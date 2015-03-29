@@ -30,7 +30,7 @@
         <password>bir-123456789</password>
     </security>
     <statement>
-        <prepared-statement-cache-size>100</prepared-statement-cache-size>
+        <prepared-statement-cache-size>110</prepared-statement-cache-size>
         <share-prepared-statements/>
     </statement>
 
