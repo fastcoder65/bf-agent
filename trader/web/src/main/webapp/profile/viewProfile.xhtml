@@ -1,0 +1,193 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+          "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:f="http://java.sun.com/jsf/core">
+
+<head>
+<title><h:outputText value="#{labels['profile.title']}" /></title>
+<link rel='stylesheet' href='css/mainStyle.css' type='text/css' />
+</head>
+<body>
+<f:view>
+		<a4j:outputPanel id="messagesPanel" >
+				 <rich:messages id="messages" ajaxRendered="true" globalOnly="true" infoStyle="color:green"	warnStyle="color:#FF9900" errorStyle="color:red" showSummary="true"	 showDetail="true" />
+		</a4j:outputPanel>
+
+	<rich:panel>
+		<f:facet name="header">
+			<h:outputText value="#{labels['profile.caption']}" />
+		</f:facet>
+		
+		<h:form method="post">
+			<h:panelGrid columns="2">
+	
+				<h:outputText value="#{labels['profile.fio']}"
+					styleClass="editlabel" />
+				<h:inputText value="#{profileBean.profileUser.fio}"
+					styleClass="searchedit" />
+
+				<h:outputText value="#{labels['profile.email']}"
+					styleClass="editlabel" />
+				<h:inputText value="#{profileBean.profileUser.email}"
+					styleClass="searchedit" />
+
+				<h:outputText value="#{labels['profile.login']}"
+					styleClass="editlabel" />
+				<h:outputText value="#{profileBean.profileUser.login}"
+					styleClass="searchedit" style="font-weight:bold" />
+
+				<h:outputText value="#{labels['profile.betfairLogin']}"
+					styleClass="editlabel" />
+				<h:inputText value="#{profileBean.profileUser.exLoginDec}"
+					styleClass="searchedit" />
+
+				<h:outputText value="#{labels['profile.maxLossPerSelection']}"
+					styleClass="editlabel" />
+				<h:inputText value="#{profileBean.profileUser.maxLossPerSelection}"
+					styleClass="searchedit" />
+
+				<h:outputText value="#{labels['profile.volumeStake']}"
+					styleClass="editlabel" />
+				<h:inputText value="#{profileBean.profileUser.volumeStake}"
+					styleClass="searchedit" />
+
+				<h:outputText value="#{labels['profile.preCosmeticValue']}"
+					styleClass="editlabel" />
+				<h:inputText value="#{profileBean.profileUser.preCosmeticValue}"
+					styleClass="searchedit" />
+
+				<h:outputText value="#{labels['profile.pseudoStakeVolume']}"
+					styleClass="editlabel" />
+				<h:inputText value="#{profileBean.profileUser.pseudoStakeVolume}"
+					styleClass="searchedit" />
+
+
+				<h:outputText value="#{labels['profile.pseudoPinkStakeVolume']}"
+					styleClass="editlabel" />
+				<h:inputText value="#{profileBean.profileUser.pseudoPinkStakeVolume}"
+					styleClass="searchedit" />
+				
+				<a4j:commandButton reRender="messagesPanel" action="#{profileBean.saveProfileUser}"
+					value="#{labels['profile.saveButton']}" />
+
+			</h:panelGrid>
+		</h:form>
+	</rich:panel>
+
+	<rich:panel>
+		<f:facet name="header">
+			<h:outputText value="#{labels['profile.changePasswordCaption']}" />
+		</f:facet>
+
+		<h:form>
+			<h:panelGrid columns="2">
+
+				<h:outputText value="#{labels['profile.password']}"
+					styleClass="editlabel" />
+				<h:inputSecret value="#{profileBean.password}" styleClass="searchedit" />
+
+				<h:outputText value="#{labels['profile.newPassword']}"
+					styleClass="editlabel" />
+				<h:inputSecret value="#{profileBean.newPassword}"
+					styleClass="searchedit" />
+
+				<h:outputText value="#{labels['profile.repeatNewPassword']}"
+					styleClass="editlabel" />
+				<h:inputSecret value="#{profileBean.repeatNewPassword}"
+					styleClass="searchedit" />
+
+				<a4j:commandButton reRender="messagesPanel" action="#{profileBean.changeUserPassword}"
+					value="#{labels['profile.changePassword']}" />
+	
+			</h:panelGrid>
+		</h:form>
+	</rich:panel>
+
+	<rich:panel>
+		<f:facet name="header">
+			<h:outputText value="#{labels['profile.changeExternalPasswordCaption']}" />
+		</f:facet>
+
+		<a4j:form>
+			<h:panelGrid columns="2">
+
+				<h:outputText value="#{labels['profile.password']}" styleClass="editlabel" />
+				<h:inputSecret value="#{profileBean.password}" styleClass="searchedit" />
+
+				<h:outputText value="#{labels['profile.newPassword']}" styleClass="editlabel" />
+				<h:inputSecret value="#{profileBean.newPassword}" styleClass="searchedit" />
+
+				<h:outputText value="#{labels['profile.repeatNewPassword']}"
+					styleClass="editlabel" />
+				<h:inputSecret value="#{profileBean.repeatNewPassword}"
+					styleClass="searchedit" />
+
+				<a4j:commandButton reRender="messagesPanel" action="#{profileBean.changeExternalPassword}"
+					value="#{labels['profile.changePassword']}" />
+
+			</h:panelGrid>
+		</a4j:form>
+	</rich:panel>
+
+	<rich:panel>
+		<f:facet name="header">
+			<h:outputText value="#{labels['profile.changeSystemSettings']}" />
+		</f:facet>
+
+		<a4j:form>
+			<h:panelGrid columns="2">
+
+				<h:outputText value="#{labels['profile.maxLossPerSelection']}" styleClass="editlabel" />
+				<h:inputText value="#{profileBean.settings.systemSettings.maxLossPerSelection}" styleClass="searchedit" />
+
+				<h:outputText value="#{labels['profile.delayPerMarket']}" styleClass="editlabel" />
+				<h:inputText value="#{profileBean.settings.systemSettings.delayPerMarket}" styleClass="searchedit" />
+
+
+				<h:outputText value="#{labels['profile.turnOnTimeOffsetHours']}" styleClass="editlabel" />
+				<h:inputText value="#{profileBean.settings.systemSettings.turnOnTimeOffsetHours}"
+					styleClass="searchedit" />
+
+				<h:outputText value="#{labels['profile.turnOnTimeOffsetMinutes']}" styleClass="editlabel" />
+				<h:inputText value="#{profileBean.settings.systemSettings.turnOnTimeOffsetMinutes}"
+					styleClass="searchedit" />
+
+
+
+
+				<h:outputText value="#{labels['profile.turnOffTimeOffsetHours']}" styleClass="editlabel" />
+				<h:inputText value="#{profileBean.settings.systemSettings.turnOffTimeOffsetHours}"
+					styleClass="searchedit" />
+
+				<h:outputText value="#{labels['profile.turnOffTimeOffsetMinutes']}" styleClass="editlabel" />
+				<h:inputText value="#{profileBean.settings.systemSettings.turnOffTimeOffsetMinutes}"
+					styleClass="searchedit" />
+
+
+				<a4j:commandButton reRender="messagesPanel" action="#{profileBean.saveSettings}"
+					value="#{labels['profile.saveButton']}" />
+
+			</h:panelGrid>
+		</a4j:form>
+	</rich:panel>
+
+<!-- 
+	private Double maxLossPerSelection;
+
+	private Integer delayPerMarket;	  
+
+	private Integer turnOnTimeOffsetHours;
+	private Integer turnOnTimeOffsetMinutes;
+	
+	private Integer turnOffTimeOffsetHours;
+	private Integer turnOffTimeOffsetMinutes;
+ -->
+ 
+</f:view>
+</body>
+</html>

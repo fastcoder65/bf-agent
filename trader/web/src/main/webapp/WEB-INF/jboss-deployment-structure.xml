@@ -1,0 +1,14 @@
+<jboss-deployment-structure> 
+   <deployment>
+        <exclusions>
+          <module name="javax.faces.api" slot="main"/>
+          <module name="com.sun.jsf-impl" slot="main"/>
+          <module name="javax.el.api" slot="main"/>
+        </exclusions>
+        <dependencies>
+          <module name="javax.faces.api" slot="1.2"/>
+          <module name="com.sun.jsf-impl" slot="1.2"/>
+          <module name="javax.el.api" slot="1"/>
+        </dependencies>
+    </deployment>   
+</jboss-deployment-structure>

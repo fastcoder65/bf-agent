@@ -1,0 +1,215 @@
+#parse("/WEB-INF/resources/include/meta/htmlDescriptor.vm")
+<html>
+<head>
+    <title>Payment History</title>
+
+    <link rel='stylesheet' href='$link.setRelative("css/main.css")' type='text/css'>
+    <link rel='stylesheet' href='$link.setRelative("css/basepage.css")' type='text/css'>
+    <link rel="stylesheet" type="text/css" media="all" href='$link.setRelative("calendar/aqua/theme.css")' title="Aqua"/>
+
+    <script type="text/javascript" src='$link.setRelative("calendar/calendar.js")'></script>
+    <script type="text/javascript" src='$link.setRelative("calendar/calendar-${logonForm.language.name}.js")'></script>
+    <script type="text/javascript" src='$link.setRelative("calendar/calendar-setup.js")'></script>
+    <script type="text/javascript" src='$link.setRelative("js/browserRendering.js")'></script>
+    <script type="text/javascript" src='$link.setRelative("js/windows.js")'></script>
+
+    <script type="text/javascript" src='$link.setRelative("js/profile/profile.js")'></script>
+    <script type="text/javascript" src='$link.setRelative("js/profile/paymentHistory.js")'></script>
+    #parse("/WEB-INF/resources/include/meta/content-type.vm")
+    #parse("/WEB-INF/resources/layout/globalJSObjects.vm")
+    #parse("/WEB-INF/resources/layout/noscript.vm")
+    <script type="text/javascript">
+
+        var sLoadingText = '$betext.get("markets.message_grid_loading")';
+        var sReportName = "paymentHistory";
+
+        var sSpacer = '$link.setRelative("images/spacer.gif")';
+
+        // paymentHistory
+
+        var sCapTransID =   '$betext.get("payments.capTransId")';
+        var sCapAmount =    '$betext.get("payments.capAmount")';
+        var sCapAction =    '$betext.get("payments.capAction")';
+        var sCapDatePerformed = '$betext.get("payments.capDate")';
+        var sCurrencySym = '$betext.get("payments.capCurrency")';
+        var sCommission = '$betext.get("paymentHistory.commission")';
+
+        var sPaySystemName = '$betext.get("paymentHistory.paySystemName")';
+        var sTranStatus = '$betext.get("paymentHistory.tranStatus")';
+
+        var sCapIn = '$betext.get("accountStatement.fundIn")';
+        var sCapOut = '$betext.get("accountStatement.fundOut")';
+
+        var IN_INVOICE_ACTION = $invoiceForm.inInvoiceAction;
+        var OUT_INVOICE_ACTION = $invoiceForm.outInvoiceAction;
+        var CHECK_INVOICE_ACTION = $invoiceForm.checkPaymentAction;
+
+        var sInvalidDatesEntered = '$betext.get("gameResults.invalidDatesEntered")';
+        var sTooBigIntervalRequested = '$betext.get("historyBets.tooBigIntervalRequested")';
+
+        function calendarSetup() {
+            Calendar.setup (
+            {inputField      :    "f_date_b",            // id of the input field
+                button      :    "f_trigger_b",     // trigger for the calendar (button ID)
+                ifFormat  :    "%d-%m-%Y",             // format of the input field  %H:%M
+                showsTime :    false,
+                timeFormat:    "24"});
+
+            Calendar.setup (
+            {inputField       : "f_date_be",            // id of the input field
+                button     : "f_trigger_be",     // trigger for the calendar (button ID)
+                ifFormat   : "%d-%m-%Y",             // format of the input field  %H:%M
+                showsTime  : false,
+                timeFormat : "24"});
+        }
+    </script>
+</head>
+
+#set ($periodTitle   = $betext.get("historyBets.periodTitle") )
+#set ($calendarTitle = $betext.get("historyBets.calendarTitle") )
+
+<body onload='calendarSetup();loadPaymentHistoryData("period");'>
+
+<table cellpadding="0" cellspacing="0" border="0" width="100%" height='100%'>
+<tr>
+    <td valign='top' height='50px'>
+        <table cellpadding="0" cellspacing="0" border="0" width="100%">
+            <tr>
+                <td id='comboPanel' class='area-border' valign='top'>
+                    <!--class='area-border'-->
+                    <table cellpadding='0' cellspacing='1' border='0' width="100%">
+                        <form name='paymentHistorySelectorForm'
+                              action='$link.setForward("profile_paymentHistoryDataAction")' method='GET'  target='dataFrame'>
+
+                            <tr>
+                              <td>
+                               <table cellpadding='' cellspacing='1' border='0' width='100%'>
+                                <tr>
+                                <td align="right" width='100px'>$betext.get("paymentHistory.action"):</td>
+                                <td align="left">
+                                        <select id="actionId" name="actionId"  onchange="loadPaymentHistoryData();">
+                                            #foreach ($acItem in $invoiceForm.actionIds)
+                                            #if($acItem.value == $invoiceForm.actionId)
+                                            <option selected value='$acItem.value'>$betext.get($acItem.label)</option>
+                                            #else
+                                            <option value='$acItem.value'>$betext.get($acItem.label)</option>
+                                            #end
+                                            #end
+                                        </select>
+                                </td>
+                                </tr>
+                               </table>
+                              </td>
+                             </tr>
+
+                            <tr>
+                              <td>
+                               <table cellpadding='0' cellspacing='1' border='0' width='100%'>
+                                <tr>
+                                <td align="right" width='100px' title='$periodTitle'><a title='$periodTitle' href='#' onclick='changeDateSource("period");'>$betext.get("historyBets.period")</a>:</td>
+                                <td align="left">
+                                    <select id="periodId" name="periodId" onchange="loadPaymentHistoryData('period');">
+                                        #foreach ($period in $invoiceForm.historyPeriods)
+                                        #if($period.value == $invoiceForm.periodId)
+                                        <option selected value='$period.value'>$betext.get($period.label)</option>
+                                        #else
+                                        <option value='$period.value'>$betext.get($period.label)</option>
+                                        #end
+                                        #end
+                                    </select>
+                                </td>
+
+                                <td align='left'>
+                                    <table cellpadding='2' cellspacing='0' border='0'>
+                                        <tr>
+                                            <td>&nbsp;</td>
+                                            <td align='right' title='$calendarTitle' nowrap>
+                                               <a title='$calendarTitle' href='#' onclick='changeDateSource("calendar");' >$betext.get("gameResults.fromDate"):</a>
+                                            </td>
+                                            <td>
+                                                <table cellSpacing='0' cellPadding='1' border='0'>
+                                                    <tr>
+                                                        <td><input type="text" id="f_date_b" name="strStartDate"
+                                                                   value="$!invoiceForm.strStartDate" readonly
+                                                                   style='width:70px'></td>
+                                                        <td valign='bottom'><img id="f_trigger_b" alt=""
+                                                                 title='$betext.get("gameResults.choose")'
+                                                                 src='$link.setRelative("images/icon_calendar.gif")'>
+                                                        </td>
+                                                    </tr>
+                                                </table>
+                                            </td>
+                                            <td align='right'>$betext.get("gameResults.toDate"):</td>
+                                            <td>
+                                                <table cellSpacing='0' cellPadding='1' border='0'>
+                                                    <tr>
+                                                        <td><input type="text" id="f_date_be" name="strEndDate"
+                                                                   value="$!invoiceForm.strEndDate" readonly
+                                                                   style='width:70px'></td>
+                                                        <td valign='bottom'><img id="f_trigger_be" alt=""
+                                                                 title='$betext.get("gameResults.choose")'
+                                                                 src='$link.setRelative("images/icon_calendar.gif")'>
+                                                        </td>
+                                                    </tr>
+                                                </table>
+                                            </td>
+                                            <td>
+                                                <input type="button"
+                                                       id='btnShow'
+                                                       value='$betext.get("gameResults.go")'
+                                                       title='$betext.get("gameResults.go")'
+                                                       onMouseOver='this.className="highlight"'
+                                                       onMouseOut='this.className=""'
+                                                       onClick="loadPaymentHistoryData('calendar');">
+                                            </td>
+                                        </tr>
+                                    </table>
+                                </td>
+                            </tr>
+                            </table>
+                           </td>
+                          </tr>
+                        </form>
+                    </table>
+                </td>
+                <td width='0px' height='0px'><iframe name="dataFrame" id="dataFrame" width="0" height="0" scrolling="no"  marginwidth="0" marginheight="0" frameborder="0" style="visibility:hidden;"></iframe></td>
+            </tr>
+        </table>
+    </td>
+</tr>
+<tr>
+    <td valign='top' height='2px'>
+        <table cellpadding="0" cellspacing="0" border="0" width='100%'>
+            <tr>
+                <td><img width='100%' height='2px' src='$link.setRelative("images/spacer.gif")' alt=""></td>
+            </tr>
+        </table>
+    </td>
+</tr>
+<tr>
+    <td valign='top' >
+        <table cellpadding="0" cellspacing="0" border="0" width='100%' height='100%'>
+            <tr>
+                <td>
+                    <div id="divBorderLoading" style="width:100%;border-top:0;border-left:0;border-right:0;border-bottom:0">
+                        <table border='0' cellspacing='0' cellpadding='0' width='100%' height='100%'>
+                            <tr>
+                                <td valign='middle' align='center' style='font-family: Tahoma;'>
+                                    <font color='#999999'>
+                                        <h2>$betext.get("markets.message_grid_loading")</h2>
+                                    </font>
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+                </td>
+                <td valign='top'>
+                    <div id="divBorder" style='width:100%;overflow:auto;border-top:0;border-left:0;border-right:0;border-bottom:0;display:none;'></div>
+                </td>
+            </tr>
+        </table>
+    </td>
+</tr>
+</table>
+</body>
+</html>

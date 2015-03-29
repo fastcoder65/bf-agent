@@ -1,0 +1,23 @@
+#parse("/WEB-INF/resources/include/meta/htmlDescriptor.vm")
+<html>
+<head>
+<title>BetEx -- WebMoney Payment History Data</title>
+ #parse("/WEB-INF/resources/include/meta/content-type.vm")
+ <script type="text/javascript">
+   var paymentHistoryRows = new Array();
+  #if ( $!invoiceForm.paymentHistoryRows )
+   #if ( $invoiceForm.paymentHistoryRows.size() > $invoiceForm.maxReportRows )
+    alert('$betext.get("profile.maxReportRowsExceeded")');
+   #end
+    #set ($iMax = $invoiceForm.maxReportRows)
+    #set ($i=0)
+    #foreach ($phRow in $invoiceForm.paymentHistoryRows)
+     #set ($i=$i+1)      
+     #if($i<$iMax) paymentHistoryRows[paymentHistoryRows.length] = '$phRow'; #end
+    #end
+
+  #end
+ </script>
+</head>
+<body onload='parent.makeHTMLContent(paymentHistoryRows)'></body>
+</html>

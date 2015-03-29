@@ -1,0 +1,73 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+          "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:f="http://java.sun.com/jsf/core">
+
+<head>
+<title>BIRBot Main</title>
+<ui:include src="/include/meta/content-type.xhtml" />
+<link rel="SHORTCUT ICON" href='./images/favicon.ico'
+	type="image/x-icon" />
+<link rel="ICON" href='./images/favicon.ico' type="image/x-icon" />
+<link rel="stylesheet" type="text/css" href='css/mainStyle.css' />
+<style>
+.outpanelHeader {
+	height: 4px;
+	border-width: 0;
+}
+
+.inpanelBody {
+	margin-top: 1px;
+	padding: 1px;
+	height: 626px;
+	overflow: auto;
+}
+
+.marketPanelBody {
+    margin-top: 1px;
+	padding: 1px;
+	height: 300px;
+	overflow: auto;
+}
+
+
+.rvgRowOne {
+ background-color: #{a4jSkin.additionalBackgroundColor}
+}
+.rvgRowTwo {
+ background-color:  #{a4jSkin.generalBackgroundColor
+}
+
+</style>
+</head>
+<body>
+
+<f:view>
+	<rich:layout id="layout_000">
+
+		<rich:layoutPanel id="layoutPanel_top"  position="top" width="100%">
+			<ui:include src="/layout/toolbar.xhtml" />
+		</rich:layoutPanel>
+
+			<rich:layoutPanel id="layoutPanel_tree" position="left" width="30%">
+		        <ui:include  src="/markets/marketPage.xhtml" />
+		    </rich:layoutPanel>
+
+		<rich:layoutPanel id="layoutPanel_bottom" position="right" width="70%">
+		<ui:include src="/layout/modalMarketPanel.xhtml" />
+				<ui:include src="/markets/activeMarkets.xhtml" />
+				<ui:include src="/markets/runners.xhtml" />
+								
+		</rich:layoutPanel>
+		
+	</rich:layout>
+</f:view>
+
+
+</body>
+</html>

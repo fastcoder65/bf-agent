@@ -1,0 +1,165 @@
+#parse("/WEB-INF/resources/include/meta/htmlDescriptor.vm")
+<html>
+<head>
+    <title>Account Statement</title>
+    <link rel='stylesheet' href='$profileForm.publicPrefix/css/main.css' type='text/css'>
+    <link rel='stylesheet' href='$profileForm.publicPrefix/css/basepage.css' type='text/css'>
+    <script type="text/javascript" src='$link.setRelative("js/browserRendering.js")'></script>
+    <script type="text/javascript" src='$link.setRelative("js/windows.js")'></script>
+    <script type="text/javascript" src='$link.setRelative("js/debug.js")'></script>
+    <script type="text/javascript" src='$link.setRelative("js/profile/profile.js")'></script>
+    <script type="text/javascript" src='$link.setRelative("js/profile/accountStatement.js")'></script>
+    <script type="text/javascript" src='$link.setRelative("js/profile/accStmTip.js")'></script>
+    #parse("/WEB-INF/resources/include/meta/content-type.vm")
+    #parse("/WEB-INF/resources/layout/globalJSObjects.vm")
+    #parse("/WEB-INF/resources/layout/noscript.vm")
+    <script type="text/javascript" >
+        var TranDetailsWindow = null;
+
+        var AO_ANY  = $profileForm.accountOperationAny;
+
+        var ACTION_TRANS_DO_DEAL        = $profileForm.actionTransDoDeal;
+        var ACTION_TRANS_IN             = $profileForm.actionTransIn;
+        var ACTION_TRANS_OUT            = $profileForm.actionTransOut;
+        var ACTION_TRANS_DO_COMISSION   = $profileForm.actionTransDoComission;
+        var ACTION_TRANS_OUT_BLOCKED    = $profileForm.actionTransOutBlocked;
+        var ACTION_TRANS_OUT_CANCELED   = $profileForm.actionTransOutCanceled;
+
+        var sStyleGreen         = 'color:green';
+        var sStyleRed           = 'color:red';
+        var sStyleTransIn       = 'color:blue';
+        var sStyleTransOut      = 'color:magenta';
+        var sStyleComis         = 'color:#DF6F6F';
+        var sStyleOutBlocked    = 'color:black'; //'color:brown';
+        var sStyleOutCanceled   = 'color:black'; //'color:#4F77A3';
+
+        var sTranHistoryDetailsAction = '$link.setForward("profile_accountStatementDetailsAction")'; // stakeId=  profitSign=
+        var sTranHistoryDetailsTitle  = '$betext.get("accountStatementDetails.title")';
+
+        var currencySymbol = '$logonForm.currency.sign';
+        var sSpacer = '$link.setRelative("images/spacer.gif")';
+
+        var sLoadingText    = '$betext.get("markets.message_grid_loading")';
+        var sReportName      = "statement";
+
+        var sCapTitleId = '$betext.get("currentBets.id")';
+        var sCapPlaced  = '$betext.get("accountStatement.placed")';
+        var sCapAmount  = '$betext.get("accountStatement.amount")';
+
+        var sCapOdds        = '$betext.get("historyBets.odds")';
+        var sCapOddsMatched = '$betext.get("historyBets.oddsMatched")';
+
+        var sCapAction  = '$betext.get("accountStatement.action")';
+        var sCapDescription = '$betext.get("historyBets.marketDescription")';
+        var sSelection  = '$betext.get("accountStatement.selection")';
+        var sCapId      = '$betext.get("historyBets.id")';
+
+        var BIDTYPE_BACK = $profileForm.bidTypeBack;
+        var BIDTYPE_LAY = $profileForm.bidTypeLay;
+        var sAccTipAction      = '$link.setForward("profile_accTipAction")';
+        var sAccDetailsOdds = '$betext.get("accountStatementDetails.odds")';
+        var sAccDetailsAmount = '$betext.get("accountStatementDetails.amount")';
+        var sAccDetailsProfitLoss = '$betext.get("accountStatementDetails.profitLoss")';
+
+        function openTranDetails( userId, stakeId, profitSign, aWindow ) {
+            var sUrl = sTranHistoryDetailsAction + '?stakeId='+ stakeId + '&profitSign='+ profitSign;
+            openDetailsWin( "TranHistoryDetails", sUrl, aWindow, parent.windowObjects );
+        }
+    </script>
+</head>
+<body onload='initSizes();loadStatementData();'>
+<script type="text/javascript" src='$link.setRelative("js/tooltip/wz_tooltip.js")'></script>
+<script type="text/javascript" src='$link.setRelative("js/tooltip/tip_balloon.js")'></script>
+<table cellpadding="0" cellspacing="0" border="0" width="100%" height='100%'>
+    <tr>
+        <td valign='top' height='40px'>
+            <table cellpadding="0" cellspacing="0" border="0" width="100%">
+            <tr>
+                <td id='comboPanel' class='area-border'>
+                    <table cellpadding='0' cellspacing='1' border='0' >
+                        <form name='statementSelectorForm' action='$link.setForward("profile_accountStatementDataAction")' method='GET' target='dataFrame'>
+                            <tr align="left">
+                                <td align="right">$betext.get("accountStatement.action"):</td>
+                                <td align="left">
+                                    <select id="actionId" name="accountStatementId"  onchange="loadStatementData();">
+                                        #foreach ($asItem in $profileForm.accountStatementIds)
+                                        #if($asItem.value == $profileForm.accountStatementId)
+                                        <option selected value='$asItem.value'>$betext.get($asItem.label)</option>
+                                        #else
+                                        <option value='$asItem.value'>$betext.get($asItem.label)</option>
+                                        #end
+                                        #end
+                                    </select>
+                                </td>
+
+                                <td>&nbsp;</td>
+
+                                <td align="right">$betext.get("historyBets.period"):</td>
+                                <td align="left">
+                                    <select id="periodId" name="periodId" onchange="loadStatementData();">
+                                        #foreach ($period in $profileForm.historyPeriods)
+                                        #if($period.value == $profileForm.periodId)
+                                        <option selected value='$period.value'>$betext.get($period.label)</option>
+                                        #else
+                                        <option value='$period.value'>$betext.get($period.label)</option>
+                                        #end
+                                        #end
+                                    </select>
+                                </td>
+                            </tr>
+                        </form>
+                    </table>
+                </td>
+                <td width='0px' height='0px'>
+                    <iframe name="dataFrame" id="dataFrame" width="0" height="0" scrolling="no" marginwidth="0" marginheight="0" frameborder="0" style="visibility:hidden;"></iframe>
+                    <iframe name="detailDataFrame" id="detailDataFrame" width="0" height="0" scrolling="no"  marginwidth="0" marginheight="0" frameborder="0" style="visibility:hidden;"></iframe>
+                </td>
+            </tr>
+            <tr>
+                <td valign='top' height='10px'>
+                    <table id='statement_notes' cellpadding="2" cellspacing="0" border="0" width='100%' height='100%'>
+                        <tr>
+                            <td>$betext.get("accountStatement.notes")</td>
+                        </tr>
+                    </table>
+                </td>
+            </tr>
+            </table>
+        </td>
+    </tr>
+    <tr>
+        <td  valign='top' height='2px'>
+            <table cellpadding="0" cellspacing="0" border="0" width='100%'>
+                <tr>
+                    <td><img width='100%' height='2px' src='$link.setRelative("images/spacer.gif")' alt=""></td>
+                </tr>
+            </table>
+        </td>
+    </tr>
+<tr>
+    <td valign='top' >
+        <table id='listArea' cellpadding="0" cellspacing="0" border="0" width='100%' > <!-- height='100%' -->
+            <tr>
+                <td valign='top' width="100%">
+                    <div id="divBorder" style='width:100%;border-top:0;border-left:0;border-right:0;border-bottom:0;display:none'>    <!--height:100%;-->
+                      <div id="divContent"  style='width:100%;overflow:auto;position:absolute;border-top:0;border-left:0;border-right:0;border-bottom:0;display:none'></div>
+                    </div>
+                    <div id="divBorderLoading" style="width:100%;border-top:0;border-left:0;border-right:0;border-bottom:0">
+                        <table border='0' cellspacing='0' cellpadding='0' width='100%' height='100%'>
+                            <tr>
+                                <td valign='middle' align='center' style='font-family: Tahoma;'>
+                                    <font color='#999999'>
+                                        <h2>$betext.get("markets.message_grid_loading")</h2>
+                                    </font>
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+                </td>
+            </tr>
+        </table>
+    </td>
+</tr>
+</table>
+</body>
+</html>

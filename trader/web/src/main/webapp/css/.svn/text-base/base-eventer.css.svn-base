@@ -1,0 +1,66 @@
+* {border:0; margin:0; padding:0; font:normal 11px tahoma;}
+body {background:#fff; min-width:1000px;}
+a {text-decoration:none;}
+input, select {border:2px inset #fff; margin:5px; vertical-align:middle;}
+label {margin:0 0 0 5px;}
+table {border-collapse:collapse; width:100%;}
+td {vertical-align:top;}
+.i1 {background:url(../images/eventer/i01.gif) right no-repeat #dee7fd; color:red; padding:0 20px 0 10px; height:16px;}
+.i2 {background:url(../images/eventer/i02.gif) right no-repeat #dee7fd; color:red; padding:0 20px 0 10px; height:16px;}
+.i3 {background:url(../images/eventer/i03.gif) right no-repeat #becbea; padding:0 20px 0 10px; height:16px;}
+.i4 {background:url(../images/eventer/i04.gif) right no-repeat #becbea; padding:0 20px 0 10px; height:16px;}
+.i5 {background:url(../images/eventer/i05.gif) right no-repeat #becbea; padding:0 20px 0 10px; height:16px;}
+.i6 {background:url(../images/eventer/i06.gif) right  no-repeat; padding:0 20px 0 0; height:17px;}
+.i7 {background:url(../images/eventer/i07.gif) right  no-repeat; padding:0 20px 0 0; height:17px;}
+
+                      /* head */
+#hd {background:url(../images/logo.jpg) no-repeat #9daed7; height:50px;}
+  #txt1_logo {margin:0 0 0 20px; color:#fff; font:25px arial;}
+  #txt2_logo {margin:0 0 0 25px; color:#fff; font:13px arial;}
+
+     /* block1 */
+  #bl1 {}
+    #bl1 p {margin:10px; text-align:right;}
+    #nm {font-weight:bold;}
+
+     /* block2*/
+  #bl2 {background:#becbea; border-left:1px solid #fff; width:240px;}
+    #bl2 p {margin:3px 10px;}
+
+     /* block3 */
+  #bl3 {background:#dee7fd; border-left:1px solid #fff; text-align:center; width:120px;}
+
+                      /* mnu */
+#mnu {background:url(../images/eventer/bg02.gif) repeat-x; color:#fff; height:18px;}
+  #mnu p {float:left; margin:1px 0 0 20px;}
+  #mnu_lft p {float:left; margin:2px 0 0 0;}
+    #mnu_lft a {color:#000;}
+    #mnu_lft a:hover {color:#fd4;}
+  #mnu_rgt {text-align:right;}
+    #mnu_rgt a {color:#fff; margin:1px 20px;}
+    #mnu_rgt a:hover {color:#fd4;}
+
+                      /* forma */
+#frm {background:#dee7fd;}
+  #sgl {vertical-align:middle; width:250px;}
+  #sgl p {font-weight:bold; text-align:right;}
+  #startDate {margin:0 20px; text-align:right;}
+
+                      /* head tabl */
+#sgl_tbl {position:relative; background:#becbea; border-top:1px solid #586ea0; height:16px;}
+  #sgl_tbl div {position:absolute; top:0; text-align:center;}
+  #th1 {width:12%;}
+  #th2 {left:12%; width:43%;}
+  #th3 {right:29%; width:16%;}
+  #th4 {right:0; width:29%;}
+
+                      /* bottom tabl */
+#ft_tbl {position:absolute; left:0; bottom:19px; background:#dee7fd; border-top:1px solid #586ea0; height:25px; min-width:1000px; width:100%;}
+  #p1_ft_tbl {margin:5px 20px;}
+  #p2_ft_tbl {margin:-18px 200px;}
+  #p3_ft_tbl {margin:0 20px 0 auto; text-align:right; width:300px;}
+
+                     /* footer */
+#ftr {position:absolute; background:#586ea0; left:0; bottom:0; color:#fff; height:18px; min-width:1000px; width:100%;}
+  #p1_ftr {margin:2px 200px 0 20px;}
+  #p2_ftr {margin:-14px 20px 0 auto; width:500px; text-align:right;}

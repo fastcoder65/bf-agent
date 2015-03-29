@@ -1,0 +1,142 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:model="http://labs.jboss.com/jbossrichfaces/ui/treeModel"
+	xmlns:tree="http://labs.jboss.com/jbossrichfaces/ui/tree"
+	xmlns:dnd="http://labs.jboss.com/jbossrichfaces/ui/drag-drop"
+	xmlns:rich="http://richfaces.org/rich">
+				<a4j:region id="pollRegion">
+                	<h:form>
+                		<a4j:poll id="pollMarkets" interval="3000" enabled="#{marketBean.pollEnabled}" reRender="pollMarkets,marketTable,marketServerTime,runnerTable,serverTime"/>
+                	</h:form>
+		        </a4j:region>
+	
+	
+	
+		<rich:simpleTogglePanel bodyClass="marketPanelBody" switchType="client" label="My Markets">
+		<h:panelGroup> 
+		<h:panelGrid>
+				 <a4j:outputPanel>
+			     	<h:outputText id="marketServerTime" value="#{marketBean.serverTime}"/>
+			     </a4j:outputPanel>
+
+			<a4j:outputPanel>
+				 <rich:messages id="marketMessages" ajaxRendered="true" globalOnly="true" infoStyle="color:green"	warnStyle="color:#FF9900" errorStyle="color:red" showSummary="true"	 showDetail="true" />
+			</a4j:outputPanel>
+				
+		</h:panelGrid>
+
+		       <h:panelGrid id="marketControls">
+			<a4j:form  id="activeMarketsForm">
+		        			     	
+				<a4j:commandLink reRender="marketRegion,marketMessages,runnerTable"  action="#{marketBean.deleteMarket}"
+					title="Remove market" style="margin-right:20px" >
+				    <h:graphicImage style="border-width:0" value="/images/buttons/ev.delete.jpg" />	
+				</a4j:commandLink>
+
+				<a4j:commandLink reRender="marketRegion,marketMessages"  action="#{marketBean.setOnAirOn}"
+					title="OnAir On" style="margin-right:20px" >
+					<h:graphicImage style="border-width:0" value="/images/buttons/ev.play.jpg" />
+				</a4j:commandLink>
+
+				<a4j:commandLink reRender="marketRegion,marketMessages"  action="#{marketBean.setOnAirOff}"
+					title="OnAir Off" style="margin-right:20px" >
+					<h:graphicImage style="border-width:0" value="/images/buttons/ev.pause.jpg" />
+				</a4j:commandLink>
+				
+				<a4j:commandLink reRender="marketRegion,pollMarkets,marketMessages,autoRefreshStatus"  action="#{marketBean.toggleRefresh}"
+				    title="Refresh On/Off" style="margin-right:20px">
+				    <h:graphicImage style="border-width:0" value="/images/buttons/ev.rec.jpg" />
+				</a4j:commandLink>
+				
+<!--  onclick="#{rich:component('mp')}.show()" -->
+
+						<a4j:commandLink rendered="#{marketBean.currentMarket4User != null}"  oncomplete="Richfaces.showModalPanel('mp');"  reRender="modPanelMarket4User"   action="#{marketBean.customMyMarketProperties}" >
+				    		<h:graphicImage style="border-width:0" value="/images/eventer/dir-edit.gif" id="showlink"/>
+						</a4j:commandLink>
+					
+				<a4j:outputPanel id="autoRefreshStatus">
+					<h:outputText value="AutoRefresh On" rendered="#{marketBean.pollEnabled}"></h:outputText>
+					<h:outputText value="AutoRefresh Off" rendered="#{!marketBean.pollEnabled}"></h:outputText>
+					
+				</a4j:outputPanel>
+				</a4j:form>		
+			</h:panelGrid>
+		   		
+		</h:panelGroup>
+		    
+		<a4j:outputPanel id="marketRegion">
+			<h:form>
+				<rich:scrollableDataTable id="marketTable" value="#{marketBean.activeMarkets}"
+					rowKeyVar="rkv" var="mkt"  
+					onRowMouseOver="this.style.backgroundColor='#{a4jSkin.additionalBackgroundColor}'"
+					onRowMouseOut="this.style.backgroundColor=''"
+					
+					width="100%" 
+					selectedClass="rich-sdt-row-selected" sortMode="single"
+					selectionMode="multi" 
+					binding="#{marketBean.masterTable}"
+					selection="#{marketBean.masterSelection}"
+					rowClasses="rvgRowOne,rvgRowTwo">
+								
+				<a4j:support 
+							id="a4j_support_master"
+							event="onselectionchange"
+						    reRender="runnerTable,marketControls" />				
+						    
+					<rich:column title="onAir" label="On Air">
+						<f:facet name="header">
+							<h:outputText value="On Air"/>
+						</f:facet>
+						<h:graphicImage rendered="#{!mkt.userData4Market[marketBean.currentUser.id].onAir}" id="switchOff" style="border-width:0" value="/images/eventer/cmd-pause.gif" />
+						
+						<h:graphicImage rendered="#{mkt.userData4Market[marketBean.currentUser.id].onAir}" id="switchOn" style="border-width:0" value="/images/eventer/cmd-play-green.gif" />
+						
+					</rich:column>
+					
+					<rich:column title="#{mkt.menuPath}\\#{mkt.name}" width="250px"  label="Event/Market name">
+						<f:facet name="header">
+							<h:outputText value="Name" id="market_name" />
+						</f:facet>
+						<h:outputText title="#{mkt.menuPath}\\#{mkt.name}" value="#{mkt.menuPath}\\#{mkt.name}" />
+					</rich:column>
+
+					<rich:column width="120px" label="Start event time">
+						<f:facet name="header">
+							<h:outputText value="Time" />
+						</f:facet>
+						<h:outputFormat value="#{marketBean.dateFormatValue}">
+				   			<f:param value="#{mkt.marketTime}"/>
+				  		</h:outputFormat>
+					</rich:column>
+
+					<rich:column width="60px" label="Status">
+						<f:facet name="header">
+							<h:outputText value="Status" />
+						</f:facet>
+						
+						<h:outputText styleClass="#{mkt.statusClass}" value="#{mkt.marketStatus}" />
+						
+					</rich:column>
+
+					<rich:column label="TimeZone">
+						<f:facet name="header">
+							<h:outputText value="TimeZone" />
+						</f:facet>
+						<h:outputText value="#{mkt.timeZone}" />
+					</rich:column>
+					
+				</rich:scrollableDataTable>
+				
+			</h:form>
+			</a4j:outputPanel>
+		
+	</rich:simpleTogglePanel>
+	
+	<a4j:log/>
+
+     	
+	
+</ui:composition>

@@ -1,0 +1,67 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:a4j="http://richfaces.org/a4j"
+      xmlns:rich="http://richfaces.org/rich">
+            
+        <script>
+         function getRightTop(ref) {
+           var position = new Object();
+           position.top = 0; //ref.offsetTop;
+           position.left =0; // ref.offsetLeft+ref.clientWidth+6;
+           return position;
+         }
+        </script>
+        <rich:modalPanel resizeable="false" id="mp" minHeight="300" minWidth="300" height="350" width="350">
+          
+            <f:facet name="header">
+                <h:outputText value="#{labels['modalDialog.capMarketProps']}" />
+            </f:facet>
+
+            <f:facet name="controls">
+			  <h:panelGroup>
+                <h:graphicImage title="Close dialog" value="/images/eventer/dir-delete.gif" id="hidelink"/>
+                <rich:componentControl for="mp" attachTo="hidelink" operation="hide" event="onclick"/>
+            </h:panelGroup>
+            </f:facet>
+
+            <rich:panel id="modPanelMarket4User">
+            <a4j:form>
+             <h:panelGrid columns="2">
+			 		
+				<h:outputText value="#{labels['profile.maxLossPerSelection']}" styleClass="editlabel30"/>
+				<h:inputText  value="#{marketBean.currentMarket4User.maxLossPerSelection}" styleClass="searchedit70r"/>
+				
+				<h:outputText value="#{labels['profile.volumeStake']}" styleClass="editlabel30" />
+				<h:inputText  value="#{marketBean.currentMarket4User.volumeStake}" styleClass="searchedit70r"/>
+			
+				<h:outputText value="#{labels['profile.preCosmeticValue']}" styleClass="editlabel30"/>
+				<h:inputText value="#{marketBean.currentMarket4User.preCosmeticValue}" styleClass="searchedit70r"/>
+		
+				<h:outputText value="#{labels['profile.pseudoStakeVolume']}" styleClass="editlabel30"/>
+				<h:inputText  value="#{marketBean.currentMarket4User.pseudoStakeVolume}" styleClass="searchedit70r"/>
+	
+				<h:outputText value="#{labels['profile.pseudoPinkStakeVolume']}" styleClass="editlabel30"/>
+				<h:inputText  value="#{marketBean.currentMarket4User.pseudoPinkStakeVolume}" styleClass="searchedit70r"/>
+				
+				<h:outputText value="#{labels['profile.turnOnTimeOffsetHours']}" styleClass="editlabel30" />
+				<h:inputText  value="#{marketBean.currentMarket4User.turnOnTimeOffsetHours}" styleClass="searchedit70r"/>
+
+				<h:outputText value="#{labels['profile.turnOnTimeOffsetMinutes']}" styleClass="editlabel30" />
+				<h:inputText value="#{marketBean.currentMarket4User.turnOnTimeOffsetMinutes}" styleClass="searchedit70r"/>
+
+				<h:outputText value="#{labels['profile.turnOffTimeOffsetHours']}" styleClass="editlabel30" />
+				<h:inputText  value="#{marketBean.currentMarket4User.turnOffTimeOffsetHours}" styleClass="searchedit70r" />
+
+				<h:outputText value="#{labels['profile.turnOffTimeOffsetMinutes']}" styleClass="editlabel30" />
+				<h:inputText  value="#{marketBean.currentMarket4User.turnOffTimeOffsetMinutes}" styleClass="searchedit70r" />
+				
+				<a4j:commandButton onclick="#{rich:component('mp')}.hide()" reRender="marketMessages" action="#{marketBean.saveMyMarketProperties}" value="#{labels['profile.saveButton']}"/>
+				<a4j:commandButton onclick="#{rich:component('mp')}.hide()" value="#{labels['modalDialog.btnClose']}"/>
+            
+            </h:panelGrid>
+            </a4j:form>
+            </rich:panel>
+        </rich:modalPanel>
+</ui:composition>

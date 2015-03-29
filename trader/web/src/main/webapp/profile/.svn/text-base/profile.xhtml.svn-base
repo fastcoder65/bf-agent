@@ -1,0 +1,28 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+          "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:f="http://java.sun.com/jsf/core">
+
+<head>
+<title>User Profile</title>
+<ui:include src="/include/meta/content-type.xhtml" />
+</head>
+<body>
+<script type="text/javascript" src="https://seal.thawte.com/getthawteseal?host_name=www.bir24x7.net&amp;size=M&amp;lang=en"></script>
+
+	<rich:layout>
+        <rich:layoutPanel position="top" height="10%">
+          <ui:include src="/layout/toolbar.xhtml"/>      
+        </rich:layoutPanel>
+
+        <rich:layoutPanel position="bottom" width="90%">
+          <ui:include src="/profile/viewProfile.xhtml"/>      
+        </rich:layoutPanel>
+	</rich:layout>
+</body>
+</html>

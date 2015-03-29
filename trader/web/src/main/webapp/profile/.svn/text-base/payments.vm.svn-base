@@ -1,0 +1,467 @@
+#parse("/WEB-INF/resources/include/meta/htmlDescriptor.vm")
+<html>
+<head>
+<title>$betext.get("payments.title")</title>
+<link rel='stylesheet' type='text/css' href='$link.setRelative("css/main.css")'>
+<link rel='stylesheet' type='text/css' href='$link.setRelative("css/basepage.css")'>
+<link rel="stylesheet" type="text/css" href='$link.setRelative("css/tabs-profile.css")'>
+<script type="text/javascript" src='$link.setRelative("js/utils.js")'></script>
+<script type="text/javascript" src='$link.setRelative("js/commonValidations.js")'></script>
+<script type="text/javascript" src='$link.setRelative("js/betValidations.js")'></script>
+
+<script type="text/javascript" src='$link.setRelative("js/browserRendering.js")'></script>
+<script type="text/javascript" src='$link.setRelative("js/debug.js")'></script>
+<script type="text/javascript" src='$link.setRelative("js/windows.js")'></script>
+<script type="text/javascript" src='$link.setRelative("js/tabs.js")'></script>
+<script type="text/javascript" src='$link.setRelative("js/selections.js")'></script>
+<script type="text/javascript" src='$link.setRelative("js/profile/profile.js")'></script>
+<script type="text/javascript" src='$link.setRelative("js/profile/payments.js")'></script>
+#parse("/WEB-INF/resources/include/meta/content-type.vm")
+#parse("/WEB-INF/resources/layout/noscript.vm")
+<script type="text/javascript">
+    var currencySymbol = '$logonForm.currency.sign';
+    var sSpacer = '$link.setRelative("images/spacer.gif")';
+    var sLoadingText = '$betext.get("markets.message_grid_loading")';
+    var sReportName = "payments";
+
+    var sPaymentsDataAction = '$link.setForward("profile_paymentDataAction")';
+    var sCheckPaymentAction = '$link.setForward("profile_checkPaymentAction")';
+
+    var sCapTransID = '$betext.get("payments.capTransId")';
+    var sCapAmount = '$betext.get("payments.capAmount")';
+    var sCapAction = '$betext.get("payments.capAction")';
+    var sCapStatus = '$betext.get("payments.capStatus")';
+    var sCapDatePerformed = '$betext.get("payments.capDate")';
+    var sCurrencySym = '$betext.get("payments.capCurrency")';
+
+    var sCapIn = '$betext.get("accountStatement.fundIn")';
+    var sCapOut = '$betext.get("accountStatement.fundOut")';
+
+    var sNoChecksFound = '$betext.get("profile.noSelectedChecksFound")';
+
+    #if ($!outTransactionOrderForm)
+        #set ($cForm = $!outTransactionOrderForm)
+    #elseif ($!marathonOutTransactionForm)
+        #set ($cForm = $!marathonOutTransactionForm)
+    #elseif ($!marathonInTransactionForm)
+        #set ($cForm = $!marathonInTransactionForm)
+    #else
+        #set($cForm = $invoiceForm)
+    #end
+
+    var IN_INVOICE_ACTION = $cForm.inInvoiceAction;
+    var OUT_INVOICE_ACTION = $cForm.outInvoiceAction;
+    var CHECK_INVOICE_ACTION = $cForm.checkPaymentAction;
+    var WEB_MONEY_SYSTEM_ID = $cForm.webMoneyPaySystemId;
+    var MARATHON_SYSTEM_ID = $cForm.marathonPaySystemId;
+
+    var currentPaySystemId = null;
+
+    paySystemInterfaces[WEB_MONEY_SYSTEM_ID] = "sc1";
+    paySystemInterfaces[MARATHON_SYSTEM_ID]  = "sc2";
+
+    var activePaySystems = new Array();
+
+    #set($tabIdx = 0)
+
+    #foreach($ps in $cForm.activePaySystems)
+        activePaySystems[$ps.value] = '$ps.label';
+        tabDesc[paySystemInterfaces[$ps.value]] = new Array(paySystemInterfaces[$ps.value], $tabIdx);
+        #set($tabIdx = $tabIdx + 1)
+    #end
+
+    #if ($cForm.activePaySystems)
+        #if ($cForm.activePaySystems.size() > 0)
+            #set($firstId = $cForm.activePaySystems.get(0).getValue())
+            initialtab = [1, paySystemInterfaces[ $firstId ] ];
+        #end
+    #end
+</script>
+</head>
+
+<body style="background-color: #FFFFFF;" onload="paymentsOnLoad($cForm.getPaySystemId())">
+
+$validator.getJavascript()
+$validator.getDynamicJavascript("outTransactionOrderForm")
+$validator.getDynamicJavascript("marathonOutTransactionForm")
+$validator.getDynamicJavascript("marathonInTransactionForm")
+
+#set ( $largeCombo = "100px" )
+#set ( $shortCombo = "40px" )
+#set ( $idEditor = "100px" )
+#set ( $sumEditor = "60px" )
+
+<table cellpadding='0' cellspacing='0' border='0' style="width:100%;height:100%">
+ <tr>
+    <td style="height:20px">
+        <table id="tablist" cellpadding=0 cellspacing=0 border=0>
+            <tr>
+                #foreach ($ps in $cForm.activePaySystems)
+                <td nowrap><a href="#" onClick="setCurrentPaySystemId($ps.value);">$ps.label</a></td>
+                #end
+            </tr>
+        </table>
+    </td>
+    <td width='0'><iframe name="dataFrame" id="dataFrame" width="0" height="0" scrolling="no" marginwidth="0" marginheight="0" frameborder="0" style="visibility:hidden;"></iframe></td>
+ </tr>
+
+ <tr>
+    <td valign='top'>
+        <table id="tabcontent" cellpadding='0' cellspacing='0' border='0' style="width:100%;height:100%;">
+            <tr>
+                <td valign='top'>
+                    <div id="sc2" style="border-top:0;border-left:0;border-right:0;border-bottom:0;width:100%;height:100%;display:none;">
+                    <table id='tableAllTab_$cForm.marathonPaySystemId' cellpadding='0' cellspacing='1' border='0' style="width:100%;height:100%;"> <!-- in IE we add "height:100%;" there-->
+                        <tr>
+                            <td height='4px'></td>
+                        </tr>
+                    #set ($marathonNote = "")
+                    #if ($!betext.get("payments.marathonNote"))
+                        #set ( $marathonNote = $!betext.get("payments.marathonNote") )
+                    #end
+                    #if ($!marathonNote && $marathonNote.trim().length() > 0)
+                    <tr>
+                            <td id="marathonNote">
+                                <table cellpadding='0' cellspacing='1' border='0' width='100%' height='100%'>
+                                <tr>
+                                <td class='area-news'>
+                                    <table width='95%' cellpadding='0' cellspacing='0' border='0'>
+                                        <tr><td style='font-family: Tahoma;'>$marathonNote</td></tr>
+                                    </table>
+                                </td>
+                                </tr>
+                                </table>
+                            </td>
+                    </tr>
+                    #end
+                        <tr>
+                            <td id="formArea_$cForm.marathonPaySystemId" height='100px'>
+                                <table cellpadding='0' cellspacing='0' border='0' width='100%' height='100%'>
+                                    <tr>
+                                    <!-- Deposit -->
+                                        <td class='rows-border' align="center" width='50%'>
+                                            <table cellpadding='0' cellspacing='0' border='0' width='100%' height='100%'>
+                                                <form name='marathonOutTransactionForm' action='$link.setAction("/betex/profile/marathonOutTransactionAction")'  method='POST'>
+                                                <input type='hidden' name='actionId' value='$cForm.marathonOutTransactionAction'>
+                                                <input type='hidden' name='paySystemId' value='$cForm.marathonPaySystemId'>
+                                                <tr>
+                                                    <td class='row-title'>$betext.get("payments.marathonFundOut")</td>
+                                                </tr>
+                                                <tr>
+                                                    <td class='row'>
+                                                        <table cellpadding='0' cellspacing='2' border='0' width='100%' height='100%'>
+                                                            <tr>
+                                                                <td align='right'>$betext.get("payments.marathonWallet"):</td>
+                                                                <td><input type='text' name='marathonWallet' value='$!cForm.marathonWallet' style='width:$idEditor' maxlength="12"></td>
+                                                            </tr>
+                                                            <tr>
+                                                                <td align="right">$betext.get("payments.walletType"):</td>
+                                                                <td align="left">
+                                                                    <select name="currencyId" style='width:$largeCombo'>
+                                                                    #foreach ($curr in $cForm.getLvPaySystemCurrencies($cForm.marathonPaySystemId))
+                                                                        #if($curr.value == $cForm.currencyId)
+                                                                            <option selected value='$curr.value'>$curr.label</option>
+                                                                        #else
+                                                                            <option value='$curr.value'>$curr.label</option>
+                                                                        #end
+                                                                    #end
+                                                                    </select>
+                                                                </td>
+                                                            </tr>
+                                                            <tr>
+                                                                <td align='right'>$betext.get("payments.amount"):</td>
+                                                                <td><input type='text' name='amount' style='width:$sumEditor' maxlength="15"></td>
+                                                            </tr>
+                                                            <tr>
+                                                                <td></td>
+                                                                <td><input type='button' value='$betext.get("payments.sendInInvoiceOrder")' onclick='submitMarathonOutTransaction(this);'></td>
+                                                            </tr>
+                                                        </table>
+                                                    </td>
+                                                </tr>
+                                                </form>
+                                            </table>
+                                        </td>
+                                        <!-- end of Deposit -->
+                                        <td><img width='1px' src='$link.setRelative("images/spacer.gif")' alt=""></td>
+                                        <!-- Withdraw -->
+                                        <td class='rows-border' align="center" width='50%'>
+                                            <table cellpadding='0' cellspacing='0' border='0' width='100%' height='100%'>
+                                                <form name='marathonInTransactionForm'  action='$link.setAction("/betex/profile/marathonInTransactionAction")' method='POST'>
+                                                <input type='hidden' name='actionId' value='$cForm.marathonInTransactionAction'>
+                                                <input type='hidden' name='paySystemId' value='$cForm.marathonPaySystemId'>
+                                                <tr>
+                                                    <td class='row-title'>$betext.get("payments.marathonFundIn")</td>
+                                                </tr>
+
+                                                <tr>
+                                                    <td class='row'>
+                                                        <table cellpadding='0' cellspacing='2' border='0' width='100%' height='100%'>
+                                                        <tr>
+                                                            <td align='right'>$betext.get("payments.marathonWallet"):</td>
+                                                            <td><input type='text' name='marathonWallet' value='$!cForm.marathonWallet' style='width:$idEditor' maxlength="13"></td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td align="right">$betext.get("payments.walletType"):</td>
+                                                            <td align="left">
+                                                            <!--id="selectCurrency2_2"-->
+                                                                <select name="currencyId" style='width:$largeCombo'>
+                                                                #foreach ($curr in $cForm.getLvPaySystemCurrencies($cForm.marathonPaySystemId))
+                                                                    #if($curr.value == $cForm.currencyId)
+                                                                        <option selected value='$curr.value'>$curr.label</option>
+                                                                    #else
+                                                                        <option value='$curr.value'>$curr.label</option>
+                                                                    #end
+                                                                #end
+                                                                </select>
+                                                            </td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td align='right'>$betext.get("payments.amount"):</td>
+                                                            <td><input type='text' name='amount' style='width:$sumEditor' maxlength="15"></td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td></td>
+                                                            <td><input type='button' value='$betext.get("payments.sendOutInvoiceOrder")'  onclick='submitMarathonInTransaction(this);'></td>
+                                                        </tr>
+                                                        </table>
+                                                    </td>
+                                                </tr>
+                                                </form>
+                                            </table>
+                                        </td>
+                                        <!-- End of Withdraw -->
+                                    </tr>
+                                </table>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td valign='top'  width="100%"  height='100%'>
+                                <table id="listArea_$cForm.marathonPaySystemId" cellpadding="0" cellspacing="0" border="0" width='100%' > <!-- in IE we add "height:100%;" there-->
+                                    <tr>
+                                        <td valign='top'>
+                                            <div id="divBorder_$cForm.marathonPaySystemId" style='width:100%;overflow:auto;border-top:0;border-left:0;border-right:0;border-bottom:0;display:none;'></div> <!-- in IE we add "height:100%;" there-->
+                                            <div id="divBorderLoading_$cForm.marathonPaySystemId" style="width:100%;border-top:0;border-left:0;border-right:0;border-bottom:0;display:none;">
+                                            <table border='0' cellspacing='0' cellpadding='0' width='100%' height='100%'>
+                                                <tr>
+                                                    <td valign='middle' align='center' style='font-family: Tahoma;'>
+                                                        <font color='#999999'><h2>$betext.get("markets.message_grid_loading")</h2></font>
+                                                    </td>
+                                                </tr>
+                                            </table>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                </table>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td valign='top' id='comboPanel_$cForm.marathonPaySystemId' class='area-border' width='100%' height='30px'>
+                                <table cellpadding='0' cellspacing='1' border='0' width='100%'>
+                                    <tr>
+                                        <td nowrap><a href='$betext.get("payments.marathonUserLinkURI")?accountId=$cForm.accountId&amp;BSESSIONID=$cForm.currentSessionId&amp;login=$cForm.login' target="_blank"><IMG alt='$betext.get("payments.marathonUserLinkTitle")' title='$betext.get("payments.marathonUserLinkTitle")' SRC='$link.setRelative("images/marathonlogo/logo_little.gif")' border="0"></a></td>
+                                        <td valign='middle' width='100%'>
+                                            <table cellpadding='0' cellspacing='0' border='0' width='100%'>
+                                                <form name='paymentSelectorForm_$cForm.marathonPaySystemId' action='$link.setForward("profile_paymentDataAction")' method='GET' target="dataFrame">
+                                                <input type='hidden' name='actionId'>
+                                                <input type='hidden' name='paySystemId'>
+                                                <tr>
+                                                    <td width='100%' align='right'>
+                                                        <input type='button' title='$betext.get("payments.checkPaymentsTitle")' name='checkPayments' value='$betext.get("payments.checkPayments")'  onclick='doCheckPayments();'>
+                                                    </td>
+                                                </tr>
+                                                </form>
+                                                <!-- Tag </form> should be there!-->
+                                            </table>
+                                                <!-- Tag should be removed!-->
+                                        </td>
+                                    </tr>
+                                </table>
+                            </td>
+                        </tr>
+                    </table>
+                    </div>
+                    <div id="sc1" style="border-top:0;border-left:0;border-right:0;border-bottom:0;width:100%;height:100%;display:none;">
+                    <table id='tableAllTab_$cForm.webMoneyPaySystemId' cellpadding='0' cellspacing='1' border='0' style="width:100%;height:100%">  <!-- in IE we add "height:100%;" there-->
+                        <tr>
+                            <td height='4px'></td>
+                        </tr>
+                    #set ($webMoneyNote = "")
+                    #if ($!betext.get("payments.webMoneyNote"))
+                        #set ( $webMoneyNote = $!betext.get("payments.webMoneyNote") )
+                    #end
+                    #if ($!webMoneyNote && $webMoneyNote.trim().length() > 0)
+                    <tr>
+                            <td id="webMoneyNote">
+                                <table cellpadding='0' cellspacing='1' border='0' width='100%' height='100%'>
+                                <tr>
+                                <td class='area-news'>
+                                    <table width='95%' cellpadding='0' cellspacing='0' border='0'>
+                                        <tr><td style='font-family: Tahoma;'>$webMoneyNote</td></tr>
+                                    </table>
+                                </td>
+                                </tr>
+                                </table>
+                            </td>
+                    </tr>
+                    #end
+
+                        <tr>
+                            <td id="formArea_$cForm.webMoneyPaySystemId" height='100px'>
+                                <table cellpadding='0' cellspacing='0' border='0' width='100%' height='100%'>
+                                    <tr>
+                                    <!-- Deposit -->
+                                        <td class='rows-border' align="center" width='50%'>
+                                            <table cellpadding='0' cellspacing='0' border='0' width='100%' height='100%'>
+                                            <form name='invoiceForm' action='$link.setAction("/betex/profile/webMoneyInTransactionOrderAction")'  method='POST'>
+                                            <input type='hidden' name='actionId' value='$cForm.inInvoiceAction'>
+                                            <input type='hidden' name='paySystemId' value='$cForm.webMoneyPaySystemId'>
+                                                <tr>
+                                                    <td class='row-title'>$betext.get("accountStatement.fundIn")</td>
+                                                </tr>
+                                                <tr>
+                                                    <td class='row'>
+                                                        <table cellpadding='0' cellspacing='2' border='0' width='100%' height='100%'>
+                                                            <tr>
+                                                                <td align='right'>$betext.get("payments.wmId"):</td>
+                                                                <td><input type='text' name='wmId' value='$!cForm.wmId' style='width:$idEditor' maxlength="12"></td>
+                                                            </tr>
+                                                            <tr>
+                                                                <td align="right">$betext.get("payments.walletType"):</td>
+                                                                <td align="left">
+                                                                <!--id="selectCurrency1_1"-->
+                                                                    <select name="currencyId" style='width:$largeCombo'>
+                                                                    #foreach ($curr in $cForm.getLvPaySystemCurrencies($cForm.webMoneyPaySystemId) )
+                                                                        #if($curr.value == $cForm.currencyId)
+                                                                            <option selected value='$curr.value'>$curr.label</option>
+                                                                        #else
+                                                                            <option value='$curr.value'>$curr.label</option>
+                                                                        #end
+                                                                    #end
+                                                                    </select>
+                                                                </td>
+                                                            </tr>
+                                                            <tr>
+                                                                <td align='right'>$betext.get("payments.amount"):</td>
+                                                                <td><input type='text' name='amount' style='width:$sumEditor' maxlength="15"></td>
+                                                            </tr>
+                                                            <tr>
+                                                                <td></td>
+                                                                <td><input type='button' value='$betext.get("payments.sendInInvoiceOrder")' onclick='submitInWmTransaction(this);'></td>
+                                                            </tr>
+                                                        </table>
+                                                    </td>
+                                                </tr>
+                                            </form>
+                                            </table>
+                                        </td>
+                                        <!-- Deposit -->
+                                        <td><img width='1px' src='$link.setRelative("images/spacer.gif")' alt=""></td>
+                                        <!-- Withdraw -->
+                                        <td class='rows-border' align="center" width='50%'>
+                                            <table cellpadding='0' cellspacing='0' border='0' width='100%' height='100%'>
+                                            <form name='outTransactionOrderForm'  action='$link.setAction("/betex/profile/webMoneyOutTransactionOrderAction")' method='POST'>
+                                            <input type='hidden' name='actionId' value='$cForm.outInvoiceAction'>
+                                            <input type='hidden' name='paySystemId' value='$cForm.webMoneyPaySystemId'>
+                                            <tr>
+                                                <td class='row-title'>$betext.get("accountStatement.fundOut")</td>
+                                            </tr>
+                                            <tr>
+                                                <td class='row'>
+                                                    <table cellpadding='0' cellspacing='2' border='0' width='100%' height='100%'>
+                                                        <tr>
+                                                            <td align='right'>$betext.get("payments.wmWallet"):</td>
+                                                            <td><input type='text' name='wmWallet' value='$!cForm.wmWallet' style='width:$idEditor' maxlength="13"></td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td align="right">$betext.get("payments.walletType"):</td>
+                                                            <td align="left">
+                                                            <!--id="selectCurrency1_2"-->
+                                                                <select name="currencyId" style='width:$largeCombo'>
+                                                                #foreach ($curr in $cForm.getLvPaySystemCurrencies($cForm.webMoneyPaySystemId))
+                                                                    #if($curr.value == $cForm.currencyId)
+                                                                        <option selected value='$curr.value'>$curr.label</option>
+                                                                    #else
+                                                                        <option value='$curr.value'>$curr.label</option>
+                                                                    #end
+                                                                #end
+                                                                </select>
+                                                            </td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td align='right'>$betext.get("payments.amount"):</td>
+                                                            <td><input type='text' name='amount' style='width:$sumEditor' maxlength="15"></td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td></td>
+                                                            <td><input type='button' value='$betext.get("payments.sendOutInvoiceOrder")'  onclick='submitOutWmTransaction(this);'></td>
+                                                        </tr>
+                                                    </table>
+                                                </td>
+                                            </tr>
+                                            </form>
+                                            </table>
+                                        </td>
+                                        <!-- Withdraw -->
+                                    </tr>
+                                </table>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td  valign='top'  width="100%" height='100%'>
+                                <table id="listArea_$cForm.webMoneyPaySystemId" cellpadding="0" cellspacing="0" border="0" width="100%" > <!-- in IE we add "height:100%;" there-->
+                                    <tr>
+                                        <td valign='top'>
+                                            <div id="divBorder_$cForm.webMoneyPaySystemId"  style='width:100%;overflow:auto;border-top:0;border-left:0;border-right:0;border-bottom:0;display:none;'></div> <!-- in IE we add "height:100%;" there-->
+                                            <div id="divBorderLoading_$cForm.webMoneyPaySystemId" style="width:100%;border-top:0;border-left:0;border-right:0;border-bottom:0;display:none;">
+                                            <table border='0' cellspacing='0' cellpadding='0' width='100%' height='100%'>
+                                                <tr>
+                                                    <td valign='middle' align='center' style='font-family: Tahoma;'><font color='#999999'><h2>$betext.get("markets.message_grid_loading")</h2></font></td>
+                                                </tr>
+                                            </table>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                </table>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td valign='top' id='comboPanel_$cForm.webMoneyPaySystemId' class='area-border' width='100%' height='30px'>
+                                <table cellpadding='0' cellspacing='1' border='0' width='100%'>
+                                    <tr>
+                                        <td nowrap>
+                                            #set ( $ourWMID = "187361175419" )
+                                            #set ( $title = $text.get("common.thereIsOurWmAttestat", [$ourWMID] ) )
+                                            #set ( $msg = $text.get("common.checkAttestat") )
+                                            #webMoneyReferenceMarkup( $ourWMID $title $msg )
+                                        </td>
+                                        <td valign='middle' width='100%'>
+                                            <table cellpadding='0' cellspacing='0' border='0' width='100%'>
+                                            <form name='paymentSelectorForm_$cForm.webMoneyPaySystemId'  action='$link.setForward("profile_paymentDataAction")' method='GET' target="dataFrame">
+                                            <input type='hidden' name='actionId'>
+                                            <input type='hidden' name='paySystemId'>
+                                                <tr>
+                                                    <td width='100%' align='right'>
+                                                        <input type='button' title='$betext.get("payments.checkPaymentsTitle")' name='checkPayments' value='$betext.get("payments.checkPayments")' onclick='doCheckPayments();'>
+                                                    </td>
+                                                    <td>#jsMessageMarkup()</td>
+                                                </tr>
+                                            </form>
+                                            <!-- Tag </form> should be there!-->
+                                            </table>
+                                            <!-- Tag should be removed!-->
+                                        </td>
+                                    </tr>
+                                </table>
+                            </td>
+                        </tr>
+                    </table>
+                    </div>
+                </td>
+            </tr>
+        </table>
+    </td>
+ </tr>
+</table>
+</body>
+</html>

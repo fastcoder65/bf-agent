@@ -1,0 +1,525 @@
+body
+{
+	margin-top: 0px;
+	margin-bottom: 0px;
+	margin-right: 0px;
+	margin-left: 0px;
+    color: black;
+	background-color: #F9F9F9;
+}
+
+A
+{
+        font-size: 11px;
+        font-weight: normal;
+}
+A:hover
+{
+        font-size: 11px;
+        font-weight: normal;
+        color: #4F77A3;
+        text-decoration: none
+}
+
+.area-content
+{
+	padding: 4px 4px;
+	text-align: center;
+	background: #F9F9F9;
+	border-top: 1px solid #C0C0C0;
+	border-left: 1px solid #C0C0C0;
+	border-right: 1px solid #C0C0C0;
+	border-bottom: 1px solid #C0C0C0;
+}
+.area-news
+{
+	padding: 4px 4px;
+	text-align: center;
+	background: #F9F9F9;
+	border-top: 1px solid #F0F0F0;
+	border-left: 1px solid #F0F0F0;
+	border-right: 1px solid #F0F0F0;
+	border-bottom: 1px solid #F0F0F0;
+}
+
+.mainBar-content
+{
+	padding: 4px 4px;
+	text-align: center;
+	background: #F9F9F9;
+	height:12px;
+	border-top: 0px solid #C0C0C0;
+	border-left: 0px solid #C0C0C0;
+	border-right: 0px solid #C0C0C0;
+	border-bottom: 0px solid #C0C0C0;
+}
+
+.area-border
+{
+	padding: 2px 2px;
+	border-top: 1px solid #E0E0E0;
+	border-left: 1px solid #E0E0E0;
+	border-right: 1px solid #E0E0E0;
+	border-bottom: 1px solid #E0E0E0;
+	background-color: #F9F9F9;
+}
+
+.area-border-white
+{
+	padding: 2px 2px;
+	border-top: 1px solid #E0E0E0;
+	border-left: 1px solid #E0E0E0;
+	border-right: 1px solid #E0E0E0;
+	border-bottom: 1px solid #E0E0E0;
+	background-color: #FFFFFF;
+}
+
+.area-title-logo
+{
+	padding: 2px 2px;
+	border-top: 1px solid #E0E0E0;
+	border-left: 1px solid #E0E0E0;
+	border-right: 0px solid #E0E0E0;
+	border-bottom: 1px solid #E0E0E0;
+	background-color: #FFFFFF;
+}
+.area-title
+{
+	padding: 2px 4px;
+	border-top: 1px solid #E0E0E0;
+	border-left: 0px solid #E0E0E0;
+	border-right: 1px solid #E0E0E0;
+	border-bottom: 1px solid #E0E0E0;
+	background-color: #FFFFFF;
+	text-align: right;
+        font-size: 10px;
+        font-weight: bold;
+}
+
+.mainBorder
+{
+	border-top: 1px solid #cccccc;
+}
+
+/***************************/
+
+.itemBorder
+{
+	padding:2px 2px;
+	border-bottom: 1px solid #cccccc;
+	border-left: 1px solid #cccccc;
+	border-right: 1px solid #cccccc;
+}
+
+
+.item
+{
+	padding:2px 2px;
+	background-color:#F9F9F9;
+	cursor:pointer; cursor:hand;
+}
+
+.itemOver
+{
+	padding:2px 2px;
+	background-color:#EEEEEE;
+	color:#4F77A3;
+	cursor:pointer; cursor:hand;
+}
+.itemDown
+{
+	padding:2px 2px;
+	background-color:#E4F3FE;
+	color:#4F77A3;
+	cursor:pointer; cursor:hand;
+}
+
+/***************************/
+
+
+.rows-border
+{
+	padding: 0px 0px;
+	text-align: center;
+	background: #F9F9F9;
+	border-top: 1px solid #E0E0E0;
+	border-left: 1px solid #E0E0E0;
+	border-right: 0px solid #C0C0C0;
+	border-bottom: 0px solid #C0C0C0;
+}
+
+.rows-border2
+{
+        padding: 0px 0px;
+        text-align: center;
+        background: #F9F9F9;
+        border-top: 1px solid #E0E0E0;
+        border-left: 1px solid #E0E0E0;
+        border-right: 1px solid #E0E0E0;
+        border-bottom: 1px solid #E0E0E0;
+}
+
+.rows-border-full
+{
+	padding: 0px 0px;
+	text-align: center;
+	background: #F9F9F9;
+	border-top: 1px solid #E0E0E0;
+	border-left: 1px solid #E0E0E0;
+	border-right: 1px solid #E0E0E0;
+	border-bottom: 1px solid #E0E0E0;
+}
+
+.rows-border-prof-title
+{
+	padding: 0px 0px;
+	text-align: left;
+	background: #F9F9F9;
+	border-top: 1px solid #E0E0E0;
+	border-left: 1px solid #E0E0E0;
+	border-right: 0px solid #C0C0C0;
+	border-bottom: 0px solid #C0C0C0;
+}
+
+.rows-border-prof-body
+{
+	padding: 0px 0px;
+	text-align: left;
+	background: #F9F9F9;
+	border-top: 0px solid #E0E0E0;
+	border-left: 1px solid #E0E0E0;
+	border-right: 0px solid #C0C0C0;
+	border-bottom: 0px solid #C0C0C0;
+}
+
+.row-title
+{
+	font-size: 10px;
+	font-weight: bold;
+	padding: 2px 4px;
+	background: #FFFFFF;
+	border-top: 0px solid #E0E0E0;
+	border-left: 0px solid #E0E0E0;
+	border-right: 1px solid #E0E0E0;
+	border-bottom: 1px solid #E0E0E0;
+}
+
+.row-title2
+{
+	font-size: 10px;
+	font-weight: bold;
+	padding: 2px 2px;
+	background: #FFFFFF;
+	border-top: 0px solid #E0E0E0;
+	border-left: 0px solid #E0E0E0;
+	border-right: 1px solid #E0E0E0;
+	border-bottom: 1px solid #E0E0E0;
+}
+
+.row-title-free
+{
+        font-size: 10px;
+        font-weight: bold;
+	padding: 2px 4px;
+	background: #FFFFFF;
+	border-top: 0px solid #E0E0E0;
+	border-left: 0px solid #E0E0E0;
+	border-right: 0px solid #E0E0E0;
+	border-bottom: 1px solid #E0E0E0;
+}
+
+.row-title-free2
+{
+        font-size: 10px;
+        font-weight: bold;
+	padding: 2px 2px;
+	background: #FFFFFF;
+	border-top: 0px solid #E0E0E0;
+	border-left: 0px solid #E0E0E0;
+	border-right: 0px solid #E0E0E0;
+	border-bottom: 1px solid #E0E0E0;
+}
+
+.row
+{
+	padding: 2px 2px;
+	background: #F9F9F9;
+
+	border-top: 0px solid #E0E0E0;
+	border-left: 0px solid #E0E0E0;
+	border-right: 1px solid #E0E0E0;
+	border-bottom: 1px solid #E0E0E0;
+}
+
+.row-odd
+{
+	padding: 2px 2px;
+	background: #F0F0F0;
+	border-top: 0px solid #E0E0E0;
+	border-left: 0px solid #E0E0E0;
+	border-right: 1px solid #E0E0E0;
+	border-bottom: 1px solid #E0E0E0;
+}
+.row-even
+{
+	padding: 2px 2px;
+	background: #F9F9F9;
+
+	border-top: 0px solid #E0E0E0;
+	border-left: 0px solid #E0E0E0;
+	border-right: 1px solid #E0E0E0;
+	border-bottom: 1px solid #E0E0E0;
+}
+
+.row-selected
+{
+	padding: 2px 2px;
+	background: #F0F0F0;
+    font-weight: bold;
+	border-top: 0px solid #E0E0E0;
+	border-left: 0px solid #E0E0E0;
+	border-right: 1px solid #E0E0E0;
+	border-bottom: 1px solid #E0E0E0;
+}
+
+.row-back-odd
+{
+	padding: 2px 2px;
+	background: #c9dae5;
+	border-top: 0px solid #E0E0E0;
+	border-left: 0px solid #E0E0E0;
+	border-right: 1px solid #E0E0E0;
+	border-bottom: 1px solid #E0E0E0;
+}
+.row-back-even
+{
+	padding: 2px 2px;
+	background: #d9eaf5;
+	border-top: 0px solid #E0E0E0;
+	border-left: 0px solid #E0E0E0;
+	border-right: 1px solid #E0E0E0;
+	border-bottom: 1px solid #E0E0E0;
+}
+
+.row-lay-odd
+{
+	padding: 2px 2px;
+	background: #F9F9C9;
+	border-top: 0px solid #E0E0E0;
+	border-left: 0px solid #E0E0E0;
+	border-right: 1px solid #E0E0E0;
+	border-bottom: 1px solid #E0E0E0;
+}
+
+.row-lay-even
+{
+	padding: 2px 2px;
+	background: #F9F9D9;
+	border-top: 0px solid #E0E0E0;
+	border-left: 0px solid #E0E0E0;
+	border-right: 1px solid #E0E0E0;
+	border-bottom: 1px solid #E0E0E0;
+}
+
+.row-free
+{
+	padding: 2px 2px;
+	background: #F9F9F9;
+	border-top: 0px solid #E0E0E0;
+	border-left: 0px solid #E0E0E0;
+	border-right: 0px solid #E0E0E0;
+	border-bottom: 1px solid #E0E0E0;
+}
+
+.row-low-free
+{
+    padding: 2px 2px;
+    background: #F9F9F9;
+    border-top: 0px solid #F0F0F0;
+    border-left: 0px solid #F0F0F0;
+    border-right: 0px solid #F0F0F0;
+    border-bottom: 1px solid #F0F0F0;
+}
+
+.row-sel
+{
+	padding: 2px 2px;
+	font-style: italic;
+	border-top: 0px solid #E0E0E0;
+	border-left: 0px solid #E0E0E0;
+	border-right: 1px solid #E0E0E0;
+	border-bottom: 1px solid #E0E0E0;
+	cursor:pointer; cursor:hand;
+}
+
+.row-sel-free
+{
+	padding: 2px 2px;
+	font-style: italic;
+	border-top: 0px solid #E0E0E0;
+	border-left: 0px solid #E0E0E0;
+	border-right: 0px solid #E0E0E0;
+	border-bottom: 1px solid #E0E0E0;
+}
+
+.row-win
+{
+	padding: 2px 2px;
+	font-weight: bold;
+	border-top: 0px solid #E0E0E0;
+	border-left: 0px solid #E0E0E0;
+	border-right: 1px solid #E0E0E0;
+	border-bottom: 1px solid #E0E0E0;
+	cursor:pointer; cursor:hand;
+}
+
+.row-game
+{
+	padding: 2px 2px;
+	background: #F3F3F3;
+	border-top: 0px solid #E0E0E0;
+	border-left: 0px solid #E0E0E0;
+	border-right: 1px solid #E0E0E0;
+	border-bottom: 1px solid #E0E0E0;
+}
+.row-free-game
+{
+	padding: 2px 2px;
+	background: #F3F3F3;
+	border-top: 0px solid #E0E0E0;
+	border-left: 0px solid #E0E0E0;
+	border-right: 0px solid #E0E0E0;
+	border-bottom: 1px solid #E0E0E0;
+}
+/***************************/
+.money-border
+{
+	padding: 0px 0px;
+	border-top: 1px solid #E0E0E0;
+	border-left: 1px solid #E0E0E0;
+	border-right: 1px solid #E0E0E0;
+	border-bottom: 1px solid #E0E0E0;
+}
+.money-border2
+{
+	padding: 0px 0px;
+	border-top: 0px solid #E0E0E0;
+	border-left: 0px solid #E0E0E0;
+	border-right: 1px solid #E0E0E0;
+	border-bottom: 0px solid #E0E0E0;
+}
+.money-title
+{
+	padding: 2px 2px;
+	background-color:#EEEEEE;
+	border-top: 0px solid #E0E0E0;
+	border-left: 0px solid #E0E0E0;
+	border-right: 0px solid #E0E0E0;
+	border-bottom: 1px solid #E0E0E0;
+	cursor:pointer; cursor:hand;
+}
+.money-row
+{
+	padding: 2px 2px;
+	background: #F9F9F9;
+	border-top: 0px solid #E0E0E0;
+	border-left: 0px solid #E0E0E0;
+	border-right: 0px solid #E0E0E0;
+	border-bottom: 1px solid #E0E0E0;
+}
+
+.tops-border
+{
+	padding: 2px 2px;
+    background-color: #F9F9F9;
+    border-top: 1px solid #F0F0F0;
+	border-left: 1px solid #F0F0F0;
+	border-right: 1px solid #F0F0F0;
+	border-bottom: 1px solid #F0F0F0;
+}
+
+.tops-title
+{
+	font-family: tahoma, arial;
+        font-weight: bold;
+        font-size: 11px;
+	padding: 2px 2px;
+	border-top: 0px solid #E0E0E0;
+	border-left: 0px solid #E0E0E0;
+	border-right: 0px solid #E0E0E0;
+	border-bottom: 1px solid #E0E0E0;
+}
+.charts-border
+{
+	padding: 2px 2px;
+	border-top: 1px solid #F0F0F0;
+	border-left: 1px solid #F0F0F0;
+	border-right: 1px solid #F0F0F0;
+	border-bottom: 1px solid #F0F0F0;
+}
+.charts-title
+{
+	font-family: tahoma, arial;
+        font-weight: bold;
+        font-size: 11px;
+	padding: 2px 2px;
+	border-top: 0px solid #E0E0E0;
+	border-left: 0px solid #E0E0E0;
+	border-right: 0px solid #E0E0E0;
+	border-bottom: 1px solid #E0E0E0;
+}
+
+/*
+ * ========================================
+ * styles for pagination links
+ * ========================================
+ */
+
+
+.pagelink,
+.pagelinklast,
+.pagecurrent{
+        font-family: tahoma, arial;
+        font-weight: bold;
+        font-size: 11px;
+        padding: 1px 3px 1px 3px;
+}
+
+.pagedisable{
+        font-family: tahoma, arial;
+        font-weight: bold;
+        color: #999999;
+        font-size: 11px;
+        padding: 1px 3px 1px 3px;
+}
+
+.pagelinklast{
+        background: #DFE6EF;
+}
+
+
+.pagecurrent{
+        background: #E0E0E0;
+}
+
+.pagelink a:active,
+.pagelink a:visited,
+.pagelink a:link,
+.pagelinklast a:active,
+.pagelinklast a:visited,
+.pagelinklast a:link,
+.pagecurrent a:active,
+.pagecurrent a:visited,
+.pagecurrent a:link{
+        font-family: tahoma, arial;
+        font-weight: bold;
+        font-size: 11px;
+        padding: 1px 3px 1px 3px;
+}
+
+.spanSelect {
+	font-weight: bold;
+}
+.spanNoSelect {
+	font-weight: normal;
+}

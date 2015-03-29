@@ -1,0 +1,41 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:a4j="http://richfaces.org/a4j"
+      xmlns:rich="http://richfaces.org/rich">
+
+        <h:form>
+        <rich:toolBar height="34" itemSeparator="disc">
+
+            <rich:toolBarGroup rendered="#{rich:isUserInRole('user')}">
+				<h:commandLink  immediate="true" action="#{menucontrolBean.main}"> 
+					<h:outputText value="#{labels['menu.main']}"/>
+				</h:commandLink>
+			</rich:toolBarGroup>
+
+			<rich:toolBarGroup rendered="#{rich:isUserInRole('user')}">
+				<h:commandLink immediate="true" action="#{menucontrolBean.profile}"> 
+					<h:outputText value="#{labels['menu.profile']}"/>
+				</h:commandLink>
+            </rich:toolBarGroup>
+     
+            <rich:toolBarGroup location="right">                       
+				<h:commandLink immediate="true" action="#{menucontrolBean.exit}"> 
+					<h:outputText value="#{labels['menu.exit']}"/>
+				</h:commandLink> 
+            </rich:toolBarGroup>
+
+            <rich:toolBarGroup location="right">
+		<h:outputText value="#{labels['menu.theme']}"	 style="margin-right:10px;" /> 
+		
+		<h:selectOneMenu	value="#{viewHelper.skin}"	
+						valueChangeListener="#{viewHelper.selectThemeChange}"
+						style="margin-right:10px;" 
+						onchange="submit();">
+			<f:selectItems value="#{viewHelper.skins}" />
+		</h:selectOneMenu>
+		</rich:toolBarGroup>
+        </rich:toolBar>
+        </h:form>
+</ui:composition>

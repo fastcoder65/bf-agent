@@ -1,0 +1,22 @@
+#parse("/WEB-INF/resources/include/meta/htmlDescriptor.vm")
+<html>
+<head>
+<title>BetEx -- Bet History Data</title>
+ #parse("/WEB-INF/resources/include/meta/content-type.vm")
+ <script type="text/javascript">
+   var betHistoryRows = new Array();
+   #if ( $!profileForm.betHistoryRows )
+     #if ( $profileForm.betHistoryRows.size() > $profileForm.maxReportRows )
+        alert('$betext.get("profile.maxReportRowsExceeded")');
+     #end
+    #set ($iMax = $profileForm.maxReportRows)
+    #set ($i=0)
+     #foreach ($betHistoryRow in $profileForm.betHistoryRows)
+        #set ($i=$i+1)
+        #if($i<$iMax) betHistoryRows[betHistoryRows.length] = '$betHistoryRow'; #end
+     #end
+   #end
+ </script>
+</head>
+<body onload='parent.makeHTMLContent(betHistoryRows)'></body>
+</html>

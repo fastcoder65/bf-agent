@@ -1,0 +1,53 @@
+* {border:0; margin:0; padding:0; font:normal 11px tahoma;}
+body {background:#fff; overflow-y:hidden; min-width:1000px;}
+a {color:#fff; text-decoration:none;}
+a:hover {color:#fd4;}
+input, select {border:2px inset #fff; margin:3px; vertical-align:middle;}
+label {margin:0 0 0 5px;}
+table {border-collapse:collapse;
+    /*width:100%;*/
+}
+td {vertical-align:top;}
+td img {vertical-align:middle;}
+th {background:#becbea; padding-bottom:3px;}
+.td1 {background:#e3edff;}
+
+
+                      /* head */
+#hd {background:url(../images/logo.jpg) no-repeat #9daed7; height:50px;}
+  #txt_logo1 {margin:25px 0 0 25px; color:#fff; font:25px arial; padding-left:25px;}
+  #txt_logo {margin:25px 0 0 25px; color:#fff; font:13px arial; padding-left:25px;}
+
+     /* block1 */
+  #bl1 {}
+    #bl1 p {margin:10px; text-align:right;}
+    #nm {font-weight:bold;}
+
+     /* block2*/
+  #bl2 {background:#becbea; border-left:1px solid #fff; width:240px;}
+    #bl2 p {margin:3px 10px;}
+
+     /* block3 */
+  #bl3 {background:#dee7fd; border-left:1px solid #fff; text-align:center; width:160px;}
+
+                      /* menu */
+#mnu {background:#586ea0; margin:1px 0; height:16px;}
+  #mnu a, #rgt_mnu span {margin:0 20px;}
+  #rgt_mnu {text-align:right;}
+    #rgt_mnu span {color:#fff;}
+
+                      /* forma */
+#frm {background:#dee7fd;}
+  #sgl {vertical-align:middle; width:250px;}
+  #sgl p {font-weight:bold; text-align:right;}
+  #startDate {margin:3px 20px; text-align:right;}
+
+                      /* table */
+#tbl {margin:1px 0 0 0; border-top:1px solid #586ea0;}
+  #tbl td {}
+
+
+                      /* footer */
+#ftr {position:absolute; bottom:0; background:#9daed7; color:#fff; height:16px;}
+  #ftr p {margin:0 20px;}
+  #cpr {text-align:right;}

@@ -1,0 +1,452 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:model="http://labs.jboss.com/jbossrichfaces/ui/treeModel"
+	xmlns:tree="http://labs.jboss.com/jbossrichfaces/ui/tree"
+	xmlns:dnd="http://labs.jboss.com/jbossrichfaces/ui/drag-drop"
+	xmlns:rich="http://richfaces.org/rich">
+
+
+	<rich:simpleTogglePanel bodyClass="marketPanelBody" switchType="client"
+		label="Runners">
+
+		<h:panelGrid>
+			<a4j:outputPanel>
+				<h:outputText id="serverTime" value="#{marketBean.serverTime}" />
+			</a4j:outputPanel>
+			<rich:messages id="runnersMessages" ajaxRendered="true"
+				globalOnly="true" infoStyle="color:green" warnStyle="color:#FF9900"
+				errorStyle="color:red" showSummary="true" showDetail="true" />
+		</h:panelGrid>
+
+
+		<h:form id="runnerForm">
+
+			<rich:dataTable value="#{marketBean.runners}" var="rnr"
+				id="runnerTable" rowKeyVar="rkv" sortMode="single" width="100%">
+
+				<rich:column sortable="true" sortBy="#{rnr.name}"
+					label="Runner Name">
+					<f:facet name="header">
+						<h:outputText value="Runner" id="Runner" />
+					</f:facet>
+
+					<h:outputText value="#{rnr.name}" />
+					<br />
+					<h:outputFormat value="#{marketBean.currencyFormatValue}"
+						rendered="#{rnr.userData4Runner[marketBean.currentUser.id].profitLoss != null}"
+						style="color: #{rnr.userData4Runner[marketBean.currentUser.id].profitColor}">
+						<f:param
+							value="#{rnr.userData4Runner[marketBean.currentUser.id].currency}" />
+						<f:param
+							value="#{rnr.userData4Runner[marketBean.currentUser.id].profitLoss}" />
+					</h:outputFormat>
+				</rich:column>
+
+				<rich:column label="Bukm.odds" styleClass="oddsCol">
+					<f:facet name="header">
+						<h:outputText value="Bukm.Odds" id="BukmOdds" />
+					</f:facet>
+					<h:inputText
+						disabled="#{rnr.userData4Runner[marketBean.currentUser.id].isNonRunner}"
+						style="width:100%" styleClass="oddsCol"
+						value="#{rnr.userData4Runner[marketBean.currentUser.id].odds}">
+						<a4j:support data="#{rnr.selectionId}"
+							actionListener="#{marketBean.saveOdds}" event="onkeyup"
+							reRender="runnersMessages,pollMarkets,autoRefreshStatus" />
+					</h:inputText>
+				</rich:column>
+
+				<ui:remove>
+					<rich:column width="45px" label="Return %" styleClass="numCol">
+						<f:facet name="header">
+							<h:outputFormat value="Return %(X),{0, number}">
+								<f:param
+									value="#{marketBean.currentMarket.userData4Market[marketBean.currentUser.id].sumReturnPercent}" />
+							</h:outputFormat>
+						</f:facet>
+
+						<h:outputFormat value="{0, number}">
+							<f:param
+								value="#{rnr.userData4Runner[marketBean.currentUser.id].returnPercent}" />
+						</h:outputFormat>
+					</rich:column>
+				</ui:remove>
+
+				<ui:remove>
+					<rich:column label="%% win" styleClass="numCol">
+						<f:facet name="header">
+							<h:outputFormat value="%% win(Y),{0, number, percent}">
+								<f:param
+									value="#{marketBean.currentMarket.userData4Market[marketBean.currentUser.id].prcWin}" />
+							</h:outputFormat>
+						</f:facet>
+
+						<h:outputFormat value="{0, number}">
+							<f:param
+								value="#{rnr.userData4Runner[marketBean.currentUser.id].prcWin}" />
+						</h:outputFormat>
+					</rich:column>
+				</ui:remove>
+
+				<rich:column label="Price3Lay" styleClass="backCol">
+					<f:facet name="header">
+						<h:outputText value="L3" />
+					</f:facet>
+
+					<h:panelGrid columns="1" style="text-align:right;margin-left:auto; margin-right:0;">
+
+						<h:outputFormat styleClass="price" value="{0, number}"
+							rendered="#{rnr.userData4Runner[marketBean.currentUser.id].layPrice3 > 0}">
+							<f:param
+								value="#{rnr.userData4Runner[marketBean.currentUser.id].layPrice3}" />
+						</h:outputFormat>
+
+						<h:outputFormat styleClass="amount"
+							value="#{marketBean.currencyFormatValue}"
+							rendered="#{rnr.userData4Runner[marketBean.currentUser.id].layAmount3 > 0}">
+							<f:param
+								value="#{rnr.userData4Runner[marketBean.currentUser.id].currency}" />
+							<f:param
+								value="#{rnr.userData4Runner[marketBean.currentUser.id].layAmount3}" />
+						</h:outputFormat>
+					</h:panelGrid>
+				</rich:column>
+
+				<rich:column label="Price2Lay" styleClass="backCol">
+					<f:facet name="header">
+						<h:outputText value="L2" />
+					</f:facet>
+					<h:panelGrid columns="1" style="text-align:right;margin-left:auto; margin-right:0;">
+						<h:outputFormat styleClass="price" value="{0, number}"
+							rendered="#{rnr.userData4Runner[marketBean.currentUser.id].layPrice2 > 0}">
+							<f:param
+								value="#{rnr.userData4Runner[marketBean.currentUser.id].layPrice2}" />
+						</h:outputFormat>
+
+						<h:outputFormat styleClass="amount"
+							value="#{marketBean.currencyFormatValue}"
+							rendered="#{rnr.userData4Runner[marketBean.currentUser.id].layAmount2 > 0}">
+							<f:param
+								value="#{rnr.userData4Runner[marketBean.currentUser.id].currency}" />
+							<f:param
+								value="#{rnr.userData4Runner[marketBean.currentUser.id].layAmount2}" />
+						</h:outputFormat>
+					</h:panelGrid>
+				</rich:column>
+
+				<rich:column label="Price1Lay" styleClass="backCol">
+					<f:facet name="header">
+						<h:outputText value="L1" />
+					</f:facet>
+
+					<h:panelGrid columns="1" style="text-align:right;margin-left:auto; margin-right:0;">
+						<h:outputFormat styleClass="price" value="{0, number}"
+							rendered="#{rnr.userData4Runner[marketBean.currentUser.id].layPrice1 > 0}">
+							<f:param
+								value="#{rnr.userData4Runner[marketBean.currentUser.id].layPrice1}" />
+						</h:outputFormat>
+
+						<h:outputFormat styleClass="amount"
+							value="#{marketBean.currencyFormatValue}"
+							rendered="#{rnr.userData4Runner[marketBean.currentUser.id].layAmount1 > 0}">
+							<f:param
+								value="#{rnr.userData4Runner[marketBean.currentUser.id].currency}" />
+							<f:param
+								value="#{rnr.userData4Runner[marketBean.currentUser.id].layAmount1}" />
+						</h:outputFormat>
+					</h:panelGrid>
+
+				</rich:column>
+
+				<rich:column label="Price1Back" styleClass="layCol">
+					<f:facet name="header">
+						<h:outputText value="B1" />
+					</f:facet>
+					<h:panelGrid columns="1" style="text-align:right;margin-left:auto; margin-right:0;">
+						<h:outputFormat styleClass="price" value="{0, number}"
+							rendered="#{rnr.userData4Runner[marketBean.currentUser.id].backPrice1 > 0}">
+							<f:param
+								value="#{rnr.userData4Runner[marketBean.currentUser.id].backPrice1}" />
+						</h:outputFormat>
+
+						<h:outputFormat styleClass="amount"
+							value="#{marketBean.currencyFormatValue}"
+							rendered="#{rnr.userData4Runner[marketBean.currentUser.id].backAmount1 > 0}">
+							<f:param
+								value="#{rnr.userData4Runner[marketBean.currentUser.id].currency}" />
+							<f:param
+								value="#{rnr.userData4Runner[marketBean.currentUser.id].backAmount1}" />
+						</h:outputFormat>
+					</h:panelGrid>
+				</rich:column>
+
+				<rich:column label="Price2Back" styleClass="layCol">
+					<f:facet name="header">
+						<h:outputText value="B2" />
+					</f:facet>
+					<h:panelGrid columns="1" style="text-align:right;margin-left:auto; margin-right:0;">
+						<h:outputFormat styleClass="price" value="{0, number}"
+							rendered="#{rnr.userData4Runner[marketBean.currentUser.id].backPrice2 > 0}">
+							<f:param
+								value="#{rnr.userData4Runner[marketBean.currentUser.id].backPrice2}" />
+						</h:outputFormat>
+
+						<h:outputFormat styleClass="amount"
+							value="#{marketBean.currencyFormatValue}"
+							rendered="#{rnr.userData4Runner[marketBean.currentUser.id].backPrice2 > 0}">
+							<f:param
+								value="#{rnr.userData4Runner[marketBean.currentUser.id].currency}" />
+							<f:param
+								value="#{rnr.userData4Runner[marketBean.currentUser.id].backAmount2}" />
+						</h:outputFormat>
+					</h:panelGrid>
+				</rich:column>
+
+				<rich:column label="Price3Back" styleClass="layCol">
+					<f:facet name="header">
+						<h:outputText value="B3" />
+					</f:facet>
+
+					<h:panelGrid id="panelGrid33" columns="1" style="text-align:right;margin-left:auto; margin-right:0;">
+						<h:outputFormat styleClass="price" value="{0, number}"
+							rendered="#{rnr.userData4Runner[marketBean.currentUser.id].backPrice3 > 0}">
+							<f:param
+								value="#{rnr.userData4Runner[marketBean.currentUser.id].backPrice3}" />
+						</h:outputFormat>
+
+						<h:outputFormat styleClass="amount"
+							value="#{marketBean.currencyFormatValue}"
+							rendered="#{rnr.userData4Runner[marketBean.currentUser.id].backAmount3 > 0}">
+							<f:param
+								value="#{rnr.userData4Runner[marketBean.currentUser.id].currency}" />
+							<f:param
+								value="#{rnr.userData4Runner[marketBean.currentUser.id].backAmount3}" />
+						</h:outputFormat>
+					</h:panelGrid>
+				</rich:column>
+
+				<ui:remove>
+					<rich:column label="Pseudo stavki" styleClass="oddsCol">
+						<f:facet name="header">
+							<h:outputText value="Pseudo stavki(AD)" />
+						</f:facet>
+						<h:outputFormat value="{0, number}">
+							<f:param
+								value="#{rnr.userData4Runner[marketBean.currentUser.id].pseudoStake}" />
+						</h:outputFormat>
+					</rich:column>
+
+					<rich:column label="Real stavki" styleClass="numCol">
+						<f:facet name="header">
+							<h:outputText value="Real stavki(AE)" />
+						</f:facet>
+
+						<h:outputFormat value="#{marketBean.currencyFormatValue}">
+							<f:param
+								value="#{rnr.userData4Runner[marketBean.currentUser.id].currency}" />
+							<f:param
+								value="#{rnr.userData4Runner[marketBean.currentUser.id].matchedLayAmount}" />
+						</h:outputFormat>
+					</rich:column>
+
+					<rich:column label="Pink Stake Return" styleClass="numCol">
+						<f:facet name="header">
+							<h:outputText value="Pink Stake Return" />
+							<h:outputFormat value="Pink Stake Return(AF) ({0, number})">
+								<f:param
+									value="#{marketBean.currentMarket.userData4Market[marketBean.currentUser.id].sumPercentWinPink}" />
+							</h:outputFormat>
+						</f:facet>
+
+						<h:outputFormat value="{0, number}">
+							<f:param
+								value="#{rnr.userData4Runner[marketBean.currentUser.id].pinkStakeReturn}" />
+						</h:outputFormat>
+
+					</rich:column>
+
+					<rich:column label="%% win Pink stake" styleClass="numCol">
+						<f:facet name="header">
+
+							<h:outputFormat
+								value="%% win Pink stake(AG) ({0, number, percent})">
+								<f:param
+									value="#{marketBean.currentMarket.userData4Market[marketBean.currentUser.id].sumPrcWinPinkStakes}" />
+							</h:outputFormat>
+						</f:facet>
+
+						<h:outputFormat value="{0, number}">
+							<f:param
+								value="#{rnr.userData4Runner[marketBean.currentUser.id].prcWinPinkStakes}" />
+						</h:outputFormat>
+
+					</rich:column>
+
+					<rich:column label="Pseudo-Pink stake" styleClass="numCol">
+						<f:facet name="header">
+							<h:outputFormat value="Pseudo-Pink stake(AH) ({0, number})">
+								<f:param
+									value="#{marketBean.currentMarket.userData4Market[marketBean.currentUser.id].pseudoPinkStakeVolume}" />
+							</h:outputFormat>
+						</f:facet>
+
+						<h:outputFormat value="{0, number}">
+							<f:param
+								value="#{rnr.userData4Runner[marketBean.currentUser.id].pseudoPinkStake}" />
+						</h:outputFormat>
+					</rich:column>
+
+					<rich:column label="Pseudo_st_andReal_st_andPseudoPink_st"
+						styleClass="numCol">
+						<f:facet name="header">
+							<h:outputFormat value="AI ({0, number})">
+								<f:param
+									value="#{marketBean.currentMarket.userData4Market[marketBean.currentUser.id].pseudoPinkStakeVolume}" />
+							</h:outputFormat>
+						</f:facet>
+
+						<h:outputFormat value="{0, number}">
+							<f:param
+								value="#{rnr.userData4Runner[marketBean.currentUser.id].sumPseudoRealPseudoPinkStakes}" />
+						</h:outputFormat>
+					</rich:column>
+
+
+					<rich:column label="Ps_plus_Real_St_n_PinkStake_Hold_withNR"
+						styleClass="numCol">
+						<f:facet name="header">
+
+							<h:outputFormat value="AJ ({0, number})">
+								<f:param
+									value="#{marketBean.currentMarket.userData4Market[marketBean.currentUser.id].summOfPsRealStPinkStakeHoldWithNR}" />
+							</h:outputFormat>
+						</f:facet>
+
+						<h:outputFormat value="{0, number}">
+							<f:param
+								value="#{rnr.userData4Runner[marketBean.currentUser.id].sumPseudoRealPseudoPinkStakesHoldWithNR}" />
+						</h:outputFormat>
+
+					</rich:column>
+
+					<rich:column label="prc_win_Sglajiv_WithNR" styleClass="numCol">
+						<f:facet name="header">
+
+							<h:outputFormat value="AK ({0, number, percent})">
+								<f:param
+									value="#{marketBean.currentMarket.userData4Market[marketBean.currentUser.id].summPercWinSglajivWithNR}" />
+							</h:outputFormat>
+						</f:facet>
+
+						<h:outputFormat value="{0, number}">
+							<f:param
+								value="#{rnr.userData4Runner[marketBean.currentUser.id].percWinSglajivWithNR}" />
+						</h:outputFormat>
+					</rich:column>
+
+				</ui:remove>
+
+				<rich:column label="M.Price&amp;Size" styleClass="oddsCol">
+					<f:facet name="header">
+						<h:outputText value="M.Price&amp;Size" />
+					</f:facet>
+
+					<h:panelGrid columns="1" style="text-align:right;margin-left:auto; margin-right:0;">
+
+						<h:outputFormat styleClass="price" value="{0, number}"
+							rendered="#{rnr.userData4Runner[marketBean.currentUser.id].matchedLayPrice > 1.0}">
+							<f:param
+								value="#{rnr.userData4Runner[marketBean.currentUser.id].matchedLayPrice}" />
+						</h:outputFormat>
+
+						<h:outputFormat styleClass="amount"
+							value="#{marketBean.currencyFormatValue}"
+							rendered="#{rnr.userData4Runner[marketBean.currentUser.id].matchedLayAmount > 1.0}">
+							<f:param
+								value="#{rnr.userData4Runner[marketBean.currentUser.id].currency}" />
+							<f:param
+								value="#{rnr.userData4Runner[marketBean.currentUser.id].matchedLayAmount}" />
+						</h:outputFormat>
+
+					</h:panelGrid>
+
+				</rich:column>
+
+				<rich:column label="U.Price&amp;Size" styleClass="numCol">
+					<f:facet name="header">
+						<h:outputText value="U.Price&amp;Size" />
+					</f:facet>
+
+					<h:panelGrid columns="1" style="text-align:right;margin-left:auto; margin-right:0;">
+						<h:outputFormat styleClass="price" value="{0, number}"
+							rendered="#{rnr.userData4Runner[marketBean.currentUser.id].unmatchedLayPrice > 1.0}">
+							<f:param
+								value="#{rnr.userData4Runner[marketBean.currentUser.id].unmatchedLayPrice}" />
+						</h:outputFormat>
+						<h:outputFormat styleClass="amount"
+							value="#{marketBean.currencyFormatValue}"
+							rendered="#{rnr.userData4Runner[marketBean.currentUser.id].unmatchedLayAmount > 1.0}">
+							<f:param
+								value="#{rnr.userData4Runner[marketBean.currentUser.id].currency}" />
+							<f:param
+								value="#{rnr.userData4Runner[marketBean.currentUser.id].unmatchedLayAmount}" />
+						</h:outputFormat>
+					</h:panelGrid>
+				</rich:column>
+
+				<rich:column label="L.Price&amp;T.Size" >
+
+					<f:facet name="header">
+						<h:outputText value="L.Price&amp;T.Size" />
+					</f:facet>
+				
+					<h:panelGrid columns="1" style="text-align:right;margin-left:auto; margin-right:0;">
+						<h:outputFormat styleClass="price" value="{0, number}"
+							rendered="#{rnr.userData4Runner[marketBean.currentUser.id].lastPriceMatched > 1.0}">
+							<f:param
+								value="#{rnr.userData4Runner[marketBean.currentUser.id].lastPriceMatched}" />
+						</h:outputFormat>
+
+						<h:outputFormat styleClass="amount"
+							value="#{marketBean.currencyFormatValue}"
+							rendered="#{rnr.userData4Runner[marketBean.currentUser.id].totalAmountMatched > 1.0}">
+							<f:param
+								value="#{rnr.userData4Runner[marketBean.currentUser.id].currency}" />
+							<f:param
+								value="#{rnr.userData4Runner[marketBean.currentUser.id].totalAmountMatched}" />
+						</h:outputFormat>
+					</h:panelGrid>
+				
+				</rich:column>
+
+				<rich:column label="Odds precosmt" styleClass="oddsCol">
+					<f:facet name="header">
+						<h:outputText value="Precosm" />
+					</f:facet>
+					<h:outputFormat styleClass="oddsCol" value="{0, number}"
+						rendered="#{rnr.userData4Runner[marketBean.currentUser.id].oddsPrecosmetic > 0}">
+						<f:param
+							value="#{rnr.userData4Runner[marketBean.currentUser.id].oddsPrecosmetic}" />
+					</h:outputFormat>
+				</rich:column>
+
+				<rich:column label="Odds cosmt" styleClass="oddsCol">
+					<f:facet name="header">
+						<h:outputText value="Cosm" />
+					</f:facet>
+					<h:outputFormat styleClass="oddsCol" value="{0, number}"
+						rendered="#{rnr.userData4Runner[marketBean.currentUser.id].oddsCosmetic > 0}">
+						<f:param
+							value="#{rnr.userData4Runner[marketBean.currentUser.id].oddsCosmetic}" />
+					</h:outputFormat>
+				</rich:column>
+
+			</rich:dataTable>
+		</h:form>
+
+	</rich:simpleTogglePanel>
+
+</ui:composition>

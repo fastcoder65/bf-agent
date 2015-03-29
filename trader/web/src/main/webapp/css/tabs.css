@@ -1,0 +1,57 @@
+body {
+	margin-top: 1px;
+	margin-bottom: 0;
+}
+
+A
+{
+        font-size: 11px;
+        font-weight: normal;
+}
+
+A:hover
+{
+        font-size:11px;
+        font-weight: normal;
+        color: #4F77A3;
+        text-decoration: none
+}
+
+
+
+#tablist td a
+{
+	text-align: right;
+	height: 20px;
+	padding: 4px 4px;
+	margin-left: 0px;
+	margin-right: 2px;
+	border-top: 1px solid buttonhighlight;
+	border-left: 1px solid buttonhighlight;
+	border-right: 1px solid buttonshadow;
+	border-bottom: 0px solid #F9F9F9;
+	background: #E0E0E0;
+	cursor: hand;
+}
+
+#tablist td a.current
+{
+	background: #F9F9F9;
+	border-bottom: 0px solid #F9F9F9;
+}
+
+#tabcontent
+{
+	border-top: 0 solid buttonhighlight;
+	border-left: 1px solid buttonhighlight;
+	border-bottom: 1px solid buttonhighlight;
+	border-right: 1px solid buttonhighlight;
+	background: #F9F9F9;
+	width: 100%;
+}
+
+#tabcontent td
+{
+	padding: 2px 2px;
+}
+

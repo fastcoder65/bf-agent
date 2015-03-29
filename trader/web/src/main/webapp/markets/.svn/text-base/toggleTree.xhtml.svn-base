@@ -1,0 +1,27 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:a4j="http://richfaces.org/a4j"
+      xmlns:rich="http://richfaces.org/rich">
+      
+	
+	<h:form>
+    <rich:togglePanel id="toggleTree" value="#{marketBean.toggleTree}" switchType="ajax"  stateOrder="on,off">
+	
+    <f:facet name="off">
+			<rich:toggleControl style="border-width:0" ajaxSingle="true" reRender="marketsTree"  switchToState="on">
+				<h:graphicImage  id="switchOff" style="border-width:0" value="/images/eventer/cmd-pause.gif" />
+			</rich:toggleControl>
+    </f:facet>   
+     
+     <f:facet name="on">
+     		<rich:toggleControl style="border-width:0" ajaxSingle="true" reRender="marketsTree" switchToState="off">
+				<h:graphicImage id="switchOn" style="border-width:0" value="/images/eventer/cmd-play-green.gif" />
+				<ui:include  src="/markets/marketPage.xhtml" />
+			</rich:toggleControl>
+	 </f:facet>
+     
+     </rich:togglePanel>
+     </h:form>        
+</ui:composition>

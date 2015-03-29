@@ -1,0 +1,10 @@
+    ##Otherwise, the IE will not display the page content to user
+    $response.setStatus(200)
+        <html>
+          <head><title>$text.get("common.error.404-title")</title></head>
+          <body>
+          <ul>
+            <li>$text.get("common.error.404")</li>
+          </ul>
+          </body>
+        </html>

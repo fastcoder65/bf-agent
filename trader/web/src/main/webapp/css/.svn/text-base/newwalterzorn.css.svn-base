@@ -1,0 +1,22 @@
+
+.lite {
+	COLOR: #cc6666
+}
+.bt1 {
+	FONT-SIZE: 17px; FONT-FAMILY: arial,helvetica,sans-serif
+}
+.bt1b {
+	FONT-WEIGHT: bold; FONT-SIZE: 17px; FONT-FAMILY: arial,helvetica,sans-serif
+}
+.bt2 {
+	FONT-SIZE: 13px; FONT-FAMILY: arial,helvetica,sans-serif
+}
+.bt2b {
+	FONT-WEIGHT: bold; FONT-SIZE: 13px; FONT-FAMILY: arial,helvetica,sans-serif
+}
+.bt3 {
+	FONT-SIZE: 11px; FONT-FAMILY: arial,helvetica,sans-serif
+}
+.bt3b {
+	FONT-WEIGHT: bold; FONT-SIZE: 11px; FONT-FAMILY: arial,helvetica,sans-serif
+}

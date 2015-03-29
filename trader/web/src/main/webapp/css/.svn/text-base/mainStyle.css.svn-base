@@ -1,0 +1,340 @@
+@CHARSET "UTF-8";
+
+.searcheditlabel {
+	float: left;
+}
+
+.searchedit {
+	width: 300px;
+	font: 12px Verdana;
+	right: 0;
+	margin-left: 10px;
+}
+
+.searchedit0 {
+	width: 300px;
+	font: 12px Verdana;
+	right: 0;
+	margin-left: 0;
+}
+
+.searchedit070 {
+	width: 70px;
+	font: 12px Verdana;
+	right: 0;
+	margin-left: 0;
+}
+
+
+.searchedit70 {
+	width: 70px;
+	font: 12px Verdana;
+	right: 0;
+	margin-left: 10px;
+}
+
+.searchedit70r {
+	text-align:right;
+	width: 70px;
+	font: 12px Verdana;
+	right: 0;
+	margin-left: 10px;
+}
+
+.searcheditdiv {
+	text-align: right;
+	margin: 10px 20px 10px 10px;
+}
+
+.editdiv {
+	text-align: left;
+	margin: 10px 20px 10px 10px;
+/*	border-style:solid;
+	border-width:thin; */ 
+}
+
+.editlabel {
+	float: left;
+	width: 60ex;
+}
+
+.editlabel30 {
+	float: left;
+	width: 30ex;
+}
+
+.editlabel25 {
+	float: left;
+	width: 29ex;
+}
+
+.idcolumn {
+	float: right;
+	width: 10px;
+}
+	
+.datesearch {
+	font: 12px Verdana;
+	right: 0;
+	margin-left: 10px;
+}
+
+.datelabel {
+	margin-right: 5px;
+	text-align: right;
+	vertical-align: text-top;
+}
+
+.pageheader {
+	background-color: #4073B0;
+	font-weight: bold;
+	color: white;
+	padding-left: 5px;
+	text-align: right;
+}
+
+.pageheader a {
+	color: white;
+}
+
+.tablediv {
+	margin-top: 20px;
+}
+
+body {
+	background-color: #ffffff;
+	color: #000000;
+	margin: 10;
+	font: 12px Verdana;
+}
+
+a.nounderline {
+	text-decoration: none;
+}
+
+fieldset {
+	margin: 2px;
+}
+
+td {
+	font: 12px Verdana;
+}
+
+a {
+	color: #336699;
+}
+
+form {
+	margin: 0;
+	padding: 0;
+}
+
+td#Navigation {
+	padding: 2px;
+	border-right: 1px solid #808080;
+	width: 170px;
+}
+
+table#Navigation td a {
+	width: 100%;
+	height: 25px;
+	background-color: #cccccc;
+	color: #ffffff;
+	padding: 1px;
+	font: 11px Verdana;
+	font-weight: bold;
+	text-decoration: none;
+}
+
+table#Navigation td a:hover {
+	background-color: #dedede;
+	color: #90a0e0;
+}
+
+table#Navigation td.Item {
+	background-color: #cccccc;
+	border-bottom: 1px solid #a0a0a0;
+	vertical-align: middle;
+}
+
+table#Navigation td.Section {
+	background-color: #8080a0;
+	color: #ffffff;
+	font: 12px Verdana;
+	font-weight: bold;
+	border-top: 2px solid #ffffff;
+}
+
+table#Navigation td.Item {
+	border-left: 15px solid #f0f0f0;
+}
+
+td#Content {
+	padding: 4px;
+}
+
+.standardTable_Header {
+	background-color: #6699cc;
+	color: #ffffff;
+	font: 10px Verdana;
+}
+
+.standardTable_Header a {
+	color: #ffffff;
+}
+
+.standardTable_Row1 {
+	background-color: #efefff;
+}
+
+.standardTable_Row2 {
+	background-color: #ffffe0;
+}
+
+.standardTable_ColumnCentered {
+	width: 10%;
+	text-align: center;
+}
+
+.standardTable_Column {
+	width: 10%;
+}
+
+table.Sheet {
+	margin-bottom: 4px;
+}
+
+td.Sheet {
+	background-color: #fffff0;
+	border: 1px solid #ebe0d0;
+	padding: 6px;
+}
+
+.SheetHdr {
+	margin: 5px;
+	margin-top: 20px;
+	margin-bottom: 25px;
+	font: 30px Arial;
+}
+
+.SheetSectionHdr {
+	margin: 5px;
+	margin-top: 12px;
+	margin-bottom: 2px;
+	font: 20px Arial;
+	font-style: italic;
+}
+
+.Sheet .standardTable_Header {
+	background-color: #d0d0d0;
+	color: #000000;
+}
+
+.Sheet .standardTable_Row1 {
+	background-color: #f0f0f0;
+}
+
+.Sheet .standardTable_Row2 {
+	background-color: #f8f8f8;
+}
+
+.-Sheet .standardTable_Row1- td-,.-Sheet .standardTable_Row2- td- {
+	width: 100%;
+}
+
+table.Entity {
+	margin-bottom: 10px;
+}
+
+td.Entity {
+	background-color: #d0d0d0;
+	border: thin outset;
+	padding: 2px;
+}
+
+.EntityHdr {
+	background-color: #4073B0;
+	font-weight: bold;
+	color: #ffffff;
+	padding-left: 5px;
+}
+
+.footer {
+	color: #b0b0b0;
+	text-align: center;
+	vertical-align: bottom;
+	border-top: 1px solid #4073B0;
+	padding-top: 5px;
+}
+
+.EntityToolbar {
+	background-color: #cccccc;
+}
+
+.Node {
+	margin: 0;
+	padding: 0;
+	margin-left: 30px;
+}
+
+.error {
+	color: #ff3030;
+	font-weight: bold;
+}
+
+.gridContent {
+	vertical-align: top;
+}
+
+
+.numCol {
+    width:45px;
+	text-align:right;
+	font-size: 11px;
+	font-family: Verdana, Arial, sans-serif;
+}
+
+.price {
+ font-size: 11px;	
+ white-space:nowrap;
+ font-weight:bold;
+}
+
+.amount {
+ font-size: 11px;
+ white-space:nowrap;
+}
+
+.oddsCol {
+    width:25px;
+	text-align:right;
+	font-size: 11px;
+	font-family: Verdana, Arial, sans-serif;
+}
+
+.backCol {
+	font-size: 11px;
+	font-family: Verdana, Arial, sans-serif;
+	background-color: #8080FF;
+	text-align:right;
+}
+
+.layCol {
+	font-size: 11px;
+	font-family: Verdana, Arial, sans-serif;
+	background-color: #FF80FF;
+	text-align:right;
+}
+
+.statusRed {
+   color:red;
+}
+
+.statusGreen {
+  color:green;
+}
+
+.statusBlack {
+  color:black;
+}
+

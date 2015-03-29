@@ -1,0 +1,25 @@
+#parse("/WEB-INF/resources/include/meta/htmlDescriptor.vm")
+<html>
+<head>
+<title>BetEx -- Current Bets Data</title>
+ #parse("/WEB-INF/resources/include/meta/content-type.vm")
+ <script type="text/javascript">
+   var cbRows = new Array();
+  #if ( $!profileForm.betRows )
+   #if ( $profileForm.betRows.size() > $profileForm.maxReportRows )
+    alert('$betext.get("profile.maxReportRowsExceeded")');
+   #end
+    #set ($iMax = $profileForm.maxReportRows);
+    #set ($i=0)
+   #foreach ($cbRow in $profileForm.betRows)
+    #set ($i=$i+1)
+      #if($i<$iMax) cbRows[cbRows.length] = '$cbRow'; #end
+   #end
+  #end
+  parent.iBetStatusId = $profileForm.betStatusId;
+ </script>
+</head>
+<body onload='parent.makeHTMLContent(cbRows)'>
+ #jsMessageMarkup()
+</body>
+</html>

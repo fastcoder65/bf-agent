@@ -1,0 +1,68 @@
+input.button {border:1px solid #000;}
+input, select {border:2px inset #fff; margin:3px; vertical-align:middle;}
+
+.topmenu {
+    margin:0 50px 0 0;
+    color:#fff;
+    text-decoration:none;
+}
+
+.page_title {
+    line-height:48px;
+    font-size:12px;
+    font-weight:bold;
+    position:absolute;
+    left:150px;
+}
+
+div.title_div {
+    position:relative;
+    background:#dee7fd;
+}
+
+div.search_form {
+    margin:0 0 0 auto;
+    width:750px;
+}
+
+div.table_title {
+    position:absolute;
+    top:0;
+    text-align:center;
+}
+
+
+table.main_table {
+	border-top:1px solid #586ea0;
+}
+
+table.main_table thead {
+	background:#becbea;
+	height:16px;
+}
+
+table.main_table td {
+	padding:0px 10px;
+}
+
+
+div.popupmenu {
+    color:#fff;
+    height:13px;
+    overflow:hidden;
+    z-index:10;
+}
+div.popupmenu:hover {height:100px;}
+a.popupmenu {background:#586ea0; border:1px solid #fff; border-top:0; display:block; padding:2px 5px;}
+
+
+div.main_bottom {
+	position:absolute;
+	left:0;
+	bottom:19px;
+	background:#dee7fd;
+	border-top:1px solid #586ea0;
+	height:25px;
+	min-width:1000px;
+	width:100%;
+}

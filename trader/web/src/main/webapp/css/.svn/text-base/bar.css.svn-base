@@ -1,0 +1,34 @@
+body
+{
+	margin-top: 0px; 
+	margin-bottom: 0px; 
+	margin-right: 0px; 
+	margin-left: 0px;
+    width: 100%;
+    height: 100%;
+    color: black;
+	background-color: #FFFFFF;
+}
+
+.area-content
+{
+	text-align: center;
+	background: #FFFFFF;
+	border-top: 1px solid #C0C0C0;
+	border-left: 1px solid #C0C0C0;
+	border-right: 1px solid #C0C0C0;
+	border-bottom: 1px solid #C0C0C0;
+}
+
+.ico
+{
+	text-align:center;
+	height:12px;
+	cursor:pointer; 
+	cursor:hand;
+}
+.separator
+{
+	text-align:center;
+	height:100%;
+}

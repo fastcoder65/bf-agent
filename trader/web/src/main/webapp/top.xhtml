@@ -1,0 +1,187 @@
+<!--
+    <script type="text/javascript">
+        var sCommunityAction = '$link.setAction("/betex/community")';
+        // window handlers
+
+        var helpWindow = null;
+        var communityWindow = null;
+        var resultsWindow = null;
+        var profileWindow = null;
+        var rulesWindow = null;
+
+        var savedMarketId = null;
+        var savedEventId = null;
+        var savedOrigin = null;
+
+        var sProfileAction = '$link.setForward("userProfile")';
+        var sResultsAction = '$link.setForward("gameResultsAction")';
+
+        var rulesURI = '$link.setForward("rules")';
+        var forumWindow = null;
+        var forumURI = '$betext.get("top.forum-url")';
+
+        var idFreeAmount = 'freeAmount_$request.session.id';
+        var idBlockedAmount = 'blockedAmount_$request.session.id';
+        var idClock = 'clock_$request.session.id';
+    </script>
+-->            
+
+<table cellpadding='0' cellspacing='1' border='0' width='100%' height='64px'>
+<tr>
+<td class='area-info' align='right' style='width:120px;height:100%'  >
+    <table cellpadding='0' cellspacing='0' border='0' width='120px' height='100%'>
+        <tr valign='middle'>
+            <td nowrap align='center'>
+			#parse("/WEB-INF/resources/layout/logo/logo.vm")
+            </td>
+        </tr>
+    </table>
+</td>
+<td class='area-info'>
+<table cellpadding='1' cellspacing='0' border='0' width='100%' height='100%' >
+<tr valign='bottom'>
+    <td nowrap align='right' style='font-size:12px; font-family: tahoma'>
+        $betext.get("top.welcome-user")&nbsp;<b>$topForm.fullName!</b>
+    </td>
+</tr>
+<tr valign='bottom'>
+    <td nowrap align='right'>
+        <table cellpadding='1' cellspacing='0' border='0' width='100%' height='100%'>
+            <tr>
+                <td id="clock_$request.session.id" align='right' nowrap style='letter-spacing: 0px; font-size:11px; font-family: Tahoma'></td>
+            </tr>
+        </table>
+    </td>
+</tr>
+<tr>
+    <td>
+        <iframe name="sumManager" id="sumManager" width="0" height="0" marginwidth="0" marginheight="0" frameborder="0"  style="visibility:hidden;"></iframe>
+        <iframe name="timeManager" id="timeManager" width="0" height="0" marginwidth="0" marginheight="0" frameborder="0"  style="visibility:hidden;"></iframe>
+    </td>
+</tr>
+</table>
+</td>
+
+<td class='area-info' title='$betext.get("grid.refresh")' style='cursor: pointer;cursor:hand; width:150px' align='right' onclick='refreshBalance();'  >
+    <table cellpadding='2' cellspacing='0' border='0' width='100%' style='font-family: tahoma'>
+        <tr>
+            <td align='right' nowrap>$betext.get("top.default-currency"):</td>
+            <td id='defaultCurrency' nowrap align='left'>$topForm.defaultCurrency.name</td>
+        </tr>
+        <tr>
+            <td align='right' nowrap>
+              <a style='font-weight: normal;font-family:Tahoma;' href='#' onclick='refreshBalance();'>
+                  $betext.get("top.display-balance"):
+              </a>
+            </td>
+            <td id='freeAmount_$request.session.id' nowrap align='left'></td>
+        </tr>
+        <tr>
+            <td  align='right' nowrap> <!--#* title='$betext.get("top.title-blocked")' *# -->
+                <a style='font-weight: normal;font-family:Tahoma;' href='#' onclick='refreshBalance();'>
+                  $betext.get("top.display-blocked"):
+                </a>
+            </td>
+            <td nowrap align='left'>
+               <table cellpadding='0' cellspacing='0' border='0'  style='font-family: tahoma'>
+                 <tr>
+                     <td id='blockedAmount_$request.session.id' nowrap align='left'></td>
+                  </tr>
+               </table>
+            </td>
+        </tr>
+    </table>
+</td>
+
+<td class='area-info' style='width:150px' align='right'  >
+    <table cellpadding='1' cellspacing='0' border='0' width='100%' style='font-family: tahoma'>
+        <tr><!--
+            <form method="POST" action='$link.setAction("/betex/changeLanguage")' target="_parent">
+                <td nowrap align='right'>$betext.get("top.display-lang"):</td>
+                <td nowrap align='left'>
+                    <select id="selectLanguage" name="languageId" style='font-family: tahoma; width:90px'
+                            onchange="this.form.submit();">
+                        #foreach ($lan in $topForm.lvLanguages )
+                          #if($lan.value == $logonForm.language.id)
+                           <option selected value='$lan.value'>$lan.label</option>
+                            #else
+                            <option value='$lan.value'>$lan.label</option>
+                          #end
+                        #end
+                    </select>
+                </td>
+            </form>
+        --></tr>
+        <tr><!--
+        
+            <form method="POST" action='$link.setAction("/betex/changeCurrency")' target="_parent">
+                <td nowrap align='right'>$betext.get("top.display-currency"):</td>
+                <td nowrap align='left'>
+                    <select id="selectCurrency" name="currencyId" style='font-family: tahoma; width:90px'
+                            onchange="this.form.submit();">
+                        #foreach ($cur in $topForm.lvCurrencies )
+                        #if($cur.value == $logonForm.currency.id)
+                        <option selected value='$cur.value'>$cur.label</option>
+                        #else
+                        <option value='$cur.value'>$cur.label</option>
+                        #end
+                        #end
+                    </select>
+                </td>
+            </form>
+            
+        --></tr>
+    </table>
+</td>
+</tr>
+</table>
+<!--	end banner	-->
+<!--	menu 		-->
+<table cellpadding='0' cellspacing='0' border='0' width='100%'>
+    <tr>
+        <td><img src='$link.setRelative("images/dot_gray.gif")' width='100%' height='1' alt='' ></td>
+    </tr>
+</table>
+
+<table cellpadding='0' cellspacing='0' border='0' width='100%'>
+    <tr bgcolor='#A4C8DF'>
+        <td align='left'><img src='$link.setRelative("images/dot_gray.gif")' width='1px' height='16px' alt=''></td>
+
+        <td align='left'>
+            <table cellpadding='0' cellspacing='0' border='0'>
+                <tr>
+                    <td class='menu-item' align='left'>
+                    <a target="_top" href='$link.setForward("logout")' onClick='logoutClick();'>&nbsp;$betext.get("menu.item-logout")</a>
+                    </td>
+                </tr>
+            </table>
+        </td>
+
+        <td><img src='$link.setRelative("images/dot_blue.gif")' width='100px' height='0px'></td>
+
+        <td align='right'>
+            <table cellpadding='0' cellspacing='0' border='0'>
+                <tr>
+                    <td class='menu-item' align='right' nowrap>
+                        <a href='javascript:top.goHome();'>$betext.get("menu.item-home")</a>&nbsp;|&nbsp;
+                        <a href='#' onClick='profileWindow = openProfileWin(sProfileAction, profileWindow)'>$betext.get("menu.item-profile")</a>&nbsp;|&nbsp;
+                        <!--<a href='#' onClick='resultsWindow = openWin(sResultsAction, 900, 700, resultsWindow)'>$betext.get("menu.item-gameResults")</a>&nbsp;|&nbsp;-->
+                        <a href='#' onClick='resultsWindow = openAutoWin(sResultsAction, resultsWindow)'>$betext.get("menu.item-gameResults")</a>&nbsp;|&nbsp;
+                        <a href='#' onclick='rulesWindow = openAutoWin(rulesURI, rulesWindow);'>$betext.get("menu.item-rules")</a>&nbsp;|&nbsp;
+                        <a href='#' onclick='helpWindow = openAutoWin(sHelpAction, helpWindow);'>$betext.get("menu.item-help")</a>&nbsp;|&nbsp;
+                        <a href='#' onClick='communityWindow = openWin(sCommunityAction, 600, 700, communityWindow)'>$betext.get("menu.item-community")</a>&nbsp;|&nbsp;
+                        <a href='mailto:${topForm.emailSupport}?subject=${topForm.emailSubject}'>$betext.get("menu.item-write2us")</a>&nbsp;
+                        <!-- #* |&nbsp; <a href='#' onClick='forumWindow = openAutoScrollWin(forumURI, forumWindow)'  >$betext.get("menu.item-forum")</a>&nbsp; *# -->
+                    </td>
+                </tr>
+            </table>
+        </td>
+
+        <td align='right'><img src='$link.setRelative("images/dot_gray.gif")' alt='' width='1px' height='16px'></td>
+    </tr>
+</table>
+<table cellpadding='0' cellspacing='0' border='0' width='100%'>
+    <tr>
+        <td><img src='$link.setRelative("images/dot_gray.gif")' alt='' width='100%' height='1px'></td>
+    </tr>
+</table>

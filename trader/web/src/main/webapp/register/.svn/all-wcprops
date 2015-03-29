@@ -1,0 +1,35 @@
+K 25
+svn:wc:ra_dav:version-url
+V 60
+/fastcoder65/bir_repo/!svn/ver/8/BIR_WEB/WebContent/register
+END
+register.xhtml
+K 25
+svn:wc:ra_dav:version-url
+V 75
+/fastcoder65/bir_repo/!svn/ver/8/BIR_WEB/WebContent/register/register.xhtml
+END
+regUserForm.vm
+K 25
+svn:wc:ra_dav:version-url
+V 75
+/fastcoder65/bir_repo/!svn/ver/8/BIR_WEB/WebContent/register/regUserForm.vm
+END
+regCompletePage.vm
+K 25
+svn:wc:ra_dav:version-url
+V 79
+/fastcoder65/bir_repo/!svn/ver/8/BIR_WEB/WebContent/register/regCompletePage.vm
+END
+activationFailurePage.vm
+K 25
+svn:wc:ra_dav:version-url
+V 85
+/fastcoder65/bir_repo/!svn/ver/8/BIR_WEB/WebContent/register/activationFailurePage.vm
+END
+activationOkPage.vm
+K 25
+svn:wc:ra_dav:version-url
+V 80
+/fastcoder65/bir_repo/!svn/ver/8/BIR_WEB/WebContent/register/activationOkPage.vm
+END

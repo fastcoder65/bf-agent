@@ -1,0 +1,122 @@
+#parse("/WEB-INF/resources/include/meta/htmlDescriptor.vm")
+<html>
+<head>
+    <title>$betext.get("accountStatementDetails.title")</title>
+    <link rel='stylesheet' href='$link.setRelative("css/main.css")' type='text/css'>
+    <link rel='stylesheet' href='$link.setRelative("css/basepage.css")' type='text/css'>
+    #parse("/WEB-INF/resources/include/meta/content-type.vm")
+    #parse("/WEB-INF/resources/layout/globalJSObjects.vm")
+    #parse("/WEB-INF/resources/layout/noscript.vm")
+    <script type="text/javascript" src='$link.setRelative("js/browserRendering.js")'></script>
+    <script type="text/javascript" src='$link.setRelative("js/utils.js")'></script>
+    <script type="text/javascript" src='$link.setRelative("js/details.js")'></script>
+</head>
+
+<body onload='initSizes();'>
+<table cellpadding='0' cellspacing='0' border='0' width='100%' height='100%'>
+    <tr>
+        <td valign='top'>
+        <table border='0' cellspacing='1' cellpadding='0' width='100%' height='100%'>
+                <tr>
+                    <td id='top-bar' align='center' width='100%' height='40px'>
+                        <table border='0' cellspacing='0' cellpadding='0' width='100%' height='100%'>
+                            <tr>
+                                <td class='area-title-logo' width='100px'>
+									<table border='0' cellspacing='0' cellpadding='0' width='100%' height='100%'>
+									<tr>
+									<td nowrap align='center' width='100px'>
+										<DIV style="top:0px;left:0px">
+											<span style='font-size:14px; font-family: Tahoma; color:#A4C8DF'><b><i>$betext.get("top.logo1")</i></b></span>
+											<span style='font-size:14px; font-family: Tahoma; color:#909090'><b><i>$betext.get("top.logo2")</i></b></span>
+										</DIV>
+										<DIV style="top:0px;left:0px">
+											<span style='letter-spacing: 0px; font-size:10px; font-family: Tahoma; color:#909090'>
+											$betext.get("top.system-name")
+											</span>
+										</DIV>
+									</td>
+									</tr>
+									</table>
+                                </td>
+                                <td class='area-title'>$betext.get("accountStatementDetails.title")</td>
+                            </tr>
+                        </table>
+                    </td>
+                </tr>
+                <tr>
+                    <td class='rows-border-prof-body' valign='top' width='100%'>
+                        <div id='rowsContainer' style='overflow:auto;'>
+                         <table cellpadding='0' cellspacing='0' border='0' width='100%'>
+                             #set ( $amountHeader = $betext.get("accountStatementDetails.amount"))
+                             #set ( $plHeader = $betext.get("accountStatementDetails.profitLoss"))
+                             #if ($!logonForm.currency.sign && $logonForm.currency.sign.length() > 0 )
+                               #set ( $amountHeader = "$amountHeader, $logonForm.currency.sign" )
+                               #set ( $plHeader = "$plHeader, $logonForm.currency.sign" )
+                             #end
+
+                            <tr>
+                             <td class="row-title" >$betext.get("accountStatementDetails.selection")</td>
+                             <td class="row-title" align="right">$betext.get("accountStatementDetails.odds")</td>
+                             <td class="row-title" align="right" nowrap>$amountHeader</td>
+                             <td class="row-title" align="right" nowrap>$plHeader</td>
+                             <td class="row-title">$betext.get("accountStatementDetails.date")</td>
+                            </tr>
+                            #set ($rowClass = "" )
+                            #set ( $RowEvenClass = "row-even" )
+                            #set ( $RowOddClass = "row-odd" )
+                            #set ($fontGreen = "<font color='green'>")
+                            #set ($fontRed = "<font color='red'>")
+                            #set ($fontClose = "</font>")
+
+                            #set ($fontEnd = "" )
+
+                        #foreach ($item in $profileForm.accountStatementDetails)
+
+                           #set ($fontBegin = $fontGreen )
+
+                           #if ( $item.profitLoss.signum() < 0 )
+                            #set ( $fontBegin = $fontRed )
+                           #end
+
+                           #if ( $rowClass ==  $RowEvenClass )
+                            #set ( $rowClass = $RowOddClass )
+                           #else
+                            #set ( $rowClass = $RowEvenClass )
+                           #end
+
+                           #set ($profitLoss = $number.format( $signedDigitFormat, $item.profitLoss))
+
+                         <tr>
+                          <td class="$rowClass" >$item.selection</td>
+                          <td class="$rowClass" align="right">$number.format($digitFormat, $item.odds)</td>
+                          <td class="$rowClass" align="right">$number.format($digitFormat, $item.amount)</td>
+                          <td class="$rowClass" align="right">$fontBegin $profitLoss $fontClose</td>
+                          <td class="$rowClass" >$date.format($dateTimeFormat, $item.regDate, $logonForm.locale) </td>
+                         </tr>
+                        #end
+                        </table>
+                      </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td id='bottom-bar' class='area-border-white' width='100%' height='30px'>
+                        <table border='0' cellspacing='2' cellpadding='0' width='100%' height='100%'>
+                            <tr>
+                                <td>
+                                    <input type="button"
+                                           value='$betext.get("restorePassword.close")'
+                                           title='$betext.get("restorePassword.close")'
+                                           onMouseOver='this.className="highlight"'
+                                           onMouseOut='this.className=""'
+                                           onClick="window.close();">
+                                </td>
+                            </tr>
+                        </table>
+                    </td>
+                </tr>
+        </table>
+    </td>
+    </tr>
+</table>
+</body>
+</html>

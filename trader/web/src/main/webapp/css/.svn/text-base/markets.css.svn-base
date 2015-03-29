@@ -1,0 +1,254 @@
+
+
+a.MenuLinks 
+{
+	color:#ffffff; 
+	text-decoration:none; 
+	font-weight:bold;
+}
+a.MenuLinks:hover
+{
+	color:#095ba6; 
+	text-decoration:none; 
+	font-weight:bold;
+}
+
+
+.links-border
+{
+	padding: 4px 4px;
+	border-top: 1px solid #E0E0E0; 
+	border-left: 1px solid #E0E0E0; 
+	border-right: 1px solid #E0E0E0; 
+	border-bottom: 1px solid #E0E0E0; 
+	cursor:pointer; cursor:hand;
+}
+.links-border-sel
+{
+	padding: 4px 4px;
+	background-color:#F0F0F0;
+	border-top: 1px solid #E0E0E0; 
+	border-left: 1px solid #E0E0E0; 
+	border-right: 1px solid #E0E0E0; 
+	border-bottom: 1px solid #E0E0E0; 
+	cursor:pointer; cursor:hand;
+}
+
+
+.marketContainer td
+{
+	padding: 2px 2px;
+}
+
+.tops-border
+{
+	background-color:#F9F9F9;
+	border-top: 0 solid #F0F0F0;
+	border-left: 1px solid #F0F0F0;
+	border-right: 1px solid #F0F0F0;
+	border-bottom: 1px solid #F0F0F0;
+}
+
+
+.MainBorder
+{
+	border-top: #cccccc 1px solid;
+	border-bottom: #cccccc 0px solid;
+	background-color:#F9F9F9;
+}
+
+.MenuBorder
+{
+	border-left:#cccccc 1px solid;
+	border-bottom:#cccccc 1px solid;
+	border-right:#cccccc 1px solid;
+}
+.MenuBottomBorder
+{
+	border-left:#cccccc 0px solid;
+	border-bottom:#cccccc 0px solid;
+}
+
+
+
+.MenuEvent
+{
+	padding:2px 2px;
+	background-color:#FFFFFF;
+	color: #000000;
+	border-top:#cccccc 0px solid;
+	border-left:#cccccc 0px solid;
+	border-bottom:#cccccc 0px solid;
+	border-right:#cccccc 0px solid;
+	cursor:pointer; cursor:hand;
+}
+.MenuEventOver
+{
+	padding:2px 2px;
+	background-color:#eeeeee;
+	color:#4F77A3;
+	border-top:#cccccc 0px solid;
+	border-left:#cccccc 0px solid;
+	border-bottom:#cccccc 0px solid;
+	border-right:#cccccc 0px solid;
+	cursor:pointer; cursor:hand;
+}
+.MenuEventDown
+{
+	padding:2px 2px;
+	background-color:#eeeeee;
+	color:#4F77A3;
+	border-top:#cccccc 0px solid;
+	border-left:#cccccc 0px solid;
+	border-bottom:#cccccc 0px solid;
+	border-right:#cccccc 0px solid;
+	cursor:pointer; cursor:hand;
+}
+
+
+
+
+.MenuPath
+{
+	background-color:#e7e7e7;
+	color:#000000;
+	border-top:#cccccc 0px solid;
+	border-left:#cccccc 0px solid;
+	border-bottom:#cccccc 0px solid;
+	border-right:#cccccc 0px solid;
+	padding: 2px 2px;
+	cursor:pointer; cursor:hand;
+}
+.MenuPathOver
+{
+	background-color:#f5f5f5;
+	color:#000000;
+	border-top:#cccccc 0px solid;
+	border-left:#cccccc 0px solid;
+	border-bottom:#cccccc 0px solid;
+	border-right:#cccccc 0px solid;
+	padding: 2px 2px;
+	cursor:pointer; cursor:hand;
+}
+.MenuPathDown
+{
+	background-color:#f5f5f5;
+	color:#095ba6;
+	border-top:#cccccc 0px solid;
+	border-left:#cccccc 0px solid;
+	border-bottom:#cccccc 0px solid;
+	border-right:#cccccc 0px solid;
+	padding: 2px 2px;
+	cursor:pointer; cursor:hand;
+}
+.MenuPathSelectedItem
+{
+	font-weight:bold; 
+	background-color:#ffffff; 
+	color:#000000; 
+	border-top:#cccccc 0px solid;
+	border-left:#cccccc 0px solid;
+	border-bottom:#cccccc 0px solid;
+	border-right:#cccccc 0px solid;
+	padding: 2px 2px;
+	width:100%;
+}
+
+
+
+
+
+.MenuMarket
+{
+	background-color:#FFFFFF;
+	color:#000000;
+	border-top:#cccccc 0px solid;
+	border-left:#cccccc 0px solid;
+	border-bottom:#cccccc 0px solid;
+	border-right:#cccccc 0px solid;
+	cursor:pointer; cursor:hand;
+	height:20px;
+}
+.MenuMarketOver
+{
+	background-color:#ffffff;
+	color:#4F77A3;
+	border-top:#cccccc 0px solid;
+	border-left:#cccccc 0px solid;
+	border-bottom:#cccccc 0px solid;
+	border-right:#cccccc 0px solid;
+	cursor:pointer; cursor:hand;
+	height:20px;
+}
+.MenuMarketDown
+{
+	background-color:#E4F3FE;
+	color:#4F77A3;
+	border-top:#cccccc 0px solid;
+	border-left:#cccccc 0px solid;
+	border-bottom:#cccccc 0px solid;
+	border-right:#cccccc 0px solid;
+	cursor:pointer; cursor:hand;
+	height:20px;
+}
+.MenuMarketBottomBorder
+{
+	height:20px;
+	border-left:#cccccc 1px solid;
+	border-bottom:#cccccc 1px solid;
+}
+
+
+
+.MenuItemLoading
+{
+	background-color:#ffffff; 
+	color:#095ba6; 
+	padding:2px;
+}
+
+.MenuIconSpacer
+{
+	height:20px;
+	border-left:#cccccc 0px solid;
+	border-bottom:#cccccc 1px solid;
+}
+
+.MenuIcon
+{
+	color:#666666; 
+	font-weight:bold; 
+	border-bottom:#cccccc 1px solid;
+	border-left:#cccccc 1px solid;
+	border-right:#cccccc 1px solid;
+	background-color:#E0E0E0;
+	width: 12px;
+}
+
+.MenuIconNoBorder
+{
+	color:#666666; 
+	font-weight:bold; 
+	cursor:auto; 
+	background-color:#E0E0E0;
+}
+
+
+
+.MenuCustomiseArrow
+{
+	padding: 2px;
+	border-bottom:#cccccc 1px solid;
+	border-right:#cccccc 1px solid;
+	background-color:#EFEFEF;
+	cursor:pointer; cursor:hand;
+}
+
+.MenuCustomiseArrowOver
+{
+	padding:2px; 
+	border-bottom:#cccccc 1px solid;
+	border-right:#cccccc 1px solid;
+	background-color:#E4F3FE;
+	cursor:pointer; cursor:hand;
+}

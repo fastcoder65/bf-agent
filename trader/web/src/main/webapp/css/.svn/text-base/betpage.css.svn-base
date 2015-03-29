@@ -1,0 +1,157 @@
+body
+{
+	margin-top: 0;
+	margin-bottom: 0;
+	margin-right: 0;
+	margin-left: 0;
+	color: black;
+	background-color: #FFFFFF;
+}
+.betNotAvailable
+{
+	position: absolute;
+	top: 0;
+	left: 0;
+	z-index:10;
+}
+.tops-border
+{
+	padding: 2px 2px;
+    background-color: #F9F9F9;
+    border-top: 0 solid #F0F0F0;
+	border-left: 1px solid #F0F0F0;
+	border-right: 1px solid #F0F0F0;
+	border-bottom: 1px solid #F0F0F0;
+}
+.bet-content
+{
+	padding: 4px 4px;
+	text-align: center;
+	background: #F9F9F9;
+	border-top: 0 solid #C0C0C0;
+	border-left: 0 solid #C0C0C0;
+	border-right: 0 solid #C0C0C0;
+	border-bottom: 0 solid #C0C0C0;
+}
+.bet-border
+{
+	padding: 4px 4px;
+	border-top: 1px solid #E0E0E0;
+	border-left: 1px solid #E0E0E0;
+	border-right: 1px solid #E0E0E0;
+	border-bottom: 1px solid #E0E0E0;
+}
+.grid-border {
+    padding: 0 0;
+    border-top: 1px solid #E0E0E0;
+    border-left: 1px solid #E0E0E0;
+    border-right: 1px solid #E0E0E0;
+    border-bottom: 0 solid #E0E0E0;
+}
+.row-title {
+    padding: 2px 2px;
+    background: #FFFFFF;
+    border-top: 0 solid #E0E0E0;
+    border-left: 0 solid #E0E0E0;
+    border-right: 0 solid #E0E0E0;
+    border-bottom: 1px solid #E0E0E0;
+}
+.row {
+    padding: 2px 2px;
+    background: #F9F9F9;
+    border-top: 0 solid #E0E0E0;
+    border-left: 0 solid #E0E0E0;
+    border-right: 0 solid #E0E0E0;
+    border-bottom: 1px solid #E0E0E0;
+    cursor: pointer;
+    cursor: hand;
+}
+.row-hl {
+    padding: 2px 2px;
+    background: #F0F0F0;
+    border-top: 0 solid #E0E0E0;
+    border-left: 0 solid #E0E0E0;
+    border-right: 0 solid #E0E0E0;
+    border-bottom: 1px solid #E0E0E0;
+    cursor: pointer;
+    cursor: hand;
+}
+.cell-title {
+    padding: 2px 2px;
+    font-size: 9px;
+    font-family: Verdana, Arial, sans-serif;
+    font-weight: bold;
+    text-align: right;
+    border-top: 0 solid #E0E0E0;
+    border-left: 0 solid #E0E0E0;
+    border-right: 0 solid #E0E0E0;
+    border-bottom: 0 solid #E0E0E0;
+}
+.cell-title A {
+    padding: 2px 2px;
+    font-size: 9px;
+    font-family: Verdana, Arial, sans-serif;
+    font-weight: bold;
+    text-align: left;
+    border-top: 0 solid #E0E0E0;
+    border-left: 0 solid #E0E0E0;
+    border-right: 0 solid #E0E0E0;
+    border-bottom: 0 solid #E0E0E0;
+}
+.cell-title A:hover {
+    padding: 2px 2px;
+    font-size: 9px;
+    font-family: Verdana, Arial, sans-serif;
+    font-weight: bold;
+    text-align: left;
+    border-top: 0 solid #E0E0E0;
+    border-left: 0 solid #E0E0E0;
+    border-right: 0 solid #E0E0E0;
+    border-bottom: 0 solid #E0E0E0;
+}
+.cell-back {
+    padding: 2px 2px;
+    background: #c9dae5;
+    text-align: right;
+    border-top: 0 solid #E0E0E0;
+    border-left: 0 solid #E0E0E0;
+    border-right: 0 solid #E0E0E0;
+    border-bottom: 0 solid #E0E0E0;
+}
+.cell-lay {
+    padding: 2px 2px;
+    background: #F9F9C9;
+    text-align: right;
+    border-top: 0 solid #E0E0E0;
+    border-left: 0 solid #E0E0E0;
+    border-right: 0 solid #E0E0E0;
+    border-bottom: 0 solid #E0E0E0;
+}
+.cell-matched {
+    padding: 2px 2px;
+    background: #F9F9F9;
+    text-align: right;
+    border-top: 0 solid #E0E0E0;
+    border-left: 0 solid #E0E0E0;
+    border-right: 0 solid #E0E0E0;
+    border-bottom: 0 solid #E0E0E0;
+}
+.cell-button {
+    padding: 4px 4px;
+    background: #FFFFFF;
+    text-align: left;
+    border-top: 1px solid #E0E0E0;
+    border-left: 1px solid #E0E0E0;
+    border-right: 1px solid #E0E0E0;
+    border-bottom: 1px solid #E0E0E0;
+}
+input.radio {
+    padding: 2px 2px;
+    font-size: 9px;
+    font-family: Verdana, Arial, sans-serif;
+    background-color: #FFFFFF;
+    border-top: 0;
+    border-left: 0;
+    border-right: 0;
+    border-bottom: 0;
+}

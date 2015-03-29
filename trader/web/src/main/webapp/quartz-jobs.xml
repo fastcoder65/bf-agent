@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+ <quartz xmlns="http://www.opensymphony.com/quartz/JobSchedulingData"
+     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+     overwrite-existing-jobs="true">
+   <job>
+     <job-detail>
+       <name>htmlTestJob</name>
+       <group>htmlGroup</group>
+       <description>Html Test Job</description>
+       <job-class>net.bir.util.MyJob</job-class>
+     </job-detail>
+     <trigger>
+       <cron>
+        <name>htmlTestTrigger</name>
+        <group>htmlTriggerGroup</group>
+        <job-name>htmlTestJob</job-name>
+        <job-group>htmlGroup</job-group>
+         <!--sintassi analoga ai crontab, schedulazione ogni 5 secondi-->
+        <cron-expression>*/5 * * * * ?</cron-expression>
+       </cron>
+     </trigger>
+   </job>
+ </quartz> 
+

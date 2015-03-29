@@ -1,0 +1,31 @@
+#parse("/WEB-INF/resources/include/meta/htmlDescriptor.vm")
+<html>
+<head>
+<title>BetEx -- Account Statement Tip Data</title>
+ #parse("/WEB-INF/resources/include/meta/content-type.vm")
+ <script type="text/javascript">
+
+    var accTipDataRows = new Array();
+    var sAccTipDataDiv = parent.divOddsTip + "$profileForm.stakeId";
+
+    #set ($iMax = $profileForm.maxReportRows)
+    #if ($profileForm.accTipDataRows)
+    #if ( $profileForm.accTipDataRows.size() > $iMax)
+        alert('$betext.get("errors.maxReportRowsExceeded")');
+    #end
+    #end
+    #set ($i=0)
+    #foreach ($sdRow in $profileForm.getAccStmTipData())
+      #set ($i=$i+1)
+      #if($i<$iMax) accTipDataRows [accTipDataRows.length] = '$sdRow'; #end
+    #end
+    function doOnLoad(sAccTipDataDiv) {
+        if(parent.makeAccTipContent) {
+            parent.makeAccTipContent( accTipDataRows, sAccTipDataDiv );
+            parent.accTipReady(sAccTipDataDiv);
+        }
+    }
+ </script>
+</head>
+ <body onload='doOnLoad(sAccTipDataDiv);'></body>
+</html>

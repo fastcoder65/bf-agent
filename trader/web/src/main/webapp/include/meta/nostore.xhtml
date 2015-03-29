@@ -1,0 +1,8 @@
+<!--#set ($cDate = $date.systemDate )
+<%
+response.setHeader("Cache-Control", "no-store, no-cache, must-revalidate")
+response.setHeader("Expires", $cDate.toString())
+%>
+-->
+<meta http-equiv="Expires" content="$date.systemDate"/>
+<meta http-equiv="Cache-Control" content="no-store, no-cache, must-revalidate"/>
