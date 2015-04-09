@@ -1,21 +1,36 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<!-- 
 <web-app id="WebApp_ID" version="2.5"
 	xmlns="http://java.sun.com/xml/ns/javaee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd">
+ -->
+<web-app version="3.0" xmlns="http://java.sun.com/xml/ns/javaee"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd">
 
+    <!-- Set the PROJECT_STAGE to 'Development' to receive constructive error messages during development.
+Change the PROJECT_STAGE to 'Production' when putting the application into production -->
+
+    <context-param>
+        <param-name>javax.faces.PROJECT_STAGE</param-name>
+        <param-value>Development</param-value>
+    </context-param>
+ 
 	<display-name>BIR Application 2</display-name>
-    <!-- 
+ <!--     
     <context-param>
         <param-name>org.jboss.jbossfaces.WAR_BUNDLES_JSF_IMPL</param-name>
         <param-value>true</param-value>
     </context-param>
-   
+ -->
+   <!--
 	<context-param>
 		<param-name>org.jboss.jbossfaces.JSF_CONFIG_NAME</param-name>
 		<param-value>Mojarra-1.2</param-value>
 	</context-param>
    -->
+   
 	<context-param>
 		<param-name>javax.faces.STATE_SAVING_METHOD</param-name>
 		<param-value>server</param-value>
@@ -36,29 +51,31 @@
 		<param-value>.xhtml</param-value>
 	</context-param>
 	
-	<!-- 
+	 
 	<context-param>
 		<param-name>facelets.DEVELOPMENT</param-name>
 		<param-value>true</param-value>
 	</context-param>
-	-->
 	
+	<!-- 
 	<context-param>
 		<param-name>facelets.REFRESH_PERIOD</param-name>
 		<param-value>7</param-value>
 	</context-param>
-
+ -->
 	 
 	<context-param>
 		<param-name>org.richfaces.SKIN</param-name>
 		<param-value>#{viewHelper.skin}</param-value>
 	</context-param>
-	
+<!-- 	
 	<context-param>  
      <param-name>javax.faces.DISABLE_FACELET_JSF_VIEWHANDLER</param-name>  
-     <param-value>true</param-value>  
+     <param-value>false</param-value>  
 	</context-param>
-	
+	 -->
+	 
+	<!-- 
 	<context-param>
 		<param-name>org.ajax4jsf.COMPRESS_SCRIPT</param-name>
 		<param-value>true</param-value>
@@ -67,33 +84,42 @@
 		<param-name>org.ajax4jsf.COMPRESS_STYLE</param-name>
 		<param-value>true</param-value>
 	</context-param>
+	 -->
+	 
+  <!-- 	
 	<context-param>
 		<param-name>org.ajax4jsf.VIEW_HANDLERS</param-name>
-		<param-value>com.sun.facelets.FaceletViewHandler</param-value>
+		<param-value>org.ajax4jsf.application.AjaxViewHandler</param-value>
 	</context-param>
+   -->
+   
+<!-- 	
 	<context-param>
 		<param-name>org.ajax4jsf.xmlparser.ORDER</param-name>
 		<param-value>NEKO, TIDY</param-value>
 	</context-param>
-	<!-- 
+ -->	
+	 
 	<context-param>
 		<param-name>org.ajax4jsf.VIEW_HANDLERS</param-name>
 		<param-value>com.sun.facelets.FaceletViewHandler</param-value>
 	</context-param>
+	
+	<!--
 	 <view-handler>org.ajax4jsf.application.AjaxViewHandler</view-handler>
 	 -->
-	 <!-- 
+<!-- 	 
 	<context-param>
 		<param-name>org.ajax4jsf.SERIALIZE_SERVER_STATE</param-name>
 		<param-value>true</param-value>
 	</context-param>
-	 -->
-		 
+ -->	
+<!-- 		 
 	<context-param>
 		<param-name>org.ajax4jsf.handleViewExpiredOnClient</param-name>
 		<param-value>true</param-value>
 	</context-param>
-  
+ -->  
 	<listener>
 		<listener-class>net.bir.util.BIRApplicationContextListener</listener-class>
 	</listener>
@@ -103,7 +129,7 @@
 		<listener-class>com.sun.faces.config.ConfigureListener</listener-class>
 	</listener>
  -->
-  
+<!--    
 	<filter>
 		<display-name>RichFaces Filter</display-name>
 		<filter-name>richfaces</filter-name>
@@ -120,15 +146,19 @@
 		<dispatcher>INCLUDE</dispatcher>
 	
 	</filter-mapping>
-	 
+ -->
+  	 
 	<!-- Faces_Servlet -->
+<!-- 	
 	<servlet>
 		<servlet-name>Faces_Servlet</servlet-name>
 		<servlet-class>javax.faces.webapp.FacesServlet</servlet-class>
 		<load-on-startup>1</load-on-startup>
 	</servlet>
-
+ -->
+ 
 	<!-- Faces_Servlet Mapping -->
+<!-- 	
 	<servlet-mapping>
 		<servlet-name>Faces_Servlet</servlet-name>
 		<url-pattern>*.jsf</url-pattern>
@@ -141,10 +171,12 @@
 		<servlet-name>Faces_Servlet</servlet-name>
 		<url-pattern>/faces/*</url-pattern>
 	</servlet-mapping>
-
+ -->
+ 
 	<welcome-file-list>
 		<welcome-file>index.html</welcome-file>
 	</welcome-file-list>
+	
 <!-- 
 	<error-page>
 		<error-code>400</error-code>

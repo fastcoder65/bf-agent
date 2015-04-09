@@ -8,66 +8,37 @@
 	xmlns:rich="http://richfaces.org/rich"
 	xmlns:f="http://java.sun.com/jsf/core">
 
+<f:loadBundle basename="net.bir.resources.labels" var="labels" />
+<f:loadBundle basename="net.bir.resources.messages" var="msg" />
+
 <head>
-<title>BIRBot Main</title>
+<title>BIR Main</title>
 <ui:include src="/include/meta/content-type.xhtml" />
 <link rel="SHORTCUT ICON" href='./images/favicon.ico'
 	type="image/x-icon" />
 <link rel="ICON" href='./images/favicon.ico' type="image/x-icon" />
-<link rel="stylesheet" type="text/css" href='css/mainStyle.css' />
-<style>
-.outpanelHeader {
-	height: 4px;
-	border-width: 0;
-}
-
-.inpanelBody {
-	margin-top: 1px;
-	padding: 1px;
-	height: 626px;
-	overflow: auto;
-}
-
-.marketPanelBody {
-    margin-top: 1px;
-	padding: 1px;
-	height: 300px;
-	overflow: auto;
-}
-
-
-.rvgRowOne {
- background-color: #{a4jSkin.additionalBackgroundColor}
-}
-.rvgRowTwo {
- background-color:  #{a4jSkin.generalBackgroundColor
-}
-
-</style>
 </head>
+ <!--   style="height:100%" -->
 <body>
-
 <f:view>
-	<rich:layout id="layout_000">
+	<h:panelGrid cellpaddintg="0" cellspacing="0" border="1" columns="1"
+		width="100%" style="height:100%">
+		<ui:include src="/layout/toolbar.xhtml" />
+		<h:panelGrid cellpaddintg="0" cellspacing="0" border="0" columns="2"
+			width="100%" valign="top">
 
-		<rich:layoutPanel id="layoutPanel_top"  position="top" width="100%">
-			<ui:include src="/layout/toolbar.xhtml" />
-		</rich:layoutPanel>
+			<ui:include src="/markets/marketPage.xhtml" />
 
-			<rich:layoutPanel id="layoutPanel_tree" position="left" width="30%">
-		        <ui:include  src="/markets/marketPage.xhtml" />
-		    </rich:layoutPanel>
+			<h:panelGrid cellpaddintg="0" cellspacing="0" border="1" columns="1"
+				width="100%" style="height:100%">
 
-		<rich:layoutPanel id="layoutPanel_bottom" position="right" width="70%">
-		<ui:include src="/layout/modalMarketPanel.xhtml" />
 				<ui:include src="/markets/activeMarkets.xhtml" />
+
 				<ui:include src="/markets/runners.xhtml" />
-								
-		</rich:layoutPanel>
-		
-	</rich:layout>
+
+			</h:panelGrid>
+		</h:panelGrid>
+	</h:panelGrid>
 </f:view>
-
-
 </body>
 </html>

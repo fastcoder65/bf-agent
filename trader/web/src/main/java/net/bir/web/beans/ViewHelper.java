@@ -14,8 +14,10 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 
-public class ViewHelper extends BaseBean {
+public class ViewHelper extends BaseBean implements java.io.Serializable {
 
+	private static final long serialVersionUID = 1L;
+	
 	public ViewHelper() {
 	}
 
@@ -72,9 +74,9 @@ public class ViewHelper extends BaseBean {
 	 */
 
 	public static enum RichSkins {
-		DEFAULT("��������"), emeraldTown("���������� �����"), blueSky(
-				"������� ����"), wine("����"), japanCherry("�������� �����"), ruby(
-				"�����"), classic("��������"), deepMarine("������");
+		DEFAULT("DEFAULT"), emeraldTown("emeraldTown"), blueSky(
+				"Blue Sky"), wine("wine"), japanCherry("Japan cherry"), ruby(
+				"Ruby"), classic("classic"), deepMarine("Deep marine");
 
 		private String name;
 
