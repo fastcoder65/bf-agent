@@ -63,10 +63,11 @@
             to work with JBoss EAP 6. It requires you have access to the JBoss EAP 6 
             maven repository. -->
         <!-- <version.jboss.as>7.2.0.Final-redhat-8</version.jboss.as> -->
-<!--  
- 		<version.richfaces>4.5.1.Final</version.richfaces>
--->
-		<version.richfaces>3.3.3.Final</version.richfaces>
+  <!-- 
+ 		<version.richfaces>4.5.4.Final</version.richfaces>
+  -->		
+
+		<version.richfaces>3.3.4.Final</version.richfaces>
 		
         <!-- other plugin versions -->
         <version.ear.plugin>2.6</version.ear.plugin>

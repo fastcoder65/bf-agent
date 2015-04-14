@@ -25,29 +25,12 @@
 
 	<name>trader - web</name>
 
-	<url>http://jboss.org/jbossas</url>
-	<licenses>
-		<license>
-			<name>Apache License, Version 2.0</name>
-			<distribution>repo</distribution>
-			<url>http://www.apache.org/licenses/LICENSE-2.0.html</url>
-		</license>
-	</licenses>
-
 	<dependencies>
 
-		<!-- Dependency on the EJB module so we can use it's services if needed -->
 		<dependency>
 			<groupId>net.bir2</groupId>
 			<artifactId>trader-ejb</artifactId>
 			<type>ejb</type>
-			<scope>provided</scope>
-		</dependency>
-
-		<dependency>
-			<groupId>org.jboss.ejb3</groupId>
-			<artifactId>jboss-ejb3-ext-api</artifactId>
-			<version>2.1.0</version>
 			<scope>provided</scope>
 		</dependency>
 
@@ -57,90 +40,38 @@
 			<scope>provided</scope>
 		</dependency>
 
-		<!-- Import the JAX-RS API, we use provided scope as the API is included 
-			in JBoss AS 7 -->
 		<dependency>
-			<groupId>org.jboss.spec.javax.ws.rs</groupId>
-			<artifactId>jboss-jaxrs-api_1.1_spec</artifactId>
+			<groupId>org.jboss.spec.javax.el</groupId>
+			<artifactId>jboss-el-api_2.2_spec</artifactId>
 			<scope>provided</scope>
 		</dependency>
 
-		<!-- Import the CDI API, we use provided scope as the API is included in 
-			JBoss AS 7 -->
-		<!-- <dependency> <groupId>javax.enterprise</groupId> <artifactId>cdi-api</artifactId> 
-			<scope>provided</scope> </dependency> -->
-		<!-- Import the JSF API, we use provided scope as the API is included in 
-			JBoss AS 7 -->
-			
-			<dependency>
-				<groupId>javax.el</groupId>
-				<artifactId>el-api</artifactId>
-				<version>2.2</version>
-			</dependency>
-			
-  <!--  
 		<dependency>
-			<groupId>javax.el</groupId>
-			<artifactId>el-api</artifactId>
-			<version>1.0</version>
-			<scope>provided</scope>
-		</dependency>
--->
-
-<!--  
-		<dependency>
-			<groupId>javax.faces</groupId>
-			<artifactId>jsf-api</artifactId>
-			<version>2.0</version>
-			<scope>provided</scope>
-		</dependency>
--->		
-<!-- 
-		<dependency>
-			<groupId>javax.faces</groupId>
-			<artifactId>jsf-impl</artifactId>
-			<version>1.2_15</version>
-		</dependency>
- -->
-<!-- 
-        <dependency>
 			<groupId>org.jboss.spec.javax.faces</groupId>
-			<artifactId>jboss-jsf-api_2.2_spec</artifactId>
-			<version>2.2.10</version>
+			<artifactId>jboss-jsf-api_2.1_spec</artifactId>
+			<scope>provided</scope>
 		</dependency>
- -->
-		 <dependency> 
-		 	<groupId>org.jboss.spec.javax.faces</groupId> 
-		 	<artifactId>jboss-jsf-api_2.1_spec</artifactId> 
-			<scope>provided</scope> 
-		  </dependency> 
 
 		<!-- Import the Servlet API, we use provided scope as the API is included 
 			in JBoss EAP -->
-		<!-- <dependency> <groupId>org.jboss.spec.javax.servlet</groupId> <artifactId>jboss-servlet-api_3.0_spec</artifactId> 
-			<scope>provided</scope> </dependency> -->
-		<!-- Import the RichFaces library -->
-		<!-- Import the RichFaces push dependencies -->
-
+			
+		<dependency>
+			<groupId>org.jboss.spec.javax.servlet</groupId>
+			<artifactId>jboss-servlet-api_3.0_spec</artifactId>
+			<scope>provided</scope>
+		</dependency>
+<!-- 
 		<dependency>
 			<groupId>commons-digester</groupId>
 			<artifactId>commons-digester</artifactId>
-			<version>1.8</version>
+			<version>2.0</version>
 		</dependency>
 
-	<dependency>
-		<groupId>commons-beanutils</groupId>
-		<artifactId>commons-beanutils</artifactId>
-		<version>1.7.0</version>
-	</dependency>
-
-
-	<dependency>
-		<groupId>commons-collections</groupId>
-		<artifactId>commons-collections</artifactId>
-		<version>3.2.1</version>
-	</dependency>
-
+		<dependency>
+			<groupId>commons-beanutils</groupId>
+			<artifactId>commons-beanutils</artifactId>
+			<version>1.8.3</version>
+		</dependency>
 
 		<dependency>
 			<groupId>commons-logging</groupId>
@@ -155,90 +86,115 @@
 		</dependency>
 
 		<dependency>
+			<groupId>commons-collections</groupId>
+			<artifactId>commons-collections</artifactId>
+			<version>3.2.1</version>
+		</dependency>
+ -->
+<!--  
+<dependency>
+	<groupId>org.richfaces</groupId>
+	<artifactId>richfaces-parent</artifactId>
+	<version>4.5.4.Final</version>
+</dependency>
+ -->
+ <!-- 
+<dependency>
+	<groupId>org.richfaces</groupId>
+	<artifactId>richfaces-core</artifactId>
+	<version>4.5.4.Final</version>
+</dependency>
+
+<dependency>
+	<groupId>org.richfaces</groupId>
+	<artifactId>richfaces-rich</artifactId>
+	<version>4.5.4.Final</version>
+</dependency>
+
+<dependency>
+	<groupId>org.richfaces</groupId>
+	<artifactId>richfaces-a4j</artifactId>
+	<version>4.5.4.Final</version>
+</dependency>
+
+<dependency>
+	<groupId>org.richfaces</groupId>
+	<artifactId>richfaces-page-fragments</artifactId>
+	<version>4.5.4.Final</version>
+</dependency>
+ -->
+ 		
+  
+		<dependency>
 			<groupId>org.richfaces</groupId>
 			<artifactId>richfaces-api</artifactId>
 			<version>${version.richfaces}</version>
 		</dependency>
-
-        <dependency>
-            <groupId>org.jboss.spec.javax.servlet</groupId>
-            <artifactId>jboss-servlet-api_3.0_spec</artifactId>
-            <scope>provided</scope>
-        </dependency>
-		 
+<!-- 
+		<dependency>
+			<groupId>org.richfaces.framework</groupId>
+			<artifactId>richfaces-impl</artifactId>
+			<version>${version.richfaces}</version>
+		</dependency>
+ -->
+ 
 		<dependency>
 			<groupId>org.richfaces.framework</groupId>
 			<artifactId>richfaces-impl-jsf2</artifactId>
 			<version>${version.richfaces}</version>
 		</dependency>
-		
-		 <!-- 
-		<dependency>
-			<groupId>xerces</groupId>
-			<artifactId>xerces</artifactId>
-			<version>2.4.0</version>
-		</dependency>
-		<dependency>
-			<groupId>net.sourceforge.nekohtml</groupId>
-			<artifactId>nekohtml</artifactId>
-			<version>1.9.17</version>
-		</dependency>
-  -->
-
-		<!-- <dependency> <groupId>org.richfaces</groupId> <artifactId>richfaces-impl</artifactId> 
-			<version>${version.richfaces}</version> </dependency> -->
-		<!-- <dependency> <groupId>org.richfaces.framework</groupId> <artifactId>richfaces-impl-jsf2</artifactId> 
-			<version>${version.richfaces}</version> </dependency> -->
-
+  
 		<dependency>
 			<groupId>org.richfaces</groupId>
 			<artifactId>richfaces-ui</artifactId>
 			<version>${version.richfaces}</version>
 		</dependency>
 
+ 
 		<dependency>
 			<groupId>com.uwyn</groupId>
 			<artifactId>jhighlight</artifactId>
 			<version>1.0</version>
 		</dependency>
-   
+
 		<dependency>
 			<groupId>com.sun.facelets</groupId>
 			<artifactId>jsf-facelets</artifactId>
-			<version>1.1.14</version>
-		</dependency>
-
-		<!-- <dependency> <groupId>org.richfaces</groupId> <artifactId>richfaces</artifactId> 
-			<version>${version.richfaces}</version> </dependency> <dependency> <groupId>org.richfaces</groupId> 
-			<artifactId>richfaces-push-depchain</artifactId> <version>${version.richfaces}</version> 
-			<type>pom</type> </dependency> -->
-		<!-- <dependency> <groupId>javax.el</groupId> <artifactId>javax.el-api</artifactId> 
-			<version>3.0.0</version> </dependency> -->
-		<!-- Import the JPA API, we use provided scope as the API is included in 
-			JBoss AS 7 -->
-		<dependency>
-			<groupId>org.hibernate.javax.persistence</groupId>
-			<artifactId>hibernate-jpa-2.0-api</artifactId>
-			<scope>provided</scope>
-		</dependency>
-
-		<!-- JSR-303 (Bean Validation) Implementation -->
-		<!-- Provides portable constraints such as @Email -->
-		<!-- Hibernate Validator is shipped in JBoss AS 7 -->
-
-		<dependency>
-			<groupId>org.hibernate</groupId>
-			<artifactId>hibernate-validator</artifactId>
-			<scope>provided</scope>
-			<exclusions>
-				<exclusion>
-					<groupId>org.slf4j</groupId>
-					<artifactId>slf4j-api</artifactId>
-				</exclusion>
-			</exclusions>
+			<version>1.1.15</version>
 		</dependency>
 
 	</dependencies>
+<!-- JBoss distributes a complete set of Java EE 6 APIs including a Bill 
+				of Materials (BOM). A BOM specifies the versions of a "stack" (or a collection) 
+				of artifacts. We use this here so that we always get the correct versions 
+				of artifacts. Here we use the jboss-javaee-6.0-with-tools stack (you can 
+				read this as the JBoss stack of the Java EE 6 APIs, with some extras tools 
+				for your project, such as Arquillian for testing) and the jboss-javaee-6.0-with-hibernate 
+				stack you can read this as the JBoss stack of the Java EE 6 APIs, with extras 
+				from the Hibernate family of projects) -->
+<!-- 				
+	<dependencyManagement>
+		<dependencies>
+
+		<dependency>
+				<groupId>org.jboss.bom</groupId>
+				<artifactId>jboss-javaee-6.0-with-tools</artifactId>
+				<version>${version.jboss.bom}</version>
+				<type>pom</type>
+				<scope>import</scope>
+			</dependency>
+
+			<dependency>
+				<groupId>org.jboss.bom</groupId>
+				<artifactId>jboss-javaee-6.0-with-hibernate</artifactId>
+				<version>${version.jboss.bom}</version>
+				<type>pom</type>
+				<scope>import</scope>
+			</dependency>
+
+		</dependencies>
+	</dependencyManagement>
+-->
 
 	<build>
 		<finalName>${project.artifactId}</finalName>
@@ -256,12 +212,6 @@
 				<artifactId>maven-war-plugin</artifactId>
 				<version>${version.war.plugin}</version>
 				<configuration>
-
-					<archive>
-						<manifestEntries>
-							<Dependencies>javax.faces.api</Dependencies>
-						</manifestEntries>
-					</archive>
 
 				</configuration>
 			</plugin>

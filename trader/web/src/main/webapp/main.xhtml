@@ -14,31 +14,32 @@
 <head>
 <title>BIR Main</title>
 <ui:include src="/include/meta/content-type.xhtml" />
-<link rel="SHORTCUT ICON" href='./images/favicon.ico'
-	type="image/x-icon" />
+<link rel="SHORTCUT ICON" href='./images/favicon.ico' type="image/x-icon" />
 <link rel="ICON" href='./images/favicon.ico' type="image/x-icon" />
 </head>
- <!--   style="height:100%" -->
 <body>
-<f:view>
-	<h:panelGrid cellpaddintg="0" cellspacing="0" border="1" columns="1"
-		width="100%" style="height:100%">
-		<ui:include src="/layout/toolbar.xhtml" />
-		<h:panelGrid cellpaddintg="0" cellspacing="0" border="0" columns="2"
-			width="100%" valign="top">
+	<rich:layout>
+        <rich:layoutPanel position="top" width="100%">
+          <ui:include src="/layout/toolbar.xhtml"/>      
+        </rich:layoutPanel>
 
-			<ui:include src="/markets/marketPage.xhtml" />
+        <rich:layoutPanel position="left" width="30%">
+          <ui:include src="/markets/marketPage.xhtml"/>      
+        </rich:layoutPanel>
 
-			<h:panelGrid cellpaddintg="0" cellspacing="0" border="1" columns="1"
-				width="100%" style="height:100%">
+        <rich:layoutPanel position="right" width="100%">
 
-				<ui:include src="/markets/activeMarkets.xhtml" />
+        	<rich:layoutPanel position="top">
+        	<ui:include src="/markets/activeMarkets.xhtml"/>
+        	</rich:layoutPanel>
+        	
+        	<rich:layoutPanel position="bottom">
+        	<ui:include src="/markets/runners.xhtml"/>
+        	</rich:layoutPanel>
+        	
+        </rich:layoutPanel>
+        
+	</rich:layout>
 
-				<ui:include src="/markets/runners.xhtml" />
-
-			</h:panelGrid>
-		</h:panelGrid>
-	</h:panelGrid>
-</f:view>
 </body>
 </html>
