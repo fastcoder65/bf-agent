@@ -1,3 +1,5 @@
 Manifest-Version: 1.0
 Class-Path: BIR_EJB.jar
+Application name: dev_betjava_fastcoder65
+Application Keys: 1.0-DELAY	90EhQuo32PR3cKeJ 1.0 SGwftqga8eArLpAT
 

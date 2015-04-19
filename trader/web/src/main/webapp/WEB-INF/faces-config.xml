@@ -84,12 +84,12 @@
 	</navigation-rule>
 
 	<application>
-	<!--   
+	     
 	<view-handler>org.ajax4jsf.application.AjaxViewHandler</view-handler>
-	 -->
-	<!--  
+	 
+	 <!--  
 		<view-handler>com.sun.facelets.FaceletViewHandler</view-handler>
-	-->	
+	 -->	
 		<locale-config>
 			<default-locale>en</default-locale>
 			<supported-locale>en</supported-locale>
