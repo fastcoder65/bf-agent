@@ -69,11 +69,13 @@ public class MarketBean extends  BaseBean {
 				if (marketService == null) {
 					throw new Exception("marketService is unavailable!");
 				}
+				
 				currentUser = marketService.getCurrentUser();
 				getLog().fine("get ApiContext for user: " + currentUser);
 				String exLogin = currentUser.getExLoginDec();
-				GlobalAPI.login(apiContext, exLogin, currentUser
-						.getExPasswordDec());
+				
+				GlobalAPI.login(apiContext, exLogin, currentUser.getExPasswordDec());
+				
 				getLog().info("Uzer " + exLogin + " log in.");
 			} catch (Exception e) {
 				// If we can't log in for any reason, just exit.

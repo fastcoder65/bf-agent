@@ -22,7 +22,7 @@ import generated.global.BFGlobalServiceStub.LogoutResp;
 import net.bir2.multitrade.util.APIContext;
 
 
-public class GlobalAPI {
+public class GlobalAPI2 {
 
     private static BFGlobalServiceStub stub;
     
