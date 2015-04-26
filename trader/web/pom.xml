@@ -61,91 +61,12 @@
 		
 		<!-- Import the Servlet API, we use provided scope as the API is included 
 			in JBoss EAP -->
-<!-- 			
-		<dependency>
-			<groupId>org.jboss.spec.javax.servlet</groupId>
-			<artifactId>jboss-servlet-api_3.0_spec</artifactId>
-			<scope>provided</scope>
-		</dependency>
--->
-		
-<!-- 
-		<dependency>
-			<groupId>commons-digester</groupId>
-			<artifactId>commons-digester</artifactId>
-			<version>2.0</version>
-		</dependency>
-
-		<dependency>
-			<groupId>commons-beanutils</groupId>
-			<artifactId>commons-beanutils</artifactId>
-			<version>1.8.3</version>
-		</dependency>
-
-		<dependency>
-			<groupId>commons-logging</groupId>
-			<artifactId>commons-logging</artifactId>
-			<version>1.1.1</version>
-		</dependency>
-
-		<dependency>
-			<groupId>commons-discovery</groupId>
-			<artifactId>commons-discovery</artifactId>
-			<version>0.2</version>
-		</dependency>
-
-		<dependency>
-			<groupId>commons-collections</groupId>
-			<artifactId>commons-collections</artifactId>
-			<version>3.2.1</version>
-		</dependency>
- -->
-<!--  
-<dependency>
-	<groupId>org.richfaces</groupId>
-	<artifactId>richfaces-parent</artifactId>
-	<version>4.5.4.Final</version>
-</dependency>
- -->
- <!-- 
-<dependency>
-	<groupId>org.richfaces</groupId>
-	<artifactId>richfaces-core</artifactId>
-	<version>4.5.4.Final</version>
-</dependency>
-
-<dependency>
-	<groupId>org.richfaces</groupId>
-	<artifactId>richfaces-rich</artifactId>
-	<version>4.5.4.Final</version>
-</dependency>
-
-<dependency>
-	<groupId>org.richfaces</groupId>
-	<artifactId>richfaces-a4j</artifactId>
-	<version>4.5.4.Final</version>
-</dependency>
-
-<dependency>
-	<groupId>org.richfaces</groupId>
-	<artifactId>richfaces-page-fragments</artifactId>
-	<version>4.5.4.Final</version>
-</dependency>
- -->
- 		
   
 		<dependency>
 			<groupId>org.richfaces</groupId>
 			<artifactId>richfaces-api</artifactId>
 			<version>${version.richfaces}</version>
 		</dependency>
-<!-- 
-		<dependency>
-			<groupId>org.richfaces.framework</groupId>
-			<artifactId>richfaces-impl</artifactId>
-			<version>${version.richfaces}</version>
-		</dependency>
- -->
  
 		<dependency>
 			<groupId>org.richfaces.framework</groupId>
@@ -158,7 +79,6 @@
 			<artifactId>richfaces-ui</artifactId>
 			<version>${version.richfaces}</version>
 		</dependency>
-
  
 		<dependency>
 			<groupId>com.uwyn</groupId>
@@ -173,37 +93,6 @@
 		</dependency>
 
 	</dependencies>
-<!-- JBoss distributes a complete set of Java EE 6 APIs including a Bill 
-				of Materials (BOM). A BOM specifies the versions of a "stack" (or a collection) 
-				of artifacts. We use this here so that we always get the correct versions 
-				of artifacts. Here we use the jboss-javaee-6.0-with-tools stack (you can 
-				read this as the JBoss stack of the Java EE 6 APIs, with some extras tools 
-				for your project, such as Arquillian for testing) and the jboss-javaee-6.0-with-hibernate 
-				stack you can read this as the JBoss stack of the Java EE 6 APIs, with extras 
-				from the Hibernate family of projects) -->
-<!-- 				
-	<dependencyManagement>
-		<dependencies>
-
-		<dependency>
-				<groupId>org.jboss.bom</groupId>
-				<artifactId>jboss-javaee-6.0-with-tools</artifactId>
-				<version>${version.jboss.bom}</version>
-				<type>pom</type>
-				<scope>import</scope>
-			</dependency>
-
-			<dependency>
-				<groupId>org.jboss.bom</groupId>
-				<artifactId>jboss-javaee-6.0-with-hibernate</artifactId>
-				<version>${version.jboss.bom}</version>
-				<type>pom</type>
-				<scope>import</scope>
-			</dependency>
-
-		</dependencies>
-	</dependencyManagement>
--->
 
 	<build>
 		<finalName>${project.artifactId}</finalName>

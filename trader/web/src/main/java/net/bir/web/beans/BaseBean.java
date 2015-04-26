@@ -42,8 +42,4 @@ public abstract class BaseBean {
 		return marketService;
 	}
 
-	public void setMarketService(MarketService marketService) {
-		this.marketService = marketService;
-	}
-
 }

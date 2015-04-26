@@ -5,12 +5,13 @@ import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-import generated.global.BFGlobalServiceStub.EventType;
-
 import net.bir.web.beans.MarketBean;
 import net.bir.web.beans.treeModel.EventNode.StringKey;
 
 import org.richfaces.model.TreeNode;
+
+import com.betfair.aping.entities.EventType;
+// import generated.global.BFGlobalServiceStub.EventType;
 
 @SuppressWarnings("rawtypes")
 public class SportNode extends Entry  implements TreeNode {
@@ -29,8 +30,8 @@ public class SportNode extends Entry  implements TreeNode {
 	private int id;
 
 	public int getId() {
-		if (id == 0)
-		id = (this.eventType== null? id : this.eventType.getId());
+		if (id == 0L)
+		id = (this.eventType == null ? id : Integer.valueOf(this.eventType.getId()));
 		return id;
 	}
 
@@ -188,5 +189,18 @@ public class SportNode extends Entry  implements TreeNode {
 		// TODO Auto-generated method stub
 		
 	}
+
+	@Override
+	public String toString() {
+		return "SportNode [id=" + id + ", type=" + type + ", name=" + name
+				+ "]";
+	}
+
+	/*
+	@Override
+	public String toString() {
+		return getName();
+	}
+	*/
 
 }

@@ -13,6 +13,7 @@ import generated.exchange.BFExchangeServiceStub.PlaceBetsResult;
 import generated.exchange.BFExchangeServiceStub.UpdateBets;
 import generated.exchange.BFExchangeServiceStub.UpdateBetsResult;
 
+
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -1353,11 +1354,10 @@ public class SheduleRequestMessageListener implements MessageListener {
 			int i = 0;
 			for (Uzer uzer : marketService.getActiveUsers()) {
 				if (!serviceBean.getActiveUsers().containsKey(uzer.getLogin())
-						|| serviceBean.getActiveUsers().get(uzer.getLogin())
-								.getMarket4Users().size() != uzer
-								.getMarket4Users().size()) {
-					boolean result = serviceBean.add2ActiveUsers(
-							uzer.getLogin(), uzer);
+						|| serviceBean.getActiveUsers().get(uzer.getLogin()).getMarket4Users().size() != uzer.getMarket4Users().size()) {
+					
+					boolean result = serviceBean.add2ActiveUsers(uzer.getLogin(), uzer);
+
 					if (result) {
 						log.info(new StringBuilder(100)
 								.append("user added ok: ").append(uzer)

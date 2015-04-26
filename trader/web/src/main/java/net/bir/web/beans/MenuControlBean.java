@@ -3,7 +3,7 @@ package net.bir.web.beans;
 import javax.faces.context.FacesContext;
 import javax.servlet.http.HttpSession;
 
-public class MenuControlBean extends BaseBean{
+public class MenuControlBean extends BaseBean {
 
 	public static final String MAIN = "main";
 	public static final String PROFILE = "profile";

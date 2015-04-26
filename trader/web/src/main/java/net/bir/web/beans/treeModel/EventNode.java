@@ -1,7 +1,5 @@
 package net.bir.web.beans.treeModel;
 
-import generated.global.BFGlobalServiceStub.BFEvent;
-
 import java.io.Serializable;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -13,6 +11,8 @@ import net.bir.web.beans.MarketBean;
 
 import org.richfaces.model.TreeNode;
 
+import com.betfair.aping.entities.Event;
+
 @SuppressWarnings("rawtypes")
 public class EventNode extends Entry implements TreeNode {
 	
@@ -23,32 +23,32 @@ public class EventNode extends Entry implements TreeNode {
 
 	private transient  TreeNode parent;
 
-	private transient  BFEvent event;
+	private transient  Event event;
 	
-	public BFEvent getEvent() {
+	public Event getEvent() {
 		return event;
 	}
 
-	public void setEvent(BFEvent event) {
+	public void setEvent(Event event) {
 		this.event = event;
 	}
 
 	public EventNode() {
 	}
 
-	public EventNode(BFEvent event) {
+	public EventNode(Event event) {
 		super();
 		this.event = event;
 	}
 
-	public EventNode(BFEvent event,  TreeNode parent) {
+	public EventNode(Event event,  TreeNode parent) {
 		super();
 		this.event = event;
 		this.parent = parent;
 	}
 
 	public int getId() {
-	    super.setId(this.event.getEventId());
+	    super.setId(Integer.valueOf(this.event.getId()));
 		return super.getId();
 	}
 
@@ -61,7 +61,7 @@ public class EventNode extends Entry implements TreeNode {
 	public static final DateFormat df = new SimpleDateFormat("HH:mm");
 	public String getName() {
 //		String eventDate = (this.event.getStartTime() == null? "" : df.format(this.event.getStartTime() .getTime()));
-		super.setName(this.event.getEventName());
+		super.setName(this.event.getName());
 		return super.getName();
 	}
 
@@ -140,15 +140,21 @@ public class EventNode extends Entry implements TreeNode {
 	public void setParent(TreeNode node) {
 		this.parent = node;
 	}
-
+/*
 	@Override
 	public String toString() {
 		return getName();
 	}
-
+*/
+	
 	public void addEvent(EventNode event) {
-		addChild(new StringKey(MarketBean.NT_EVENT + event.getEvent().getOrderIndex()), event);
+		addChild(new StringKey(MarketBean.NT_EVENT + event.getPath()), event);
 		event.setParent((TreeNode)this);
+	}
+
+	@Override
+	public String toString() {
+		return "EventNode [event=" + event + ", type=" + type + "]";
 	}
 
 	public void addMarket(MarketNode market) {

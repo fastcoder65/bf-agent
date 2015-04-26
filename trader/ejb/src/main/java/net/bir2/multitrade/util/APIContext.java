@@ -7,6 +7,16 @@ public class APIContext {
 	// The session token
 	private String token;
 	
+	private String product;
+	
+	public String getProduct() {
+		return product;
+	}
+
+	public void setProduct(String product) {
+		this.product = product;
+	}
+
 	// the API calls usage map.
 	private UsageMap usage = new UsageMap();
 
