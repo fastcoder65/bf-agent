@@ -15,7 +15,9 @@ import net.bir.util.WebUtils;
 public class ServiceBean extends BaseBean {
 
 	//static private ServiceBean __instance = new ServiceBean();
+
 	private static final String SERVICE_BEAN = "serviceBean";
+
 	public static ServiceBean getInstance() {
 		return (ServiceBean) WebUtils.getManagedBean(SERVICE_BEAN);
 	//	return __instance;	

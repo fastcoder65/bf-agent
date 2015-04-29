@@ -46,7 +46,13 @@ public abstract class ApiNgOperations {
 
 	public abstract PlaceExecutionReport placeOrders(String marketId, List<PlaceInstruction> instructions, String customerRef , String appKey, String ssoId) throws APINGException;
 
+	public abstract String keepAlive(String appKey, String ssoId);
+
+	public abstract String logout(String appKey, String ssoId);
+	
     protected abstract String makeRequest(String operation, Map<String, Object> params, String appKey, String ssoToken) throws  APINGException;
+    
+    protected abstract String makeKeepAliveRequest(String appKey, String ssoToken);
 
 }
 

@@ -28,7 +28,10 @@ public class WebUtils {
 		if (ctx == null) {
 		 System.out.println("FacesContext is null");	
 		}
-		return (ctx == null)? null: getManagedBean(theBeanName, ctx);
+		Object result = (ctx == null)? null: getManagedBean(theBeanName, ctx);
+		System.out.println ("result: "+ result);
+		
+		return result;
 	}
 
 	public static Object getManagedBean(final String theBeanName,
@@ -38,9 +41,11 @@ public class WebUtils {
 		final Object returnObject = ctx.getELContext().getELResolver()
 				.getValue(ctx.getELContext(), null, theBeanName);
 
-		
+		assert(returnObject != null);
 //		final Object returnObject =	ctx.getApplication().getVariableResolver().resolveVariable(ctx, theBeanName);
 
+		System.out.println ("returnObject: "+ returnObject);
+		
 		if (returnObject == null) {
 			throw new RuntimeException("Bean with name " + theBeanName
 					+ " was not found.");

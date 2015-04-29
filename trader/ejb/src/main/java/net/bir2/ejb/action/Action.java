@@ -7,6 +7,7 @@ public enum Action {
 		LOAD_ACTIVE_USERS("Загрузка активных игроков"),
 		LOAD_ACTIVE_MARKETS("Загрузка активных рынков"),
 		UPDATE_MARKETS("Обновление активных рынков"),
+		KEEP_ALIVE("Поддержание сессии betfair"),
 		UPDATE_MARKET("Обновление статуса указанного рынка"),    //  обновление статуса и выдача запроса на чтение цен, если статус не "CLOSED"	
 		UPDATE_MARKET_PRICES("Обновление цен указанного рынка"); //  чтение цен для юзера
 		private String name;

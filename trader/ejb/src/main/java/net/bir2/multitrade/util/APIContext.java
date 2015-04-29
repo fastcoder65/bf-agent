@@ -3,7 +3,12 @@ package net.bir2.multitrade.util;
 import java.util.Date;
 
 // Class for storing the connection status and other details of an API connection
-public class APIContext {
+public class APIContext implements java.io.Serializable {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+
 	// The session token
 	private String token;
 	
@@ -42,4 +47,41 @@ public class APIContext {
 	public void setLastCall(Date lastCall) {
 		this.lastCall = lastCall;
 	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((product == null) ? 0 : product.hashCode());
+		result = prime * result + ((token == null) ? 0 : token.hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		APIContext other = (APIContext) obj;
+		if (product == null) {
+			if (other.product != null)
+				return false;
+		} else if (!product.equals(other.product))
+			return false;
+		if (token == null) {
+			if (other.token != null)
+				return false;
+		} else if (!token.equals(other.token))
+			return false;
+		return true;
+	}
+
+	@Override
+	public String toString() {
+		return "APIContext [token=" + token + ", product=" + product + "]";
+	}
+	
 }

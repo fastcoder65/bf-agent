@@ -41,11 +41,21 @@
 		</dependency>
 
 		<dependency>
-			<groupId>org.jboss.spec.javax.el</groupId>
-			<artifactId>jboss-el-api_2.2_spec</artifactId>
-			<scope>provided</scope>
+			<groupId>javax.el</groupId>
+			<artifactId>el-api</artifactId>
+			<version>1.0</version>
+		
 		</dependency>
 
+		<dependency>
+			<groupId>el-impl</groupId>
+			<artifactId>el-impl</artifactId>
+			<version>1.0</version>
+		
+		</dependency>
+
+		<!-- <dependency> <groupId>org.jboss.spec.javax.el</groupId> <artifactId>jboss-el-api_2.2_spec</artifactId> 
+			</dependency> -->
 		<dependency>
 			<groupId>org.jboss.spec.javax.faces</groupId>
 			<artifactId>jboss-jsf-api_2.1_spec</artifactId>
@@ -58,28 +68,52 @@
 			<version>2.5</version>
 			<scope>provided</scope>
 		</dependency>
-		
+
 		<!-- Import the Servlet API, we use provided scope as the API is included 
 			in JBoss EAP -->
-  
+
+		<dependency>
+			<groupId>commons-digester</groupId>
+			<artifactId>commons-digester</artifactId>
+			<version>1.8</version>
+		</dependency>
+
+		<dependency>
+			<groupId>commons-beanutils</groupId>
+			<artifactId>commons-beanutils</artifactId>
+			<version>1.8.3</version>
+		</dependency>
+		
+		<dependency>
+			<groupId>commons-collections</groupId>
+			<artifactId>commons-collections</artifactId>
+			<version>3.2</version>
+		</dependency>
+
+		<dependency>
+			<groupId>commons-logging</groupId>
+			<artifactId>commons-logging</artifactId>
+			<version>1.1.2</version>
+		</dependency>
+
 		<dependency>
 			<groupId>org.richfaces</groupId>
 			<artifactId>richfaces-api</artifactId>
 			<version>${version.richfaces}</version>
 		</dependency>
- 
+
 		<dependency>
 			<groupId>org.richfaces.framework</groupId>
 			<artifactId>richfaces-impl-jsf2</artifactId>
 			<version>${version.richfaces}</version>
 		</dependency>
-  
+
 		<dependency>
 			<groupId>org.richfaces</groupId>
 			<artifactId>richfaces-ui</artifactId>
 			<version>${version.richfaces}</version>
 		</dependency>
- 
+
 		<dependency>
 			<groupId>com.uwyn</groupId>
 			<artifactId>jhighlight</artifactId>

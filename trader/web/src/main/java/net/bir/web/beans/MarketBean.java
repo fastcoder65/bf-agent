@@ -10,13 +10,22 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
+import java.util.logging.Logger;
 
+import javax.annotation.PostConstruct;
+import javax.annotation.PreDestroy;
 import javax.ejb.EJB;
 import javax.faces.component.UIComponent;
 import javax.faces.component.html.HtmlInputText;
+import javax.faces.context.FacesContext;
+import javax.servlet.http.HttpSession;
 
 import net.bir.ejb.session.settings.SettingsService;
+import net.bir.util.WebUtils;
 import net.bir.web.beans.treeModel.EventNode;
 import net.bir.web.beans.treeModel.MarketNode;
 import net.bir.web.beans.treeModel.SportNode;
@@ -65,6 +74,38 @@ public class MarketBean extends BaseBean {
 	 * final MarketSummary[] MARKET_SUMMARY0 = new MarketSummary[0];
 	 */
 
+	private static final String MARKET_BEAN = "marketBean";
+
+	public static MarketBean getInstance() {
+		return (MarketBean) WebUtils.getManagedBean(MARKET_BEAN);
+	}
+
+	public static MarketBean getInstance(FacesContext context) {
+		return (MarketBean) WebUtils.getManagedBean(MARKET_BEAN, context);
+	}
+
+	private ScheduledExecutorService scheduler;
+
+	@PostConstruct
+	public void init() {
+		scheduler = Executors.newSingleThreadScheduledExecutor();
+	}
+
+	@PreDestroy
+	public void destroy() {
+		scheduler.shutdownNow();
+	}
+
+	public void logout () {
+		try {
+			String exLogin = currentUser.getExLoginDec();
+			GlobalAPI.logout(apiContext);
+			getLog().info("Uzer " + exLogin + " log out.");
+		} catch (Exception e) {
+			getLog().log(Level.SEVERE, "Logout failed ", e);		
+		}
+	}
+	
 	public APIContext getApiContext() {
 		if (apiContext == null) {
 			apiContext = new APIContext();
@@ -74,11 +115,14 @@ public class MarketBean extends BaseBean {
 				}
 
 				currentUser = marketService.getCurrentUser();
-				getLog().fine("get ApiContext for user: " + currentUser);
+				getLog().info("get ApiContext for user: " + currentUser);
 				String exLogin = currentUser.getExLoginDec();
 
 				GlobalAPI.login(apiContext, exLogin,
 						currentUser.getExPasswordDec());
+
+				scheduler.scheduleAtFixedRate(new KeepAliveJob(apiContext), 1,
+						10, TimeUnit.MINUTES);
 
 				getLog().info("Uzer " + exLogin + " log in.");
 			} catch (Exception e) {
@@ -199,7 +243,7 @@ public class MarketBean extends BaseBean {
 				selectedMarketNode = marketNode;
 				getLog().info("marketNode is:" + marketNode);
 			} else {
-				
+
 				try {
 					getLog().info("else...");
 					Set<String> eventTypeIds = new HashSet<String>();
@@ -217,8 +261,8 @@ public class MarketBean extends BaseBean {
 					}
 					getLog().info("eventIds.size()= " + eventIds.size());
 
-					List<Event> listEvents = GlobalAPI.getEvents(apiContext, eventTypeIds,
-							eventIds);
+					List<Event> listEvents = GlobalAPI.getEvents(apiContext,
+							eventTypeIds, eventIds);
 
 					/*
 					 * BFEvent[] bfEvents = resp.getEventItems().getBFEvent() ==
@@ -228,27 +272,30 @@ public class MarketBean extends BaseBean {
 					 * .getMarketSummary() == null ? MARKET_SUMMARY0 :
 					 * resp.getMarketItems().getMarketSummary();
 					 */
-					
+
 					if (listEvents != null) {
-						getLog().info("## listEvents.size()= " + listEvents.size());
+						getLog().info(
+								"## listEvents.size()= " + listEvents.size());
 						int i = 0;
 						for (Event bfEvent : listEvents) {
-						    i++;
-							log.info(i+")");
-						  
-						  if (bfEvent != null &&  bfEvent.getId() != null && bfEvent.getId().trim().length()> 0) {
-							
-							 getLog().info(i+") " + "sportEvent: " + bfEvent);
-							  
-							EventNode sportEvent = new EventNode(bfEvent);
-							
-							if (sportNode != null)
-								sportNode.addEntry(sportEvent);
-							
-							if (eventNode != null)
-								eventNode.addEntry(sportEvent);
-							
-						  }	
+							i++;
+							log.info(i + ")");
+
+							if (bfEvent != null && bfEvent.getId() != null
+									&& bfEvent.getId().trim().length() > 0) {
+
+								getLog().info(
+										i + ") " + "sportEvent: " + bfEvent);
+
+								EventNode sportEvent = new EventNode(bfEvent);
+
+								if (sportNode != null)
+									sportNode.addEntry(sportEvent);
+
+								if (eventNode != null)
+									eventNode.addEntry(sportEvent);
+
+							}
 						}
 					}
 					/*
@@ -260,7 +307,8 @@ public class MarketBean extends BaseBean {
 					// Collections.sort(eventNode.getMarkets(), new
 					// MarketNode.MarketNodeComparator());
 				} catch (Exception e) {
-					getLog().log(Level.SEVERE, "error in selectNodeListener: ", e );
+					getLog().log(Level.SEVERE, "error in selectNodeListener: ",
+							e);
 				}
 			} // if marketnode != null
 		}
@@ -779,4 +827,26 @@ public class MarketBean extends BaseBean {
 	 * additional discussion on this area, please see Bugzilla.
 	 */
 
+	class KeepAliveJob implements Runnable {
+
+		private final Logger log = Logger.getLogger(this.getClass().getName());
+
+		private APIContext apiContext;
+
+		public KeepAliveJob(APIContext apiContext) {
+			this.apiContext = apiContext;
+		}
+
+		@Override
+		public void run() {
+			try {
+				Thread.sleep(1000);
+				log.log(Level.INFO, "call GlobalAPI.keepAlive(" + apiContext+ ")");
+				GlobalAPI.keepAlive(apiContext);
+			} catch (Exception e) {
+				log.log(Level.SEVERE, "error on keep-alive request", e);
+			}
+			log.log(Level.INFO, "run finished");
+		}
+	}
 }

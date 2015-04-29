@@ -91,6 +91,17 @@ public class ShedulerActivityBean implements ShedulerActivity {
 	}
 */
 
+	public void sendKeepAlive(String login) {
+		
+	Uzer currentUser = getActiveUsers().get(login);
+	try {
+		GlobalAPI.keepAlive(currentUser.getApiContext());
+	} catch (Exception e) {
+		e.printStackTrace();
+	}
+
+	}
+	
 	public boolean add2ActiveUsers(String login, Uzer uzer) {
 		APIContext apiContext = new APIContext();
 		boolean result = false;

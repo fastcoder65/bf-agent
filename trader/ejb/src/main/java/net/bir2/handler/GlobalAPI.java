@@ -12,7 +12,6 @@ import generated.global.BFGlobalServiceStub.LogoutErrorEnum;
 import generated.global.BFGlobalServiceStub.LogoutReq;
 import generated.global.BFGlobalServiceStub.LogoutResp;
 
-import java.util.Calendar;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
@@ -76,6 +75,8 @@ public class GlobalAPI {
 
 	private static final String SESSION_TOKEN = "sessionToken";
 	private static final String LOGIN_STATUS = "loginStatus";
+
+	private static final String STATUS = "status";
 	
 	private static final ObjectMapper om = new ObjectMapper();
 
@@ -177,28 +178,40 @@ public class GlobalAPI {
         List<Event> r = jsonOperations.listEvents(marketFilter, MarketSort.FIRST_TO_START, "200", context.getProduct(), context.getToken());
         return r;
 	}
-	
-	// Fire a Web services logout request
-	public static void logout(APIContext context) throws Exception {
-		// Create a request object
-        LogoutReq request = new LogoutReq();
-        request.setHeader(getHeader(context));
 
-        // Create the Logout message and attach the request to it.
-        Logout msg = new Logout();
-        msg.setRequest(request);
-        
-        // Send the request to the Betfair Service.
-        LogoutResp resp = getStub().logout(msg).getResult();
-        context.getUsage().addCall("logout");
-       
-        // Check the response code, and throw and exception if the call failed
-        if (resp.getErrorCode() != LogoutErrorEnum.OK)
-        {
-        	throw new IllegalArgumentException("Failed to log out: "+resp.getErrorCode() + " Minor Error:"+resp.getMinorErrorCode()+ " Header Error:"+resp.getHeader().getErrorCode());
-        }
-        
-        setHeaderDataToContext(context, resp.getHeader());
+	//@TODO Implement Keep alive for Italian jurisdiction
+	
+	public static void keepAlive (APIContext context) throws Exception {
+		JsonNode jsonNode = null;
+		// International jurisdictions:
+		// https://identitysso.betfair.com/api/keepAlive
+
+		// Italian jurisdiction:
+		// https://identitysso.betfair.it/api/keepAlive
+ 
+		String sessionResponse = null;
+		
+		if ((sessionResponse = jsonOperations.keepAlive(context.getProduct(), context.getToken())) != null) {
+			jsonNode = om.readTree(sessionResponse);
+
+	        if (!"SUCCESS".equals ( jsonNode.get(STATUS).textValue() ) ) {
+	        	throw new IllegalArgumentException("Keep-alive request failed!");
+	        }
+		}
+	}
+
+	public static void logout(APIContext context) throws Exception {
+	// https://identitysso.betfair.com/api/logout
+		JsonNode jsonNode = null;
+		String sessionResponse = null;
+		
+		if ((sessionResponse = jsonOperations.logout(context.getProduct(), context.getToken())) != null) {
+			jsonNode = om.readTree(sessionResponse);
+
+	        if (!"SUCCESS".equals ( jsonNode.get(STATUS).textValue() ) ) {
+	        	throw new IllegalArgumentException("Logout request failed!");
+	        }
+		}
 	}
 	
 }

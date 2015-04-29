@@ -31,6 +31,23 @@ public class ApiNgJsonRpcOperations extends ApiNgOperations {
 		return instance;
 	}
 
+	public String keepAlive(String appKey, String ssoId) {
+		
+		String result = getInstance().makeKeepAliveRequest(appKey, ssoId);
+		if (ApiNGDemo.isDebug())
+			System.out.println("\nResponse: " + result);
+		return result;
+	}
+
+	public String logout(String appKey, String ssoId) {
+		
+		String result = getInstance().makeLogoutRequest(appKey, ssoId);
+		if (ApiNGDemo.isDebug())
+			System.out.println("\nResponse: " + result);
+		
+		return result;
+	}
+
 	public List<EventTypeResult> listEventTypes(MarketFilter filter,
 			String appKey, String ssoId) throws APINGException {
 	
@@ -172,9 +189,17 @@ public class ApiNgJsonRpcOperations extends ApiNgOperations {
 		// We need to pass the "sendPostRequest" method a string in util format:
 		// requestString
 		HttpUtil requester = new HttpUtil();
-		return requester.sendPostRequestJsonRpc(requestString, operation,
-				appKey, ssoToken);
+		return requester.sendPostRequestJsonRpc(requestString, operation, appKey, ssoToken);
+	}
 
+	protected String makeKeepAliveRequest(String appKey, String ssoToken) {
+		HttpUtil requester = new HttpUtil();
+		return requester.sendKeepAlivePostRequest( appKey, ssoToken);
+	}
+
+	protected String makeLogoutRequest(String appKey, String ssoToken) {
+		HttpUtil requester = new HttpUtil();
+		return requester.sendLogoutRequest( appKey, ssoToken);
 	}
 
 }

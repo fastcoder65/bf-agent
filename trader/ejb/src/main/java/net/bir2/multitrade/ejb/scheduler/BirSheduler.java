@@ -19,13 +19,7 @@ import javax.naming.NamingException;
 @Singleton
 public class BirSheduler {
 
-//	public static final String loadRequestQueue = "queue/bir/jms/priceRequestQueue";
-
 	public static final String loadRequestQueue = "/jms/queue/PriceRequestQueue";
-
-	/*
-	private  final Logger logger = Logger.getLogger(this.getClass().getName());
-	 */
 	
     @Inject
     private Logger log;
@@ -51,57 +45,29 @@ public class BirSheduler {
 
 			QueueConnectionFactory qcf = (QueueConnectionFactory) ctx
 
-			 //.lookup("java:JmsXA");
-
 					.lookup("ConnectionFactory");
 
-			/**
-			 * 
-			 * ������������ � jms-����������
-			 */
 
 			jmsConnection = qcf.createConnection();
 
-			/**
-			 * 
-			 * ������� ������
-			 */
 
 			session = jmsConnection.createSession(false,
 
 			Session.AUTO_ACKNOWLEDGE);
 
-			/**
-			 * 
-			 * ������� ����������� (���������)
-			 */
 
 			producer = session.createProducer(queue);
 
-			/**
-			 * 
-			 * ��������� ��������� �� �������� ��������� ��� ���� �� 10 ������
-			 * 
-			 * ��������� �� ����� ���������� �� ��� ����� ������� �� �������
-			 */
 
 			producer.setTimeToLive(10 * 1000); // 1 sec
 
 			producer.setDeliveryMode(DeliveryMode.NON_PERSISTENT);
 
-			/**
-			 * 
-			 * ������� ���� ���������
-			 */
 
 			MapMessage message = session.createMapMessage();
 
 			message.setString("action", action);
 
-			/**
-			 * 
-			 * ����������
-			 */
 
 			producer.send(message);
 
@@ -156,5 +122,13 @@ public class BirSheduler {
 		sendRequest("LOAD_ACTIVE_USERS");
 		sendRequest("LOAD_ACTIVE_MARKETS");
 		sendRequest("UPDATE_MARKETS");
+		
 	}
+	
+	@Schedule( minute = "*/15", hour = "*", info="KEEP_ALIVE", persistent = false)
+	public void performKeepAlive() {
+		System.out.println ("perform in 15 min!");
+		 sendRequest("KEEP_ALIVE");
+	}
+
 }

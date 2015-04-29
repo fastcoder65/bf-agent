@@ -41,6 +41,7 @@ public class HttpUtil {
             post.setHeader(HTTP_HEADER_X_APPLICATION, appKey);
             post.setHeader(HTTP_HEADER_X_AUTHENTICATION, ssoToken);
 
+            if (jsonRequest != null)
             post.setEntity(new StringEntity(jsonRequest, ApiNGDemo.getProp().getProperty("ENCODING_UTF8")));
 
             HttpClient httpClient = new DefaultHttpClient();
@@ -80,6 +81,18 @@ public class HttpUtil {
 
         return sendPostRequest(param, operation, appKey, ssoToken, apiNgURL, new JsonResponseHandler());
 
+    }
+
+    public String sendKeepAlivePostRequest( String appKey, String ssoToken) {
+        String apiNgURL = "https://identitysso.betfair.com/api/keepAlive"; // ApiNGDemo.getProp().getProperty("INTER_KA_URL");
+
+        return sendPostRequest(null, null, appKey, ssoToken, apiNgURL, new JsonResponseHandler());
+    }
+
+    public String sendLogoutRequest( String appKey, String ssoToken) {
+        String apiNgURL = "https://identitysso.betfair.com/api/logout"; // ApiNGDemo.getProp().getProperty("INTER_KA_URL");
+
+        return sendPostRequest(null, null, appKey, ssoToken, apiNgURL, new JsonResponseHandler());
     }
 
 }

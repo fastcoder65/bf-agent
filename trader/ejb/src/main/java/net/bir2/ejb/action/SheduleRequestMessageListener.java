@@ -13,7 +13,6 @@ import generated.exchange.BFExchangeServiceStub.PlaceBetsResult;
 import generated.exchange.BFExchangeServiceStub.UpdateBets;
 import generated.exchange.BFExchangeServiceStub.UpdateBetsResult;
 
-
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -22,6 +21,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.ejb.ActivationConfigProperty;
 import javax.ejb.EJB;
@@ -51,10 +52,8 @@ import net.bir2.multitrade.ejb.entity.Uzer;
 import net.bir2.multitrade.util.InflatedMarketPrices.InflatedPrice;
 import net.bir2.multitrade.util.InflatedMarketPrices.InflatedRunner;
 
-//import org.apache.log4j.Logger;
-import java.util.logging.*;
-
 import com.unitab.race.Race;
+//import org.apache.log4j.Logger;
 
 @MessageDriven(activationConfig = {
 		@ActivationConfigProperty(propertyName = "destinationType", propertyValue = "javax.jms.Queue"),
@@ -96,7 +95,7 @@ public class SheduleRequestMessageListener implements MessageListener {
 	@EJB
 	protected MarketService marketService;
 
-	// @TransactionAttribute(TransactionAttributeType.REQUIRED)
+	
 	public void onMessage(Message msg) {
 
 		if (msg == null || !(msg instanceof MapMessage))
@@ -127,7 +126,26 @@ public class SheduleRequestMessageListener implements MessageListener {
 	 * 
 	 * }
 	 */
+	
+	private void doKeepAliveRequests(){
 
+		log.info("* send keep-alive request to all active users..");
+		
+	if (marketService == null) {
+		log.log(Level.WARNING, "marketService is null!");
+
+	} else {
+		for (Uzer uzer : marketService.getActiveUsers()) {
+			if (!serviceBean.getActiveUsers().containsKey(uzer.getLogin())
+					|| serviceBean.getActiveUsers().get(uzer.getLogin()).getMarket4Users().size() != uzer.getMarket4Users().size()) {
+				
+				 serviceBean.sendKeepAlive(uzer.getLogin());
+			}
+		}
+	}
+
+	}
+	
 	public static final String UNKNOWN = "UNKNOWN";
 
 	private void actionUpdateMarketStatus(String login, Long marketId) {
@@ -304,20 +322,15 @@ public class SheduleRequestMessageListener implements MessageListener {
 								.append(bet.getPrice()).append(", size=")
 								.append(bet.getSize()).toString());
 
-					// Long _key = Long.valueOf(bet.getSelectionId());
-
 					Runner runner = currentMarket.getRunnersMap().get(
 							(long) bet.getSelectionId());
 
-					/*
-					 * Runner runner = marketService.getRunnerBySelectionId(
-					 * currentMarket.getId(), _key);
-					 */
 					if (runner == null) {
 						log.severe(new StringBuilder(100)
 								.append("runner is null for selectionId=")
 								.append(bet.getSelectionId()).toString());
 					}
+
 					if (runner != null) {
 
 						Runner4User r4u = runner.getUserData4Runner().get(
@@ -350,9 +363,7 @@ public class SheduleRequestMessageListener implements MessageListener {
 								r4u.setMatchedLayPrice(bet.getPrice());
 								r4u.setMatchedLayAmount(bet.getSize());
 							}
-
 							marketService.merge(r4u);
-
 						}
 					}
 				}
@@ -1413,6 +1424,10 @@ public class SheduleRequestMessageListener implements MessageListener {
 
 			case UPDATE_MARKET_PRICES: {
 				actionUpdateMarketPrices(login, marketId);
+				break;
+			}
+			case KEEP_ALIVE: {
+				doKeepAliveRequests();
 				break;
 			}
 

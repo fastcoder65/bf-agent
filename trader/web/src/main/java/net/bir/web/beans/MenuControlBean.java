@@ -19,6 +19,8 @@ public class MenuControlBean extends BaseBean {
 	public String exit() {
 		HttpSession session = (HttpSession) FacesContext.getCurrentInstance()
 				.getExternalContext().getSession(false);
+		
+		MarketBean.getInstance().logout();
 		try {
 			session.invalidate();
 			log.info("user logout.");

@@ -25,7 +25,26 @@ public class ApiNgRescriptOperations extends ApiNgOperations {
         }
         return instance;
     }
+    
+	public String keepAlive(String appKey, String ssoId) {
+		
+		String result = getInstance().makeKeepAliveRequest(
+				appKey, ssoId);
+		if (ApiNGDemo.isDebug())
+			System.out.println("\nResponse: " + result);
+		return result;
+	}
 
+	public String logout (String appKey, String ssoId) {
+		
+		String result = getInstance().makeLogoutRequest(
+				appKey, ssoId);
+		if (ApiNGDemo.isDebug())
+			System.out.println("\nResponse: " + result);
+		return result;
+	}
+
+	
     public List<EventTypeResult> listEventTypes(MarketFilter filter,  String appKey, String ssoId) throws APINGException {
         Map<String, Object> params = new HashMap<String, Object>();
         params.put(FILTER, filter);
@@ -104,7 +123,7 @@ public class ApiNgRescriptOperations extends ApiNgOperations {
     }
 
 
-    protected String makeRequest(String operation, Map<String, Object> params, String appKey, String ssoToken) throws APINGException {
+    protected String makeRequest(String operation, Map<String, Object> params, String appKey, String ssoToken)  throws  APINGException {
         String requestString;
         //Handling the Rescript request
         params.put("id", 1);
@@ -121,6 +140,16 @@ public class ApiNgRescriptOperations extends ApiNgOperations {
         else
             throw new APINGException();
     }
+
+	protected String makeKeepAliveRequest(String appKey, String ssoToken) {
+		HttpUtil requester = new HttpUtil();
+		return requester.sendKeepAlivePostRequest( appKey, ssoToken);
+	}
+
+	protected String makeLogoutRequest(String appKey, String ssoToken) {
+		HttpUtil requester = new HttpUtil();
+		return requester.sendLogoutRequest( appKey, ssoToken);
+	}
 
 }
 

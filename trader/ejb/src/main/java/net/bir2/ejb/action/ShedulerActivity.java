@@ -18,6 +18,7 @@ public interface ShedulerActivity {
 	 void updateUserMarkets();
 	 Map<String, Uzer> getActiveUsers();
 	 boolean add2ActiveUsers(String login, Uzer uzer);
+	 void sendKeepAlive(String login);
 	 void sendRequest(Action action, String login, String marketId);
 	
 }
