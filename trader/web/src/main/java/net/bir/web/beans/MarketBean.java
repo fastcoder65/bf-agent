@@ -22,7 +22,6 @@ import javax.ejb.EJB;
 import javax.faces.component.UIComponent;
 import javax.faces.component.html.HtmlInputText;
 import javax.faces.context.FacesContext;
-import javax.servlet.http.HttpSession;
 
 import net.bir.ejb.session.settings.SettingsService;
 import net.bir.util.WebUtils;
