@@ -6,6 +6,7 @@ import java.util.Map;
 import java.util.Set;
 
 import com.betfair.aping.entities.Event;
+import com.betfair.aping.entities.EventResult;
 import com.betfair.aping.entities.EventTypeResult;
 import com.betfair.aping.entities.MarketBook;
 import com.betfair.aping.entities.MarketCatalogue;
@@ -33,7 +34,7 @@ public abstract class ApiNgOperations {
 
 	public abstract List<EventTypeResult> listEventTypes(MarketFilter filter, String appKey, String ssoId) throws APINGException;
 
-	public abstract  List<Event> listEvents(MarketFilter filter, MarketSort sort,String maxResult,
+	public abstract  List<EventResult> listEvents(MarketFilter filter, MarketSort sort,String maxResult,
 			 String appKey, 
 			 String ssoId)
 			throws APINGException;

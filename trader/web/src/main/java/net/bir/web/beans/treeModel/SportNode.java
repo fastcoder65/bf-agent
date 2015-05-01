@@ -11,17 +11,17 @@ import net.bir.web.beans.treeModel.EventNode.StringKey;
 import org.richfaces.model.TreeNode;
 
 import com.betfair.aping.entities.EventType;
-// import generated.global.BFGlobalServiceStub.EventType;
+
 
 @SuppressWarnings("rawtypes")
-public class SportNode extends Entry  implements TreeNode {
+public class SportNode extends Entry implements TreeNode {
 
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = -6635293645813230420L;
 	private TreeNode parent;
-	
+
 	public SportNode(int id, String name) {
 		this.id = id;
 		this.name = name;
@@ -31,7 +31,8 @@ public class SportNode extends Entry  implements TreeNode {
 
 	public int getId() {
 		if (id == 0L)
-		id = (this.eventType == null ? id : Integer.valueOf(this.eventType.getId()));
+			id = (this.eventType == null ? id : Integer.valueOf(this.eventType
+					.getId()));
 		return id;
 	}
 
@@ -52,7 +53,7 @@ public class SportNode extends Entry  implements TreeNode {
 	}
 
 	public String getName() {
-		name = (this.eventType == null? name : this.eventType.getName());
+		name = (this.eventType == null ? name : this.eventType.getName());
 		return name;
 	}
 
@@ -72,7 +73,7 @@ public class SportNode extends Entry  implements TreeNode {
 	private transient EventType eventType;
 
 	public Map<Object, TreeNode> getEventTypes() {
-	//	System.out.println ("eventTypes.size()=" + eventTypes.size());
+		// System.out.println ("eventTypes.size()=" + eventTypes.size());
 		return eventTypes;
 	}
 
@@ -80,18 +81,20 @@ public class SportNode extends Entry  implements TreeNode {
 		this.eventTypes = eventTypes;
 	}
 
-    private transient Map<Object, TreeNode> eventTypes;{
-        eventTypes = new HashMap<Object, TreeNode>();
-    }
+	private transient Map<Object, TreeNode> eventTypes;
+	{
+		eventTypes = new HashMap<Object, TreeNode>();
+	}
 
-//	private Map<Object, TreeNode> events = new HashMap<Object, TreeNode>();
+	// private Map<Object, TreeNode> events = new HashMap<Object, TreeNode>();
 
-    private transient Map<Object, TreeNode> events;{
-        events = new LinkedHashMap<Object, TreeNode>();
-    }
+	private transient Map<Object, TreeNode> events;
+	{
+		events = new LinkedHashMap<Object, TreeNode>();
+	}
 
-    public Map<Object, TreeNode> getEvents() {
-		// System.out.println("events.size()" + events.size());
+	public Map<Object, TreeNode> getEvents() {
+	//	System.out.println("getEvents() - events.size()" + events.size());
 		return events;
 	}
 
@@ -99,30 +102,47 @@ public class SportNode extends Entry  implements TreeNode {
 		this.events = events;
 	}
 
-/*	@Override
-	public void addChild(Object identifier, TreeNode child) {
-		events.put(identifier, child);
+	private transient Map<Object, TreeNode> groups;
+	{
+		groups = new LinkedHashMap<Object, TreeNode>();
 	}
-*/
+
+	public Map<Object, TreeNode> getGroups() {
+		System.out.println("getGroups - groups.size()" + groups.size());
+		return groups;
+	}
+
+	public void setGroups(Map<Object, TreeNode> groups) {
+		this.groups = groups;
+	}
+
+
+	/*
+	 * @Override public void addChild(Object identifier, TreeNode child) {
+	 * events.put(identifier, child); }
+	 */
+	
 	public void addChild(Object id, TreeNode child) {
-		 if (child instanceof EventNode) {
-			 events.put(id, child);
-		 } 
-		 if (child instanceof SportNode) {
-			 eventTypes.put(id, child);
-		 }
+		// System.out.println("child: " + child);
+
+		if (child instanceof EventNode) {
+			events.put(id, child);
+			System.out.println("addChild - events.size(): " + events.size());
+		}
+		if (child instanceof SportNode) {
+			eventTypes.put(id, child);
+			System.out.println("addChild - eventTypes.size(): " + eventTypes.size());
 		}
 
+	}
 
 	public TreeNode getChild(Object id) {
 		return events.get(id);
 	}
 
-
 	public Iterator getChildren() {
 		return events.entrySet().iterator();
 	}
-
 
 	public Object getData() {
 		return eventType;
@@ -130,30 +150,24 @@ public class SportNode extends Entry  implements TreeNode {
 
 	@Override
 	public SportNode getParent() {
-		return (SportNode)parent;
+		return (SportNode) parent;
 	}
-
 
 	public boolean isLeaf() {
 		return events.isEmpty();
 	}
 
-
 	public void removeChild(Object id) {
 		events.remove(id);
 	}
 
-	
 	public void setData(Object arg0) {
 	}
 
-	
 	public void setParent(TreeNode node) {
 		this.parent = node;
-
 	}
 
-   
 	private transient Object state;
 
 	public Object getState() {
@@ -166,12 +180,12 @@ public class SportNode extends Entry  implements TreeNode {
 
 	public void addEvent(EventNode event) {
 		addChild(new StringKey(MarketBean.NT_EVENT + event.getId()), event);
-		event.setParent((TreeNode)this);
+		event.setParent((TreeNode) this);
 	}
 
 	public void addSport(SportNode sport) {
 		addChild(new StringKey(MarketBean.NT_SPORT + sport.getId()), sport);
-		sport.setParent((TreeNode)this);
+		sport.setParent((TreeNode) this);
 	}
 
 	@Override
@@ -181,13 +195,11 @@ public class SportNode extends Entry  implements TreeNode {
 		} else {
 			addSport((SportNode) entry);
 		}
-		
 	}
 
 	@Override
 	public void removeEntry(Entry entry) {
 		// TODO Auto-generated method stub
-		
 	}
 
 	@Override
@@ -197,10 +209,7 @@ public class SportNode extends Entry  implements TreeNode {
 	}
 
 	/*
-	@Override
-	public String toString() {
-		return getName();
-	}
-	*/
+	 * @Override public String toString() { return getName(); }
+	 */
 
 }

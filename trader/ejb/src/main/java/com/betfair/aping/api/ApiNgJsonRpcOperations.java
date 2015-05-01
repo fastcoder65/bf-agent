@@ -73,7 +73,7 @@ public class ApiNgJsonRpcOperations extends ApiNgOperations {
 
 	}
 
-	public List<Event> listEvents(MarketFilter filter, MarketSort sort,String maxResult,
+	public List<EventResult> listEvents(MarketFilter filter, MarketSort sort,String maxResult,
 			 String appKey, 
 			 String ssoId
 			 )

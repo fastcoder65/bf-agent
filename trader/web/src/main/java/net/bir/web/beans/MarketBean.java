@@ -52,7 +52,7 @@ import org.richfaces.model.TreeNode;
 import org.richfaces.model.TreeRowKey;
 import org.richfaces.model.selection.SimpleSelection;
 
-import com.betfair.aping.entities.Event;
+import com.betfair.aping.entities.EventResult;
 import com.betfair.aping.entities.EventTypeResult;
 import com.betfair.aping.exceptions.APINGException;
 
@@ -92,13 +92,16 @@ public class MarketBean extends BaseBean {
 
 	@PreDestroy
 	public void destroy() {
+		logout();
 		scheduler.shutdownNow();
 	}
 
 	public void logout () {
+		if (apiContext != null)
 		try {
 			String exLogin = currentUser.getExLoginDec();
 			GlobalAPI.logout(apiContext);
+			apiContext = null;
 			getLog().info("Uzer " + exLogin + " log out.");
 		} catch (Exception e) {
 			getLog().log(Level.SEVERE, "Logout failed ", e);		
@@ -260,7 +263,7 @@ public class MarketBean extends BaseBean {
 					}
 					getLog().info("eventIds.size()= " + eventIds.size());
 
-					List<Event> listEvents = GlobalAPI.getEvents(apiContext,
+					List<EventResult> listEvents = GlobalAPI.getEvents(apiContext,
 							eventTypeIds, eventIds);
 
 					/*
@@ -276,17 +279,17 @@ public class MarketBean extends BaseBean {
 						getLog().info(
 								"## listEvents.size()= " + listEvents.size());
 						int i = 0;
-						for (Event bfEvent : listEvents) {
+						for (EventResult bfEvent : listEvents) {
 							i++;
 							log.info(i + ")");
 
-							if (bfEvent != null && bfEvent.getId() != null
-									&& bfEvent.getId().trim().length() > 0) {
+							if (bfEvent != null && bfEvent.getEvent().getId() != null
+									&& bfEvent.getEvent().getId().trim().length() > 0) {
 
 								getLog().info(
-										i + ") " + "sportEvent: " + bfEvent);
+										i + ") " + "sportEvent: " + bfEvent.getEvent());
 
-								EventNode sportEvent = new EventNode(bfEvent);
+								EventNode sportEvent = new EventNode(bfEvent.getEvent());
 
 								if (sportNode != null)
 									sportNode.addEntry(sportEvent);
@@ -316,6 +319,9 @@ public class MarketBean extends BaseBean {
 	public static final String NT_SPORT = "S-";
 	public static final String NT_EVENT = "E-";
 	public static final String NT_MARKET = "M-";
+	public static final String NT_GROUP = "G-";
+	public static final String NT_COMPETITION = "C-";
+	public static final String NT_RACE = "R-";
 
 	@SuppressWarnings("rawtypes")
 	public Map<Object, TreeNode> getSportNodes() throws APINGException {

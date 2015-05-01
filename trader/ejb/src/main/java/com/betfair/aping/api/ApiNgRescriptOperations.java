@@ -59,7 +59,7 @@ public class ApiNgRescriptOperations extends ApiNgOperations {
 
     }
     
-	public  List<Event> listEvents(MarketFilter filter, MarketSort sort,String maxResult,
+	public  List<EventResult> listEvents(MarketFilter filter, MarketSort sort,String maxResult,
 			 String appKey, 
 			 String ssoId)
 			throws APINGException {
@@ -70,7 +70,7 @@ public class ApiNgRescriptOperations extends ApiNgOperations {
         if(ApiNGDemo.isDebug())
             System.out.println("\nResponse: "+result);
 
-        List<Event> container = JsonConverter.convertFromJson(result, new TypeToken<List<EventTypeResult>>() {}.getType());
+        List<EventResult> container = JsonConverter.convertFromJson(result, new TypeToken<List<EventTypeResult>>() {}.getType());
 
         return container;
 		
