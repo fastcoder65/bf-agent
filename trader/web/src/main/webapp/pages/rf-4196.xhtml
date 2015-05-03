@@ -1,0 +1,54 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+          "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:rich="http://labs.jboss.com/jbossrichfaces/ui/tree"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:dnd="http://labs.jboss.com/jbossrichfaces/ui/drag-drop">
+
+	<head>
+		<title></title>
+	</head>
+	<body>
+		<f:view>
+			<a4j:status startText="...start..." stopText="stopped" />
+			
+			<h:form>
+				ajaxChildActivationEncodeBehavior: 
+				<h:selectOneMenu value="#{bean.ajaxChildActivationEncodeBehavior}">
+					<f:selectItem itemLabel="default" itemValue=""/>
+					<f:selectItem itemLabel="none" itemValue="none"/>
+					<f:selectItem itemLabel="node" itemValue="node"/>
+					<f:selectItem itemLabel="subtree" itemValue="subtree"/>
+				</h:selectOneMenu><br />
+				
+				ajaxNodeSelectionEncodeBehavior:
+				<h:selectOneMenu value="#{bean.ajaxNodeSelectionEncodeBehavior}">
+					<f:selectItem itemLabel="default" itemValue=""/>
+					<f:selectItem itemLabel="none" itemValue="none"/>
+					<f:selectItem itemLabel="node" itemValue="node"/>
+					<f:selectItem itemLabel="subtree" itemValue="subtree"/>
+				</h:selectOneMenu><br />
+				<h:commandButton value="Apply" />
+			</h:form>
+			
+			<h:form>
+				<rich:tree ajaxNodeSelectionEncodeBehavior="#{bean.ajaxNodeSelectionEncodeBehavior}"
+				ajaxChildActivationEncodeBehavior="#{bean.ajaxChildActivationEncodeBehavior}"
+				ajaxSubmitSelection="true" binding="#{rf4196.tree}" value="#{bean.data}" var="item" switchType="ajax">
+					<rich:treeNode>
+						<h:outputText escape="false" value="#{item} &lt; style='color: red;'&gt;#{bean.requestCounter}&lt;/b&gt; Re-render: " />
+						<a4j:commandLink value="Default" /> /
+						<a4j:commandLink value="Node" action="#{rf4196.rerenderNode}" /> / 				
+						<a4j:commandLink value="Subtree" action="#{rf4196.rerenderSubtree}" />				
+					</rich:treeNode>
+				</rich:tree>
+				
+				<a4j:commandLink value="Re-render tree root node" action="#{rf4196.rerenderRoot}" />
+			</h:form>
+		</f:view>
+	</body>
+</html>

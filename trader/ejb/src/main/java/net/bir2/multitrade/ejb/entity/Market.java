@@ -21,6 +21,8 @@ import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 import javax.persistence.Transient;
 
+import org.hibernate.Hibernate;
+
 /**
  * Entity implementation class for Entity: Market
  */
@@ -43,13 +45,13 @@ public class Market implements java.io.Serializable {
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private long id;
 
-	private long marketId;
+	private String marketId;
 
-	public long getMarketId() {
+	public String getMarketId() {
 		return marketId;
 	}
 
-	public void setMarketId(long marketId) {
+	public void setMarketId(String marketId) {
 		this.marketId = marketId;
 	}
 
@@ -119,13 +121,15 @@ public class Market implements java.io.Serializable {
 
 	@OneToMany(mappedBy = "market", cascade = CascadeType.MERGE)
 	// fetch = FetchType.EAGER,
-	private Set<Runner> runners = new HashSet<Runner>(20);
+	private Set<Runner> runners = new HashSet<Runner>();
 
 	public Set<Runner> getRunners() {
+/*		
 		String runnersInfo = "Market: "
 				+ (runners == null ? "runners is null" : "runners.size()="
 						+ runners.size());
 		log.info(runnersInfo);
+*/		
 		return runners;
 	}
 
@@ -356,179 +360,15 @@ public class Market implements java.io.Serializable {
 				+ runnersMayBeAdded + ", timeZone=" + timeZone + ']';
 	}
 
-	@Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result
-				+ ((asianLineId == null) ? 0 : asianLineId.hashCode());
-		result = prime * result + (canTurnInplay ? 1231 : 1237);
-		result = prime * result + ((country == null) ? 0 : country.hashCode());
-		result = prime * result + delay;
-		result = prime * result + eventTypeId;
-		result = prime * result
-				+ ((exchange == null) ? 0 : exchange.hashCode());
-		result = prime * result
-				+ ((handicap == null) ? 0 : handicap.hashCode());
-		result = prime * result + (int) (id ^ (id >>> 32));
-		result = prime
-				* result
-				+ ((marketDescription == null) ? 0 : marketDescription
-						.hashCode());
-		result = prime
-				* result
-				+ ((marketDisplayTime == null) ? 0 : marketDisplayTime
-						.hashCode());
-		result = prime * result + (int) (marketId ^ (marketId >>> 32));
-		result = prime * result
-				+ ((marketInfo == null) ? 0 : marketInfo.hashCode());
-		result = prime * result
-				+ ((marketStatus == null) ? 0 : marketStatus.hashCode());
-		result = prime * result
-				+ ((marketTime == null) ? 0 : marketTime.hashCode());
-		result = prime * result
-				+ ((marketType == null) ? 0 : marketType.hashCode());
-		result = prime * result
-				+ ((menuPath == null) ? 0 : menuPath.hashCode());
-		result = prime * result + ((name == null) ? 0 : name.hashCode());
-		result = prime * result
-				+ ((noOfWinners == null) ? 0 : noOfWinners.hashCode());
-		result = prime * result + numberOfWinners;
-		result = prime * result
-				+ ((parentEventId == null) ? 0 : parentEventId.hashCode());
-		result = prime * result
-				+ ((removedRunners == null) ? 0 : removedRunners.hashCode());
-		result = prime * result + ((runners == null) ? 0 : runners.hashCode());
-		result = prime
-				* result
-				+ ((runnersMayBeAdded == null) ? 0 : runnersMayBeAdded
-						.hashCode());
-		result = prime * result
-				+ ((timeZone == null) ? 0 : timeZone.hashCode());
-		return result;
-	}
-
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (obj == null)
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
-		Market other = (Market) obj;
-		if (asianLineId == null) {
-			if (other.asianLineId != null)
-				return false;
-		} else if (!asianLineId.equals(other.asianLineId))
-			return false;
-		if (canTurnInplay != other.canTurnInplay)
-			return false;
-		if (country == null) {
-			if (other.country != null)
-				return false;
-		} else if (!country.equals(other.country))
-			return false;
-		if (delay != other.delay)
-			return false;
-		if (eventTypeId != other.eventTypeId)
-			return false;
-		if (exchange == null) {
-			if (other.exchange != null)
-				return false;
-		} else if (!exchange.equals(other.exchange))
-			return false;
-		if (handicap == null) {
-			if (other.handicap != null)
-				return false;
-		} else if (!handicap.equals(other.handicap))
-			return false;
-		if (id != other.id)
-			return false;
-		if (marketDescription == null) {
-			if (other.marketDescription != null)
-				return false;
-		} else if (!marketDescription.equals(other.marketDescription))
-			return false;
-		if (marketDisplayTime == null) {
-			if (other.marketDisplayTime != null)
-				return false;
-		} else if (!marketDisplayTime.equals(other.marketDisplayTime))
-			return false;
-		if (marketId != other.marketId)
-			return false;
-		if (marketInfo == null) {
-			if (other.marketInfo != null)
-				return false;
-		} else if (!marketInfo.equals(other.marketInfo))
-			return false;
-		if (marketStatus == null) {
-			if (other.marketStatus != null)
-				return false;
-		} else if (!marketStatus.equals(other.marketStatus))
-			return false;
-		if (marketTime == null) {
-			if (other.marketTime != null)
-				return false;
-		} else if (!marketTime.equals(other.marketTime))
-			return false;
-		if (marketType == null) {
-			if (other.marketType != null)
-				return false;
-		} else if (!marketType.equals(other.marketType))
-			return false;
-		if (menuPath == null) {
-			if (other.menuPath != null)
-				return false;
-		} else if (!menuPath.equals(other.menuPath))
-			return false;
-		if (name == null) {
-			if (other.name != null)
-				return false;
-		} else if (!name.equals(other.name))
-			return false;
-		if (noOfWinners == null) {
-			if (other.noOfWinners != null)
-				return false;
-		} else if (!noOfWinners.equals(other.noOfWinners))
-			return false;
-		if (numberOfWinners != other.numberOfWinners)
-			return false;
-		if (parentEventId == null) {
-			if (other.parentEventId != null)
-				return false;
-		} else if (!parentEventId.equals(other.parentEventId))
-			return false;
-		if (removedRunners == null) {
-			if (other.removedRunners != null)
-				return false;
-		} else if (!removedRunners.equals(other.removedRunners))
-			return false;
-		if (runners == null) {
-			if (other.runners != null)
-				return false;
-		} else if (!runners.equals(other.runners))
-			return false;
-		if (runnersMayBeAdded == null) {
-			if (other.runnersMayBeAdded != null)
-				return false;
-		} else if (!runnersMayBeAdded.equals(other.runnersMayBeAdded))
-			return false;
-		if (timeZone == null) {
-			if (other.timeZone != null)
-				return false;
-		} else if (!timeZone.equals(other.timeZone))
-			return false;
-		return true;
-	}
-
 	@TransactionAttribute(TransactionAttributeType.REQUIRED)
 	public Market prefetchAll() {
-		log.fine("" + this.getRunners().size());
+		Hibernate.initialize(this.getMarket4Users());
+		Hibernate.initialize(this.getRunners());
+		if (this.getRunners() != null)
 		for (Runner runner : this.getRunners()) {
 			runner.getId();
 
-			log.fine(new StringBuilder(100)
+			log.info(new StringBuilder(100)
 					.append(MessageFormat.format(
 							"{0}, runner.getRunner4Users().size()=", runner))
 					.append(runner.getRunner4Users().size()).toString());

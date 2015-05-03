@@ -16,9 +16,6 @@ import com.betfair.aping.entities.Event;
 @SuppressWarnings("rawtypes")
 public class EventNode extends Entry implements TreeNode {
 	
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 9220676792064698125L;
 
 	private transient  TreeNode parent;
@@ -37,19 +34,18 @@ public class EventNode extends Entry implements TreeNode {
 	}
 
 	public EventNode(Event event) {
-		super();
+		this.setId(event.getId());
+		this.setName(event.getName());
 		this.event = event;
 	}
 
 	public EventNode(Event event,  TreeNode parent) {
-		super();
-		this.event = event;
+		this(event);
 		this.parent = parent;
 	}
 
-	public int getId() {
-	    super.setId(Integer.valueOf(this.event.getId()));
-		return super.getId();
+	public String getId() {
+		return id;
 	}
 
 	private String type= "event";
@@ -59,10 +55,9 @@ public class EventNode extends Entry implements TreeNode {
 	}
 	
 	public static final DateFormat df = new SimpleDateFormat("HH:mm");
+
 	public String getName() {
-//		String eventDate = (this.event.getStartTime() == null? "" : df.format(this.event.getStartTime() .getTime()));
-		super.setName(this.event.getName());
-		return super.getName();
+		return name;
 	}
 
 
@@ -93,13 +88,15 @@ public class EventNode extends Entry implements TreeNode {
 
 
 	public void addChild(Object id, TreeNode child) {
+
 	 if (child instanceof EventNode) {
 		 events.put(id, child);
 	 } 
+
 	 if (child instanceof MarketNode) {
 		 markets.put(id, child);
-		 // markets.
 	 }
+
 	}
 
 	
@@ -140,12 +137,6 @@ public class EventNode extends Entry implements TreeNode {
 	public void setParent(TreeNode node) {
 		this.parent = node;
 	}
-/*
-	@Override
-	public String toString() {
-		return getName();
-	}
-*/
 	
 	public void addEvent(EventNode event) {
 		addChild(new StringKey(MarketBean.NT_EVENT + event.getPath()), event);
@@ -158,15 +149,13 @@ public class EventNode extends Entry implements TreeNode {
 	}
 
 	public void addMarket(MarketNode market) {
-		String sKey = MarketBean.NT_MARKET + market.getMarket().getOrderIndex();
-	//	System.out.println ("sKey=" + sKey);
+		String sKey = MarketBean.NT_MARKET + market.getMarket().getMarketId();
 		addChild(new StringKey(sKey), market);
 		market.setParent((TreeNode)this);
 	}
 	
 	@Override
 	public void addEntry(Entry entry) {
-		// TODO Auto-generated method stub
 		if (entry instanceof EventNode) {
 			addEvent((EventNode) entry);
 		} else {
@@ -182,9 +171,7 @@ public class EventNode extends Entry implements TreeNode {
 	}
 
 	public static class StringKey implements Serializable, Comparable<StringKey> {
-	    /**
-		 * 
-		 */
+
 		private static final long serialVersionUID = 1L;
 		private String s;
 	    
@@ -225,7 +212,6 @@ public class EventNode extends Entry implements TreeNode {
 
 		@Override
 		public int compareTo(StringKey sk) {
-			// TODO Auto-generated method stub
 			return this.s.compareTo(sk.s);
 		}
 	}

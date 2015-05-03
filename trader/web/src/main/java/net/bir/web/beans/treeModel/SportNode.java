@@ -16,27 +16,21 @@ import com.betfair.aping.entities.EventType;
 @SuppressWarnings("rawtypes")
 public class SportNode extends Entry implements TreeNode {
 
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = -6635293645813230420L;
+	private static final long serialVersionUID = 1L;
 	private TreeNode parent;
 
-	public SportNode(int id, String name) {
+	public SportNode(String id, String name) {
 		this.id = id;
 		this.name = name;
 	}
 
-	private int id;
+	private String id;
 
-	public int getId() {
-		if (id == 0L)
-			id = (this.eventType == null ? id : Integer.valueOf(this.eventType
-					.getId()));
+	public String getId() {
 		return id;
 	}
 
-	public void setId(int id) {
+	public void setId(String id) {
 		this.id = id;
 	}
 
@@ -58,7 +52,10 @@ public class SportNode extends Entry implements TreeNode {
 	}
 
 	public SportNode(EventType eventType) {
-		super();
+		this.setId(eventType.getId());
+		System.out.println("SportNode construct -eventType.getName() " + eventType.getName());
+		this.setName(eventType.getName());
+		
 		this.eventType = eventType;
 	}
 
@@ -86,15 +83,12 @@ public class SportNode extends Entry implements TreeNode {
 		eventTypes = new HashMap<Object, TreeNode>();
 	}
 
-	// private Map<Object, TreeNode> events = new HashMap<Object, TreeNode>();
-
 	private transient Map<Object, TreeNode> events;
 	{
 		events = new LinkedHashMap<Object, TreeNode>();
 	}
 
 	public Map<Object, TreeNode> getEvents() {
-	//	System.out.println("getEvents() - events.size()" + events.size());
 		return events;
 	}
 
@@ -184,6 +178,7 @@ public class SportNode extends Entry implements TreeNode {
 	}
 
 	public void addSport(SportNode sport) {
+		System.out.println("sport: " + sport);
 		addChild(new StringKey(MarketBean.NT_SPORT + sport.getId()), sport);
 		sport.setParent((TreeNode) this);
 	}

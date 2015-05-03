@@ -8,6 +8,17 @@ public class MarketCatalogue {
 	private String marketName;
 	private MarketDescription description;
 	private List<RunnerCatalog> runners = null;
+	/*
+	private Date marketStartTime;
+	
+	public Date getMarketStartTime() {
+		return marketStartTime;
+	}
+
+	public void setMarketStartTime(Date marketStartTime) {
+		this.marketStartTime = marketStartTime;
+	}
+*/
 	private EventType eventType;
 	private Competition competition;
 	private Event event;

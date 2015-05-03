@@ -144,7 +144,7 @@ public class MarketServiceBean implements MarketService {
 	}
 
 	@SuppressWarnings("unchecked")
-	public List<Runner> listRunners(long marketId) {
+	public List<Runner> listRunners(String marketId) {
 		List<Runner> result;
 		result = em.createQuery(
 				" FROM Runner r where r.market.marketId = :marketId ")
@@ -171,17 +171,18 @@ public class MarketServiceBean implements MarketService {
 		return em.find(Market.class, id);
 	}
 
-	public Market getMarketByMarketId(long marketId) {
+	public Market getMarketByMarketId(String marketId) {
 		Market result = (Market) em.createNamedQuery("MarketByMarketId")
 				.setParameter("marketId", marketId).getSingleResult();
 		result.prefetchAll();
 		return result;
 	}
 
-	public boolean isMarketAlreadyExistsByMarketId(long marketId) {
+	public boolean isMarketAlreadyExistsByMarketId(String marketId) {
 		long count = (Long) em.createNamedQuery("MarketCountByMarketId")
 				.setParameter("marketId", marketId).getSingleResult();
-		return (count == 1);
+		log.info("isMarketAlreadyExistsByMarketId - count:" + count);
+		return (count > 0);
 	}
 
 	// "MarketByMarketId"

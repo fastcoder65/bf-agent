@@ -11,10 +11,10 @@ public interface ShedulerActivity {
 	 void create () throws Exception; 
 	 void destroy () throws Exception; 
 
-	 Map<Long, Market> getActiveMarkets();
-	 void setActiveMarkets(Map<Long, Market> activeMarkets);
-	 Market getActiveMarket(Long marketId);
-	 void setActiveMarket(Long marketId, Market market);
+	 Map<String, Market> getActiveMarkets();
+	 void setActiveMarkets(Map<String, Market> activeMarkets);
+	 Market getActiveMarket(String marketId);
+	 void setActiveMarket(String marketId, Market market);
 	 void updateUserMarkets();
 	 Map<String, Uzer> getActiveUsers();
 	 boolean add2ActiveUsers(String login, Uzer uzer);

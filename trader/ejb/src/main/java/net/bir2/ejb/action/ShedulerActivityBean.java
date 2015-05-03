@@ -57,17 +57,18 @@ public class ShedulerActivityBean implements ShedulerActivity {
 		this.activeUsers = activeUsers;
 	}
 
-	private Map<Long, Market> activeMarkets = new ConcurrentHashMap<Long, Market>();
+	private Map<String, Market> activeMarkets = new ConcurrentHashMap<String, Market>();
 
-	public Map<Long, Market> getActiveMarkets() {
+
+	public Map<String, Market> getActiveMarkets() {
 		return activeMarkets;
 	}
 
-	public void setActiveMarkets(Map<Long, Market> activeMarkets) {
+	public void setActiveMarkets(Map<String, Market> activeMarkets) {
 		this.activeMarkets = activeMarkets;
 	}
 
-	public Market getActiveMarket(Long marketId) {
+	public Market getActiveMarket(String marketId) {
 		Market result = null;
 		try {
 			result = activeMarkets.get(marketId);
@@ -77,7 +78,7 @@ public class ShedulerActivityBean implements ShedulerActivity {
 		return result;
 	}
 
-	public void setActiveMarket(Long marketId, Market market) {
+	public void setActiveMarket(String marketId, Market market) {
 		activeMarkets.put(marketId, market);
 	}
 
@@ -245,7 +246,7 @@ public class ShedulerActivityBean implements ShedulerActivity {
 				turnOffTime.add(Calendar.HOUR, turnOffTimeOffsetHours);
 				turnOffTime.add(Calendar.MINUTE, turnOffTimeOffsetMinutes);
 
-				Long _marketId = market4User.getLinkedMarket().getMarketId();
+				String _marketId = market4User.getLinkedMarket().getMarketId();
 				String marketName = new StringBuilder(100).append(market4User.getLinkedMarket().getMenuPath()).append('/').append(market4User.getLinkedMarket().getName()).toString();
 				log.fine(new StringBuilder(100).append("Market Id=").append(_marketId).append(", Market Name =").append(marketName).append(", turnOnTime=").append(turnOnTime.getTime()).append(", turnOffTime=").append(turnOffTime.getTime()).toString());
 

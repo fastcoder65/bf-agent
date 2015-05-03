@@ -148,7 +148,7 @@ public class SheduleRequestMessageListener implements MessageListener {
 	
 	public static final String UNKNOWN = "UNKNOWN";
 
-	private void actionUpdateMarketStatus(String login, Long marketId) {
+	private void actionUpdateMarketStatus(String login, String marketId) {
 		
 			log.fine(new StringBuilder(100)
 					.append("actionUpdateMarketStatus: login=").append(login)
@@ -244,7 +244,7 @@ public class SheduleRequestMessageListener implements MessageListener {
 
 	}
 
-	private void actionUpdateMarketPrices(String login, Long marketId) {
+	private void actionUpdateMarketPrices(String login, String marketId) {
 
 		Exchange selected_exchange;
 
@@ -1388,7 +1388,7 @@ public class SheduleRequestMessageListener implements MessageListener {
 		String market_id = message.getString(MARKET_ID_PROPERTY);
 		String login = message.getString(LOGIN_PROPERTY);
 
-		Long marketId = market_id == null ? null : Long.valueOf(market_id);
+		//Long marketId = market_id == null ? null : Long.valueOf(market_id);
 
 		if (act_name == null) {
 			log.severe("Unknown action!");
@@ -1417,13 +1417,13 @@ public class SheduleRequestMessageListener implements MessageListener {
 			}
 
 			case UPDATE_MARKET: {
-				actionUpdateMarketStatus(login, marketId);
+				actionUpdateMarketStatus(login, market_id);
 				// doUpdateMarketStatus(login, marketId);
 				break;
 			}
 
 			case UPDATE_MARKET_PRICES: {
-				actionUpdateMarketPrices(login, marketId);
+				actionUpdateMarketPrices(login, market_id);
 				break;
 			}
 			case KEEP_ALIVE: {

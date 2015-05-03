@@ -2,18 +2,18 @@ package net.bir.web.beans.treeModel;
 
 public abstract class Entry {
 	
-	private int id;
+	protected String id;
 	
-	public int getId() {
+	public String getId() {
 		return id;
 	}
 
-	public void setId(int id) {
+	public void setId(String id) {
 		this.id = id;
 	}
 
-	private String name;
-	private Entry parent;
+	protected String name;
+	protected Entry parent;
 	
 	public String getPath() {
 		StringBuffer result = new StringBuffer();

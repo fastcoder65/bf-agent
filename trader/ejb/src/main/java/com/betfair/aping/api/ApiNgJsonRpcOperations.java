@@ -32,7 +32,7 @@ public class ApiNgJsonRpcOperations extends ApiNgOperations {
 	}
 
 	public String keepAlive(String appKey, String ssoId) {
-		
+
 		String result = getInstance().makeKeepAliveRequest(appKey, ssoId);
 		if (ApiNGDemo.isDebug())
 			System.out.println("\nResponse: " + result);
@@ -40,24 +40,24 @@ public class ApiNgJsonRpcOperations extends ApiNgOperations {
 	}
 
 	public String logout(String appKey, String ssoId) {
-		
+
 		String result = getInstance().makeLogoutRequest(appKey, ssoId);
 		if (ApiNGDemo.isDebug())
 			System.out.println("\nResponse: " + result);
-		
+
 		return result;
 	}
 
 	public List<EventTypeResult> listEventTypes(MarketFilter filter,
 			String appKey, String ssoId) throws APINGException {
-	
-		System.out.println ("appKey: " + appKey);
-		System.out.println ("ssoId: " + ssoId);
-		
+
+		System.out.println("appKey: " + appKey);
+		System.out.println("ssoId: " + ssoId);
+
 		Map<String, Object> params = new HashMap<String, Object>();
 		params.put(FILTER, filter);
 		params.put(LOCALE, locale);
-		
+
 		String result = getInstance().makeRequest(
 				ApiNgOperation.LISTEVENTTYPES.getOperationName(), params,
 				appKey, ssoId);
@@ -73,10 +73,8 @@ public class ApiNgJsonRpcOperations extends ApiNgOperations {
 
 	}
 
-	public List<EventResult> listEvents(MarketFilter filter, MarketSort sort,String maxResult,
-			 String appKey, 
-			 String ssoId
-			 )
+	public List<EventResult> listEvents(MarketFilter filter, MarketSort sort,
+			String maxResult, String appKey, String ssoId)
 			throws APINGException {
 		Map<String, Object> params = new HashMap<String, Object>();
 		params.put(LOCALE, locale);
@@ -85,13 +83,14 @@ public class ApiNgJsonRpcOperations extends ApiNgOperations {
 		params.put(MAX_RESULT, maxResult);
 
 		String result = getInstance().makeRequest(
-				ApiNgOperation.LISTEVENTS.getOperationName(), params,
-				appKey, ssoId);
-		
+				ApiNgOperation.LISTEVENTS.getOperationName(), params, appKey,
+				ssoId);
+
 		if (ApiNGDemo.isDebug())
 			System.out.println("\nResponse: " + result);
 
-		ListEventContainer container = JsonConverter.convertFromJson(result, ListEventContainer.class);
+		ListEventContainer container = JsonConverter.convertFromJson(result,
+				ListEventContainer.class);
 
 		if (container.getError() != null)
 			throw container.getError().getData().getAPINGException();
@@ -107,6 +106,11 @@ public class ApiNgJsonRpcOperations extends ApiNgOperations {
 		Map<String, Object> params = new HashMap<String, Object>();
 		params.put(LOCALE, locale);
 		params.put(MARKET_IDS, marketIds);
+		params.put(PRICE_PROJECTION, priceProjection);
+		params.put(ORDER_PROJECTION, orderProjection);
+		params.put(MATCH_PROJECTION, matchProjection);
+		params.put("currencyCode", currencyCode);
+
 		String result = getInstance().makeRequest(
 				ApiNgOperation.LISTMARKETBOOK.getOperationName(), params,
 				appKey, ssoId);
@@ -124,14 +128,16 @@ public class ApiNgJsonRpcOperations extends ApiNgOperations {
 	}
 
 	public List<MarketCatalogue> listMarketCatalogue(MarketFilter filter,
-			Set<MarketProjection> marketProjection, MarketSort sort,String maxResult,
-			 String appKey, String ssoId)
+			Set<MarketProjection> marketProjection, MarketSort sort,
+			String maxResult, String appKey, String ssoId)
 			throws APINGException {
 		Map<String, Object> params = new HashMap<String, Object>();
 		params.put(LOCALE, locale);
 		params.put(FILTER, filter);
 		params.put(SORT, sort);
 		params.put(MAX_RESULT, maxResult);
+		params.put(MARKET_PROJECTION, marketProjection);
+
 		String result = getInstance().makeRequest(
 				ApiNgOperation.LISTMARKETCATALOGUE.getOperationName(), params,
 				appKey, ssoId);
@@ -189,17 +195,18 @@ public class ApiNgJsonRpcOperations extends ApiNgOperations {
 		// We need to pass the "sendPostRequest" method a string in util format:
 		// requestString
 		HttpUtil requester = new HttpUtil();
-		return requester.sendPostRequestJsonRpc(requestString, operation, appKey, ssoToken);
+		return requester.sendPostRequestJsonRpc(requestString, operation,
+				appKey, ssoToken);
 	}
 
 	protected String makeKeepAliveRequest(String appKey, String ssoToken) {
 		HttpUtil requester = new HttpUtil();
-		return requester.sendKeepAlivePostRequest( appKey, ssoToken);
+		return requester.sendKeepAlivePostRequest(appKey, ssoToken);
 	}
 
 	protected String makeLogoutRequest(String appKey, String ssoToken) {
 		HttpUtil requester = new HttpUtil();
-		return requester.sendLogoutRequest( appKey, ssoToken);
+		return requester.sendLogoutRequest(appKey, ssoToken);
 	}
 
 }

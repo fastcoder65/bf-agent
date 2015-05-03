@@ -2,7 +2,7 @@ package net.bir2.multitrade.ejb.entity;
 
 public class Market4UserId implements java.io.Serializable{
 
-	private static final long serialVersionUID = 4530007929898831370L;
+	private static final long serialVersionUID = 1L;
 	private long marketId;
 	private int userId;
 	
@@ -15,6 +15,7 @@ public class Market4UserId implements java.io.Serializable{
 	}
 
 	public Market4UserId() {}
+	
 	public Market4UserId(long marketId, int userId) {
 		super();
 		this.marketId = marketId;

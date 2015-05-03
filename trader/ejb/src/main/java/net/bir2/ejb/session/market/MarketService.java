@@ -20,13 +20,13 @@ public interface MarketService {
 
 	List<Market> getMyActiveMarkets();
 	
-	List<Runner> listRunners(long marketId);
+	List<Runner> listRunners(String marketId);
 
 	Market merge(Market market);
 
 	Market getMarket(long id);
-	Market getMarketByMarketId(long id);
-	boolean isMarketAlreadyExistsByMarketId(long marketId);
+	Market getMarketByMarketId(String marketId);
+	boolean isMarketAlreadyExistsByMarketId(String marketId);
 
 	Runner merge(Runner runner);
 

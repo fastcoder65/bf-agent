@@ -1,0 +1,46 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+          "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:rich="http://labs.jboss.com/jbossrichfaces/ui/tree"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:dnd="http://labs.jboss.com/jbossrichfaces/ui/drag-drop">
+
+	<head>
+		<title></title>
+	</head>
+	<body>
+		<f:view>
+			Try to expand any node. The whole tree should be expanded.
+
+			<h:panelGroup layout="block" id="imageHidden" style="padding: 10px; border: 1px solid navy;">
+				<h:outputLink value="#" onclick="Element.show('imageShown'); Element.hide('imageHidden'); return false;">
+					Click here to see the wrong variant
+				</h:outputLink>
+			</h:panelGroup>
+			<h:panelGroup layout="block" id="imageShown" style="padding: 10px; border: 1px solid navy; display: none;">
+				<h:graphicImage value="../images/rf-3899.png" /><br />
+				<h:outputLink value="#" onclick="Element.hide('imageShown'); Element.show('imageHidden'); return false;">
+					Hide
+				</h:outputLink>
+			</h:panelGroup>
+
+
+			<a4j:outputPanel ajaxRendered="true">
+				<h:messages />
+			</a4j:outputPanel>
+
+			<h:form>
+				<rich:tree value="#{bean.data}" switchType="server" immediate="true" adviseNodeOpened="#{rf3899.adviseNodeOpened}"></rich:tree>
+			</h:form>
+
+			<a4j:status startText="...start..." />
+
+			<a4j:log hotkey="O" />
+
+		</f:view>
+	</body>
+</html>

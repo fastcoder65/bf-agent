@@ -7,6 +7,7 @@ import net.bir2.multitrade.ejb.entity.JPASettings;
 import net.bir2.multitrade.ejb.entity.SystemSettings;
 import net.bir2.multitrade.ejb.entity.Uzer;
 import net.bir.ejb.session.settings.SettingsService;
+
 import net.bir.util.WebUtils;
 
 public class ProfileBean extends BaseBean {

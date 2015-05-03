@@ -19,13 +19,8 @@ import org.hibernate.annotations.Formula;
 @IdClass(Market4UserId.class)
 public class Market4User implements java.io.Serializable {
 
-	private static final long serialVersionUID = -2924500284841132219L;
+	private static final long serialVersionUID = 1L;
 
-	/*
-	private static final Logger log = Logger
-	.getLogger(Market4User.class);
-*/
-	
 	@Transient
 	@Inject
     private Logger log;
@@ -56,9 +51,9 @@ public class Market4User implements java.io.Serializable {
 			Integer turnOffTimeOffsetMinutes, 
 			Double maxLossPerSelection) {
 		
-		this.userId = uzer.getId();
+//		this.userId = uzer.getId();
 		this.linkedUser = uzer;
-		this.marketId = market.getId();
+//		this.marketId = market.getId();
 		this.linkedMarket = market;
 		
 		this.maxLossPerSelection = (uzer.getMaxLossPerSelection() != null ? uzer.getMaxLossPerSelection() : maxLossPerSelection );

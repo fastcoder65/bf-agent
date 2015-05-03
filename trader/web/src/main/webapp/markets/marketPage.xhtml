@@ -13,8 +13,12 @@
 			    <h:outputText value="All markets"/>
 			   </f:facet>
 				<h:panelGrid columns="1">
-			    
-				<a4j:form ajaxSubmit="true" reRender="marketsTree">
+			    <!-- ajaxSubmit="true" reRender="marketsTree" -->
+			    <a4j:outputPanel id="marketsTreePane">
+				<h:form>
+				
+				    <a4j:queue requestDelay="100" ignoreDupResponce="true" />
+						     		
 					<rich:tree id="marketsTree" switchType="client"
 						adviseNodeOpened="#{marketBean.adviseNodeOpened}"
 						ajaxSubmitSelection="true">
@@ -25,7 +29,7 @@
 							<rich:treeNode id="sportItem"
 								icon="images/tree/ftv2folderopen.gif"
 								iconLeaf="images/tree/ftv2folderclosed.gif"
-								reRender="marketsTree"
+								reRender="marketsTreePane"
 								nodeSelectListener="#{marketBean.selectNodeListener}">
 								<h:outputText value="#{sportItem.name}" />
 							</rich:treeNode>
@@ -35,7 +39,7 @@
 								<rich:treeNode id="eventItem"
 									icon="images/tree/ftv2folderopen.gif"
 									iconLeaf="images/tree/ftv2folderclosed.gif"
-									reRender="marketsTree"
+									reRender="marketsTreePane"
 									nodeSelectListener="#{marketBean.selectNodeListener}">
 
 									<h:outputText value="#{eventItem.name}" />
@@ -58,9 +62,12 @@
 							</rich:recursiveTreeNodesAdaptor>
 						</rich:treeNodesAdaptor>
 					</rich:tree>
-				</a4j:form>
+				</h:form>
+				</a4j:outputPanel>
 				</h:panelGrid>
+				
 				</rich:panel>
+
 
 </ui:composition>
 

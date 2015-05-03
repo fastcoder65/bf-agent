@@ -29,8 +29,11 @@
 		</h:panelGrid>
 
 		       <h:panelGrid id="marketControls">
+
 			<a4j:form  id="activeMarketsForm">
-		        			     	
+			
+		     		<a4j:queue requestDelay="100" ignoreDupResponce="true" />
+		     		   			     	
 				<a4j:commandLink reRender="marketRegion,marketMessages,runnerTable"  action="#{marketBean.deleteMarket}"
 					title="Remove market" style="margin-right:20px" >
 				    <h:graphicImage style="border-width:0" value="/images/buttons/ev.delete.jpg" />	

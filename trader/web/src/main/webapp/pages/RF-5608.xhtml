@@ -1,0 +1,70 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+          "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:tree="http://labs.jboss.com/jbossrichfaces/ui/tree"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:dnd="http://labs.jboss.com/jbossrichfaces/ui/drag-drop">
+
+<head>
+
+<title></title>
+</head>
+<body>
+<f:view>
+    <h:form id="f" >
+        <a4j:outputPanel id="op" ajaxRendered="true">
+            <h:messages />
+        </a4j:outputPanel>
+
+        <!-- ajaxSingle="true" -->
+
+        <tree:tree 
+            id="tree" 
+            switchType="client" 
+            ajaxSingle="true"
+            
+            value="#{treeDndBean.treeNodeLeft}"
+            rowKeyVar="key"         
+            var="item"
+            
+            binding="#{treeDndBean.leftTree}"
+            dropListener="#{treeDndBean.onDrop}"
+            dragListener="#{treeDndBean.onDrag}"
+            
+            dragIndicator="treeIndicator"
+            acceptedTypes="treeNode"
+            dragType="treeNode" >
+        </tree:tree>
+    </h:form>
+    
+    <h:form id="f2">
+        <a4j:status startText="...start..." stopText="stopped" />
+    
+        <tree:tree id="tree" value="#{bean.data}" var="item">
+            <tree:treeNode 
+                id="node" 
+                ajaxSubmitSelection="true" 
+                ajaxSingle="false"
+                nodeSelectListener="#{bean.onSelect}"
+                
+                process="text"
+                reRender="text2"
+                >
+                <h:outputText id="item" value="#{item}" />
+            </tree:treeNode>
+        </tree:tree>
+        
+        <h:inputText id="text" value="#{bean.value}" />
+        <h:inputText id="text2" value="#{bean.value}"/>
+        <a4j:region selfRendered="true">
+            <h:inputText id="text3" value="#{bean.value}"/>
+        </a4j:region>
+    </h:form>
+    
+</f:view>
+</body>
+</html>

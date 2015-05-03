@@ -1,7 +1,5 @@
 package net.bir.web.beans;
 
-import generated.global.BFGlobalServiceStub.MarketSummary;
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
@@ -29,8 +27,6 @@ import net.bir.web.beans.treeModel.EventNode;
 import net.bir.web.beans.treeModel.MarketNode;
 import net.bir.web.beans.treeModel.SportNode;
 import net.bir2.ejb.session.market.BaseServiceBean;
-import net.bir2.handler.ExchangeAPI;
-import net.bir2.handler.ExchangeAPI.Exchange;
 import net.bir2.handler.GlobalAPI;
 import net.bir2.multitrade.ejb.entity.JPASettings;
 import net.bir2.multitrade.ejb.entity.Market;
@@ -54,6 +50,13 @@ import org.richfaces.model.selection.SimpleSelection;
 
 import com.betfair.aping.entities.EventResult;
 import com.betfair.aping.entities.EventTypeResult;
+import com.betfair.aping.entities.MarketBook;
+import com.betfair.aping.entities.MarketCatalogue;
+import com.betfair.aping.entities.MarketDescription;
+import com.betfair.aping.entities.PriceProjection;
+import com.betfair.aping.entities.RunnerCatalog;
+import com.betfair.aping.enums.MatchProjection;
+import com.betfair.aping.enums.OrderProjection;
 import com.betfair.aping.exceptions.APINGException;
 
 public class MarketBean extends BaseBean {
@@ -96,18 +99,18 @@ public class MarketBean extends BaseBean {
 		scheduler.shutdownNow();
 	}
 
-	public void logout () {
+	public void logout() {
 		if (apiContext != null)
-		try {
-			String exLogin = currentUser.getExLoginDec();
-			GlobalAPI.logout(apiContext);
-			apiContext = null;
-			getLog().info("Uzer " + exLogin + " log out.");
-		} catch (Exception e) {
-			getLog().log(Level.SEVERE, "Logout failed ", e);		
-		}
+			try {
+				String exLogin = currentUser.getExLoginDec();
+				GlobalAPI.logout(apiContext);
+				apiContext = null;
+				getLog().info("Uzer " + exLogin + " log out.");
+			} catch (Exception e) {
+				getLog().log(Level.SEVERE, "Logout failed ", e);
+			}
 	}
-	
+
 	public APIContext getApiContext() {
 		if (apiContext == null) {
 			apiContext = new APIContext();
@@ -207,7 +210,7 @@ public class MarketBean extends BaseBean {
 		}
 	}
 
-	public void selectNodeListener(NodeSelectedEvent evt) throws APINGException {
+	public synchronized void selectNodeListener(NodeSelectedEvent evt) throws APINGException {
 		getLog().info("* enter to nodeSelectListener, event:" + evt);
 		setPollEnabled(false);
 		Object source = evt.getSource();
@@ -261,10 +264,11 @@ public class MarketBean extends BaseBean {
 					if (eventNode != null) {
 						eventIds.add(String.valueOf(eventNode.getId()));
 					}
+					
 					getLog().info("eventIds.size()= " + eventIds.size());
 
-					List<EventResult> listEvents = GlobalAPI.getEvents(apiContext,
-							eventTypeIds, eventIds);
+					List<EventResult> listEvents = GlobalAPI.getEvents(
+							apiContext, eventTypeIds, eventIds);
 
 					/*
 					 * BFEvent[] bfEvents = resp.getEventItems().getBFEvent() ==
@@ -283,13 +287,17 @@ public class MarketBean extends BaseBean {
 							i++;
 							log.info(i + ")");
 
-							if (bfEvent != null && bfEvent.getEvent().getId() != null
-									&& bfEvent.getEvent().getId().trim().length() > 0) {
+							if (bfEvent != null
+									&& bfEvent.getEvent().getId() != null
+									&& bfEvent.getEvent().getId().trim()
+											.length() > 0) {
 
 								getLog().info(
-										i + ") " + "sportEvent: " + bfEvent.getEvent());
+										i + ") " + "sportEvent: "
+												+ bfEvent.getEvent());
 
-								EventNode sportEvent = new EventNode(bfEvent.getEvent());
+								EventNode sportEvent = new EventNode(
+										bfEvent.getEvent());
 
 								if (sportNode != null)
 									sportNode.addEntry(sportEvent);
@@ -300,14 +308,19 @@ public class MarketBean extends BaseBean {
 							}
 						}
 					}
-					/*
-					 * for (MarketSummary bfMarket : bfMarkets) {
-					 * getLog().fine("\t market:" + bfMarket.getMarketName());
-					 * MarketNode aMarketNode = new MarketNode(bfMarket); if
-					 * (eventNode != null) eventNode.addEntry(aMarketNode); }
-					 */
-					// Collections.sort(eventNode.getMarkets(), new
-					// MarketNode.MarketNodeComparator());
+					
+					List<MarketCatalogue> listMarkets = GlobalAPI.getMarkets( apiContext, eventIds, null);
+							
+					for (MarketCatalogue mc  : listMarkets) {
+						getLog().info("\t market:" + mc.getMarketName());
+						MarketNode aMarketNode = new MarketNode(mc);
+						if (eventNode != null)
+							eventNode.addEntry(aMarketNode);
+					}
+/*
+					 Collections.sort(eventNode.getMarkets(), new
+					 MarketNode.MarketNodeComparator());
+*/					 
 				} catch (Exception e) {
 					getLog().log(Level.SEVERE, "error in selectNodeListener: ",
 							e);
@@ -326,12 +339,16 @@ public class MarketBean extends BaseBean {
 	@SuppressWarnings("rawtypes")
 	public Map<Object, TreeNode> getSportNodes() throws APINGException {
 		if (sports == null) {
-			sports = new SportNode(0, "All sports");
+			sports = new SportNode("0", "All sports");
+			
 			try {
+				int i= 0;
 				for (EventTypeResult et : GlobalAPI
 						.getActiveEventTypes(getApiContext())) {
+					i++;
 					SportNode sport = new SportNode(et.getEventType());
 					sports.addEntry(sport);
+					System.out.println(i+") " + sport);
 				}
 			} catch (Exception e) {
 				getLog().severe(e.getMessage());
@@ -424,7 +441,7 @@ public class MarketBean extends BaseBean {
 		return runners;
 	}
 
-	public void saveOdds(javax.faces.event.ActionEvent event) {
+	public synchronized void saveOdds(javax.faces.event.ActionEvent event) {
 		getLog().fine(
 				"*** saveOdds fired, event: " + event.toString() + ", source:"
 						+ event.getSource().toString());
@@ -485,7 +502,7 @@ public class MarketBean extends BaseBean {
 		return currentUser;
 	}
 
-	public void addToActiveMarkets(javax.faces.event.ActionEvent event) {
+	public synchronized void addToActiveMarkets(javax.faces.event.ActionEvent event) {
 		getLog().info("*** enter to double click event handler ***" + event);
 		UIComponent component = event.getComponent().getParent();
 		getLog().info("component: " + component);
@@ -502,56 +519,87 @@ public class MarketBean extends BaseBean {
 			selectedMarketNode = marketNode;
 			getLog().info("marketNode is:" + marketNode);
 		}
-		synchronized (lock) {
-			add2ActiveMarkets();
-		}
+	//	synchronized (lock) {
+			try {
+				add2ActiveMarkets();
+			} catch (APINGException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+	//	}
 	}
 
-	public void add2ActiveMarkets() {
-		generated.exchange.BFExchangeServiceStub.Market selectedMarket = null;
+	public void add2ActiveMarkets() throws APINGException {
+	//	generated.exchange.BFExchangeServiceStub.Market selectedMarket = null;
 
-		if (selectedMarketNode == null)
+		if (selectedMarketNode == null) {
+			getLog().warning("selectedMarketNode is null!");
 			return;
+		}	
 
 		getLog().info(
 				"adding to selected markets - id: "
 						+ selectedMarketNode.getId() + ", name: "
 						+ selectedMarketNode.getName());
 		setPollEnabled(false);
-		MarketSummary ms = (MarketSummary) selectedMarketNode.getData();
-		Exchange selectedExchange = ms.getExchangeId() == 1 ? Exchange.UK
-				: Exchange.AUS;
-		try {
 
-			selectedMarket = ExchangeAPI.getMarket(selectedExchange,
-					getApiContext(), ((MarketSummary) selectedMarketNode
-							.getData()).getMarketId());
+		MarketCatalogue _mc = (MarketCatalogue) selectedMarketNode.getMarket();
 
-		} catch (Exception e) {
-			getLog().severe(
-					"Error selecting market, messsage:" + e.getMessage());
-		}
+		Set<String> marketIds = new HashSet<String>();
+		marketIds.add(_mc.getMarketId());
+		
+		List<MarketCatalogue> _listMarkets = GlobalAPI.getMarkets( apiContext, null, marketIds);
+		Iterator<MarketCatalogue> mi = _listMarkets.iterator();
 
+		MarketCatalogue mc = (mi.hasNext()?  (MarketCatalogue) mi.next(): null); 
+		getLog().info("MarketCatalogue: " + mc);
+				
+	   MarketDescription md = mc.getDescription();
+	   getLog().info("MarketDescription: " + md);
+
+	   // get marketbook there
+	   List<String>  listMarketIds = new ArrayList<String>();
+	   listMarketIds.add(mc.getMarketId());
+
+	   PriceProjection pp = new PriceProjection();
+	   pp.setVirtualise(false);
+	   
+	   List<MarketBook> listMarketBook = GlobalAPI.listMarketBook
+			   (apiContext,  listMarketIds,
+						pp, OrderProjection.ALL,
+						MatchProjection.NO_ROLLUP, "USD");
+	   
+	   Iterator<MarketBook> mbi = listMarketBook.iterator();
+	   MarketBook mb = ( mbi.hasNext()? mbi.next(): null); 
+	   
 		Uzer currentUser = getMarketService().getCurrentUser();
 		boolean alreadySelected = false;
-		if (selectedMarket != null) {
+		if (mc != null) {
 			alreadySelected = marketService
-					.isMarketAlreadyExistsByMarketId(selectedMarket
-							.getMarketId());
+					.isMarketAlreadyExistsByMarketId(mc.getMarketId());
+							
 		}
+		
 		if (alreadySelected) {
 			getLog().severe("@@ Market already selected!! @@");
 			Market market2add = marketService
-					.getMarketByMarketId(selectedMarket.getMarketId());
+					.getMarketByMarketId(mc.getMarketId());
+			
 			market2add.getMarket4Users().add(
-					new Market4User(currentUser, market2add, getSettings()
+					new Market4User(currentUser, market2add,
+							getSettings()
 							.getSystemSettings().getTurnOnTimeOffsetHours(),
+							
 							getSettings().getSystemSettings()
 									.getTurnOnTimeOffsetMinutes(),
+							
 							getSettings().getSystemSettings()
-									.getTurnOffTimeOffsetHours(), getSettings()
+									.getTurnOffTimeOffsetHours(),
+									
+							getSettings()
 									.getSystemSettings()
 									.getTurnOffTimeOffsetMinutes(),
+									
 							getSettings().getSystemSettings()
 									.getMaxLossPerSelection()));
 
@@ -565,55 +613,53 @@ public class MarketBean extends BaseBean {
 
 		} else {
 			Market market = new Market();
-			market.setName(selectedMarket.getName());
-			market.setCountry(selectedMarket.getCountryISO3());
-			market.setMarketStatus(selectedMarket.getMarketStatus().getValue());
+			market.setName(mc.getMarketName());
+			market.setCountry(mc.getEvent().getCountryCode());
+			
+			market.setMarketStatus(mb.getStatus());
 			// getLog().info(selectedMarket.getMarketDisplayTime().getTime());
-			market.setMarketDisplayTime(selectedMarket.getMarketDisplayTime()
-					.getTime());
-			market.setExchange(ms.getExchangeId());
-			market.setDelay(ms.getBetDelay());
-			market.setMarketId(selectedMarket.getMarketId());
-			// market.setId(selectedMarket.getMarketId());
-			// market.setMarketDescription(selectedMarket.getMarketDescription());
-			market.setMarketTime(selectedMarket.getMarketTime().getTime());
-			market.setNoOfWinners(selectedMarket.getNumberOfWinners());
-			market.setRunnersMayBeAdded(selectedMarket.getRunnersMayBeAdded());
-			market.setMenuPath(selectedMarket.getMenuPath());
-			market.setMarketType(selectedMarket.getMarketType().getValue());
-			market.setTimeZone(selectedMarket.getTimezone());
+			 market.setMarketDisplayTime(md.getMarketTime());
+			 
+			//market.setExchange(mc.getDescription().getRegulator().
+			market.setDelay(mb.getBetDelay());
+			market.setMarketId(mc.getMarketId());
+			
+			//market.setMarketDescription(mc.getDescription().toString());
+			market.setMarketTime(md.getMarketTime());
+			market.setNoOfWinners(mb.getNumberOfWinners()); //selectedMarket.getNumberOfWinners());
+			//market.setRunnersMayBeAdded(m selectedMarket.getRunnersMayBeAdded());
+			// market.setMenuPath(//selectedMarket.getMenuPath());
+			market.setMarketType(md.getMarketType());
+			market.setTimeZone(mc.getEvent().getTimezone());//selectedMarket.getTimezone());
 			market = merge(market);
 			Set<Market4User> market4users = new HashSet<Market4User>();
-
 			Market4User market4User = new Market4User(currentUser, market,
-
-			getSettings().getSystemSettings().getTurnOnTimeOffsetHours(),
-					getSettings().getSystemSettings()
-							.getTurnOnTimeOffsetMinutes(),
-
-					getSettings().getSystemSettings()
-							.getTurnOffTimeOffsetHours(), getSettings()
-							.getSystemSettings().getTurnOffTimeOffsetMinutes(),
-
+			        getSettings().getSystemSettings().getTurnOnTimeOffsetHours(),
+					getSettings().getSystemSettings().getTurnOnTimeOffsetMinutes(),
+					getSettings().getSystemSettings().getTurnOffTimeOffsetHours(), 
+					getSettings().getSystemSettings().getTurnOffTimeOffsetMinutes(),
 					getSettings().getSystemSettings().getMaxLossPerSelection());
 
 			market4User = merge(market4User);
+			
 			market4users.add(market4User);
+			
 			market.setMarket4Users(market4users);
+			
 			market = merge(market);
 
-			generated.exchange.BFExchangeServiceStub.Runner[] runners = selectedMarket
-					.getRunners().getRunner();
+			List<RunnerCatalog> runners = mc.getRunners();
+					//.getRunners().getRunner();
 
 			if (runners != null) {
-				for (generated.exchange.BFExchangeServiceStub.Runner bfRunner : runners) {
+				for (RunnerCatalog rc : runners) {
 					Runner runner = new Runner();
 
-					runner.setSelectionId((long) bfRunner.getSelectionId());
+					runner.setSelectionId((long) rc.getSelectionId());
 					runner.setMarket(market);
-					runner.setName(bfRunner.getName());
-					runner.setHandicap(bfRunner.getHandicap());
-					runner.setAsianLineId(bfRunner.getAsianLineId());
+					runner.setName(rc.getRunnerName());
+					runner.setHandicap(rc.getHandicap()); //bfRunner.getHandicap());
+					//runner.setAsianLineId(rc. bfRunner.getAsianLineId());
 					runner = getMarketService().merge(runner);
 					// System.out.println("==runner " + runner + " merged!");
 					Runner4User r4u = new Runner4User(currentUser, runner);
@@ -626,7 +672,7 @@ public class MarketBean extends BaseBean {
 				}
 			} else {
 				getLog().log(Level.WARNING,
-						selectedMarket.getName() + ": no runners found!");
+						mc.getMarketName() + ": no runners found!");
 			}
 		}
 		setPollEnabled(true);
@@ -846,7 +892,8 @@ public class MarketBean extends BaseBean {
 		public void run() {
 			try {
 				Thread.sleep(1000);
-				log.log(Level.INFO, "call GlobalAPI.keepAlive(" + apiContext+ ")");
+				log.log(Level.INFO, "call GlobalAPI.keepAlive(" + apiContext
+						+ ")");
 				GlobalAPI.keepAlive(apiContext);
 			} catch (Exception e) {
 				log.log(Level.SEVERE, "error on keep-alive request", e);
