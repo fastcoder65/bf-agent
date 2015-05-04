@@ -37,25 +37,16 @@
 		<dependency>
 			<groupId>org.jboss.spec.javax.ejb</groupId>
 			<artifactId>jboss-ejb-api_3.1_spec</artifactId>
-			<scope>provided</scope>
+			
 		</dependency>
-
+		<!-- <dependency> <groupId>javax.el</groupId> <artifactId>el-api</artifactId> 
+			<version>1.0</version> </dependency> <dependency> <groupId>el-impl</groupId> 
+			<artifactId>el-impl</artifactId> <version>1.0</version> </dependency> -->
 		<dependency>
-			<groupId>javax.el</groupId>
-			<artifactId>el-api</artifactId>
-			<version>1.0</version>
-		
+			<groupId>org.jboss.spec.javax.el</groupId>
+			<artifactId>jboss-el-api_2.2_spec</artifactId>
 		</dependency>
-
-		<dependency>
-			<groupId>el-impl</groupId>
-			<artifactId>el-impl</artifactId>
-			<version>1.0</version>
 		
-		</dependency>
-
-		<!-- <dependency> <groupId>org.jboss.spec.javax.el</groupId> <artifactId>jboss-el-api_2.2_spec</artifactId> 
-			</dependency> -->
 		<dependency>
 			<groupId>org.jboss.spec.javax.faces</groupId>
 			<artifactId>jboss-jsf-api_2.1_spec</artifactId>
@@ -83,7 +74,7 @@
 			<artifactId>commons-beanutils</artifactId>
 			<version>1.8.3</version>
 		</dependency>
-		
+
 		<dependency>
 			<groupId>commons-collections</groupId>
 			<artifactId>commons-collections</artifactId>
@@ -137,11 +128,11 @@
 					<exclude>**/*.java</exclude>
 				</excludes>
 			</resource>
-			
+
 			<resource>
 				<directory>src/main/resources</directory>
 			</resource>
-			
+
 		</resources>
 
 		<plugins>

@@ -13,11 +13,11 @@ import org.richfaces.model.TreeNode;
 import com.betfair.aping.entities.EventType;
 
 
-@SuppressWarnings("rawtypes")
-public class SportNode extends Entry implements TreeNode {
+// @SuppressWarnings("rawtypes")
+public class SportNode extends Entry implements TreeNode<EventType> {
 
 	private static final long serialVersionUID = 1L;
-	private TreeNode parent;
+	private TreeNode<EventType> parent;
 
 	public SportNode(String id, String name) {
 		this.id = id;
@@ -138,10 +138,14 @@ public class SportNode extends Entry implements TreeNode {
 		return events.entrySet().iterator();
 	}
 
-	public Object getData() {
+	public EventType getData() {
 		return eventType;
 	}
 
+	public void setData(EventType evtType) {
+		this.eventType = evtType;
+	}
+	
 	@Override
 	public SportNode getParent() {
 		return (SportNode) parent;
