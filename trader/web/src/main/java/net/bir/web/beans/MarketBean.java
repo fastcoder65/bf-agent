@@ -210,7 +210,8 @@ public class MarketBean extends BaseBean {
 		}
 	}
 
-	public synchronized void selectNodeListener(NodeSelectedEvent evt) throws APINGException {
+	public synchronized void selectNodeListener(NodeSelectedEvent evt)
+			throws APINGException {
 		getLog().info("* enter to nodeSelectListener, event:" + evt);
 		setPollEnabled(false);
 		Object source = evt.getSource();
@@ -264,7 +265,7 @@ public class MarketBean extends BaseBean {
 					if (eventNode != null) {
 						eventIds.add(String.valueOf(eventNode.getId()));
 					}
-					
+
 					getLog().info("eventIds.size()= " + eventIds.size());
 
 					List<EventResult> listEvents = GlobalAPI.getEvents(
@@ -308,19 +309,20 @@ public class MarketBean extends BaseBean {
 							}
 						}
 					}
-					
-					List<MarketCatalogue> listMarkets = GlobalAPI.getMarkets( apiContext, eventIds, null);
-							
-					for (MarketCatalogue mc  : listMarkets) {
+
+					List<MarketCatalogue> listMarkets = GlobalAPI.getMarkets(
+							apiContext, eventIds, null);
+
+					for (MarketCatalogue mc : listMarkets) {
 						getLog().info("\t market:" + mc.getMarketName());
 						MarketNode aMarketNode = new MarketNode(mc);
 						if (eventNode != null)
 							eventNode.addEntry(aMarketNode);
 					}
-/*
-					 Collections.sort(eventNode.getMarkets(), new
-					 MarketNode.MarketNodeComparator());
-*/					 
+					/*
+					 * Collections.sort(eventNode.getMarkets(), new
+					 * MarketNode.MarketNodeComparator());
+					 */
 				} catch (Exception e) {
 					getLog().log(Level.SEVERE, "error in selectNodeListener: ",
 							e);
@@ -340,15 +342,15 @@ public class MarketBean extends BaseBean {
 	public Map<Object, TreeNode> getSportNodes() throws APINGException {
 		if (sports == null) {
 			sports = new SportNode("0", "All sports");
-			
+
 			try {
-				int i= 0;
+				int i = 0;
 				for (EventTypeResult et : GlobalAPI
 						.getActiveEventTypes(getApiContext())) {
 					i++;
 					SportNode sport = new SportNode(et.getEventType());
 					sports.addEntry(sport);
-					System.out.println(i+") " + sport);
+					System.out.println(i + ") " + sport);
 				}
 			} catch (Exception e) {
 				getLog().severe(e.getMessage());
@@ -502,7 +504,8 @@ public class MarketBean extends BaseBean {
 		return currentUser;
 	}
 
-	public synchronized void addToActiveMarkets(javax.faces.event.ActionEvent event) {
+	public synchronized void addToActiveMarkets(
+			javax.faces.event.ActionEvent event) {
 		getLog().info("*** enter to double click event handler ***" + event);
 		UIComponent component = event.getComponent().getParent();
 		getLog().info("component: " + component);
@@ -519,23 +522,24 @@ public class MarketBean extends BaseBean {
 			selectedMarketNode = marketNode;
 			getLog().info("marketNode is:" + marketNode);
 		}
-	//	synchronized (lock) {
-			try {
-				add2ActiveMarkets();
-			} catch (APINGException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-	//	}
+		// synchronized (lock) {
+		try {
+			add2ActiveMarkets();
+		} catch (APINGException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		// }
 	}
 
 	public void add2ActiveMarkets() throws APINGException {
-	//	generated.exchange.BFExchangeServiceStub.Market selectedMarket = null;
+		// generated.exchange.BFExchangeServiceStub.Market selectedMarket =
+		// null;
 
 		if (selectedMarketNode == null) {
 			getLog().warning("selectedMarketNode is null!");
 			return;
-		}	
+		}
 
 		getLog().info(
 				"adding to selected markets - id: "
@@ -547,61 +551,60 @@ public class MarketBean extends BaseBean {
 
 		Set<String> marketIds = new HashSet<String>();
 		marketIds.add(_mc.getMarketId());
-		
-		List<MarketCatalogue> _listMarkets = GlobalAPI.getMarkets( apiContext, null, marketIds);
+
+		List<MarketCatalogue> _listMarkets = GlobalAPI.getMarkets(apiContext,
+				null, marketIds);
 		Iterator<MarketCatalogue> mi = _listMarkets.iterator();
 
-		MarketCatalogue mc = (mi.hasNext()?  (MarketCatalogue) mi.next(): null); 
+		MarketCatalogue mc = (mi.hasNext() ? (MarketCatalogue) mi.next() : null);
 		getLog().info("MarketCatalogue: " + mc);
-				
-	   MarketDescription md = mc.getDescription();
-	   getLog().info("MarketDescription: " + md);
 
-	   // get marketbook there
-	   List<String>  listMarketIds = new ArrayList<String>();
-	   listMarketIds.add(mc.getMarketId());
+		MarketDescription md = mc.getDescription();
+		getLog().info("MarketDescription: " + md);
 
-	   PriceProjection pp = new PriceProjection();
-	   pp.setVirtualise(false);
-	   
-	   List<MarketBook> listMarketBook = GlobalAPI.listMarketBook
-			   (apiContext,  listMarketIds,
-						pp, OrderProjection.ALL,
-						MatchProjection.NO_ROLLUP, "USD");
-	   
-	   Iterator<MarketBook> mbi = listMarketBook.iterator();
-	   MarketBook mb = ( mbi.hasNext()? mbi.next(): null); 
-	   
+		// get marketbook there
+		List<String> listMarketIds = new ArrayList<String>();
+		listMarketIds.add(mc.getMarketId());
+
+		PriceProjection pp = new PriceProjection();
+		pp.setVirtualise(false);
+
+		List<MarketBook> listMarketBook = GlobalAPI.listMarketBook(apiContext,
+				listMarketIds, pp, OrderProjection.ALL,
+				MatchProjection.NO_ROLLUP, "USD");
+
+		Iterator<MarketBook> mbi = listMarketBook.iterator();
+		MarketBook mb = (mbi.hasNext() ? mbi.next() : null);
+
 		Uzer currentUser = getMarketService().getCurrentUser();
+
 		boolean alreadySelected = false;
 		if (mc != null) {
-			alreadySelected = marketService
-					.isMarketAlreadyExistsByMarketId(mc.getMarketId());
-							
+			alreadySelected = marketService.isMarketAlreadyExistsByMarketId(mc
+					.getMarketId());
+
 		}
-		
+
 		if (alreadySelected) {
 			getLog().severe("@@ Market already selected!! @@");
-			Market market2add = marketService
-					.getMarketByMarketId(mc.getMarketId());
-			
-			market2add.getMarket4Users().add(
-					new Market4User(currentUser, market2add,
-							getSettings()
+			Market market2add = marketService.getMarketByMarketId(mc
+					.getMarketId());
+
+			market2add
+					.getMarket4Users()
+					.add(new Market4User(currentUser, market2add, getSettings()
 							.getSystemSettings().getTurnOnTimeOffsetHours(),
-							
-							getSettings().getSystemSettings()
-									.getTurnOnTimeOffsetMinutes(),
-							
-							getSettings().getSystemSettings()
-									.getTurnOffTimeOffsetHours(),
-									
-							getSettings()
-									.getSystemSettings()
-									.getTurnOffTimeOffsetMinutes(),
-									
-							getSettings().getSystemSettings()
-									.getMaxLossPerSelection()));
+
+					getSettings().getSystemSettings()
+							.getTurnOnTimeOffsetMinutes(),
+
+					getSettings().getSystemSettings()
+							.getTurnOffTimeOffsetHours(),
+
+					getSettings().getSystemSettings()
+							.getTurnOffTimeOffsetMinutes(),
+
+					getSettings().getSystemSettings().getMaxLossPerSelection()));
 
 			getMarketService().merge(market2add);
 			for (Runner runner : market2add.getRunners()) {
@@ -615,41 +618,59 @@ public class MarketBean extends BaseBean {
 			Market market = new Market();
 			market.setName(mc.getMarketName());
 			market.setCountry(mc.getEvent().getCountryCode());
-			
+
 			market.setMarketStatus(mb.getStatus());
 			// getLog().info(selectedMarket.getMarketDisplayTime().getTime());
-			 market.setMarketDisplayTime(md.getMarketTime());
-			 
-			//market.setExchange(mc.getDescription().getRegulator().
+			market.setMarketDisplayTime(md.getMarketTime());
+
+			// market.setExchange(mc.getDescription().getRegulator().
 			market.setDelay(mb.getBetDelay());
 			market.setMarketId(mc.getMarketId());
-			
-			//market.setMarketDescription(mc.getDescription().toString());
+
+			// market.setMarketDescription(mc.getDescription().toString());
 			market.setMarketTime(md.getMarketTime());
-			market.setNoOfWinners(mb.getNumberOfWinners()); //selectedMarket.getNumberOfWinners());
-			//market.setRunnersMayBeAdded(m selectedMarket.getRunnersMayBeAdded());
+			market.setNoOfWinners(mb.getNumberOfWinners()); // selectedMarket.getNumberOfWinners());
+			// market.setRunnersMayBeAdded(m
+			// selectedMarket.getRunnersMayBeAdded());
 			// market.setMenuPath(//selectedMarket.getMenuPath());
 			market.setMarketType(md.getMarketType());
-			market.setTimeZone(mc.getEvent().getTimezone());//selectedMarket.getTimezone());
+			market.setTimeZone(mc.getEvent().getTimezone());// selectedMarket.getTimezone());
 			market = merge(market);
 			Set<Market4User> market4users = new HashSet<Market4User>();
-			Market4User market4User = new Market4User(currentUser, market,
-			        getSettings().getSystemSettings().getTurnOnTimeOffsetHours(),
-					getSettings().getSystemSettings().getTurnOnTimeOffsetMinutes(),
-					getSettings().getSystemSettings().getTurnOffTimeOffsetHours(), 
-					getSettings().getSystemSettings().getTurnOffTimeOffsetMinutes(),
-					getSettings().getSystemSettings().getMaxLossPerSelection());
 
-			market4User = merge(market4User);
-			
-			market4users.add(market4User);
-			
-			market.setMarket4Users(market4users);
-			
-			market = merge(market);
+			Market4User market4User = null;
+
+			if (currentUser == null || market == null) {
+				if (currentUser == null)
+					log.warning("currentUser is null!");
+
+				if (market == null)
+					log.warning("currentUser is null!");
+
+			} else {
+
+				market4User = new Market4User(currentUser, market,
+						getSettings().getSystemSettings()
+								.getTurnOnTimeOffsetHours(), getSettings()
+								.getSystemSettings()
+								.getTurnOnTimeOffsetMinutes(), getSettings()
+								.getSystemSettings()
+								.getTurnOffTimeOffsetHours(), getSettings()
+								.getSystemSettings()
+								.getTurnOffTimeOffsetMinutes(), getSettings()
+								.getSystemSettings().getMaxLossPerSelection());
+
+				market4User = merge(market4User);
+
+				market4users.add(market4User);
+
+				market.setMarket4Users(market4users);
+
+				market = merge(market);
+			}
 
 			List<RunnerCatalog> runners = mc.getRunners();
-					//.getRunners().getRunner();
+			// .getRunners().getRunner();
 
 			if (runners != null) {
 				for (RunnerCatalog rc : runners) {
@@ -658,8 +679,8 @@ public class MarketBean extends BaseBean {
 					runner.setSelectionId((long) rc.getSelectionId());
 					runner.setMarket(market);
 					runner.setName(rc.getRunnerName());
-					runner.setHandicap(rc.getHandicap()); //bfRunner.getHandicap());
-					//runner.setAsianLineId(rc. bfRunner.getAsianLineId());
+					runner.setHandicap(rc.getHandicap()); // bfRunner.getHandicap());
+					// runner.setAsianLineId(rc. bfRunner.getAsianLineId());
 					runner = getMarketService().merge(runner);
 					// System.out.println("==runner " + runner + " merged!");
 					Runner4User r4u = new Runner4User(currentUser, runner);

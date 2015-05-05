@@ -96,8 +96,10 @@ public class MarketServiceBean implements MarketService {
 	public Uzer getUserByLogin(String userLogin) {
 		Uzer result;
 
-		result = (Uzer) em.createNamedQuery("UserByLogin").setParameter(
-				"login", userLogin).getSingleResult();
+		result = (Uzer) em.createNamedQuery("UserByLogin")
+				.setParameter("login", userLogin)
+				.getSingleResult();
+		
 
 		/*
 		 * org.hibernate.Session session = (org.hibernate.Session)
@@ -109,9 +111,12 @@ public class MarketServiceBean implements MarketService {
 		 * // result.setExLoginDec(decodedLoginPass[0].toString());
 		 * result.setExPasswordDec(decodedLoginPass[1].toString());
 		 */
-		result.setExLoginDec(result.getExLogin());
-		result.setExPasswordDec(result.getExPassword());
 
+		if (result != null) {
+			result.setExLoginDec(result.getExLogin());
+			result.setExPasswordDec(result.getExPassword());
+		}
+		log.info("getUserByLogin - result: " + result);
 		return result;
 	}
 
@@ -173,7 +178,8 @@ public class MarketServiceBean implements MarketService {
 
 	public Market getMarketByMarketId(String marketId) {
 		Market result = (Market) em.createNamedQuery("MarketByMarketId")
-				.setParameter("marketId", marketId).getSingleResult();
+				.setParameter("marketId", marketId)
+				.getSingleResult();
 		result.prefetchAll();
 		return result;
 	}

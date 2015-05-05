@@ -2,10 +2,9 @@ package com.betfair.aping.entities;
 
 import java.util.Date;
 
-public class Event {
+public class Event extends Root {
 
-	private String id;
-	private String name;
+	private static final long serialVersionUID = -6420728416591165012L;
 	private String countryCode;
 	private String timezone;
 	private String venue;
@@ -59,11 +58,12 @@ public class Event {
 		this.openDate = openDate;
 	}
 
+	@Override
 	public String toString() {
-		return "{" + "" + "id=" + getId() + "," + "name=" + getName() + ","
-				+ "countryCode=" + getCountryCode() + "," + "timezone="
-				+ getTimezone() + "," + "venue=" + getVenue() + ","
-				+ "openDate=" + getOpenDate() + "," + "}";
+		return "Event [countryCode=" + countryCode + ", timezone=" + timezone
+				+ ", venue=" + venue + ", openDate=" + openDate + ", id=" + id
+				+ ", name=" + name + ", type=" + type + "]";
 	}
+
 
 }

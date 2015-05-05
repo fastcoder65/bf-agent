@@ -1,6 +1,5 @@
 package net.bir2.multitrade.ejb.entity;
 
-import java.text.MessageFormat;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -8,10 +7,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.logging.Logger;
 
-import javax.ejb.TransactionAttribute;
-import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
-import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -31,9 +27,11 @@ import org.hibernate.Hibernate;
 		@NamedQuery(name = "MarketCountByMarketId", query = "select count(m) FROM Market m where m.marketId = :marketId"),
 		@NamedQuery(name = "MarketByMarketId", query = "select m  FROM Market m where m.marketId = :marketId"),
 		@NamedQuery(name = "MyActiveMarkets", query = "select m FROM Market m join m.market4Users m4u join m4u.linkedUser u  where m.marketStatus <> :marketStatus and u.login = :login") })
+
 // @NamedNativeQuery(name = "MyActiveMarkets", query =
 // "select m.* from market4user m4u join user u on m4u.user_id=u.id join market m on m4u.market_id=m.id where u.login=:login",
 // resultClass = Market.class )
+
 public class Market implements java.io.Serializable {
 
 	// private static final Logger log = Logger.getLogger(Market.class);
@@ -79,8 +77,7 @@ public class Market implements java.io.Serializable {
 
 	private static final long serialVersionUID = 1L;
 
-	@OneToMany(mappedBy = "linkedMarket", cascade = CascadeType.MERGE)
-	// fetch = FetchType.EAGER,
+	@OneToMany(mappedBy = "linkedMarket")
 	private Set<Market4User> market4Users = new HashSet<Market4User>(10);
 
 	public Set<Market4User> getMarket4Users() {
@@ -92,8 +89,7 @@ public class Market implements java.io.Serializable {
 	}
 
 	// Feed4Market4User
-	@OneToMany(mappedBy = "linkedMarket", cascade = CascadeType.MERGE)
-	// fetch = FetchType.EAGER,
+	@OneToMany(mappedBy = "linkedMarket")
 	private Set<Feed4Market4User> feed4Market4Users = new HashSet<Feed4Market4User>(
 			10);
 
@@ -119,17 +115,10 @@ public class Market implements java.io.Serializable {
 		return userData4Market;
 	}
 
-	@OneToMany(mappedBy = "market", cascade = CascadeType.MERGE)
-	// fetch = FetchType.EAGER,
+	@OneToMany(mappedBy = "market")
 	private Set<Runner> runners = new HashSet<Runner>();
 
 	public Set<Runner> getRunners() {
-/*		
-		String runnersInfo = "Market: "
-				+ (runners == null ? "runners is null" : "runners.size()="
-						+ runners.size());
-		log.info(runnersInfo);
-*/		
 		return runners;
 	}
 
@@ -140,13 +129,9 @@ public class Market implements java.io.Serializable {
 		if (runnersMap == null) {
 			runnersMap = new HashMap<Long, Runner>(20);
 			for (Runner runner : runners) {
-
 				Long key = Long.valueOf(runner.getSelectionId());
-				// System.out.println ("key =" + key);
 				runnersMap.put(key, runner);
 			}
-			// System.out.println ("Market.getRunnersMap(): " +
-			// runnersMap.size());
 		}
 		return runnersMap;
 	}
@@ -344,70 +329,10 @@ public class Market implements java.io.Serializable {
 				+ menuPath + ", name=" + name;
 	}
 
-	public String toStringFull() {
-		return "Market [asianLineId=" + asianLineId + ", canTurnInplay="
-				+ canTurnInplay + ", country=" + country + ", delay=" + delay
-				+ ", eventTypeId=" + eventTypeId + ", exchange=" + exchange
-				+ ", handicap=" + handicap + ", id=" + id
-				+ ", marketDescription=" + marketDescription
-				+ ", marketDisplayTime=" + marketDisplayTime + ", marketInfo="
-				+ marketInfo + ", marketStatus=" + marketStatus
-				+ ", marketTime=" + marketTime + ", marketType=" + marketType
-				+ ", menuPath=" + menuPath + ", name=" + name
-				+ ", noOfWinners=" + noOfWinners + ", numberOfWinners="
-				+ numberOfWinners + ", parentEventId=" + parentEventId
-				+ ", removedRunners=" + removedRunners + ", runnersMayBeAdded="
-				+ runnersMayBeAdded + ", timeZone=" + timeZone + ']';
-	}
-
-	@TransactionAttribute(TransactionAttributeType.REQUIRED)
 	public Market prefetchAll() {
 		Hibernate.initialize(this.getMarket4Users());
 		Hibernate.initialize(this.getRunners());
-		if (this.getRunners() != null)
-		for (Runner runner : this.getRunners()) {
-			runner.getId();
-
-			log.info(new StringBuilder(100)
-					.append(MessageFormat.format(
-							"{0}, runner.getRunner4Users().size()=", runner))
-					.append(runner.getRunner4Users().size()).toString());
-
-		}
 		return this;
 	}
-	/*
-	 * public Ticket prefetchAll() {
-	 * 
-	 * for (Signer s : getSigners()) {
-	 * 
-	 * s.getId();
-	 * 
-	 * if (s.isItsGroup())
-	 * 
-	 * for (User u : s.getGroup().getUsers())
-	 * 
-	 * u.getId();
-	 * 
-	 * }
-	 * 
-	 * for (SignResult s : getSignResults()) {
-	 * 
-	 * s.getId();
-	 * 
-	 * if (s.isItsGroup())
-	 * 
-	 * for (User u : s.getGroup().getUsers())
-	 * 
-	 * u.getId();
-	 * 
-	 * 
-	 * 
-	 * }
-	 * 
-	 * return this;
-	 * 
-	 * }
-	 */
 
 }

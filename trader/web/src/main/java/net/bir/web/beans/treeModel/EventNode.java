@@ -44,10 +44,6 @@ public class EventNode extends Entry implements TreeNode {
 		this.parent = parent;
 	}
 
-	public String getId() {
-		return id;
-	}
-
 	private String type= "event";
 	
 	public String getType() {
@@ -56,12 +52,9 @@ public class EventNode extends Entry implements TreeNode {
 	
 	public static final DateFormat df = new SimpleDateFormat("HH:mm");
 
-	public String getName() {
-		return name;
-	}
 
-
-    private transient Map<Object, TreeNode> events;{
+    private transient Map<Object, TreeNode> events;
+    {
         events = new TreeMap<Object, TreeNode>();
     }
 
@@ -73,7 +66,8 @@ public class EventNode extends Entry implements TreeNode {
 		this.events = events;
 	}
 
-    private transient Map<Object, TreeNode> markets;{
+    private transient Map<Object, TreeNode> markets;
+    {
         markets = new TreeMap<Object, TreeNode>();
     }
 
@@ -111,12 +105,12 @@ public class EventNode extends Entry implements TreeNode {
 
 
 	public Object getData() {
-		return event;
+		return this;
 	}
 
 	@Override
 	public EventNode getParent() {
-		return (EventNode)parent;
+		return  (EventNode) parent;
 	}
 
 

@@ -284,5 +284,36 @@ public class Uzer implements Serializable {
 	private Double pseudoStakeVolume; // pseudo stake volume
 	
 	private Double preCosmeticValue; // pre-cosmetic value
+
+	public Double getPseudoPinkStakeFraction() {
+		return pseudoPinkStakeFraction;
+	}
+
+	public void setPseudoPinkStakeFraction(Double pseudoPinkStakeFraction) {
+		this.pseudoPinkStakeFraction = pseudoPinkStakeFraction;
+	}
+
+	public Double getPseudoStakeFraction() {
+		return pseudoStakeFraction;
+	}
+
+	public void setPseudoStakeFraction(Double pseudoStakeFraction) {
+		this.pseudoStakeFraction = pseudoStakeFraction;
+	}
+
+	public Boolean getEnabled() {
+		return enabled;
+	}
+
+	public void setEnabled(Boolean enabled) {
+		this.enabled = enabled;
+	}
+
+	private Double pseudoPinkStakeFraction;
+	
+	private Double pseudoStakeFraction;
+	
+	private Boolean enabled;
+	
 	
 }

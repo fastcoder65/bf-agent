@@ -5,7 +5,7 @@ import java.util.List;
 import com.betfair.aping.entities.EventResult;
 
 
-public class ListEventContainer extends Container{
+public class EventResultContainer extends Container{
 	
 	private List<EventResult> result;
 		

@@ -4,34 +4,20 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Map;
-
 import net.bir.web.beans.MarketBean;
 import net.bir.web.beans.treeModel.EventNode.StringKey;
-
 import org.richfaces.model.TreeNode;
-
 import com.betfair.aping.entities.EventType;
 
-
-// @SuppressWarnings("rawtypes")
-public class SportNode extends Entry implements TreeNode<EventType> {
+@SuppressWarnings("rawtypes")
+public class SportNode extends Entry implements TreeNode {
 
 	private static final long serialVersionUID = 1L;
-	private TreeNode<EventType> parent;
+	private TreeNode<SportNode> parent;
 
 	public SportNode(String id, String name) {
 		this.id = id;
 		this.name = name;
-	}
-
-	private String id;
-
-	public String getId() {
-		return id;
-	}
-
-	public void setId(String id) {
-		this.id = id;
 	}
 
 	private String type = "sport";
@@ -40,22 +26,13 @@ public class SportNode extends Entry implements TreeNode<EventType> {
 		return type;
 	}
 
-	private String name;
-
 	public void setType(String type) {
-		this.type = type;
-	}
-
-	public String getName() {
-		name = (this.eventType == null ? name : this.eventType.getName());
-		return name;
 	}
 
 	public SportNode(EventType eventType) {
 		this.setId(eventType.getId());
 		System.out.println("SportNode construct -eventType.getName() " + eventType.getName());
-		this.setName(eventType.getName());
-		
+		this.name = eventType.getName();
 		this.eventType = eventType;
 	}
 
@@ -70,7 +47,6 @@ public class SportNode extends Entry implements TreeNode<EventType> {
 	private transient EventType eventType;
 
 	public Map<Object, TreeNode> getEventTypes() {
-		// System.out.println ("eventTypes.size()=" + eventTypes.size());
 		return eventTypes;
 	}
 
@@ -120,11 +96,11 @@ public class SportNode extends Entry implements TreeNode<EventType> {
 		// System.out.println("child: " + child);
 
 		if (child instanceof EventNode) {
-			events.put(id, child);
+			events.put(id,  child);
 			System.out.println("addChild - events.size(): " + events.size());
 		}
 		if (child instanceof SportNode) {
-			eventTypes.put(id, child);
+			eventTypes.put(id,  child);
 			System.out.println("addChild - eventTypes.size(): " + eventTypes.size());
 		}
 
@@ -138,12 +114,8 @@ public class SportNode extends Entry implements TreeNode<EventType> {
 		return events.entrySet().iterator();
 	}
 
-	public EventType getData() {
-		return eventType;
-	}
-
-	public void setData(EventType evtType) {
-		this.eventType = evtType;
+	public Object getData() {
+		return this;
 	}
 	
 	@Override
@@ -159,9 +131,8 @@ public class SportNode extends Entry implements TreeNode<EventType> {
 		events.remove(id);
 	}
 
-	public void setData(Object arg0) {
-	}
 
+	@SuppressWarnings("unchecked")
 	public void setParent(TreeNode node) {
 		this.parent = node;
 	}
@@ -205,6 +176,11 @@ public class SportNode extends Entry implements TreeNode<EventType> {
 	public String toString() {
 		return "SportNode [id=" + id + ", type=" + type + ", name=" + name
 				+ "]";
+	}
+
+	@Override
+	public void setData(Object arg0) {
+		// TODO Auto-generated method stub
 	}
 
 	/*

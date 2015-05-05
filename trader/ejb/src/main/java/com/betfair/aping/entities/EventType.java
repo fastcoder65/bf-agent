@@ -1,30 +1,14 @@
 package com.betfair.aping.entities;
 
-public class EventType {
-	private String id;
-	private String name;
+public class EventType extends Root {
+	
+	private static final long serialVersionUID = -6658152462101249370L;
 
-	public EventType() {
-	}
-
-	public String getId() {
-		return id;
-	}
-
-	public void setId(String id) {
-		this.id = id;
-	}
-
-	public String getName() {
-		return name;
-	}
-
-	public void setName(String name) {
-		this.name = name;
-	}
-
+	@Override
 	public String toString() {
-		return "{" + "" + "id=" + getId() + "," + "name=" + getName() + "}";
+		return "EventType [id=" + id + ", name=" + name + ", type=" + type
+				+ "]";
 	}
+
 
 }

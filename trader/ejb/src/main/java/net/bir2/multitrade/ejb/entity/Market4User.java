@@ -19,7 +19,13 @@ import org.hibernate.annotations.Formula;
 @IdClass(Market4UserId.class)
 public class Market4User implements java.io.Serializable {
 
-	private static final long serialVersionUID = 1L;
+	
+	
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -5769032763323594143L;
 
 	@Transient
 	@Inject
@@ -28,7 +34,7 @@ public class Market4User implements java.io.Serializable {
 	@Id
 	@Column(name = "user_id", insertable = false, updatable = false)
 	private int userId;
-
+	
 	public int getUserId() {
 		return userId;
 	}
@@ -36,12 +42,12 @@ public class Market4User implements java.io.Serializable {
 	@Id
 	@Column(name = "market_id", insertable = false, updatable = false)
 	private long marketId;
-
+	
 	public long getMarketId() {
 		return marketId;
 	}
 
-	public Market4User() {
+    public Market4User() {
 	}
 
 	public Market4User(Uzer uzer, Market market, 
@@ -51,9 +57,9 @@ public class Market4User implements java.io.Serializable {
 			Integer turnOffTimeOffsetMinutes, 
 			Double maxLossPerSelection) {
 		
-//		this.userId = uzer.getId();
+		this.userId = uzer.getId();
 		this.linkedUser = uzer;
-//		this.marketId = market.getId();
+		this.marketId = market.getId();
 		this.linkedMarket = market;
 		
 		this.maxLossPerSelection = (uzer.getMaxLossPerSelection() != null ? uzer.getMaxLossPerSelection() : maxLossPerSelection );
@@ -98,22 +104,32 @@ public class Market4User implements java.io.Serializable {
 		this.volumeStake = volumeStake;
 	}
 
+
+	public void setLinkedUser(Uzer linkedUser) {
+		
+	}
+
+	public void setLinkedMarket(Market linkedMarket) {
+		
+	}
+
 	@ManyToOne
 	@JoinColumn(name = "user_id")
-	Uzer linkedUser;
-
+	private Uzer linkedUser;
+	
 	public Uzer getLinkedUser() {
 		return linkedUser;
 	}
 
 	@ManyToOne
 	@JoinColumn(name = "market_id")
-	Market linkedMarket;
-
+	private Market linkedMarket;
+	
 	public Market getLinkedMarket() {
 		return linkedMarket;
 	}
 
+	@Transient
 	private Double _sumReturnPercent;
 
 	@Formula("(select coalesce(1/sum(1/r4u.odds), 0) from Runner4User r4u, Runner r where r4u.user_id = userId  and r.id=r4u.runner_id and r.market_id=marketId )")
@@ -332,22 +348,5 @@ public class Market4User implements java.io.Serializable {
 		}
 	  return _result.doubleValue();	
 	}
-
-	@Override
-	public String toString() {
-		return "Market4User [marketId=" + marketId + ", maxLossPerSelection="
-				+ maxLossPerSelection + ", onAir=" + onAir
-				+ ", preCosmeticValue=" + preCosmeticValue
-				+ ", pseudoPinkStakeVolume=" + pseudoPinkStakeVolume
-				+ ", pseudoStakeVolume=" + pseudoStakeVolume
-				+ ", sumPercentWinPink=" + sumPercentWinPink
-				+ ", sumRetPercent=" + _sumReturnPercent
-				+ ", turnOffTimeOffsetHours=" + turnOffTimeOffsetHours
-				+ ", turnOffTimeOffsetMinutes=" + turnOffTimeOffsetMinutes
-				+ ", turnOnTimeOffsetHours=" + turnOnTimeOffsetHours
-				+ ", turnOnTimeOffsetMinutes=" + turnOnTimeOffsetMinutes
-				+ ", userId=" + userId + ", volumeStake=" + volumeStake + ']';
-	}
-
     
 }

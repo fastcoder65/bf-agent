@@ -2,7 +2,7 @@ package com.betfair.aping.api;
 
 import com.betfair.aping.ApiNGDemo;
 import com.betfair.aping.containers.EventTypeResultContainer;
-import com.betfair.aping.containers.ListEventContainer;
+import com.betfair.aping.containers.EventResultContainer;
 import com.betfair.aping.containers.ListMarketBooksContainer;
 import com.betfair.aping.containers.ListMarketCatalogueContainer;
 import com.betfair.aping.containers.PlaceOrdersContainer;
@@ -89,8 +89,8 @@ public class ApiNgJsonRpcOperations extends ApiNgOperations {
 		if (ApiNGDemo.isDebug())
 			System.out.println("\nResponse: " + result);
 
-		ListEventContainer container = JsonConverter.convertFromJson(result,
-				ListEventContainer.class);
+		EventResultContainer container = JsonConverter.convertFromJson(result,
+				EventResultContainer.class);
 
 		if (container.getError() != null)
 			throw container.getError().getData().getAPINGException();
