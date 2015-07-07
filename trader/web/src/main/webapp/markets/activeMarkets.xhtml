@@ -7,17 +7,21 @@
 	xmlns:tree="http://labs.jboss.com/jbossrichfaces/ui/tree"
 	xmlns:dnd="http://labs.jboss.com/jbossrichfaces/ui/drag-drop"
 	xmlns:rich="http://richfaces.org/rich">
+
 				<a4j:region id="pollRegion">
                 	<h:form>
-                		<a4j:poll id="pollMarkets" interval="3000" enabled="#{marketBean.pollEnabled}" reRender="pollMarkets,marketTable,marketServerTime,runnerTable,serverTime"/>
+                		<a4j:poll id="pollMarkets" interval="30000" enabled="#{marketBean.pollEnabled}" reRender="pollMarkets,marketTable,marketServerTime,runnerTable,serverTime"/>
                 	</h:form>
 		        </a4j:region>
 	
-	
-	
-		<rich:simpleTogglePanel bodyClass="marketPanelBody" switchType="client" label="My Markets">
+	<h:form  id="activeMarketsForm">	
+
+		<rich:togglePanel></rich:togglePanel>
+			
+		<rich:togglePanel bodyClass="marketPanelBody" switchType="client" label="My Markets">
 		<h:panelGroup> 
 		<h:panelGrid>
+		
 				 <a4j:outputPanel>
 			     	<h:outputText id="marketServerTime" value="#{marketBean.serverTime}"/>
 			     </a4j:outputPanel>
@@ -30,7 +34,7 @@
 
 		       <h:panelGrid id="marketControls">
 
-			<a4j:form  id="activeMarketsForm">
+		
 			
 		     		<a4j:queue requestDelay="100" ignoreDupResponce="true" />
 		     		   			     	
@@ -65,29 +69,30 @@
 					<h:outputText value="AutoRefresh Off" rendered="#{!marketBean.pollEnabled}"></h:outputText>
 					
 				</a4j:outputPanel>
-				</a4j:form>		
+					
 			</h:panelGrid>
 		   		
 		</h:panelGroup>
 		    
 		<a4j:outputPanel id="marketRegion">
-			<h:form>
-				<rich:scrollableDataTable id="marketTable" value="#{marketBean.activeMarkets}"
-					rowKeyVar="rkv" var="mkt"  
+		
+							
+				<rich:extendedDataTable  
+					id="marketTable" 
+					value="#{marketBean.activeMarkets}"
+					rowKeyVar="rkv" var="mkt"
 					onRowMouseOver="this.style.backgroundColor='#{a4jSkin.additionalBackgroundColor}'"
 					onRowMouseOut="this.style.backgroundColor=''"
-					
-					width="100%" 
-					selectedClass="rich-sdt-row-selected" sortMode="single"
-					selectionMode="multi" 
-					binding="#{marketBean.masterTable}"
-					selection="#{marketBean.masterSelection}"
-					rowClasses="rvgRowOne,rvgRowTwo">
+					width="100%"
+					selectedClass="rich-sdt-row-selected" 
+					sortMode="single"
+					selectionMode="multiple"
+					selection="#{marketBean.masterTableSelection}"
+					rowClasses="rvgRowOne,rvgRowTwo" >
 								
-				<a4j:support 
-							id="a4j_support_master"
-							event="onselectionchange"
-						    reRender="runnerTable,marketControls" />				
+				
+				     <a4j:ajax execute="@form" event="selectionchange" listener="#{marketBean.masterSelectionListener}"
+                          render=":runnerTable,:marketControls"/>
 						    
 					<rich:column title="onAir" label="On Air">
 						<f:facet name="header">
@@ -131,15 +136,13 @@
 						<h:outputText value="#{mkt.timeZone}" />
 					</rich:column>
 					
-				</rich:scrollableDataTable>
+				</rich:extendedDataTable>
 				
-			</h:form>
+
 			</a4j:outputPanel>
 		
-	</rich:simpleTogglePanel>
-	
+	</rich:togglePanel>
+			</h:form>	
 	<a4j:log/>
-
-     	
 	
 </ui:composition>

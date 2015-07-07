@@ -39,8 +39,6 @@ import net.bir2.ejb.session.market.BaseService;
 import net.bir2.ejb.session.market.BaseServiceBean;
 import net.bir2.ejb.session.market.DataFeedService;
 import net.bir2.ejb.session.market.MarketService;
-import net.bir2.handler.ExchangeAPI;
-import net.bir2.handler.ExchangeAPI.Exchange;
 import net.bir2.multitrade.ejb.entity.DataFeedEvent;
 import net.bir2.multitrade.ejb.entity.Feed4Market4User;
 import net.bir2.multitrade.ejb.entity.Feed4Runner4User;
@@ -53,6 +51,8 @@ import net.bir2.multitrade.util.InflatedMarketPrices.InflatedPrice;
 import net.bir2.multitrade.util.InflatedMarketPrices.InflatedRunner;
 
 import com.unitab.race.Race;
+//import net.bir2.handler.ExchangeAPI;
+//import net.bir2.handler.ExchangeAPI.Exchange;
 //import org.apache.log4j.Logger;
 
 @MessageDriven(activationConfig = {
@@ -158,7 +158,7 @@ public class SheduleRequestMessageListener implements MessageListener {
 
 		// ShedulerActivity serviceBean = ShedulerActivityBean.getInstance();
 
-		Exchange selected_exchange;
+	//	Exchange selected_exchange;
 
 		Market currentMarket = null;
 		if (marketService.isMarketAlreadyExistsByMarketId(marketId)) {
@@ -204,16 +204,13 @@ public class SheduleRequestMessageListener implements MessageListener {
 					+ currentMarket.getName() + ", minutes to start: " + km
 					+ ", refreshInt(second(s)):" + refreshInt);
 
-		selected_exchange = currentMarket.getExchange() == 1 ? Exchange.UK
-				: Exchange.AUS;
+		// selected_exchange = currentMarket.getExchange() == 1 ? Exchange.UK: Exchange.AUS;
 
 		String marketStatus;
 		long startTime = System.currentTimeMillis();
 		try {
 
-			MarketLite marketLite = ExchangeAPI.getMarketInfo(
-					selected_exchange, currentUser.getApiContext(), Long
-							.valueOf(currentMarket.getMarketId()).intValue());
+			MarketLite marketLite = null; // ExchangeAPI.getMarketInfo(selected_exchange, currentUser.getApiContext(), Long.valueOf(currentMarket.getMarketId()).intValue());
 
 			long endTime = System.currentTimeMillis();
 			
@@ -246,7 +243,7 @@ public class SheduleRequestMessageListener implements MessageListener {
 
 	private void actionUpdateMarketPrices(String login, String marketId) {
 
-		Exchange selected_exchange;
+	//	Exchange selected_exchange;
 
 		Market currentMarket = null;
 		try {
@@ -286,8 +283,7 @@ public class SheduleRequestMessageListener implements MessageListener {
 				log.fine("*** Update market prices for login: " + login
 						+ ", market: " + marketId);
 
-			selected_exchange = currentMarket.getExchange() == 1 ? Exchange.UK
-					: Exchange.AUS;
+// 			selected_exchange = currentMarket.getExchange() == 1 ? Exchange.UK: Exchange.AUS;
 
 			List<MUBet> curBets = new ArrayList<MUBet>(10);
 			MUBet[] currentBets = null;
@@ -295,9 +291,7 @@ public class SheduleRequestMessageListener implements MessageListener {
 
 			try {
 
-				currentBets = ExchangeAPI.getMUBets(selected_exchange,
-						currentUser.getApiContext(),
-						Long.valueOf(currentMarket.getMarketId()).intValue());
+				currentBets = null; // ExchangeAPI.getMUBets(selected_exchange,currentUser.getApiContext(),Long.valueOf(currentMarket.getMarketId()).intValue());
 
 			} catch (Exception e) {
 				log.severe(" 'Get Current Bets' error, message: "
@@ -313,7 +307,7 @@ public class SheduleRequestMessageListener implements MessageListener {
 
 			if (currentBets != null)
 				for (MUBet bet : currentBets) {
-					
+/*					
 						log.fine(new StringBuilder(100)
 								.append("bet: SelectionId=")
 								.append(bet.getSelectionId())
@@ -321,7 +315,8 @@ public class SheduleRequestMessageListener implements MessageListener {
 								.append(bet.getBetStatus()).append(", price=")
 								.append(bet.getPrice()).append(", size=")
 								.append(bet.getSize()).toString());
-
+*/
+					
 					Runner runner = currentMarket.getRunnersMap().get(
 							(long) bet.getSelectionId());
 
@@ -404,7 +399,7 @@ public class SheduleRequestMessageListener implements MessageListener {
 
 					Double _profit = null;
 					if (BetStatusEnum.M.equals(currentBets[i].getBetStatus())) {
-						
+/*						
 							log.fine(new StringBuilder(100).append("i=")
 									.append(i).append(", betType=")
 									.append(currentBets[i].getBetType())
@@ -413,7 +408,7 @@ public class SheduleRequestMessageListener implements MessageListener {
 									.append(", size=")
 									.append(currentBets[i].getSize())
 									.toString());
-
+*/
 						double _profitItem = currentBets[i].getSize()
 								* currentBets[i].getPrice();
 					
@@ -486,9 +481,13 @@ public class SheduleRequestMessageListener implements MessageListener {
 			startTime = System.currentTimeMillis();
 			String currency = "";
 			try {
-				prices = ExchangeAPI.getMarketPrices(selected_exchange,
+				
+				prices = null;
+/*
+				ExchangeAPI.getMarketPrices(selected_exchange,
 						currentUser.getApiContext(),
 						Long.valueOf(currentMarket.getMarketId()).intValue());
+*/				
 				inPlayDelay = prices.getInPlayDelay();
 		
 					log.fine("inPlayDelay =" + inPlayDelay);
@@ -1106,8 +1105,7 @@ public class SheduleRequestMessageListener implements MessageListener {
 
 			log.fine("*** for market " + currentMarket + " onAir is " + isOnAir);
 
-		Exchange selected_exchange = currentMarket.getExchange() == 1 ? Exchange.UK
-				: Exchange.AUS;
+// 		Exchange selected_exchange = currentMarket.getExchange() == 1 ? Exchange.UK : Exchange.AUS;
 
 		List<CancelBets> cDeletes = new ArrayList<CancelBets>(100);
 
@@ -1123,9 +1121,12 @@ public class SheduleRequestMessageListener implements MessageListener {
 				CancelBetsResult[] cancelBetsResults = null;
 				if (!cDeletes.isEmpty()) {
 					try {
-						cancelBetsResults = ExchangeAPI.cancelBets(
+						cancelBetsResults = null;
+/*								
+								ExchangeAPI.cancelBets(
 								selected_exchange, currentUser.getApiContext(),
 								cDeletes);
+*/								
 					} catch (Exception e) {
 						log.severe(new StringBuilder(100)
 								.append("ExchangeAPI.cancelBets error: ")
@@ -1181,6 +1182,7 @@ public class SheduleRequestMessageListener implements MessageListener {
 
 			log.fine("newBets.size()=" + newBets.size() + ", curBets.size()="
 					+ curBets.size());
+			
 		makeUpdateList(curBets, newBets, cUpdates, cInserts, cDeletes);
 		UpdateBetsResult[] updateBetResults = null;
 
@@ -1194,8 +1196,7 @@ public class SheduleRequestMessageListener implements MessageListener {
 						.append(ubs.getNewSize()).toString());
 			}
 			try {
-				updateBetResults = ExchangeAPI.updateBets(selected_exchange,
-						currentUser.getApiContext(), cUpdates);
+				updateBetResults = null; // ExchangeAPI.updateBets(selected_exchange, \currentUser.getApiContext(), cUpdates);
 
 			} catch (Exception e) {
 				log.severe(new StringBuilder(100)
@@ -1219,10 +1220,10 @@ public class SheduleRequestMessageListener implements MessageListener {
 		}
 
 		CancelBetsResult[] cancelBetsResults = null;
+		
 		if (!cDeletes.isEmpty()) {
 			try {
-				cancelBetsResults = ExchangeAPI.cancelBets(selected_exchange,
-						currentUser.getApiContext(), cDeletes);
+				cancelBetsResults = null; // ExchangeAPI.cancelBets(selected_exchange, currentUser.getApiContext(), cDeletes);
 			} catch (Exception e) {
 				log.severe(new StringBuilder(100)
 						.append("ExchangeAPI.cancelBets error: ")
@@ -1277,6 +1278,7 @@ public class SheduleRequestMessageListener implements MessageListener {
 
 			if (!oBets.isEmpty()) {
 				for (PlaceBets pbs : oBets) {
+					/*					
 					log.info(new StringBuilder(100)
 							.append("PlaceBets - AsianLineId=")
 							.append(pbs.getAsianLineId()).append(", marketId=")
@@ -1286,10 +1288,10 @@ public class SheduleRequestMessageListener implements MessageListener {
 							.append(pbs.getSize()).append(", betType=")
 							.append(pbs.getBetType()).toString());
 				}
-
+*/
+				}
 				try {
-					placeBetsResults = ExchangeAPI.placeBets(selected_exchange,
-							currentUser.getApiContext(), oBets);
+					placeBetsResults = null; // ExchangeAPI.placeBets(selected_exchange, currentUser.getApiContext(), oBets);
 				} catch (Exception e) {
 					log.severe(new StringBuilder(100)
 							.append("ExchangeAPI.placeBets error: ")
@@ -1304,7 +1306,9 @@ public class SheduleRequestMessageListener implements MessageListener {
 
 		} while (bMore);
 
-		if (placeBetsResults != null) {
+	//	if (placeBetsResults != null) {
+			
+/*		
 			for (PlaceBetsResult pbr : placeBetsResults) {
 				log.info(new StringBuilder(100).append("bet ")
 						.append(pbr.getBetId()).append(" placed, status: ")
@@ -1314,7 +1318,8 @@ public class SheduleRequestMessageListener implements MessageListener {
 						.append(currentMarket.getMenuPath()).append(BS)
 						.append(currentMarket.getName()).toString());
 			}
-		}
+*/			
+		// }
 
 	}
 

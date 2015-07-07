@@ -29,11 +29,11 @@
       <jta-data-source>java:jboss/datasources/traderDS</jta-data-source>
       -->
       
-      <jta-data-source>java:/jboss/datasources/birOraDS</jta-data-source>
+      <jta-data-source>jboss/datasources/birOraDS</jta-data-source>
       <properties>
          <!-- Properties for Hibernate -->
          <property name="hibernate.hbm2ddl.auto" value="update" />
-         <property name="hibernate.show_sql" value="true" />
+         <property name="hibernate.show_sql" value="false" />
          <property name="hibernate.dialect" value="org.hibernate.dialect.Oracle10gDialect"/>
       </properties>
       

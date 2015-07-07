@@ -16,7 +16,7 @@
 		<f:loadBundle basename="net.bir.resources.messages" var="msg"/>    	
       
             <f:view>
-                  <a4j:form>
+                  <h:form>
                         <rich:panel header="RichFaces Greeter" style="width: 315px">
                               <h:outputText value="#{msg['login.username']}" />
                               <h:inputText value="#{user.name}" >
@@ -31,7 +31,7 @@
                                     <h:outputText value="!" rendered="#{not empty user.name}" />
                               </h:panelGroup>
                         </rich:panel>
-                  </a4j:form>
+                  </h:form>
             </f:view>
       </body>
 </html>

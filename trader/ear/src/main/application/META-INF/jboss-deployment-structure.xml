@@ -1,0 +1,20 @@
+<jboss-deployment-structure>
+<!--   
+	<deployment>
+		<dependencies>
+			<module name="javax.faces.api" slot="1.2" export="true" />
+			<module name="com.sun.jsf-impl" slot="1.2" export="true" />
+		</dependencies>
+	</deployment>
+	<sub-deployment name="trader-web.war">
+		<exclusions>
+			<module name="javax.faces.api" slot="main" />
+			<module name="com.sun.jsf-impl" slot="main" />
+		</exclusions>
+		<dependencies>
+			<module name="javax.faces.api" slot="1.2" />
+			<module name="com.sun.jsf-impl" slot="1.2" />
+		</dependencies>
+	</sub-deployment>
+ -->
+</jboss-deployment-structure>

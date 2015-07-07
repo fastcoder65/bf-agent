@@ -4,6 +4,11 @@ import java.util.Date;
 
 public class Race extends Root {
 
+	public Race(String id, String name, String type) {
+		super(id, name, type);
+		// TODO Auto-generated constructor stub
+	}
+
 	private static final long serialVersionUID = -9219002568726351201L;
 	private Date startTime;
 	private String venue;

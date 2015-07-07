@@ -6,27 +6,27 @@
       xmlns:rich="http://richfaces.org/rich">
 
         <h:form>
-        <rich:toolBar height="34" itemSeparator="disc">
-
-            <rich:toolBarGroup rendered="#{rich:isUserInRole('user')}">
+        <rich:toolbar height="34" itemSeparator="disc">
+			<rich:toolbarGroup></rich:toolbarGroup>
+            <rich:toolbarGroup rendered="#{rich:isUserInRole('user')}">
 				<h:commandLink  immediate="true" action="#{menucontrolBean.main}"> 
 					<h:outputText value="#{labels['menu.main']}"/>
 				</h:commandLink>
-			</rich:toolBarGroup>
+			</rich:toolbarGroup>
 
-			<rich:toolBarGroup rendered="#{rich:isUserInRole('user')}">
+			<rich:toolbarGroup rendered="#{rich:isUserInRole('user')}">
 				<h:commandLink immediate="true" action="#{menucontrolBean.profile}"> 
 					<h:outputText value="#{labels['menu.profile']}"/>
 				</h:commandLink>
-            </rich:toolBarGroup>
+            </rich:toolbarGroup>
      
-            <rich:toolBarGroup location="right">                       
+            <rich:toolbarGroup location="right">                       
 				<h:commandLink immediate="true" action="#{menucontrolBean.exit}"> 
 					<h:outputText value="#{labels['menu.exit']}"/>
 				</h:commandLink> 
-            </rich:toolBarGroup>
+            </rich:toolbarGroup>
 
-            <rich:toolBarGroup location="right">
+            <rich:toolbarGroup location="right">
 		<h:outputText value="#{labels['menu.theme']}"	 style="margin-right:10px;" /> 
 		
 		<h:selectOneMenu	value="#{viewHelper.skin}"	
@@ -35,7 +35,7 @@
 						onchange="submit();">
 			<f:selectItems value="#{viewHelper.skins}" />
 		</h:selectOneMenu>
-		</rich:toolBarGroup>
-        </rich:toolBar>
+		</rich:toolbarGroup>
+        </rich:toolbar>
         </h:form>
 </ui:composition>

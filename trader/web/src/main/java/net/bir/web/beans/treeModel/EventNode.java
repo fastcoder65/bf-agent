@@ -1,27 +1,31 @@
 package net.bir.web.beans.treeModel;
 
-import java.io.Serializable;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.TreeMap;
+import java.util.ArrayList;
+import java.util.Enumeration;
+import java.util.List;
 
-import net.bir.web.beans.MarketBean;
-
-import org.richfaces.model.TreeNode;
+import javax.swing.tree.TreeNode;
 
 import com.betfair.aping.entities.Event;
+import com.google.common.collect.Iterators;
+//import org.richfaces.model.TreeNode;
 
-@SuppressWarnings("rawtypes")
+
 public class EventNode extends Entry implements TreeNode {
-	
-	private static final long serialVersionUID = 9220676792064698125L;
 
-	private transient  TreeNode parent;
-
-	private transient  Event event;
 	
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -7742007242946255970L;
+
+	private TreeNode parent;
+
+	private Event event;
+
 	public Event getEvent() {
 		return event;
 	}
@@ -31,78 +35,52 @@ public class EventNode extends Entry implements TreeNode {
 	}
 
 	public EventNode() {
+		System.out.println("default constructor for EventNode: " + this);
 	}
 
 	public EventNode(Event event) {
-		this.setId(event.getId());
-		this.setName(event.getName());
+	//	System.out.println("with arg event: " + event.getName());
+		
+		id   = event.getId();
+		name = event.getName();
 		this.event = event;
+		type = "event";
+	//	System.out.println("" + this);
 	}
 
-	public EventNode(Event event,  TreeNode parent) {
+	public EventNode(Event event, TreeNode parent) {
 		this(event);
 		this.parent = parent;
-	}
-
-	private String type= "event";
-	
-	public String getType() {
-		return type;
+		System.out.println("EventNode() with parent: " + parent + ", " + this);
 	}
 	
 	public static final DateFormat df = new SimpleDateFormat("HH:mm");
 
+	private List<TreeNode> events = new ArrayList<TreeNode>();
 
-    private transient Map<Object, TreeNode> events;
-    {
-        events = new TreeMap<Object, TreeNode>();
-    }
 
-    public Map<Object, TreeNode> getEvents() {
+	public List<TreeNode> getEvents() {
+		if (events != null) {
+		 for (TreeNode tnode: events) {
+			System.out.println("eventNode.getEvents(): " + tnode); 
+		 }
+		}
 		return events;
 	}
 
-	public void setEvents(Map<Object, TreeNode> events) {
+	public void setEvents(List<TreeNode> events) {
 		this.events = events;
 	}
 
-    private transient Map<Object, TreeNode> markets;
-    {
-        markets = new TreeMap<Object, TreeNode>();
-    }
+	private List<TreeNode> markets = new ArrayList<TreeNode>();
 
-    public Map<Object, TreeNode> getMarkets() {
+	public List<TreeNode> getMarkets() {
 		return markets;
 	}
 
-	public void setMarkets(Map<Object, TreeNode> events) {
-		this.markets = events;
+	public void setMarkets(List<TreeNode> markets) {
+		this.markets = markets;
 	}
-
-
-
-	public void addChild(Object id, TreeNode child) {
-
-	 if (child instanceof EventNode) {
-		 events.put(id, child);
-	 } 
-
-	 if (child instanceof MarketNode) {
-		 markets.put(id, child);
-	 }
-
-	}
-
-	
-	public TreeNode getChild(Object id) {
-		return events.get(id);
-	}
-
-
-	public Iterator<?> getChildren() {
-		return  events.entrySet().iterator();
-	}
-
 
 	public Object getData() {
 		return this;
@@ -110,44 +88,43 @@ public class EventNode extends Entry implements TreeNode {
 
 	@Override
 	public EventNode getParent() {
-		return  (EventNode) parent;
+		return (EventNode) parent;
 	}
-
 
 	public boolean isLeaf() {
-		  return events.isEmpty();
+		return events.isEmpty() && markets.isEmpty();
 	}
-
 
 	public void removeChild(Object id) {
-		 events.remove(id);
+		events.remove(id);
 	}
 
-	
 	public void setData(Object data) {
 	}
 
-	
 	public void setParent(TreeNode node) {
 		this.parent = node;
 	}
-	
-	public void addEvent(EventNode event) {
-		addChild(new StringKey(MarketBean.NT_EVENT + event.getPath()), event);
-		event.setParent((TreeNode)this);
+
+	public void addEvent(EventNode eventNode) {
+		//addChild(new StringKey(MarketBean.NT_EVENT + event.getPath()), event);
+		eventNode.setParent((TreeNode) this);
+		events.add((TreeNode)eventNode);
 	}
+
+	
 
 	@Override
 	public String toString() {
-		return "EventNode [event=" + event + ", type=" + type + "]";
+		return "EventNode [event=" + event + ", id=" + id + ", name=" + name
+				+ ", type=" + type + "]";
 	}
 
-	public void addMarket(MarketNode market) {
-		String sKey = MarketBean.NT_MARKET + market.getMarket().getMarketId();
-		addChild(new StringKey(sKey), market);
-		market.setParent((TreeNode)this);
+	public void addMarket(MarketNode marketNode) {
+		marketNode.setParent((TreeNode) this);
+		markets.add(marketNode);
 	}
-	
+
 	@Override
 	public void addEntry(Entry entry) {
 		if (entry instanceof EventNode) {
@@ -155,59 +132,96 @@ public class EventNode extends Entry implements TreeNode {
 		} else {
 			addMarket((MarketNode) entry);
 		}
-		
 	}
 
 	@Override
 	public void removeEntry(Entry entry) {
-		events.remove(entry);
-		markets.remove(entry);
+
 	}
 
-	public static class StringKey implements Serializable, Comparable<StringKey> {
+	@Override
+	public TreeNode getChildAt(int childIndex) {
+		TreeNode result = null;
+		
+		if(!events.isEmpty())
+		result = events.get(childIndex);
 
-		private static final long serialVersionUID = 1L;
-		private String s;
-	    
-	    public StringKey(String s) {
-		super();
-		this.s = s;
-	    }
+		if(!markets.isEmpty())
+		result = markets.get(childIndex);
 
-	    @Override
-	    public String toString() {
-	        return s;
-	    }
-
-	    @Override
-	    public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + ((s == null) ? 0 : s.hashCode());
 		return result;
-	    }
-
-	    @Override
-	    public boolean equals(Object obj) {
-		if (this == obj)
-		    return true;
-		if (obj == null)
-		    return false;
-		if (getClass() != obj.getClass())
-		    return false;
-		StringKey other = (StringKey) obj;
-		if (s == null) {
-		    if (other.s != null)
-			return false;
-		} else if (!s.equals(other.s))
-		    return false;
-		return true;
-	    }
-
-		@Override
-		public int compareTo(StringKey sk) {
-			return this.s.compareTo(sk.s);
-		}
 	}
+
+	@Override
+	public int getChildCount() {
+		int result = 0;
+		
+		if(!events.isEmpty())
+		result = events.size();
+
+		if(!markets.isEmpty())
+		result = markets.size();
+
+		return result;
+	}
+
+	@Override
+	public int getIndex(TreeNode node) {
+		int result = 0;
+		
+		if(!events.isEmpty())
+		result = events.indexOf(node);
+
+		if(!markets.isEmpty())
+		result = markets.indexOf(node);
+
+		return result;
+		
+	}
+
+	@Override
+	public boolean getAllowsChildren() {
+		return (!events.isEmpty() || markets.isEmpty());
+	}
+
+	@Override
+	public Enumeration<TreeNode> children() {
+		Enumeration<TreeNode> result = null;
+
+		if (events.size() > 0)
+			result = Iterators.asEnumeration(events.iterator());
+
+		if (markets.size() > 0)
+			result = Iterators.asEnumeration(markets.iterator());
+		
+	 return result;	
+	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = super.hashCode();
+		result = prime * result + ((event == null) ? 0 : event.hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (!super.equals(obj))
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		EventNode other = (EventNode) obj;
+		if (event == null) {
+			if (other.event != null)
+				return false;
+		} else if (!event.equals(other.event))
+			return false;
+		return true;
+	}
+
+	
 
 }

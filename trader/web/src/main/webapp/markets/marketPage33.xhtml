@@ -1,0 +1,76 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:model="http://labs.jboss.com/jbossrichfaces/ui/treeModel"
+	xmlns:tree="http://labs.jboss.com/jbossrichfaces/ui/tree"
+	xmlns:dnd="http://labs.jboss.com/jbossrichfaces/ui/drag-drop"
+	xmlns:rich="http://richfaces.org/rich">
+
+			 <rich:panel bodyClass="inpanelBody">
+			   <f:facet name="header">
+			    <h:outputText value="All markets"/>
+			   </f:facet>
+				<h:panelGrid columns="1">
+			    <!-- ajaxSubmit="true" reRender="marketsTree" -->
+			    <a4j:outputPanel id="marketsTreePane">
+				<h:form>
+				
+				    <a4j:queue requestDelay="100" ignoreDupResponce="true" />
+						     		
+					<rich:tree id="marketsTree" switchType="client"
+						adviseNodeOpened="#{marketBean.adviseNodeOpened}"
+						ajaxSubmitSelection="true">
+
+						<rich:treeNodesAdaptor id="sportItems" var="sportItem"
+							nodes="#{marketBean.sportNodes}">
+
+							<rich:treeNode id="sportItem"
+								icon="images/tree/ftv2folderopen.gif"
+								iconLeaf="images/tree/ftv2folderclosed.gif"
+								reRender="marketsTreePane"
+								bypassUpdates="true"
+								nodeSelectListener="#{marketBean.selectNodeListener}">
+								<h:outputText value="#{sportItem.name}" />
+							</rich:treeNode>
+
+							<rich:recursiveTreeNodesAdaptor id="eventItems" var="eventItem"
+								roots="#{sportItem.events}" nodes="#{eventItem.events}">
+								<rich:treeNode id="eventItem"
+									icon="images/tree/ftv2folderopen.gif"
+									iconLeaf="images/tree/ftv2folderclosed.gif"
+									reRender="marketsTreePane"
+									nodeSelectListener="#{marketBean.selectNodeListener}">
+
+									<h:outputText value="#{eventItem.name}" />
+								</rich:treeNode>
+
+								<rich:treeNodesAdaptor id="marketItems" var="marketItem"
+									nodes="#{eventItem.markets}">
+
+									<rich:treeNode id="marketItem"
+										icon="images/tree-help/ftv2doc.gif.gif"
+										nodeSelectListener="#{marketBean.selectNodeListener}">
+										
+										<h:outputText value="#{marketItem.name}" />
+									    <a4j:support event="ondblclick"  actionListener="#{marketBean.addToActiveMarkets}" reRender="marketRegion"/>
+										
+									</rich:treeNode>
+									
+								</rich:treeNodesAdaptor>
+
+							</rich:recursiveTreeNodesAdaptor>
+						</rich:treeNodesAdaptor>
+					</rich:tree>
+				</h:form>
+				</a4j:outputPanel>
+				</h:panelGrid>
+				
+				</rich:panel>
+
+
+</ui:composition>
+
+	
+

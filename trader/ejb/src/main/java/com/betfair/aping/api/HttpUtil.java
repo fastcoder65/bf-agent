@@ -1,98 +1,226 @@
 package com.betfair.aping.api;
 
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+
+import org.apache.http.auth.AuthScheme;
+import org.apache.http.auth.AuthScope;
+import org.apache.http.auth.UsernamePasswordCredentials;
+import org.apache.http.client.AuthCache;
+import org.apache.http.client.ClientProtocolException;
+import org.apache.http.client.CredentialsProvider;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.ResponseHandler;
+import org.apache.http.client.config.RequestConfig;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.client.protocol.HttpClientContext;
+import org.apache.http.entity.StringEntity;
+import org.apache.http.impl.auth.DigestScheme;
+import org.apache.http.impl.client.BasicAuthCache;
+import org.apache.http.impl.client.BasicCredentialsProvider;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClientBuilder;
+import org.apache.http.impl.client.HttpClients;
+import org.apache.http.impl.conn.DefaultProxyRoutePlanner;
 
 import com.betfair.aping.ApiNGDemo;
 import com.betfair.aping.exceptions.APINGException;
 import com.betfair.aping.util.JsonResponseHandler;
 import com.betfair.aping.util.RescriptResponseHandler;
-import org.apache.http.client.ClientProtocolException;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.ResponseHandler;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.entity.StringEntity;
-import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.http.params.HttpConnectionParams;
-import org.apache.http.params.HttpParams;
-
-import java.io.IOException;
-import java.io.UnsupportedEncodingException;
+//import org.apache.commons.httpclient.auth.DigestScheme;
+//import org.apache.commons.httpclient.auth.AuthScheme;
 
 public class HttpUtil {
 
-    private final String HTTP_HEADER_X_APPLICATION = "X-Application";
-    private final String HTTP_HEADER_X_AUTHENTICATION = "X-Authentication";
-    private final String HTTP_HEADER_CONTENT_TYPE = "Content-Type";
-    private final String HTTP_HEADER_ACCEPT = "Accept";
-    private final String HTTP_HEADER_ACCEPT_CHARSET = "Accept-Charset";
+	private final String HTTP_HEADER_X_APPLICATION = "X-Application";
+	private final String HTTP_HEADER_X_AUTHENTICATION = "X-Authentication";
+	private final String HTTP_HEADER_CONTENT_TYPE = "Content-Type";
+	private final String HTTP_HEADER_ACCEPT = "Accept";
+	private final String HTTP_HEADER_ACCEPT_CHARSET = "Accept-Charset";
 
-    public HttpUtil() {
-        super();
-    }
+	public HttpUtil() {
+		super();
+	}
 
-    private String sendPostRequest(String param, String operation, String appKey, String ssoToken, String URL, ResponseHandler<String> reqHandler){
-        String jsonRequest = param;
+	private boolean isSet(Object sysProperty) {
+		return sysProperty != null
+				&& sysProperty.toString().trim().length() > 0;
+	}
 
-        HttpPost post = new HttpPost(URL);
-        String resp = null;
-        try {
-            post.setHeader(HTTP_HEADER_CONTENT_TYPE, ApiNGDemo.getProp().getProperty("APPLICATION_JSON"));
-            post.setHeader(HTTP_HEADER_ACCEPT, ApiNGDemo.getProp().getProperty("APPLICATION_JSON"));
-            post.setHeader(HTTP_HEADER_ACCEPT_CHARSET, ApiNGDemo.getProp().getProperty("ENCODING_UTF8"));
-            post.setHeader(HTTP_HEADER_X_APPLICATION, appKey);
-            post.setHeader(HTTP_HEADER_X_AUTHENTICATION, ssoToken);
+	private HttpClient createHttpClientOrProxy() {
 
-            if (jsonRequest != null)
-            post.setEntity(new StringEntity(jsonRequest, ApiNGDemo.getProp().getProperty("ENCODING_UTF8")));
+		HttpClientBuilder hcBuilder = HttpClients.custom();
 
-            HttpClient httpClient = new DefaultHttpClient();
+		RequestConfig requestConfig = RequestConfig
+				.custom()
+				.setSocketTimeout(
+						new Integer(ApiNGDemo.getProp().getProperty("TIMEOUT"))
+								.intValue())
+				.setConnectTimeout(
+						new Integer(ApiNGDemo.getProp().getProperty("TIMEOUT"))
+								.intValue()).build();
 
-            HttpParams httpParams = httpClient.getParams();
-            HttpConnectionParams.setConnectionTimeout(httpParams, new Integer(ApiNGDemo.getProp().getProperty("TIMEOUT")).intValue());
-            HttpConnectionParams.setSoTimeout(httpParams, new Integer(ApiNGDemo.getProp().getProperty("TIMEOUT")).intValue());
+		// Set HTTP proxy, if specified in system properties
+		if (isSet(System.getProperty("http.proxyHost"))) {
+			int port = 80;
+			if (isSet(System.getProperty("http.proxyPort"))) {
+				port = Integer.parseInt(System.getProperty("http.proxyPort"));
+			}
+			org.apache.http.HttpHost proxy = new org.apache.http.HttpHost(
+					System.getProperty("http.proxyHost"), port);
 
-            resp = httpClient.execute(post, reqHandler);
+			org.apache.http.client.CredentialsProvider credsProvider = new BasicCredentialsProvider();
 
-        } catch (UnsupportedEncodingException e1) {
-            //Do something
-        	e1.printStackTrace();
+			credsProvider.setCredentials(new AuthScope(proxy.getHostName(),
+					proxy.getPort()), new UsernamePasswordCredentials(
+					"fastcoder65", "imxDr5OZimxDr5OZ"));
 
-        } catch (ClientProtocolException e) {
-            //Do something
-        	e.printStackTrace();
+			DefaultProxyRoutePlanner routePlanner = new DefaultProxyRoutePlanner(
+					proxy);
 
-        } catch (IOException ioE){
-            //Do something
-        	ioE.printStackTrace();
-        }
+			hcBuilder.setRoutePlanner(routePlanner);
+			hcBuilder.setDefaultRequestConfig(requestConfig)
+					.setDefaultCredentialsProvider(credsProvider);
+		}
 
-        return resp;
+		CloseableHttpClient httpClient = hcBuilder.build();
 
-    }
+		return httpClient;
+	}
 
-    public String sendPostRequestRescript(String param, String operation, String appKey, String ssoToken) throws APINGException{
-        String apiNgURL = ApiNGDemo.getProp().getProperty("APING_URL") + ApiNGDemo.getProp().getProperty("RESCRIPT_SUFFIX")+operation+"/";
+	private String sendPostRequest(String param, String operation,
+			String appKey, String ssoToken, String aURL,
+			ResponseHandler<String> reqHandler) {
+		String jsonRequest = param;
 
-        return  sendPostRequest(param, operation, appKey, ssoToken, apiNgURL, new RescriptResponseHandler());
+		HttpPost post = new HttpPost(aURL);
 
-    }
+		String resp = null;
+		try {
+			post.setHeader(HTTP_HEADER_CONTENT_TYPE, ApiNGDemo.getProp()
+					.getProperty("APPLICATION_JSON"));
+			post.setHeader(HTTP_HEADER_ACCEPT,
+					ApiNGDemo.getProp().getProperty("APPLICATION_JSON"));
+			post.setHeader(HTTP_HEADER_ACCEPT_CHARSET, ApiNGDemo.getProp()
+					.getProperty("ENCODING_UTF8"));
+			post.setHeader(HTTP_HEADER_X_APPLICATION, appKey);
+			post.setHeader(HTTP_HEADER_X_AUTHENTICATION, ssoToken);
 
-    public String sendPostRequestJsonRpc(String param, String operation, String appKey, String ssoToken) {
-        String apiNgURL = ApiNGDemo.getProp().getProperty("APING_URL") + ApiNGDemo.getProp().getProperty("JSON_RPC_SUFFIX");
+			if (jsonRequest != null)
+				post.setEntity(new StringEntity(jsonRequest, ApiNGDemo
+						.getProp().getProperty("ENCODING_UTF8")));
 
-        return sendPostRequest(param, operation, appKey, ssoToken, apiNgURL, new JsonResponseHandler());
+			HttpClientBuilder hcBuilder = HttpClients.custom();
 
-    }
+			RequestConfig requestConfig = RequestConfig
+					.custom()
+					.setSocketTimeout(
+							new Integer(ApiNGDemo.getProp().getProperty(
+									"TIMEOUT")).intValue())
+					.setConnectTimeout(
+							new Integer(ApiNGDemo.getProp().getProperty(
+									"TIMEOUT")).intValue()).build();
 
-    public String sendKeepAlivePostRequest( String appKey, String ssoToken) {
-        String apiNgURL = "https://identitysso.betfair.com/api/keepAlive"; // ApiNGDemo.getProp().getProperty("INTER_KA_URL");
+			// Set HTTP proxy, if specified in system properties
 
-        return sendPostRequest(null, null, appKey, ssoToken, apiNgURL, new JsonResponseHandler());
-    }
+			org.apache.http.HttpHost proxy = null;
+			HttpClientContext context = HttpClientContext.create();
 
-    public String sendLogoutRequest( String appKey, String ssoToken) {
-        String apiNgURL = "https://identitysso.betfair.com/api/logout"; // ApiNGDemo.getProp().getProperty("INTER_KA_URL");
+// http.proxyHost = 54.75.241.179
+// http.proxyPort = 3128
+			
+			if (isSet(System.getProperty("http.proxyHost"))) {
+				int port = 80;
+				if (isSet(System.getProperty("http.proxyPort"))) {
+					port = Integer.parseInt(System
+							.getProperty("http.proxyPort"));
+				}
 
-        return sendPostRequest(null, null, appKey, ssoToken, apiNgURL, new JsonResponseHandler());
-    }
+				proxy = new org.apache.http.HttpHost(
+						System.getProperty("http.proxyHost"), port);
+
+				CredentialsProvider credsProvider = new BasicCredentialsProvider();
+
+				credsProvider.setCredentials(new AuthScope(proxy.getHostName(),
+						proxy.getPort()), new UsernamePasswordCredentials(
+						"fastcoder65", "imxDr5OZimxDr5OZ"));
+
+				AuthCache authCache = new BasicAuthCache();
+
+				DigestScheme asAuth = new DigestScheme();
+				// Suppose we already know the realm name
+				
+				asAuth.overrideParamter("realm", "MyPrivateEc2Proxy");
+				// Suppose we already know the expected nonce value
+				asAuth.overrideParamter("nonce", "XPFezyhHcEWult89wHfh31Kei6O");
+
+				authCache.put(proxy, asAuth);
+
+				context.setCredentialsProvider(credsProvider);
+				context.setAuthCache(authCache);
+
+				DefaultProxyRoutePlanner routePlanner = new DefaultProxyRoutePlanner(
+						proxy);
+
+				hcBuilder.setRoutePlanner(routePlanner);
+				hcBuilder.setDefaultRequestConfig(requestConfig)
+						.setDefaultCredentialsProvider(credsProvider);
+			}
+
+			CloseableHttpClient httpClient = hcBuilder.build();
+
+			resp = httpClient.execute(post, reqHandler, context);
+
+		} catch (UnsupportedEncodingException e1) {
+			// Do something
+			e1.printStackTrace();
+
+		} catch (ClientProtocolException e) {
+			// Do something
+			e.printStackTrace();
+
+		} catch (IOException ioE) {
+			// Do something
+			ioE.printStackTrace();
+		}
+
+		return resp;
+
+	}
+
+	public String sendPostRequestRescript(String param, String operation,
+			String appKey, String ssoToken) throws APINGException {
+		String apiNgURL = ApiNGDemo.getProp().getProperty("APING_URL")
+				+ ApiNGDemo.getProp().getProperty("RESCRIPT_SUFFIX")
+				+ operation + "/";
+
+		return sendPostRequest(param, operation, appKey, ssoToken, apiNgURL,
+				new RescriptResponseHandler());
+
+	}
+
+	public String sendPostRequestJsonRpc(String param, String operation,
+			String appKey, String ssoToken) {
+		String apiNgURL = ApiNGDemo.getProp().getProperty("APING_URL")
+				+ ApiNGDemo.getProp().getProperty("JSON_RPC_SUFFIX");
+
+		return sendPostRequest(param, operation, appKey, ssoToken, apiNgURL,
+				new JsonResponseHandler());
+
+	}
+
+	public String sendKeepAlivePostRequest(String appKey, String ssoToken) {
+		String apiNgURL = "https://identitysso.betfair.com/api/keepAlive"; // ApiNGDemo.getProp().getProperty("INTER_KA_URL");
+
+		return sendPostRequest(null, null, appKey, ssoToken, apiNgURL,
+				new JsonResponseHandler());
+	}
+
+	public String sendLogoutRequest(String appKey, String ssoToken) {
+		String apiNgURL = "https://identitysso.betfair.com/api/logout"; // ApiNGDemo.getProp().getProperty("INTER_KA_URL");
+
+		return sendPostRequest(null, null, appKey, ssoToken, apiNgURL,
+				new JsonResponseHandler());
+	}
 
 }

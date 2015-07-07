@@ -1,14 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<web-app id="WebApp_ID" version="2.5"
-	xmlns="http://java.sun.com/xml/ns/javaee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd">
-
-	<!-- <web-app version="3.0" xmlns="http://java.sun.com/xml/ns/javaee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
-		xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd"> -->
-	<!-- Set the PROJECT_STAGE to 'Development' to receive constructive error 
-		messages during development. Change the PROJECT_STAGE to 'Production' when 
-		putting the application into production -->
+<web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://java.sun.com/xml/ns/javaee" xmlns:web="http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd"
+    xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd" id="richfaces-showcase"
+    version="3.0">
 
 	<context-param>
 		<param-name>javax.faces.PROJECT_STAGE</param-name>
@@ -32,9 +26,10 @@
 		<param-value>false</param-value>
 	</context-param>
 
-
-	<!-- <context-param> <param-name>facelets.BUILD_BEFORE_RESTORE</param-name> 
-		<param-value>true</param-value> </context-param> -->
+	<context-param>
+		<param-name>facelets.BUILD_BEFORE_RESTORE</param-name>
+		<param-value>true</param-value>
+	</context-param>
 
 	<context-param>
 		<param-name>javax.faces.DEFAULT_SUFFIX</param-name>
@@ -47,7 +42,7 @@
 	</context-param>
 
 	<context-param>
-		<param-name>facelets.REFRESH_PERIOD</param-name>
+		<param-name>javax.faces.FACELETS_REFRESH_PERIOD</param-name>
 		<param-value>7</param-value>
 	</context-param>
 
@@ -56,13 +51,7 @@
 		<param-value>#{viewHelper.skin}</param-value>
 	</context-param>
 
-
 	<context-param>
-		<param-name>javax.faces.DISABLE_FACELET_JSF_VIEWHANDLER</param-name>
-		<param-value>true</param-value>
-	</context-param>
- 
- 	<context-param>
 		<param-name>org.ajax4jsf.COMPRESS_SCRIPT</param-name>
 		<param-value>true</param-value>
 	</context-param>
@@ -71,33 +60,9 @@
 		<param-name>org.ajax4jsf.COMPRESS_STYLE</param-name>
 		<param-value>true</param-value>
 	</context-param>
-<!-- 
-	<context-param>
-		<param-name>org.ajax4jsf.xmlparser.ORDER</param-name>
-		<param-value>NEKO, TIDY</param-value>
-	</context-param>
- -->	
-<!-- 
-	 <context-param> <param-name>org.ajax4jsf.VIEW_HANDLERS</param-name> 
-		<param-value>org.ajax4jsf.application.AjaxViewHandler</param-value> </context-param> 
- -->
- 		
-	<!-- <context-param> <param-name>org.ajax4jsf.VIEW_HANDLERS</param-name> 
-		<param-value>com.sun.facelets.FaceletViewHandler</param-value> </context-param> -->
- 
-	<context-param>
-		<param-name>org.ajax4jsf.VIEW_HANDLERS</param-name>
-		<param-value>com.sun.facelets.FaceletViewHandler</param-value>
-	</context-param>
 
-<!-- 
 	<context-param>
-		<param-name>org.jboss.jbossfaces.WAR_BUNDLES_JSF_IMPL</param-name>
-		<param-value>true</param-value>
-	</context-param>
- -->
-	<context-param>
-		<param-name>facelets.VIEW_MAPPINGS</param-name>
+		<param-name>javax.faces.FACELETS_VIEW_MAPPINGS</param-name>
 		<param-value>*.xhtml</param-value>
 	</context-param>
 
@@ -105,7 +70,6 @@
 		<param-name>org.ajax4jsf.SERIALIZE_SERVER_STATE</param-name>
 		<param-value>true</param-value>
 	</context-param>
-
 
 	<context-param>
 		<param-name>org.ajax4jsf.handleViewExpiredOnClient</param-name>
@@ -115,31 +79,6 @@
 	<listener>
 		<listener-class>net.bir.util.BIRApplicationContextListener</listener-class>
 	</listener>
-
-	<filter>
-		<display-name>RichFaces Filter</display-name>
-		<filter-name>richfaces</filter-name>
-		<filter-class>org.ajax4jsf.Filter</filter-class>
-	</filter>
-
-	<filter-mapping>
-		<filter-name>richfaces</filter-name>
-		<servlet-name>Faces_Servlet</servlet-name>
-
-		<dispatcher>REQUEST</dispatcher>
-		<dispatcher>FORWARD</dispatcher>
-		<dispatcher>INCLUDE</dispatcher>
-
-	</filter-mapping>
-
-	<!-- <listener> <listener-class> org.jboss.seam.servlet.SeamListener </listener-class> 
-		</listener> <filter> <filter-name>Seam Filter</filter-name> <filter-class>org.jboss.seam.servlet.SeamFilter</filter-class> 
-		<init-param> <param-name>createTempFiles</param-name> <param-value>false</param-value> 
-		</init-param> <init-param> <param-name>maxRequestSize</param-name> <param-value>100000</param-value> 
-		</init-param> </filter> <filter-mapping> <filter-name>Seam Filter</filter-name> 
-		<servlet-name>Faces_Servlet</servlet-name> <dispatcher>FORWARD</dispatcher> 
-		<dispatcher>REQUEST</dispatcher> <dispatcher>INCLUDE</dispatcher> <dispatcher>ERROR</dispatcher> 
-		</filter-mapping> -->
 
 	<servlet>
 		<servlet-name>Faces_Servlet</servlet-name>
@@ -242,7 +181,7 @@
 			<transport-guarantee>NONE</transport-guarantee>
 		</user-data-constraint>
 	</security-constraint>
-	
+
 	<login-config>
 		<auth-method>DIGEST</auth-method>
 		<realm-name>BIR24x7</realm-name>

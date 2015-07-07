@@ -4,13 +4,15 @@ import java.io.Serializable;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Comparator;
+import java.util.Enumeration;
 import java.util.Iterator;
 
-import org.richfaces.model.TreeNode;
+// import org.richfaces.model.TreeNode;
+import javax.swing.tree.TreeNode;
 
 import com.betfair.aping.entities.MarketCatalogue;
 
-@SuppressWarnings("rawtypes")
+
 public class MarketNode extends Entry implements TreeNode {
 
 	private static final long serialVersionUID = 1L;
@@ -24,35 +26,25 @@ public class MarketNode extends Entry implements TreeNode {
 	}
 
 	public MarketNode(MarketCatalogue market) {
-		System.out.println( market.getMarketId());
-		setId(market.getMarketId());
-		setName(market.getMarketName());
+		System.out.println( market );
+		id = market.getMarketId();
+		name = market.getMarketName();
 		this.market = market;
+		type = "market";
 	}
 
 	public MarketNode(MarketCatalogue market, TreeNode parent) {
-		super();
-		this.market = market;
+		this(market);
 		this.parent = parent;
 	}
 
 	public String getId() {
 		return id;
 	}
-
-	private String type = "market";
-
-	public String getType() {
-		return type;
-	}
-
+	
 	public static final DateFormat df = new SimpleDateFormat("HH:mm");
 
 	public String getName() {
-		// String marketDate = (this.market.getDescription().getMarketTime() ==
-		// null? "" : df.format(this.market.getDescription().getMarketTime()));
-		// super.setName(("03:00".equals(marketDate)?"": marketDate + " " )+
-		// this.market.getMarketName());
 		return this.getMarket().getMarketName();
 	}
 
@@ -89,7 +81,7 @@ public class MarketNode extends Entry implements TreeNode {
 
 	}
 
-	public Iterator getChildren() {
+	public Iterator<TreeNode> getChildren() {
 		// TODO Auto-generated method stub
 		return null;
 	}
@@ -128,4 +120,34 @@ public class MarketNode extends Entry implements TreeNode {
 					Integer.valueOf(o2.getMarket().getMarketId()));
 		}
 	}
+
+	@Override
+	public TreeNode getChildAt(int childIndex) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public int getChildCount() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	@Override
+	public int getIndex(TreeNode node) {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	@Override
+	public boolean getAllowsChildren() {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public Enumeration<TreeNode> children() {
+		return null;
+	}
+
 }

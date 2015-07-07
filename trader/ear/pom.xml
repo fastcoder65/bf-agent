@@ -38,9 +38,11 @@
             <url>http://www.apache.org/licenses/LICENSE-2.0.html</url>
         </license>
     </licenses>
+
 	<properties>
 		<jboss.deploy.dir>C:/Java/jboss-eap-6.4/standalone/deployments</jboss.deploy.dir>
 	</properties>
+
     <dependencies>
 
         <!-- Depend on the ejb module and war so that we can package them -->
@@ -93,13 +95,25 @@
 			<artifactId>gson</artifactId>
 			<version>2.2.2</version>
 		</dependency>
-
+<!-- 
 		<dependency>
 			<groupId>org.apache.httpcomponents</groupId>
 			<artifactId>httpclient</artifactId>
-			<version>4.2.5</version>
+			<version>4.4</version>
 		</dependency>
-        
+ -->        
+ 		<dependency>
+			<groupId>org.apache.httpcomponents</groupId>
+			<artifactId>httpclient</artifactId>
+			 <version>4.4</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.apache.httpcomponents</groupId>
+			<artifactId>httpcore</artifactId>
+			<version>4.4</version>
+		</dependency>
+ 
     </dependencies>
 
     <build>
@@ -116,6 +130,7 @@
                         are in easy way to package any libraries needed in the ear, and automatically 
                         have any modules (EJB-JARs and WARs) use them -->
                     <defaultLibBundleDir>lib</defaultLibBundleDir>
+
                     <modules>
                     	<ejbModule>
 							<groupId>net.bir2</groupId>
@@ -126,9 +141,10 @@
 							<artifactId>trader-web</artifactId>
 							<contextRoot>/trader</contextRoot>
 						</webModule>
-                    
                     </modules>
+                <!--     
                     <fileNameMapping>no-version</fileNameMapping>
+                  -->   
                 </configuration>
             </plugin>
 			<plugin>
@@ -180,6 +196,7 @@
                             <outputDirectory>deployments</outputDirectory>
                         </configuration>
                     </plugin>
+
 			<plugin>
 				<artifactId>maven-antrun-plugin</artifactId>
 				<executions>

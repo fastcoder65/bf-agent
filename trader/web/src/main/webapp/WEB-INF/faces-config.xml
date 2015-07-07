@@ -1,160 +1,97 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <faces-config version="2.0" xmlns="http://java.sun.com/xml/ns/javaee"
-	xmlns:xi="http://www.w3.org/2001/XInclude" 
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-facesconfig_2_0.xsd">
-
+ xmlns:xi="http://www.w3.org/2001/XInclude"
+ xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-facesconfig_2_0.xsd">
+ <converter>
+  <converter-id>longConverter</converter-id>
+  <converter-class>net.bir.util.LongConverter</converter-class>
+ </converter>
+ <!-- 
 	<managed-bean>
 		<managed-bean-name>marketBean</managed-bean-name>
 		<managed-bean-class>net.bir.web.beans.MarketBean</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 	</managed-bean>
-
-	<managed-bean>
-		<managed-bean-name>profileBean</managed-bean-name>
-		<managed-bean-class>net.bir.web.beans.ProfileBean</managed-bean-class>
-		<managed-bean-scope>session</managed-bean-scope>
-	</managed-bean>
-
-	<managed-bean>
-		<managed-bean-name>menucontrolBean</managed-bean-name>
-		<managed-bean-class>net.bir.web.beans.MenuControlBean</managed-bean-class>
-		<managed-bean-scope>session</managed-bean-scope>
-	</managed-bean>
-
-	<managed-bean>
-		<managed-bean-name>viewHelper</managed-bean-name>
-		<managed-bean-class>net.bir.web.beans.ViewHelper</managed-bean-class>
-		<managed-bean-scope>session</managed-bean-scope>
-		<managed-property>
-			<property-name>skin</property-name>
-			<value>DEFAULT</value>
-		</managed-property>
-		<managed-property>
-			<property-name>rowCounts</property-name>
-			<map-entries>
-				<key-class>java.lang.String</key-class>
-				<value-class>java.lang.Integer</value-class>
-				<map-entry>
-					<key>5</key>
-					<value>5</value>
-				</map-entry>
-				<map-entry>
-					<key>10</key>
-					<value>10</value>
-				</map-entry>
-				<map-entry>
-					<key>20</key>
-					<value>20</value>
-				</map-entry>
-				<map-entry>
-					<key>50</key>
-					<value>50</value>
-				</map-entry>
-			</map-entries>
-		</managed-property>
-	
-	</managed-bean>
-	
-	<managed-bean>
-		<managed-bean-name>bean</managed-bean-name>
-		<managed-bean-class>org.richfaces.Bean</managed-bean-class>
-		<managed-bean-scope>session</managed-bean-scope>
-	</managed-bean>
-	<managed-bean>
-		<managed-bean-name>pathwayBean</managed-bean-name>
-		<managed-bean-class>org.richfaces.TreeBean</managed-bean-class>
-		<managed-bean-scope>session</managed-bean-scope>
-	</managed-bean>
-
-	<managed-bean>
-		<managed-bean-name>treeDndBean</managed-bean-name>
-		<managed-bean-class>org.richfaces.TreeDndBean</managed-bean-class>
-		<managed-bean-scope>session</managed-bean-scope>
-	</managed-bean>
-<!-- 
-	<managed-bean>
-		<managed-bean-name>skinBean</managed-bean-name>
-		<managed-bean-class>org.richfaces.SkinBean</managed-bean-class>
-		<managed-bean-scope>session</managed-bean-scope>
-	</managed-bean>
--->
-	 
-	<managed-bean>
-		<managed-bean-name>rf3899</managed-bean-name>
-		<managed-bean-class>org.richfaces.rf3899.Bean</managed-bean-class>
-		<managed-bean-scope>session</managed-bean-scope>
-	</managed-bean>
-
-	<managed-bean>
-		<managed-bean-name>rf4196</managed-bean-name>
-		<managed-bean-class>org.richfaces.rf4196.Bean</managed-bean-class>
-		<managed-bean-scope>request</managed-bean-scope>
-	</managed-bean>
-
-	<managed-bean>
-		<managed-bean-name>rf4351</managed-bean-name>
-		<managed-bean-class>org.richfaces.rf4351.Bean</managed-bean-class>
-		<managed-bean-scope>session</managed-bean-scope>
-	</managed-bean>
-
-
-
-
-	<navigation-rule>
-		<from-view-id>*</from-view-id>
-		<navigation-case>
-			<from-outcome>main</from-outcome>
-			<to-view-id>/main.xhtml</to-view-id>
-			<redirect />
-		</navigation-case>
-	</navigation-rule>
-
-	<navigation-rule>
-		<from-view-id>*</from-view-id>
-		<navigation-case>
-			<from-outcome>profile</from-outcome>
-			<to-view-id>/profile/profile.xhtml</to-view-id>
-			<redirect />
-		</navigation-case>
-	</navigation-rule>
-
-	<navigation-rule>
-		<from-view-id>*</from-view-id>
-		<navigation-case>
-			<from-outcome>index</from-outcome>
-			<to-view-id>/index.xhtml</to-view-id>
-			<redirect />
-		</navigation-case>
-	</navigation-rule>
-
-	<application>
-	     
-	<view-handler>org.ajax4jsf.application.AjaxViewHandler</view-handler>
-	 
-	 <!--  
-		<view-handler>com.sun.facelets.FaceletViewHandler</view-handler>
-	 -->	
-		<locale-config>
-			<default-locale>en</default-locale>
-			<supported-locale>en</supported-locale>
-			<supported-locale>ru</supported-locale>
-		</locale-config>
-
-		<resource-bundle>
-			<base-name>net.bir.resources.messages</base-name>
-			<var>msg</var>
-		</resource-bundle>
-
-		<resource-bundle>
-			<base-name>net.bir.resources.labels</base-name>
-			<var>labels</var>
-		</resource-bundle>
-	</application>
-
-	<converter>
-		<converter-id>longConverter</converter-id>
-		<converter-class>net.bir.util.LongConverter</converter-class>
-	</converter>
-
+ -->
+ <managed-bean>
+  <managed-bean-name>profileBean</managed-bean-name>
+  <managed-bean-class>net.bir.web.beans.ProfileBean</managed-bean-class>
+  <managed-bean-scope>session</managed-bean-scope>
+ </managed-bean>
+ <managed-bean>
+  <managed-bean-name>menucontrolBean</managed-bean-name>
+  <managed-bean-class>net.bir.web.beans.MenuControlBean</managed-bean-class>
+  <managed-bean-scope>session</managed-bean-scope>
+ </managed-bean>
+ <managed-bean>
+  <managed-bean-name>viewHelper</managed-bean-name>
+  <managed-bean-class>net.bir.web.beans.ViewHelper</managed-bean-class>
+  <managed-bean-scope>session</managed-bean-scope>
+  <managed-property>
+   <property-name>skin</property-name>
+   <value>DEFAULT</value>
+  </managed-property>
+  <managed-property>
+   <property-name>rowCounts</property-name>
+   <map-entries>
+    <key-class>java.lang.String</key-class>
+    <value-class>java.lang.Integer</value-class>
+    <map-entry>
+     <key>5</key>
+     <value>5</value>
+    </map-entry>
+    <map-entry>
+     <key>10</key>
+     <value>10</value>
+    </map-entry>
+    <map-entry>
+     <key>20</key>
+     <value>20</value>
+    </map-entry>
+    <map-entry>
+     <key>50</key>
+     <value>50</value>
+    </map-entry>
+   </map-entries>
+  </managed-property>
+ </managed-bean>
+ <navigation-rule>
+  <from-view-id>*</from-view-id>
+  <navigation-case>
+   <from-outcome>main</from-outcome>
+   <to-view-id>/main.xhtml</to-view-id>
+   <redirect/>
+  </navigation-case>
+ </navigation-rule>
+ <navigation-rule>
+  <from-view-id>*</from-view-id>
+  <navigation-case>
+   <from-outcome>profile</from-outcome>
+   <to-view-id>/profile/profile.xhtml</to-view-id>
+   <redirect/>
+  </navigation-case>
+ </navigation-rule>
+ <navigation-rule>
+  <from-view-id>*</from-view-id>
+  <navigation-case>
+   <from-outcome>index</from-outcome>
+   <to-view-id>/index.xhtml</to-view-id>
+   <redirect/>
+  </navigation-case>
+ </navigation-rule>
+ <application>
+  <locale-config>
+   <default-locale>en</default-locale>
+   <supported-locale>en</supported-locale>
+   <supported-locale>ru</supported-locale>
+  </locale-config>
+  <resource-bundle>
+   <base-name>net.bir.resources.messages</base-name>
+   <var>msg</var>
+  </resource-bundle>
+  <resource-bundle>
+   <base-name>net.bir.resources.labels</base-name>
+   <var>labels</var>
+  </resource-bundle>
+ </application>
 </faces-config>

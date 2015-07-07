@@ -4,6 +4,11 @@ import java.util.Date;
 
 public class Event extends Root {
 
+	public Event(String id, String name, String type) {
+		super(id, name, type);
+		// TODO Auto-generated constructor stub
+	}
+
 	private static final long serialVersionUID = -6420728416591165012L;
 	private String countryCode;
 	private String timezone;

@@ -1,0 +1,45 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+          "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:f="http://java.sun.com/jsf/core">
+
+<f:loadBundle basename="net.bir.resources.labels" var="labels" />
+<f:loadBundle basename="net.bir.resources.messages" var="msg" />
+
+<head>
+<title>BIR Main</title>
+<ui:include src="/include/meta/content-type.xhtml" />
+<link rel="SHORTCUT ICON" href='./images/favicon.ico' type="image/x-icon" />
+<link rel="ICON" href='./images/favicon.ico' type="image/x-icon" />
+</head>
+<body>
+	<rich:layout>
+        <rich:layoutPanel position="top" width="100%">
+          <ui:include src="/layout/toolbar.xhtml"/>      
+        </rich:layoutPanel>
+
+        <rich:layoutPanel position="left" width="30%">
+          <ui:include src="/markets/marketPage.xhtml"/>      
+        </rich:layoutPanel>
+
+        <rich:layoutPanel position="right" width="100%">
+
+        	<rich:layoutPanel position="top">
+        	<ui:include src="/markets/activeMarkets.xhtml"/>
+        	</rich:layoutPanel>
+        	
+        	<rich:layoutPanel position="bottom">
+        	<ui:include src="/markets/runners.xhtml"/>
+        	</rich:layoutPanel>
+        	
+        </rich:layoutPanel>
+        
+	</rich:layout>
+<a4j:log/>
+</body>
+</html>

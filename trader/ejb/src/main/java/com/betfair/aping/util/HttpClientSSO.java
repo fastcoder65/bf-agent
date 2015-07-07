@@ -6,6 +6,7 @@ package com.betfair.aping.util;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.security.KeyStore;
 import java.security.SecureRandom;
@@ -21,40 +22,115 @@ import my.pack.util.AccountConstants;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
+import org.apache.http.auth.AuthScope;
+import org.apache.http.auth.UsernamePasswordCredentials;
+import org.apache.http.client.AuthCache;
+import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpPost;
-import org.apache.http.conn.ClientConnectionManager;
-import org.apache.http.conn.scheme.Scheme;
-import org.apache.http.conn.ssl.SSLSocketFactory;
-import org.apache.http.conn.ssl.StrictHostnameVerifier;
-import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.client.protocol.HttpClientContext;
+import org.apache.http.config.Registry;
+import org.apache.http.config.RegistryBuilder;
+import org.apache.http.conn.HttpClientConnectionManager;
+import org.apache.http.conn.socket.ConnectionSocketFactory;
+import org.apache.http.conn.ssl.NoopHostnameVerifier;
+import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
+import org.apache.http.impl.auth.DigestScheme;
+import org.apache.http.impl.client.BasicAuthCache;
+import org.apache.http.impl.client.BasicCredentialsProvider;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClientBuilder;
+import org.apache.http.impl.client.HttpClients;
+import org.apache.http.impl.conn.DefaultProxyRoutePlanner;
+import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.util.EntityUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+// import org.apache.http.impl.client.DefaultHttpClient;
+
 public class HttpClientSSO {
 
 	private static final int PORT = 443;
-	private static final Logger log = LoggerFactory.getLogger(HttpClientSSO.class);
-	
-	public static String getSessionTokenResponse(String appKey, String userName, String password) {
-		DefaultHttpClient httpClient = new DefaultHttpClient();
-		String responseString = null;
-		try {
-			SSLContext ctx = SSLContext.getInstance("TLS");
-			KeyManager[] keyManagers = getKeyManagers("pkcs12",
-					new FileInputStream(new File(AccountConstants.PATH_TO_PRIVATE_KEY)),
-					"1q2w3e4r5t");
-			ctx.init(keyManagers, null, new SecureRandom());
-			SSLSocketFactory factory = new SSLSocketFactory(ctx,
-					new StrictHostnameVerifier());
+	private static final Logger log = LoggerFactory
+			.getLogger(HttpClientSSO.class);
 
-			ClientConnectionManager manager = httpClient.getConnectionManager();
-			manager.getSchemeRegistry().register(
-					new Scheme("https", PORT, factory));
-			HttpPost httpPost = new HttpPost(
-					AccountConstants.ENDPOINT_TO_CERTLOGIN);
+	private static boolean isSet(Object sysProperty) {
+		return sysProperty != null
+				&& sysProperty.toString().trim().length() > 0;
+	}
+
+	public static String getSessionTokenResponse(String appKey, String userName, String password) {
+
+		String responseString = null;
+		HttpClientBuilder hcBuilder = HttpClients.custom();
+
+		org.apache.http.HttpHost proxy = null;
+
+		// Set HTTP proxy, if specified in system properties
+		if (isSet(System.getProperty("http.proxyHost"))) {
+			int port = 80;
+			if (isSet(System.getProperty("http.proxyPort"))) {
+				port = Integer.parseInt(System.getProperty("http.proxyPort"));
+			}
+			proxy = new org.apache.http.HttpHost(
+					System.getProperty("http.proxyHost"), port);
+
+			org.apache.http.client.CredentialsProvider credsProvider = new BasicCredentialsProvider();
+
+			credsProvider.setCredentials(
+					new AuthScope(proxy.getHostName(), proxy.getPort(),
+							AuthScope.ANY_REALM, AuthScope.ANY_SCHEME),
+
+					new UsernamePasswordCredentials("fastcoder65",
+							"imxDr5OZimxDr5OZ"));
+
+			DefaultProxyRoutePlanner routePlanner = new DefaultProxyRoutePlanner(
+					proxy);
+
+			hcBuilder.setRoutePlanner(routePlanner);
+			hcBuilder.setDefaultCredentialsProvider(credsProvider);
+			hcBuilder.setProxy(proxy);
+		}
+
+		
+		 CloseableHttpClient httpClient = null;
+
+		try {
+			
+			SSLContext ctx = SSLContext.getInstance("TLS");
+
+			KeyManager[] keyManagers = getKeyManagers("pkcs12", new FileInputStream(new File(AccountConstants.PATH_TO_PRIVATE_KEY)),"1q2w3e4r5t");
+
+			ctx.init(keyManagers, null, new SecureRandom());
+
+			SSLConnectionSocketFactory sslsf = new SSLConnectionSocketFactory(ctx, NoopHostnameVerifier.INSTANCE);
+			
+	        httpClient = hcBuilder.setSSLSocketFactory(sslsf).build();
+
+			HttpClientContext localContext = null;
+
+			if (proxy != null) {
+				// Create AuthCache instance
+				AuthCache authCache = new BasicAuthCache();
+				// Generate DIGEST scheme object, initialize it and add it to
+				// the local
+				// auth cache
+				DigestScheme digestAuth = new DigestScheme();
+				// Suppose we already know the realm name
+				digestAuth.overrideParamter("realm", "MyPrivateEc2Proxy");
+				// Suppose we already know the expected nonce value
+				 digestAuth.overrideParamter("nonce", "XPFezyhHcEWult89wHfh31Kei6O");
+				authCache.put(proxy, digestAuth);
+
+				// Add AuthCache to the execution context
+				localContext = HttpClientContext.create();
+				localContext.setAuthCache(authCache);
+			}  
+
+			HttpPost httpPost = new HttpPost(AccountConstants.ENDPOINT_TO_CERTLOGIN);
+
 			List<NameValuePair> nvps = new ArrayList<NameValuePair>();
 
 			nvps.add(new BasicNameValuePair("username", userName));
@@ -62,12 +138,14 @@ public class HttpClientSSO {
 
 			httpPost.setEntity(new UrlEncodedFormEntity(nvps));
 			httpPost.setHeader("X-Application", appKey);
-			log.info("executing request {}",  httpPost.getRequestLine());
+			log.info("executing request {}", httpPost.getRequestLine());
 
-			HttpResponse response = httpClient.execute(httpPost);
+			HttpResponse response = httpClient.execute(httpPost, localContext);
+			
+			// HttpResponse response = httpClient.execute(httpPost);
 			HttpEntity entity = response.getEntity();
 
-			log.info("Response status line: {}",response.getStatusLine());
+			log.info("Response status line: {}", response.getStatusLine());
 			if (entity != null) {
 				responseString = EntityUtils.toString(entity);
 				log.info("Session token: {}", responseString);
@@ -75,10 +153,181 @@ public class HttpClientSSO {
 		} catch (Exception e) {
 			log.error("Exception while get sessionToken: {}", e);
 		} finally {
-			httpClient.getConnectionManager().shutdown();
+			try {
+				if ( httpClient != null )
+				httpClient.close();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		}
 		return responseString;
 	}
+
+
+	public static String getSessionTokenResponse2(String appKey,
+			String userName, String password) {
+
+		String responseString = null;
+		HttpClientBuilder hcBuilder = HttpClients.custom();
+
+		org.apache.http.HttpHost proxy = null;
+
+		// Set HTTP proxy, if specified in system properties
+		if (isSet(System.getProperty("http.proxyHost"))) {
+			int port = 80;
+			if (isSet(System.getProperty("http.proxyPort"))) {
+				port = Integer.parseInt(System.getProperty("http.proxyPort"));
+			}
+			proxy = new org.apache.http.HttpHost(
+					System.getProperty("http.proxyHost"), port);
+
+			org.apache.http.client.CredentialsProvider credsProvider = new BasicCredentialsProvider();
+
+			credsProvider.setCredentials(
+					new AuthScope(proxy.getHostName(), proxy.getPort(),
+							AuthScope.ANY_REALM, AuthScope.ANY_SCHEME),
+
+					new UsernamePasswordCredentials("fastcoder65",
+							"imxDr5OZimxDr5OZ"));
+
+			DefaultProxyRoutePlanner routePlanner = new DefaultProxyRoutePlanner(
+					proxy);
+
+			hcBuilder.setRoutePlanner(routePlanner);
+			hcBuilder.setDefaultCredentialsProvider(credsProvider);
+		}
+
+		CloseableHttpClient httpClient = hcBuilder.build();
+
+		try {
+			SSLContext ctx = SSLContext.getInstance("TLS");
+			KeyManager[] keyManagers = getKeyManagers("pkcs12",
+					new FileInputStream(new File(
+							AccountConstants.PATH_TO_PRIVATE_KEY)),
+					"1q2w3e4r5t");
+			ctx.init(keyManagers, null, new SecureRandom());
+
+			SSLConnectionSocketFactory sslsf = new SSLConnectionSocketFactory(
+					ctx, NoopHostnameVerifier.INSTANCE);
+
+			// SSLSocketFactory factory = new SSLSocketFactory(ctx, new
+			// StrictHostnameVerifier());
+
+			// ClientConnectionManager manager =
+			// httpClient.getConnectionManager();
+			// HttpClientConnectionManager manager =
+			// httpClient.getConnectionManager();
+			
+			Registry<ConnectionSocketFactory> r = RegistryBuilder
+					.<ConnectionSocketFactory> create()
+					.register("https", sslsf).build();
+			
+
+			HttpClientConnectionManager cm = new PoolingHttpClientConnectionManager(
+					r);
+			
+			HttpClients.custom().setConnectionManager(cm).build();
+
+			HttpClientContext localContext = null;
+
+			if (proxy != null) {
+				// Create AuthCache instance
+				AuthCache authCache = new BasicAuthCache();
+				// Generate DIGEST scheme object, initialize it and add it to
+				// the local
+				// auth cache
+				DigestScheme digestAuth = new DigestScheme();
+				// Suppose we already know the realm name
+				digestAuth.overrideParamter("realm", "MyPrivateEc2Proxy");
+				// Suppose we already know the expected nonce value
+				digestAuth.overrideParamter("nonce",
+						"XPFezyhHcEWult89wHfh31Kei6O");
+				authCache.put(proxy, digestAuth);
+
+				// Add AuthCache to the execution context
+				localContext = HttpClientContext.create();
+				localContext.setAuthCache(authCache);
+
+			}  
+			
+			RequestConfig config = RequestConfig.custom()
+	                .setProxy(proxy)
+	                .build();
+
+			HttpPost httpPost = new HttpPost(
+					AccountConstants.ENDPOINT_TO_CERTLOGIN);
+			httpPost.setConfig(config);
+			List<NameValuePair> nvps = new ArrayList<NameValuePair>();
+
+			nvps.add(new BasicNameValuePair("username", userName));
+			nvps.add(new BasicNameValuePair("password", password));
+
+			httpPost.setEntity(new UrlEncodedFormEntity(nvps));
+			httpPost.setHeader("X-Application", appKey);
+			log.info("executing request {}", httpPost.getRequestLine());
+
+			HttpResponse response = httpClient.execute(httpPost, localContext);
+			HttpEntity entity = response.getEntity();
+
+			log.info("Response status line: {}", response.getStatusLine());
+			if (entity != null) {
+				responseString = EntityUtils.toString(entity);
+				log.info("Session token: {}", responseString);
+			}
+		} catch (Exception e) {
+			log.error("Exception while get sessionToken: {}", e);
+		} finally {
+			try {
+				httpClient.close();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		return responseString;
+	}
+
+	/*
+	 * public static String getSessionTokenResponse_old(String appKey, String
+	 * userName, String password) {
+	 * 
+	 * 
+	 * DefaultHttpClient httpClient = new DefaultHttpClient();
+	 * 
+	 * String responseString = null; try { SSLContext ctx =
+	 * SSLContext.getInstance("TLS"); KeyManager[] keyManagers =
+	 * getKeyManagers("pkcs12", new FileInputStream(new
+	 * File(AccountConstants.PATH_TO_PRIVATE_KEY)),"1q2w3e4r5t");
+	 * ctx.init(keyManagers, null, new SecureRandom());
+	 * 
+	 * SSLSocketFactory factory = new SSLSocketFactory(ctx, new
+	 * StrictHostnameVerifier());
+	 * 
+	 * ClientConnectionManager manager = httpClient.getConnectionManager();
+	 * 
+	 * manager.getSchemeRegistry().register(new Scheme("https", PORT, factory));
+	 * 
+	 * HttpPost httpPost = new HttpPost(
+	 * AccountConstants.ENDPOINT_TO_CERTLOGIN); List<NameValuePair> nvps = new
+	 * ArrayList<NameValuePair>();
+	 * 
+	 * nvps.add(new BasicNameValuePair("username", userName)); nvps.add(new
+	 * BasicNameValuePair("password", password));
+	 * 
+	 * httpPost.setEntity(new UrlEncodedFormEntity(nvps));
+	 * httpPost.setHeader("X-Application", appKey);
+	 * log.info("executing request {}", httpPost.getRequestLine());
+	 * 
+	 * HttpResponse response = httpClient.execute(httpPost); HttpEntity entity =
+	 * response.getEntity();
+	 * 
+	 * log.info("Response status line: {}",response.getStatusLine()); if (entity
+	 * != null) { responseString = EntityUtils.toString(entity);
+	 * log.info("Session token: {}", responseString); } } catch (Exception e) {
+	 * log.error("Exception while get sessionToken: {}", e); } finally {
+	 * httpClient.getConnectionManager().shutdown(); } return responseString; }
+	 */
 
 	private static KeyManager[] getKeyManagers(String keyStoreType,
 			InputStream keyStoreFile, String keyStorePassword) throws Exception {

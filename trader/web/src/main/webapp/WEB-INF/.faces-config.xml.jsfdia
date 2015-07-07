@@ -21,8 +21,8 @@
  </PROCESS-ITEM>
  <PROCESS-ITEM NAME="rules:#index.xhtml" PATH="/index.xhtml"
   SHAPE="240,257,0,0" model-entity="JSFProcessGroup"/>
- <PROCESS-ITEM NAME="rules:#main.xhtml" PATH="/main.xhtml"
-  SHAPE="240,33,0,0" model-entity="JSFProcessGroup"/>
  <PROCESS-ITEM NAME="rules:#profile#profile.xhtml"
   PATH="/profile/profile.xhtml" SHAPE="240,145,0,0" model-entity="JSFProcessGroup"/>
+ <PROCESS-ITEM NAME="rules:#main.xhtml" PATH="/main.xhtml"
+  SHAPE="240,33,0,0" model-entity="JSFProcessGroup"/>
 </PROCESS>

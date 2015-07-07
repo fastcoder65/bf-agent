@@ -1,12 +1,13 @@
 package net.bir.web.beans;
 
+import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -17,9 +18,13 @@ import java.util.logging.Logger;
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import javax.ejb.EJB;
+import javax.faces.bean.ManagedBean;
+import javax.faces.bean.SessionScoped;
 import javax.faces.component.UIComponent;
 import javax.faces.component.html.HtmlInputText;
 import javax.faces.context.FacesContext;
+import javax.faces.event.AjaxBehaviorEvent;
+import javax.swing.tree.TreeNode;
 
 import net.bir.ejb.session.settings.SettingsService;
 import net.bir.util.WebUtils;
@@ -37,18 +42,15 @@ import net.bir2.multitrade.ejb.entity.SystemSettings;
 import net.bir2.multitrade.ejb.entity.Uzer;
 import net.bir2.multitrade.util.APIContext;
 
-import org.ajax4jsf.component.html.HtmlAjaxSupport;
+import org.richfaces.component.AbstractExtendedDataTable;
+import org.richfaces.component.AbstractTree;
 import org.richfaces.component.UITree;
-import org.richfaces.component.html.HtmlScrollableDataTable;
-import org.richfaces.component.html.HtmlTreeNode;
-import org.richfaces.component.state.TreeState;
-import org.richfaces.event.NodeExpandedEvent;
-import org.richfaces.event.NodeSelectedEvent;
-import org.richfaces.model.TreeNode;
-import org.richfaces.model.TreeRowKey;
-import org.richfaces.model.selection.SimpleSelection;
+import org.richfaces.component.UITreeNode;
+import org.richfaces.event.TreeSelectionChangeEvent;
+import org.richfaces.event.TreeToggleEvent;
 
 import com.betfair.aping.entities.EventResult;
+import com.betfair.aping.entities.EventType;
 import com.betfair.aping.entities.EventTypeResult;
 import com.betfair.aping.entities.MarketBook;
 import com.betfair.aping.entities.MarketCatalogue;
@@ -58,15 +60,34 @@ import com.betfair.aping.entities.RunnerCatalog;
 import com.betfair.aping.enums.MatchProjection;
 import com.betfair.aping.enums.OrderProjection;
 import com.betfair.aping.exceptions.APINGException;
+//import org.ajax4jsf.component.html.HtmlAjaxSupport;
+//import org.richfaces.component.html.HtmlScrollableDataTable;
+//import org.richfaces.component.html.HtmlTreeNode;
+//import org.richfaces.component.state.TreeState;
+//import org.richfaces.event.NodeExpandedEvent;
+//import org.richfaces.event.NodeSelectedEvent;
+//import org.richfaces.model.TreeRowKey;
+//import org.richfaces.model.selection.SimpleSelection;
 
-public class MarketBean extends BaseBean {
+@ManagedBean
+@SessionScoped
+public class MarketBean extends BaseBean implements Serializable {
 
+	private static final long serialVersionUID = 1L;
 	private Market currentMarket = null;
 	private Market4User market4User = null;
 
 	private APIContext apiContext = null;
 
-	private final Object lock = new Object();
+	private TreeNode currentSelection = null;
+
+	public TreeNode getCurrentSelection() {
+		return currentSelection;
+	}
+
+	public void setCurrentSelection(TreeNode currentSelection) {
+		this.currentSelection = currentSelection;
+	}
 
 	@EJB(name = "BIR/SettingsServiceBean/local")
 	protected SettingsService settingsService;
@@ -138,7 +159,7 @@ public class MarketBean extends BaseBean {
 	}
 
 	private String nodeTitle;
-	private SportNode sports;
+	private SportNode allSports;
 
 	// Print some data to the output, appending a carriage return.
 	public void println(String value) {
@@ -184,152 +205,260 @@ public class MarketBean extends BaseBean {
 		return getMarketService().merge(market4User);
 	}
 
-	@SuppressWarnings("rawtypes")
-	public void changeExpandListener(final NodeExpandedEvent event) {
-		setPollEnabled(false);
-		getLog().info("*** enter to changeExpandListener ***");
-		Object source = event.getSource();
-		if (source instanceof HtmlTreeNode) {
-			UITree tree = ((HtmlTreeNode) source).getUITree();
-			if (tree == null) {
-				return;
-			}
-			// get the row key i.e. id of the given node.
-			Object rowKey = tree.getRowKey();
-			// Object data = tree.getRowData(rowKey);
+	public void selectionChanged(TreeSelectionChangeEvent selectionChangeEvent) {
+		getLog().info(
+				"TREE.selectionChanged - selectionChangeEvent: "
+						+ selectionChangeEvent);
 
-			// get the model node of this node.
-			TreeRowKey key = (TreeRowKey) tree.getRowKey();
-			getLog().fine("key=" + key);
-			TreeState state = (TreeState) tree.getComponentState();
-			if (state.isExpanded(key)) {
-				getLog().fine(rowKey + " - expanded");
-			} else {
-				getLog().fine(rowKey + " - collapsed");
-			}
+		// considering only single selection
+		List<Object> selection = new ArrayList<Object>(
+				selectionChangeEvent.getNewSelection());
+		Object currentSelectionKey = selection.get(0);
+		AbstractTree tree = (AbstractTree) selectionChangeEvent.getSource();
+
+		Object storedKey = tree.getRowKey();
+		log.info("TREE.selectionChanged - storedKey: " + storedKey);
+		tree.setRowKey(currentSelectionKey);
+		currentSelection = (TreeNode) tree.getRowData();
+		tree.setRowKey(storedKey);
+
+		getLog().info("currentSelection: " + currentSelection);
+		SportNode sportNode = null;
+		EventNode eventNode = null;
+		MarketNode marketNode = null;
+
+		if (currentSelection instanceof SportNode) {
+			sportNode = (SportNode) currentSelection;
+			getLog().info("sportNode: " + sportNode);
 		}
+
+		if (currentSelection instanceof EventNode) {
+			eventNode = (EventNode) currentSelection;
+			getLog().info("eventNode: " + eventNode);
+		}
+
+		if (currentSelection instanceof MarketNode) {
+			marketNode = (MarketNode) currentSelection;
+			getLog().info("marketNode: " + marketNode);
+		}
+
 	}
 
-	public synchronized void selectNodeListener(NodeSelectedEvent evt)
-			throws APINGException {
-		getLog().info("* enter to nodeSelectListener, event:" + evt);
-		setPollEnabled(false);
-		Object source = evt.getSource();
-		getLog().info("source:" + source);
+	public synchronized void toggleListener(TreeToggleEvent ttEvent) {
+		getLog().info("toggleListener: " + ttEvent);
+		UITree tree = (UITree) ttEvent.getSource();
 
-		UITree tree = ((HtmlTreeNode) source).getUITree();
-		if (tree == null) {
-			getLog().info("tree == null ! ");
+		//UIComponent treecomp = ttEvent.getComponent();
+		//getLog().info("treecomp.getClientId(): " + treecomp.getClientId());
+
+		//AbstractTree absTree = tree;
+		currentSelection = (TreeNode) tree.getRowData();
+
+		SportNode sportNode = null;
+		EventNode eventNode = null;
+		MarketNode marketNode = null;
+
+		if (currentSelection == null)
 			return;
-		}
+		
+		if (currentSelection instanceof SportNode) {
+			sportNode = (SportNode) currentSelection;
+			getLog().info("sportNode: " + sportNode);
 
-		if (source instanceof HtmlTreeNode) {
-			Object rowData = tree.getRowData();
-			getLog().info("rowData is: " + rowData);
-			SportNode sportNode = null;
-			EventNode eventNode = null;
-			MarketNode marketNode = null;
+			Set<String> eventTypeIds = new HashSet<String>();
+			Set<String> eventIds = new HashSet<String>();
+			
+			eventTypeIds.add(String.valueOf(sportNode.getId()));
 
-			if (rowData instanceof SportNode) {
-				sportNode = (SportNode) rowData;
-				getLog().info("sportNode: " + sportNode);
+			List<EventResult> listEvents = null;
+
+			try {
+				listEvents = GlobalAPI.getEvents(apiContext, eventTypeIds,
+						eventIds);
+			} catch (APINGException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
 			}
 
-			if (rowData instanceof EventNode) {
-				eventNode = (EventNode) rowData;
-				getLog().info("eventNode: " + eventNode);
-			}
+			if (listEvents != null) {
+				getLog().info("## listEvents.size()= " + listEvents.size());
+				
+				for (EventResult er : listEvents) {
 
-			if (rowData instanceof MarketNode) {
-				marketNode = (MarketNode) rowData;
-				getLog().info("marketNode: " + marketNode);
-			}
+					if (er != null
+							&& er.getEvent().getId() != null
+							&& er.getEvent().getId().trim().length() > 0) {
 
-			if (marketNode != null) {
-				selectedMarketNode = marketNode;
-				getLog().info("marketNode is:" + marketNode);
-			} else {
+						EventNode _event = new EventNode(er.getEvent());
+						
+					//	getLog().info("(parent is sportNode) sportEvent: " + _event);
 
-				try {
-					getLog().info("else...");
-					Set<String> eventTypeIds = new HashSet<String>();
+						sportNode.addEntry(_event);
 
-					if (sportNode != null) {
-						eventTypeIds.add(String.valueOf(sportNode.getId()));
 					}
-
-					getLog().info("eventTypeIds.size()= " + eventTypeIds.size());
-
-					Set<String> eventIds = new HashSet<String>();
-
-					if (eventNode != null) {
-						eventIds.add(String.valueOf(eventNode.getId()));
-					}
-
-					getLog().info("eventIds.size()= " + eventIds.size());
-
-					List<EventResult> listEvents = GlobalAPI.getEvents(
-							apiContext, eventTypeIds, eventIds);
-
-					/*
-					 * BFEvent[] bfEvents = resp.getEventItems().getBFEvent() ==
-					 * null ? BF_EVENT0 : resp.getEventItems().getBFEvent();
-					 * 
-					 * MarketSummary[] bfMarkets = resp.getMarketItems()
-					 * .getMarketSummary() == null ? MARKET_SUMMARY0 :
-					 * resp.getMarketItems().getMarketSummary();
-					 */
-
-					if (listEvents != null) {
-						getLog().info(
-								"## listEvents.size()= " + listEvents.size());
-						int i = 0;
-						for (EventResult bfEvent : listEvents) {
-							i++;
-							log.info(i + ")");
-
-							if (bfEvent != null
-									&& bfEvent.getEvent().getId() != null
-									&& bfEvent.getEvent().getId().trim()
-											.length() > 0) {
-
-								getLog().info(
-										i + ") " + "sportEvent: "
-												+ bfEvent.getEvent());
-
-								EventNode sportEvent = new EventNode(
-										bfEvent.getEvent());
-
-								if (sportNode != null)
-									sportNode.addEntry(sportEvent);
-
-								if (eventNode != null)
-									eventNode.addEntry(sportEvent);
-
-							}
-						}
-					}
-
-					List<MarketCatalogue> listMarkets = GlobalAPI.getMarkets(
-							apiContext, eventIds, null);
-
-					for (MarketCatalogue mc : listMarkets) {
-						getLog().info("\t market:" + mc.getMarketName());
-						MarketNode aMarketNode = new MarketNode(mc);
-						if (eventNode != null)
-							eventNode.addEntry(aMarketNode);
-					}
-					/*
-					 * Collections.sort(eventNode.getMarkets(), new
-					 * MarketNode.MarketNodeComparator());
-					 */
-				} catch (Exception e) {
-					getLog().log(Level.SEVERE, "error in selectNodeListener: ",
-							e);
 				}
-			} // if marketnode != null
+			}
 		}
+
+		if (currentSelection instanceof EventNode) {
+			eventNode = (EventNode) currentSelection;
+			getLog().info("eventNode: " + eventNode);
+
+			Set<String> eventTypeIds = new HashSet<String>();
+			Set<String> eventIds = new HashSet<String>();
+
+			if (eventNode != null) {
+				eventIds.add(String.valueOf(eventNode.getId()));
+			}
+
+			getLog().info("eventIds.size()= " + eventIds.size());
+
+			List<EventResult> listEvents = null;
+
+			try {
+				listEvents = GlobalAPI.getEvents(apiContext, eventTypeIds,
+						eventIds);
+			} catch (APINGException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
+
+			if (listEvents != null) {
+				getLog().info("## listEvents.size()= " + listEvents.size());
+				
+				int i = 0;
+				for (EventResult er : listEvents) {
+					i++;
+//					log.info(i + ")");
+
+					if (er != null
+							&& er.getEvent().getId() != null
+							&& er.getEvent().getId().trim().length() > 0) {
+
+
+						EventNode _event = new EventNode(er.getEvent());
+						getLog().info(i + ") (parent is eventNode)" + "sportEvent: " + _event);
+
+							eventNode.addEntry(_event);
+
+					}
+				}
+			}
+
+			List<MarketCatalogue> listMarkets = null;
+
+			try {
+				listMarkets = GlobalAPI.getMarkets(apiContext, eventIds, null);
+			} catch (APINGException e) {
+				// TODO Auto-generated catch block
+				getLog().log(Level.SEVERE, "error getting markets: ", e);
+			}
+
+			if (listMarkets != null)
+				for (MarketCatalogue mc : listMarkets) {
+					getLog().info("\n market:" + mc.getMarketName());
+					MarketNode aMarketNode = new MarketNode(mc);
+					if (eventNode != null)
+						eventNode.addEntry(aMarketNode);
+				}
+
+		}
+
+		if (currentSelection instanceof MarketNode) {
+			marketNode = (MarketNode) currentSelection;
+			getLog().info("marketNode: " + marketNode);
+		}
+
+		if (marketNode != null) {
+			selectedMarketNode = marketNode;
+			getLog().info("marketNode is:" + marketNode);
+		}  // if marketnode != null
+
 	}
+
+	/*
+	 * public synchronized void selectNodeListener(NodeSelectedEvent evt) {
+	 * getLog().info("* enter to nodeSelectListener, event:" + evt);
+	 * setPollEnabled(false); Object source = evt.getSource();
+	 * getLog().info("source:" + source);
+	 * 
+	 * UITree tree = ((HtmlTreeNode) source).getUITree(); if (tree == null) {
+	 * getLog().info("tree == null ! "); return; }
+	 * 
+	 * if (source instanceof HtmlTreeNode) { Object rowData = tree.getRowData();
+	 * getLog().info("rowData is: " + rowData); } }
+	 */
+	/*
+	 * public synchronized void selectNodeListener0(NodeSelectedEvent evt)
+	 * throws APINGException {
+	 * getLog().info("* enter to nodeSelectListener, event:" + evt);
+	 * setPollEnabled(false); Object source = evt.getSource();
+	 * getLog().info("source:" + source);
+	 * 
+	 * UITree tree = ((HtmlTreeNode) source).getUITree(); if (tree == null) {
+	 * getLog().info("tree == null ! "); return; }
+	 * 
+	 * if (source instanceof HtmlTreeNode) { Object rowData = tree.getRowData();
+	 * getLog().info("rowData is: " + rowData); SportNode sportNode = null;
+	 * EventNode eventNode = null; MarketNode marketNode = null;
+	 * 
+	 * if (rowData instanceof SportNode) { sportNode = (SportNode) rowData;
+	 * getLog().info("sportNode: " + sportNode); }
+	 * 
+	 * if (rowData instanceof EventNode) { eventNode = (EventNode) rowData;
+	 * getLog().info("eventNode: " + eventNode); }
+	 * 
+	 * if (rowData instanceof MarketNode) { marketNode = (MarketNode) rowData;
+	 * getLog().info("marketNode: " + marketNode); }
+	 * 
+	 * if (marketNode != null) { selectedMarketNode = marketNode;
+	 * getLog().info("marketNode is:" + marketNode); } else {
+	 * 
+	 * try { getLog().info("else..."); Set<String> eventTypeIds = new
+	 * HashSet<String>();
+	 * 
+	 * if (sportNode != null) {
+	 * eventTypeIds.add(String.valueOf(sportNode.getId())); }
+	 * 
+	 * getLog().info("eventTypeIds.size()= " + eventTypeIds.size());
+	 * 
+	 * Set<String> eventIds = new HashSet<String>();
+	 * 
+	 * if (eventNode != null) { eventIds.add(String.valueOf(eventNode.getId()));
+	 * }
+	 * 
+	 * getLog().info("eventIds.size()= " + eventIds.size());
+	 * 
+	 * List<EventResult> listEvents = GlobalAPI.getEvents( apiContext,
+	 * eventTypeIds, eventIds);
+	 * 
+	 * 
+	 * if (listEvents != null) { getLog().info( "## listEvents.size()= " +
+	 * listEvents.size()); int i = 0; for (EventResult bfEvent : listEvents) {
+	 * i++; log.info(i + ")");
+	 * 
+	 * if (bfEvent != null && bfEvent.getEvent().getId() != null &&
+	 * bfEvent.getEvent().getId().trim() .length() > 0) {
+	 * 
+	 * getLog().info( i + ") " + "sportEvent: " + bfEvent.getEvent());
+	 * 
+	 * EventNode sportEvent = new EventNode( bfEvent.getEvent());
+	 * 
+	 * if (sportNode != null) sportNode.addEntry(sportEvent);
+	 * 
+	 * if (eventNode != null) eventNode.addEntry(sportEvent);
+	 * 
+	 * } } }
+	 * 
+	 * List<MarketCatalogue> listMarkets = GlobalAPI.getMarkets( apiContext,
+	 * eventIds, null);
+	 * 
+	 * for (MarketCatalogue mc : listMarkets) { getLog().info("\t market:" +
+	 * mc.getMarketName()); MarketNode aMarketNode = new MarketNode(mc); if
+	 * (eventNode != null) eventNode.addEntry(aMarketNode); } } catch (Exception
+	 * e) { getLog().log(Level.SEVERE, "error in selectNodeListener: ", e); } }
+	 * // if marketnode != null } }
+	 */
 
 	public static final String NT_SPORT = "S-";
 	public static final String NT_EVENT = "E-";
@@ -338,36 +467,97 @@ public class MarketBean extends BaseBean {
 	public static final String NT_COMPETITION = "C-";
 	public static final String NT_RACE = "R-";
 
-	@SuppressWarnings("rawtypes")
-	public Map<Object, TreeNode> getSportNodes() throws APINGException {
-		if (sports == null) {
-			sports = new SportNode("0", "All sports");
+	public synchronized List<TreeNode> getSportNodes() throws APINGException {
+		if (allSports == null) {
+			allSports = new SportNode("0", "All sports");
 
 			try {
 				int i = 0;
-				for (EventTypeResult et : GlobalAPI
-						.getActiveEventTypes(getApiContext())) {
+				for (EventTypeResult et : GlobalAPI.getActiveEventTypes(getApiContext())) {
+					
 					i++;
 					SportNode sport = new SportNode(et.getEventType());
-					sports.addEntry(sport);
+					allSports.addEntry(sport);
+
+					Set<String> eventTypeIds = new HashSet<String>();
+					Set<String> eventIds = new HashSet<String>();
+					
+					eventTypeIds.add(String.valueOf(sport.getId()));
+
+					List<EventResult> listEvents = null;
+
+		//			if (i < 2) {	
+
+					try {
+						listEvents = GlobalAPI.getEvents(apiContext, eventTypeIds,
+								eventIds);
+					} catch (APINGException e1) {
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
+					}
+
+					if (listEvents != null) {
+					//	getLog().info("## listEvents.size()= " + listEvents.size());
+						
+						for (EventResult er : listEvents) {
+
+							if (er != null
+									&& er.getEvent().getId() != null
+									&& er.getEvent().getId().trim().length() > 0) {
+
+								EventNode _event = new EventNode(er.getEvent());
+								
+							//	 getLog().info("(parent is sportNode) sportEvent: " + _event.getId());
+
+								sport.addEntry(_event);
+
+							}
+						}
+					}
+			//		} // if
+				}
+			} catch (Exception e) {
+				getLog().severe(e.getMessage());
+			}
+		}
+
+		System.out.println("sports.getEventTypes().size(): "
+				+ allSports.getEventTypes().size());
+		return allSports.getEventTypes();
+	}
+
+	public synchronized List<TreeNode> getSportNodes0() throws APINGException {
+		if (allSports == null) {
+			allSports = new SportNode("0", "All sports");
+
+			try {
+
+				for (int i = 0; i < 10; i++) {
+					i++;
+					SportNode sport = new SportNode(new EventType("" + i,
+							"000_" + i, "sport"));
+					allSports.addEntry(sport);
 					System.out.println(i + ") " + sport);
 				}
 			} catch (Exception e) {
 				getLog().severe(e.getMessage());
 			}
 		}
-		return sports.getEventTypes();
+
+		System.out.println("sports.getEventTypes().size(): "
+				+ allSports.getEventTypes().size());
+		return allSports.getEventTypes();
 	}
 
-	public List<Market> getActiveMarkets() {
+	public synchronized List<Market> getActiveMarkets() {
 
 		List<Market> result;
-		synchronized (lock) {
-			result = getMarketService().getMyActiveMarkets();
-			getLog().fine(
-					"getActiveMarkets(): read " + result.size()
-							+ " active markets..");
-		}
+
+		result = getMarketService().getMyActiveMarkets();
+		getLog().fine(
+				"getActiveMarkets(): read " + result.size()
+						+ " active markets..");
+
 		return result;
 	}
 
@@ -407,96 +597,129 @@ public class MarketBean extends BaseBean {
 	List<Runner> runners = new ArrayList<Runner>();
 
 	public List<Runner> getRunners() {
-		Iterator<Object> iterator = masterSelection.getKeys();
+		Iterator<Object> iterator = masterSelectionItems.iterator();
 		while (iterator.hasNext()) {
-			Object key = iterator.next();
-			getLog().fine("master key is:" + key);
+			Object data = iterator.next();
+			System.out.println("master data:" + data);
 
-			masterTable.setRowKey(key);
-			if (masterTable.isRowAvailable()) {
-				Object data = masterTable.getRowData();
-				// System.out.println("master data:" + data);
+			if (data instanceof Market) {
+				Market _market = (Market) data;
+				if (getCurrentMarket() == null
+						|| getCurrentMarket().getMarketId() != _market
+								.getMarketId()) {
+					setCurrentMarket(_market);
 
-				if (data instanceof Market) {
-					Market _market = (Market) data;
-					if (getCurrentMarket() == null
-							|| getCurrentMarket().getMarketId() != _market
-									.getMarketId()) {
-						setCurrentMarket(_market);
+					runners.clear();
+					getLog().info("read runners for " + currentMarket.getId());
 
-						runners.clear();
-						getLog().info(
-								"read runners for " + currentMarket.getId());
-
-						runners.addAll(getMarketService().listRunners(
-								currentMarket.getMarketId()));
-						Collections
-								.sort(runners, new Runner.RunnerComparator());
-						getLog().info(
-								"method getRunners() completed, "
-										+ runners.size() + " runners found.");
-						break;
-					}
+					runners.addAll(getMarketService().listRunners(
+							currentMarket.getMarketId()));
+					Collections.sort(runners, new Runner.RunnerComparator());
+					getLog().info(
+							"method getRunners() completed, " + runners.size()
+									+ " runners found.");
+					break;
 				}
 			}
 		}
 		return runners;
 	}
 
-	public synchronized void saveOdds(javax.faces.event.ActionEvent event) {
-		getLog().fine(
+	public synchronized void saveOdds(AjaxBehaviorEvent event) {
+		getLog().info(
 				"*** saveOdds fired, event: " + event.toString() + ", source:"
 						+ event.getSource().toString());
+
 		UIComponent component = event.getComponent();
 		UIComponent parentComponent = component.getParent();
 
-		getLog().fine("component: " + component);
-		getLog().fine("parentComponent: " + parentComponent);
+		getLog().info("component: " + component);
+		getLog().info("parentComponent: " + parentComponent);
 
-		HtmlAjaxSupport has = (HtmlAjaxSupport) component;
+		// HtmlAjaxSupport has = (HtmlAjaxSupport) component;
 		HtmlInputText inputText = (HtmlInputText) parentComponent;
-		getLog().fine("Processing inputText with id: " + has.getData());
+		// getLog().fine("Processing inputText with id: " + has.getData());
+		/*
+		 * if (has.getData() != null) { Long _id = (Long) has.getData();
+		 */
+		Long _id = null;
+		try {
+			for (Runner runner : runners) {
+				if (runner.getSelectionId().equals(_id)
+						&& inputText.getValue() != null) {
 
-		if (has.getData() != null) {
-			Long _id = (Long) has.getData();
-			try {
-				for (Runner runner : runners) {
-					if (runner.getSelectionId().equals(_id)
-							&& inputText.getValue() != null) {
+					Double _odds = (Double) inputText.getValue();
 
-						Double _odds = (Double) inputText.getValue();
+					_odds = (_odds == null || _odds == 0.0) ? BaseServiceBean.FAKE_ODDS
+							: _odds;
 
-						_odds = (_odds == null || _odds == 0.0) ? BaseServiceBean.FAKE_ODDS
-								: _odds;
+					Runner4User r4u = runner.getUserData4Runner().get(
+							currentUser.getId());
+					/*
+					 * Market4User m4u = r4u.getLinkedRunner().getMarket()
+					 * .getUserData4Market().get(currentUser.getId());
+					 */
+					Market4User m4u = getCurrentMarket().getUserData4Market()
+							.get(currentUser.getId());
+					getLog().fine(m4u.toString());
+					this.setPollEnabled(false);
+					m4u.setOnAir(false);
+					r4u.setOdds(_odds);
 
-						Runner4User r4u = runner.getUserData4Runner().get(
-								currentUser.getId());
-						/*
-						 * Market4User m4u = r4u.getLinkedRunner().getMarket()
-						 * .getUserData4Market().get(currentUser.getId());
-						 */
-						Market4User m4u = getCurrentMarket()
-								.getUserData4Market().get(currentUser.getId());
-						getLog().fine(m4u.toString());
-						this.setPollEnabled(false);
-						m4u.setOnAir(false);
-						r4u.setOdds(_odds);
+					getLog().info(
+							"** user odds " + _odds + " for runner "
+									+ runner.getSelectionId() + " saved.");
+					getMarketService().merge(m4u);
+					getMarketService().merge(r4u);
+					break;
 
-						getLog().info(
-								"** user odds " + _odds + " for runner "
-										+ runner.getSelectionId() + " saved.");
-						getMarketService().merge(m4u);
-						getMarketService().merge(r4u);
-						break;
-
-					}
 				}
-			} catch (Exception e) {
-				getLog().severe(
-						"Error saving user odds, message: " + e.getMessage());
 			}
+		} catch (Exception e) {
+			getLog().severe(
+					"Error saving user odds, message: " + e.getMessage());
 		}
+		// }
 	}
+
+	/*
+	 * public synchronized void saveOdds_old(javax.faces.event.ActionEvent
+	 * event) { getLog().info( "*** saveOdds fired, event: " + event.toString()
+	 * + ", source:" + event.getSource().toString());
+	 * 
+	 * UIComponent component = event.getComponent(); UIComponent parentComponent
+	 * = component.getParent();
+	 * 
+	 * getLog().info("component: " + component);
+	 * getLog().info("parentComponent: " + parentComponent);
+	 * 
+	 * HtmlAjaxSupport has = (HtmlAjaxSupport) component; HtmlInputText
+	 * inputText = (HtmlInputText) parentComponent;
+	 * getLog().fine("Processing inputText with id: " + has.getData());
+	 * 
+	 * if (has.getData() != null) { Long _id = (Long) has.getData(); try { for
+	 * (Runner runner : runners) { if (runner.getSelectionId().equals(_id) &&
+	 * inputText.getValue() != null) {
+	 * 
+	 * Double _odds = (Double) inputText.getValue();
+	 * 
+	 * _odds = (_odds == null || _odds == 0.0) ? BaseServiceBean.FAKE_ODDS :
+	 * _odds;
+	 * 
+	 * Runner4User r4u = runner.getUserData4Runner().get( currentUser.getId());
+	 * 
+	 * Market4User m4u = getCurrentMarket()
+	 * .getUserData4Market().get(currentUser.getId());
+	 * getLog().fine(m4u.toString()); this.setPollEnabled(false);
+	 * m4u.setOnAir(false); r4u.setOdds(_odds);
+	 * 
+	 * getLog().info( "** user odds " + _odds + " for runner " +
+	 * runner.getSelectionId() + " saved."); getMarketService().merge(m4u);
+	 * getMarketService().merge(r4u); break;
+	 * 
+	 * } } } catch (Exception e) { getLog().severe(
+	 * "Error saving user odds, message: " + e.getMessage()); } } }
+	 */
 
 	private Uzer currentUser = null;
 
@@ -509,7 +732,7 @@ public class MarketBean extends BaseBean {
 		getLog().info("*** enter to double click event handler ***" + event);
 		UIComponent component = event.getComponent().getParent();
 		getLog().info("component: " + component);
-		UITree tree = ((HtmlTreeNode) component).getUITree();
+		UITree tree = null; // ((HtmlTreeNode) component).getUITree();
 		if (tree == null) {
 			return;
 		}
@@ -703,16 +926,18 @@ public class MarketBean extends BaseBean {
 		getLog().info("changeSelection fired!");
 	}
 
-	protected SimpleSelection masterSelection = new SimpleSelection();
+	// protected SimpleSelection masterSelection = new SimpleSelection();
+	private Collection<Object> masterTableSelection;
 
-	protected HtmlScrollableDataTable masterTable = null;
-
-	public HtmlScrollableDataTable getMasterTable() {
-		return masterTable;
+	public Collection<Object> getMasterTableSelection() {
+		return masterTableSelection;
 	}
 
-	public void setMasterTable(HtmlScrollableDataTable masterTable) {
-		this.masterTable = masterTable;
+	public void setMasterTableSelection(Collection<Object> masterTableSelection) {
+		this.masterTableSelection = masterTableSelection;
+		getLog().info(
+				"this.masterTableSelection = " + this.masterTableSelection);
+		setPollEnabled(true);
 	}
 
 	private boolean pollEnabled = true;
@@ -727,14 +952,21 @@ public class MarketBean extends BaseBean {
 		getLog().fine("pollEnabled =" + pollEnabled);
 	}
 
-	public SimpleSelection getMasterSelection() {
-		return masterSelection;
-	}
+	private List<Object> masterSelectionItems = new ArrayList<Object>();
 
-	public void setMasterSelection(SimpleSelection masterSelection) {
-		this.masterSelection = masterSelection;
-		getLog().fine("this.masterSelection =" + this.masterSelection);
-		setPollEnabled(true);
+	public void masterSelectionListener(AjaxBehaviorEvent event) {
+
+		AbstractExtendedDataTable dataTable = (AbstractExtendedDataTable) event
+				.getComponent();
+		Object originalKey = dataTable.getRowKey();
+		masterSelectionItems.clear();
+		for (Object selectionKey : masterTableSelection) {
+			dataTable.setRowKey(selectionKey);
+			if (dataTable.isRowAvailable()) {
+				masterSelectionItems.add(dataTable.getRowData());
+			}
+		}
+		dataTable.setRowKey(originalKey);
 	}
 
 	public long getSelectedMarketId() {
@@ -763,20 +995,16 @@ public class MarketBean extends BaseBean {
 	public void setOnAir(boolean b) {
 		getLog().info("*** enter to switch OnAir...");
 		setPollEnabled(false);
-		Iterator<Object> iterator = masterSelection.getKeys();
+		Iterator<Object> iterator = masterSelectionItems.iterator();
 		int i = 0;
 		while (iterator.hasNext()) {
-			Object key = iterator.next();
-			masterTable.setRowKey(key);
-			if (masterTable.isRowAvailable()) {
-				Object data = masterTable.getRowData();
-				if (data instanceof Market) {
-					Market _currentMarket = (Market) data;
-					Market4User m4u = _currentMarket.getUserData4Market().get(
-							currentUser.getId());
-					m4u.setOnAir(b);
-					getMarketService().merge(m4u);
-				}
+			Object data = iterator.next();
+			if (data instanceof Market) {
+				Market _currentMarket = (Market) data;
+				Market4User m4u = _currentMarket.getUserData4Market().get(
+						currentUser.getId());
+				m4u.setOnAir(b);
+				getMarketService().merge(m4u);
 			}
 			i++;
 		}
@@ -787,20 +1015,16 @@ public class MarketBean extends BaseBean {
 	public void deleteMarket() {
 		getLog().info("*** enter to delete markets...");
 		setPollEnabled(false);
-		Iterator<Object> iterator = masterSelection.getKeys();
+		Iterator<Object> iterator = masterSelectionItems.iterator();
 		int i = 0;
 		while (iterator.hasNext()) {
-			Object key = iterator.next();
-			masterTable.setRowKey(key);
-			if (masterTable.isRowAvailable()) {
-				Object data = masterTable.getRowData();
-				if (data instanceof Market) {
-					Market _currentMarket = (Market) data;
-					_currentMarket = getMarketService().getMarket(
-							_currentMarket.getId());
-					if (_currentMarket != null) {
-						getMarketService().remove(_currentMarket);
-					}
+			Object data = iterator.next();
+			if (data instanceof Market) {
+				Market _currentMarket = (Market) data;
+				_currentMarket = getMarketService().getMarket(
+						_currentMarket.getId());
+				if (_currentMarket != null) {
+					getMarketService().remove(_currentMarket);
 				}
 			}
 			i++;
@@ -816,7 +1040,8 @@ public class MarketBean extends BaseBean {
 		 * if (this.market4User == null) { //
 		 * getLog().info("market4User is null! " + this.hashCode()); } else { //
 		 * getLog().info("market4User is NOT null! " + this.hashCode()); }
-		 */return this.market4User;
+		 */
+		return this.market4User;
 	}
 
 	public void setCurrentMarket4User(Market4User _currentMarket4User) {
@@ -824,7 +1049,7 @@ public class MarketBean extends BaseBean {
 			return;
 		this.market4User = _currentMarket4User;
 		// copyMarketProperties();
-		getLog().fine("this.market4User set to: " + this.market4User);
+		getLog().info("this.market4User set to: " + this.market4User);
 	}
 
 	public String customMyMarketProperties() {

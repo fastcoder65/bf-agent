@@ -8,8 +8,9 @@
 	xmlns:dnd="http://labs.jboss.com/jbossrichfaces/ui/drag-drop"
 	xmlns:rich="http://richfaces.org/rich">
 
-
-	<rich:simpleTogglePanel bodyClass="marketPanelBody" switchType="client"
+	<h:form id="runnerForm">
+		
+	<rich:togglePanel bodyClass="marketPanelBody" switchType="client"
 		label="Runners">
 
 		<h:panelGrid>
@@ -21,8 +22,6 @@
 				errorStyle="color:red" showSummary="true" showDetail="true" />
 		</h:panelGrid>
 
-
-		<h:form id="runnerForm">
 
 			<rich:dataTable value="#{marketBean.runners}" var="rnr"
 				id="runnerTable" rowKeyVar="rkv" sortMode="single" width="100%">
@@ -53,9 +52,12 @@
 						disabled="#{rnr.userData4Runner[marketBean.currentUser.id].isNonRunner}"
 						style="width:100%" styleClass="oddsCol"
 						value="#{rnr.userData4Runner[marketBean.currentUser.id].odds}">
-						<a4j:support data="#{rnr.selectionId}"
-							actionListener="#{marketBean.saveOdds}" event="onkeyup"
-							reRender="runnersMessages,pollMarkets,autoRefreshStatus" />
+
+						<a4j:ajax
+							data="#{rnr.selectionId}"
+							listener="#{marketBean.saveOdds}" event="keyup"
+							render="runnersMessages,pollMarkets,autoRefreshStatus" />
+							
 					</h:inputText>
 				</rich:column>
 
@@ -445,8 +447,9 @@
 				</rich:column>
 
 			</rich:dataTable>
+
+	</rich:togglePanel>
+		
 		</h:form>
-
-	</rich:simpleTogglePanel>
-
+		
 </ui:composition>

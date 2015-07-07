@@ -17,7 +17,7 @@
 					errorStyle="color:red" showSummary="true" showDetail="true" />
 			</a4j:outputPanel>
 
-			<a4j:form id="activeMarketsForm">
+			<h:form id="activeMarketsForm">
 
 				<a4j:commandButton reRender="marketRegion"
 					action="#{marketBean.deleteMarket}" value="Remove market"
@@ -32,7 +32,7 @@
 						<h:outputText value="Pseudo-Stake volume" />
 						<rich:inputNumberSpinner minValue="0" maxValue="10000"
 							value="#{marketBean.pseudoStakeVolume}" step="10">
-							<a4j:support event="onchange"
+							<a4j:ajax event="change"
 								actionListener="#{marketBean.changePseudoStakeVolume}"
 								ajaxSingle="true" />
 
@@ -44,7 +44,7 @@
 						<rich:inputNumberSpinner value="0.9" step="0.02" />
 					</h:panelGrid>
 				</h:panelGrid>
-			</a4j:form>
+			</h:form>
 
 			<a4j:region>
 				<h:form>

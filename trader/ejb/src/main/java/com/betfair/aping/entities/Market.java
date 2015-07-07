@@ -4,6 +4,11 @@ import java.util.Date;
 
 public class Market extends Root {
 
+	public Market(String id, String name, String type) {
+		super(id, name, type);
+		// TODO Auto-generated constructor stub
+	}
+
 	private static final long serialVersionUID = 2536922843974294714L;
 
 	private String exchangeId;
