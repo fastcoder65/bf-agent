@@ -3,23 +3,22 @@
 	xmlns:h="http://java.sun.com/jsf/html"
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:a4j="http://richfaces.org/a4j"
-	xmlns:model="http://labs.jboss.com/jbossrichfaces/ui/treeModel"
-	xmlns:tree="http://labs.jboss.com/jbossrichfaces/ui/tree"
-	xmlns:dnd="http://labs.jboss.com/jbossrichfaces/ui/drag-drop"
 	xmlns:rich="http://richfaces.org/rich">
 
 	<h:form id="runnerForm">
 		
-	<rich:togglePanel bodyClass="marketPanelBody" switchType="client"
-		label="Runners">
+	<rich:togglePanel bodyClass="marketPanelBody" switchType="client" label="Runners">
 
 		<h:panelGrid>
+
 			<a4j:outputPanel>
 				<h:outputText id="serverTime" value="#{marketBean.serverTime}" />
 			</a4j:outputPanel>
+
 			<rich:messages id="runnersMessages" ajaxRendered="true"
 				globalOnly="true" infoStyle="color:green" warnStyle="color:#FF9900"
 				errorStyle="color:red" showSummary="true" showDetail="true" />
+
 		</h:panelGrid>
 
 

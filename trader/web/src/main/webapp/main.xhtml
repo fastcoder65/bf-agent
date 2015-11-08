@@ -19,28 +19,26 @@
 
 	<link rel="ICON" href='images/favicon.ico' type="image/x-icon" />
 
+	<link rel="stylesheet" type="text/css"  href="css/main.css" />
+
 </h:head>
 
 <h:body>
-<f:view>
-	<h:panelGrid cellpaddintg="0" cellspacing="0" border="0" columns="1"
-		width="100%" style="height:100%">
-		<ui:include src="/layout/toolbar.xhtml" />
-		<h:panelGrid cellpaddintg="0" cellspacing="0" border="0" columns="2"
-			width="100%" valign="top">
 
-			<ui:include src="/markets/marketPage.xhtml" />
 
-			<h:panelGrid cellpaddintg="0" cellspacing="0" border="0" columns="1"
-				width="100%" style="height:100%">
+	<f:view>
 
+	<div style="width:100%">
+			<ui:include src="/layout/toolbar.xhtml" />
+		</div>
+		<div style="width:20%;float:left">
+			<ui:include src="/demo/treeModelRecursiveAdaptor-sample.xhtml"/>
+		</div>
+
+		<div style="width:80%;">
 				<ui:include src="/markets/activeMarkets.xhtml" />
-
-				<ui:include src="/markets/runners.xhtml" />
-
-			</h:panelGrid>
-		</h:panelGrid>
-	</h:panelGrid>
+    		    <ui:include src="/markets/runners.xhtml" />
+		</div>
 </f:view>
 </h:body>
 </html>

@@ -4,118 +4,24 @@ html, body {
     width: 100%;
     height: 100%;
     border-width: 0px;
-    background-color: #FFFFFF;
-    scrollbar-shadow-color: #000000;
-    scrollbar-highlight-color: #C0C0C0;
-    scrollbar-face-color: #D0D0D0;
-    scrollbar-darkshadow-color: #F0F0F0;
-    scrollbar-3dlight-color: #F0F0F0;
-    scrollbar-track-color: #E0E0E0;
-    scrollbar-arrow-color: #000000;
 }
 
-A {
-    font-size: 11px;
-    font-family: Verdana, Arial, sans-serif;
-    font-weight: bold;
-    color: #000000;
-    text-decoration: none
+.outPanelHeader {
+    height: 4px;
+    border-width: 0;
 }
 
-A:hover {
-    font-size: 11px;
-    font-family: Verdana, Arial, sans-serif;
-    font-weight: bold;
-    color: #4F77A3;
-    text-decoration: none
+.inPanelBody {
+    margin-top: 1px;
+    padding: 1px;
+    height: 630px;
+    overflow: auto;
 }
 
-table {
-    font-size: 11px;
-    font-family: Verdana, Arial, sans-serif;
+.marketPanelBody {
+    margin-top: 1px;
+    padding: 1px;
+    height: 300px;
+    overflow: auto;
 }
 
-input {
-    font-size: 11px;
-    font-family: Verdana, Arial, sans-serif;
-    background-color: #F0F0F0;
-    border-top: 1px solid #C0C0C0;
-    border-left: 1px solid #C0C0C0;
-    border-right: 1px solid #C0C0C0;
-    border-bottom: 1px solid #C0C0C0;
-}
-
-input.highlight {
-    font-size: 11px;
-    font-family: Verdana, Arial, sans-serif;
-    background-color: #FFFFFF;
-    border-top: 1px solid #C0C0C0;
-    border-left: 1px solid #C0C0C0;
-    border-right: 1px solid #C0C0C0;
-    border-bottom: 1px solid #C0C0C0;
-    cursor: pointer;
-    cursor: hand;
-}
-
-select {
-    font-size: 11px;
-    font-family: Verdana, Arial, sans-serif;
-    background-color: #F0F0F0;
-}
-
-textarea {
-    font-size: 11px;
-    font-family: Verdana, Arial, sans-serif;
-    background-color: #F0F0F0;
-}
-
-.copyright {
-    FONT-FAMILY: Tahoma, Verdana;
-    font-weight: normal;
-    TEXT-ALIGN: right;
-    COLOR: #303030;
-}
-
-.copyright A {
-    FONT-FAMILY: Tahoma, Verdana;
-    font-weight: normal;
-    TEXT-DECORATION: none;
-    COLOR: #303030;
-}
-
-.copyright A:hover {
-    FONT-FAMILY: Tahoma, Verdana;
-    font-weight: normal;
-    TEXT-DECORATION: none;
-    COLOR: #FFFFFF;
-}
-
-.webmaster {
-    FONT-FAMILY: Tahoma, Verdana;
-    font-weight: normal;
-    TEXT-ALIGN: left;
-    COLOR: #303030;
-}
-
-.webmaster A {
-    FONT-FAMILY: Tahoma, Verdana;
-    font-weight: normal;
-    TEXT-DECORATION: none;
-    COLOR: #303030;
-}
-
-.webmaster A:hover {
-    FONT-FAMILY: Tahoma, Verdana;
-    font-weight: normal;
-    TEXT-DECORATION: none;
-    COLOR: #FFFFFF;
-}
-
-.noBorder
-{
-	background: #FFFFFF;
-  border-top: 0px solid #FFFFFF;
-	border-left: 0px solid #FFFFFF;
-	border-right: 0px solid #FFFFFF;
-	border-bottom: 0px solid #FFFFFF;
-}
