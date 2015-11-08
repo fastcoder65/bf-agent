@@ -22,18 +22,58 @@
     xsi:schemaLocation="http://www.jboss.org/ironjacamar/schema http://docs.jboss.org/ironjacamar/schema/datasources_1_0.xsd">
    <!-- The datasource is bound into JNDI at this location. We reference 
       this in META-INF/persistence.xml -->
+<!--
     <datasource jndi-name="java:jboss/datasources/traderDS" pool-name="trader"  enabled="true" use-java-context="true">
     <connection-url>jdbc:mysql://localhost:3306/bir</connection-url>
     <driver>mysql2</driver>
     <security>
         <user-name>bir</user-name>
-        <password>bir-123456789</password>
+        <password>bir_12345678</password>
     </security>
     <statement>
         <prepared-statement-cache-size>110</prepared-statement-cache-size>
         <share-prepared-statements/>
     </statement>
-
     </datasource>
+-->
+<!--
+    <datasource jndi-name="java:/jboss/datasources/context/birOraDS" pool-name="birOraPoolDsCtx" enabled="true">
+        <connection-url>jdbc:oracle:thin:@127.0.0.1:1521:XE</connection-url>
+        <driver>OracleDriver</driver>
+        <transaction-isolation>TRANSACTION_READ_COMMITTED</transaction-isolation>
+        <pool>
+            <min-pool-size>10</min-pool-size>
+            <max-pool-size>30</max-pool-size>
+            <prefill>true</prefill>
+        </pool>
+        <security>
+            <user-name>bir</user-name>
+            <password>bir_1234567890</password>
+        </security>
+        <statement>
+            <prepared-statement-cache-size>32</prepared-statement-cache-size>
+            <share-prepared-statements>true</share-prepared-statements>
+        </statement>
+    </datasource>
+-->
+    <datasource jndi-name="java:/jboss/datasources/birPgDSApp" pool-name="birPgPoolDsApp" enabled="true">
+        <connection-url>jdbc:postgresql://localhost:5432/postgres</connection-url>
+        <driver>PostgresSQLDriver</driver>
+        <transaction-isolation>TRANSACTION_READ_COMMITTED</transaction-isolation>
+        <pool>
+            <min-pool-size>4</min-pool-size>
+            <max-pool-size>20</max-pool-size>
+            <prefill>true</prefill>
+        </pool>
+        <security>
+            <user-name>bir</user-name>
+            <password>bir_123</password>
+        </security>
+        <statement>
+            <prepared-statement-cache-size>32</prepared-statement-cache-size>
+            <share-prepared-statements>true</share-prepared-statements>
+        </statement>
+    </datasource>
+
 </datasources>
  
