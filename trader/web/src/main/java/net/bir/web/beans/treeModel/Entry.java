@@ -1,6 +1,8 @@
 package net.bir.web.beans.treeModel;
 
+import javax.swing.tree.TreeNode;
 import java.io.Serializable;
+import java.util.List;
 
 public abstract class Entry implements Serializable {
 	
@@ -116,4 +118,9 @@ public abstract class Entry implements Serializable {
 	public abstract void addEntry(Entry entry);
 
 	public abstract void removeEntry(Entry entry);
+
+	public abstract List<TreeNode> getEvents();
+
+	public abstract List<TreeNode> getMarkets();
+
 }

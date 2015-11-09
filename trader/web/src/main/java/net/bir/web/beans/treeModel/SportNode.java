@@ -51,15 +51,28 @@ public class SportNode extends Entry implements TreeNode {
 		this.eventTypes = eventTypes;
 	}
 
+
+	private List<TreeNode> markets = new ArrayList<TreeNode>();
+
+	public List<TreeNode> getMarkets() {
+		return markets;
+	}
+
+	public void setMarkets(List<TreeNode> markets) {
+		this.markets = markets;
+	}
+
+
 	private List<TreeNode> events = new ArrayList<TreeNode>();
 
 	public List<TreeNode> getEvents() {
+/*
 		if (events != null) {
 			for (TreeNode tnode : events) {
 				System.out.println("sportNode.getEvents(): " + tnode);
 			}
 		}
-
+*/
 		return events;
 	}
 

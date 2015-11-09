@@ -3,9 +3,7 @@ package net.bir.web.beans.treeModel;
 import java.io.Serializable;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.Comparator;
-import java.util.Enumeration;
-import java.util.Iterator;
+import java.util.*;
 
 // import org.richfaces.model.TreeNode;
 import javax.swing.tree.TreeNode;
@@ -47,6 +45,34 @@ public class MarketNode extends Entry implements TreeNode {
 	public String getName() {
 		return this.getMarket().getMarketName();
 	}
+
+	private List<TreeNode> events = new ArrayList<TreeNode>();
+
+	public List<TreeNode> getEvents() {
+/*
+		if (events != null) {
+			for (TreeNode tnode : events) {
+				System.out.println("sportNode.getEvents(): " + tnode);
+			}
+		}
+*/
+		return events;
+	}
+
+	public void setEvents(List<TreeNode> events) {
+		this.events = events;
+	}
+
+	private List<TreeNode> markets = new ArrayList<TreeNode>();
+
+	public List<TreeNode> getMarkets() {
+		return markets;
+	}
+
+	public void setMarkets(List<TreeNode> markets) {
+		this.markets = markets;
+	}
+
 
 	@Override
 	public void addEntry(Entry entry) {

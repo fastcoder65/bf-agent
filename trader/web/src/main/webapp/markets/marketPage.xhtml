@@ -4,60 +4,98 @@
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:a4j="http://richfaces.org/a4j"
 	xmlns:rich="http://richfaces.org/rich">
-
-	<rich:panel bodyClass="inpanelBody">
-
+	<rich:panel bodyClass="inPanelBody">
 		<f:facet name="header">
-			<h:outputText value="All markets" />
+			<h:outputText value="All markets"/>
 		</f:facet>
 
-		<h:panelGrid columns="1">
+		<div>
+			<h:form>
+				<rich:tree toggleType="ajax" var="item"
+						   nodeClass="net.bir.web.beans.treeModel.Entry"
+						   toggleListener="#{marketBean.toggleListener}"
+						   selectionChangeListener="#{marketBean.selectionChanged}"
+						>
 
-			<a4j:outputPanel id="marketsTreePane">
+					<rich:treeModelRecursiveAdaptor roots="#{marketBean.sportNodes}" nodes="#{item.events}">
+						<rich:treeNode>
+							#{item.name}
+						</rich:treeNode>
 
-				<h:form>
 
-					<rich:tree 	id="marketsRT" 
-								toggleType="ajax" 
-								var="nodeItem"
-								toggleListener="#{marketBean.toggleListener}"
-								selectionChangeListener="#{marketBean.selectionChanged}">
-
-						<rich:treeModelRecursiveAdaptor id="sportItemsMA"
-							roots="#{marketBean.sportNodes}"
-							nodes="#{nodeItem.events}">
-
-							<rich:treeNode id="sportItem"
-								
-								iconExpanded="images/tree/ftv2folderopen.gif"
-								iconCollapsed="images/tree/ftv2folderclosed.gif">
-
-								<h:outputText value="#{nodeItem.name}" />
-
+						<rich:treeModelAdaptor id="marketItems" nodes="#{item.markets}">
+							<rich:treeNode id="marketItem" iconCollapsed="images/tree-help/ftv2doc.gif">
+								#{item.name}
+							<a4j:ajax event="dblclick" listener="#{marketBean.addToActiveMarkets}" render="marketRegion" />
 							</rich:treeNode>
-
-						<rich:treeModelAdaptor id="marketItems" nodes="#{nodeItem.markets}">
-
-							<rich:treeNode id="marketItem"
-								iconCollapsed="images/tree-help/ftv2doc.gif">
-
-								<h:outputText value="#{nodeItem.name}" />
-
-								<a4j:ajax event="dblclick"
-									listener="#{marketBean.addToActiveMarkets}"
-									render="marketRegion" />
-
-							</rich:treeNode>
-
 						</rich:treeModelAdaptor>
 
-						</rich:treeModelRecursiveAdaptor>
 
-					</rich:tree>
-				</h:form>
-			</a4j:outputPanel>
-		</h:panelGrid>
+					</rich:treeModelRecursiveAdaptor>
+				</rich:tree>
+			</h:form>
+		</div>
 	</rich:panel>
+
+	<ui:remove>
+	<!--
+
+        <rich:panel bodyClass="inpanelBody">
+
+            <f:facet name="header">
+                <h:outputText value="All markets" />
+            </f:facet>
+
+            <h:panelGrid columns="1">
+
+                <a4j:outputPanel id="marketsTreePane">
+
+                    <h:form>
+
+                        <rich:tree 	id="marketsRT"
+                                    toggleType="ajax"
+                                    var="nodeItem"
+                                    toggleListener="#{marketBean.toggleListener}"
+                                    selectionChangeListener="#{marketBean.selectionChanged}"
+                                    >
+
+                            <rich:treeModelRecursiveAdaptor id="sportItemsMA"
+                                roots="#{marketBean.sportNodes}"
+                                nodes="#{nodeItem.events}">
+
+                                <rich:treeNode id="sportItem"
+
+                                    iconExpanded="images/tree/ftv2folderopen.gif"
+                                    iconCollapsed="images/tree/ftv2folderclosed.gif">
+
+                                    <h:outputText value="#{nodeItem.name}" />
+
+                                </rich:treeNode>
+
+                            <rich:treeModelAdaptor id="marketItems" nodes="#{nodeItem.markets}">
+
+                                <rich:treeNode id="marketItem"
+                                    iconCollapsed="images/tree-help/ftv2doc.gif">
+
+                                    <h:outputText value="#{nodeItem.name}" />
+
+                                    <a4j:ajax event="dblclick"
+                                        listener="#{marketBean.addToActiveMarkets}"
+                                        render="marketRegion" />
+
+                                </rich:treeNode>
+
+                            </rich:treeModelAdaptor>
+
+                            </rich:treeModelRecursiveAdaptor>
+
+                        </rich:tree>
+                    </h:form>
+                </a4j:outputPanel>
+            </h:panelGrid>
+        </rich:panel>
+        -->
+	</ui:remove>
 </ui:composition>
 
 
