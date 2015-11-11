@@ -58,8 +58,26 @@ public class ApiNgRescriptOperations extends ApiNgOperations {
         return container;
 
     }
-    
-	public  List<EventResult> listEvents(MarketFilter filter, MarketSort sort,String maxResult,
+
+    public List<CompetitionResult> listCompetitions(MarketFilter filter, MarketSort sort,String maxResult,
+                                         String appKey,
+                                         String ssoId)
+            throws APINGException {
+        Map<String, Object> params = new HashMap<String, Object>();
+        params.put(FILTER, filter);
+        params.put(LOCALE, locale);
+        String result = getInstance().makeRequest(ApiNgOperation.LISTCOMPETITIONS.getOperationName(), params, appKey, ssoId);
+        if(ApiNGDemo.isDebug())
+            System.out.println("\nResponse: "+result);
+
+        List<CompetitionResult> container = JsonConverter.convertFromJson(result, new TypeToken<List<CompetitionResult>>() {}.getType());
+
+        return container;
+
+    }
+
+
+    public  List<EventResult> listEvents(MarketFilter filter, MarketSort sort,String maxResult,
 			 String appKey, 
 			 String ssoId)
 			throws APINGException {

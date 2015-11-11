@@ -1,11 +1,7 @@
 package com.betfair.aping.api;
 
 import com.betfair.aping.ApiNGDemo;
-import com.betfair.aping.containers.EventTypeResultContainer;
-import com.betfair.aping.containers.EventResultContainer;
-import com.betfair.aping.containers.ListMarketBooksContainer;
-import com.betfair.aping.containers.ListMarketCatalogueContainer;
-import com.betfair.aping.containers.PlaceOrdersContainer;
+import com.betfair.aping.containers.*;
 import com.betfair.aping.entities.*;
 import com.betfair.aping.enums.*;
 import com.betfair.aping.exceptions.APINGException;
@@ -66,6 +62,32 @@ public class ApiNgJsonRpcOperations extends ApiNgOperations {
 
 		EventTypeResultContainer container = JsonConverter.convertFromJson(
 				result, EventTypeResultContainer.class);
+		if (container.getError() != null)
+			throw container.getError().getData().getAPINGException();
+
+		return container.getResult();
+
+	}
+
+	public List<CompetitionResult> listCompetitions
+			(MarketFilter filter, MarketSort sort, String maxResult, String appKey, String ssoId)
+			throws APINGException {
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put(LOCALE, locale);
+		params.put(FILTER, filter);
+		params.put(SORT, sort);
+		params.put(MAX_RESULT, maxResult);
+
+		String result = getInstance().makeRequest(
+				ApiNgOperation.LISTCOMPETITIONS.getOperationName(), params, appKey,
+				ssoId);
+
+		if (ApiNGDemo.isDebug())
+			System.out.println("\nResponse: " + result);
+
+		CompetitionResultContainer container = JsonConverter.convertFromJson(result,
+				CompetitionResultContainer.class);
+
 		if (container.getError() != null)
 			throw container.getError().getData().getAPINGException();
 

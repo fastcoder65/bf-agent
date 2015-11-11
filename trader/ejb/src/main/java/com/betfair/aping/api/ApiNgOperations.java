@@ -5,14 +5,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
-import com.betfair.aping.entities.EventResult;
-import com.betfair.aping.entities.EventTypeResult;
-import com.betfair.aping.entities.MarketBook;
-import com.betfair.aping.entities.MarketCatalogue;
-import com.betfair.aping.entities.MarketFilter;
-import com.betfair.aping.entities.PlaceExecutionReport;
-import com.betfair.aping.entities.PlaceInstruction;
-import com.betfair.aping.entities.PriceProjection;
+import com.betfair.aping.entities.*;
 import com.betfair.aping.enums.MarketProjection;
 import com.betfair.aping.enums.MarketSort;
 import com.betfair.aping.enums.MatchProjection;
@@ -41,6 +34,11 @@ public abstract class ApiNgOperations {
 	public abstract List<EventResult> listEvents(MarketFilter filter,
 			MarketSort sort, String maxResult, String appKey, String ssoId)
 			throws APINGException;
+
+	public abstract List<CompetitionResult> listCompetitions
+			(MarketFilter filter, MarketSort sort, String maxResult, String appKey, String ssoId)
+			throws APINGException;
+
 
 	public abstract List<MarketBook> listMarketBook(List<String> marketIds,
 			PriceProjection priceProjection, OrderProjection orderProjection,

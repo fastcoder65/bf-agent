@@ -7,19 +7,13 @@ import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import com.betfair.aping.entities.*;
 import my.pack.util.AccountConstants;
 import net.bir2.multitrade.util.APIContext;
 import net.bir2.util.DTAction;
 
 import com.betfair.aping.api.ApiNgJsonRpcOperations;
 import com.betfair.aping.api.ApiNgOperations;
-import com.betfair.aping.entities.EventResult;
-import com.betfair.aping.entities.EventTypeResult;
-import com.betfair.aping.entities.MarketBook;
-import com.betfair.aping.entities.MarketCatalogue;
-import com.betfair.aping.entities.MarketFilter;
-import com.betfair.aping.entities.PriceProjection;
-import com.betfair.aping.entities.TimeRange;
 import com.betfair.aping.enums.MarketProjection;
 import com.betfair.aping.enums.MarketSort;
 import com.betfair.aping.enums.MatchProjection;
@@ -87,7 +81,38 @@ public class GlobalAPI {
 		return r;
 	}
 
-	// Get the markets available for the event specified
+	public static List<CompetitionResult> getCompetitions(APIContext context,
+											  Set<String> eventTypeIds, Set<String> eventIds)
+			throws APINGException {
+		MarketFilter marketFilter = new MarketFilter();
+		Set<String> _eventTypeIds = new HashSet<String>();
+
+		if (eventTypeIds != null && eventTypeIds.size() > 0)
+			_eventTypeIds.addAll(eventTypeIds);
+
+		marketFilter.setEventTypeIds(_eventTypeIds);
+
+		Set<String> _eventIds = new HashSet<String>();
+
+		if (eventIds != null && eventIds.size() > 0)
+			_eventIds.addAll(eventIds);
+
+		marketFilter.setEventIds(_eventIds);
+		TimeRange timeRange = new TimeRange();
+
+		timeRange.setFrom(DTAction.getTimeFormBegin(new Date()));
+		timeRange.setTo(DTAction.getTimeToEnd(new Date()));
+
+		marketFilter.setMarketStartTime(timeRange);
+		marketFilter.setTurnInPlayEnabled(true);
+
+		List<CompetitionResult> r = jsonOperations.listCompetitions(marketFilter,
+				MarketSort.FIRST_TO_START, "250", context.getProduct(),
+				context.getToken());
+		return r;
+	}
+
+
 	public static List<EventResult> getEvents(APIContext context,
 			Set<String> eventTypeIds, Set<String> eventIds)
 			throws APINGException {
