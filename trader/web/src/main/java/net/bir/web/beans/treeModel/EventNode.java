@@ -109,7 +109,7 @@ public class EventNode extends Entry implements TreeNode {
 	public void addEvent(EventNode eventNode) {
 		//addChild(new StringKey(MarketBean.NT_EVENT + event.getPath()), event);
 		eventNode.setParent((TreeNode) this);
-		events.add((TreeNode)eventNode);
+		events.add(eventNode);
 	}
 
 	
@@ -150,6 +150,10 @@ public class EventNode extends Entry implements TreeNode {
 		result = markets.get(childIndex);
 
 		return result;
+	}
+
+	public List<TreeNode> getChildren() {
+	 return events;
 	}
 
 	@Override

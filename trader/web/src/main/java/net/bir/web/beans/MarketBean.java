@@ -26,6 +26,7 @@ import javax.faces.context.FacesContext;
 import javax.faces.event.AjaxBehaviorEvent;
 import javax.swing.tree.TreeNode;
 
+import com.betfair.aping.entities.*;
 import net.bir.ejb.session.settings.SettingsService;
 import net.bir.util.WebUtils;
 import net.bir.web.beans.treeModel.EventNode;
@@ -49,14 +50,6 @@ import org.richfaces.component.UITreeNode;
 import org.richfaces.event.TreeSelectionChangeEvent;
 import org.richfaces.event.TreeToggleEvent;
 
-import com.betfair.aping.entities.EventResult;
-import com.betfair.aping.entities.EventType;
-import com.betfair.aping.entities.EventTypeResult;
-import com.betfair.aping.entities.MarketBook;
-import com.betfair.aping.entities.MarketCatalogue;
-import com.betfair.aping.entities.MarketDescription;
-import com.betfair.aping.entities.PriceProjection;
-import com.betfair.aping.entities.RunnerCatalog;
 import com.betfair.aping.enums.MatchProjection;
 import com.betfair.aping.enums.OrderProjection;
 import com.betfair.aping.exceptions.APINGException;
@@ -271,13 +264,35 @@ public class MarketBean extends BaseBean implements Serializable {
 			eventTypeIds.add(String.valueOf(sportNode.getId()));
 
 			List<EventResult> listEvents = null;
-
+			List<CompetitionResult> listCompetitions = null;
 			try {
-				listEvents = GlobalAPI.getEvents(apiContext, eventTypeIds,
-						eventIds);
+
+				listCompetitions =  GlobalAPI.getCompetitions(apiContext, eventTypeIds, eventIds);
+
+				if (listCompetitions == null || listCompetitions.size()==0)
+					listEvents = GlobalAPI.getEvents(apiContext, eventTypeIds, eventIds);
+
 			} catch (APINGException e1) {
 				// TODO Auto-generated catch block
 				e1.printStackTrace();
+			}
+			if (listCompetitions != null) {
+				getLog().info("## listCompetitions.size()= " + listCompetitions.size());
+
+				for (CompetitionResult cr : listCompetitions) {
+
+					if (cr != null
+							&& cr.getCompetition().getId() != null
+							&& cr.getCompetition().getId().trim().length() > 0) {
+
+						EventNode _event = new EventNode(cr.getEvent());
+
+						//	getLog().info("(parent is sportNode) sportEvent: " + _event);
+
+						sportNode.addEntry(_event);
+
+					}
+				}
 			}
 
 			if (listEvents != null) {
@@ -467,7 +482,7 @@ public class MarketBean extends BaseBean implements Serializable {
 	public static final String NT_COMPETITION = "C-";
 	public static final String NT_RACE = "R-";
 
-	public synchronized List<TreeNode> getSportNodes() throws APINGException {
+	public synchronized List<TreeNode> getRootNodes() throws APINGException {
 		if (allSports == null) {
 			allSports = new SportNode("0", "All sports");
 
@@ -484,10 +499,10 @@ public class MarketBean extends BaseBean implements Serializable {
 					
 					eventTypeIds.add(String.valueOf(sport.getId()));
 
-					List<EventResult> listEvents = null;
+//					List<EventResult> listEvents = null;
 
 		//			if (i < 2) {	
-
+/*
 					try {
 						listEvents = GlobalAPI.getEvents(apiContext, eventTypeIds,
 								eventIds);
@@ -495,10 +510,10 @@ public class MarketBean extends BaseBean implements Serializable {
 						// TODO Auto-generated catch block
 						e1.printStackTrace();
 					}
-
-					if (listEvents != null) {
+*/
+				//	if (listEvents != null) {
 					//	getLog().info("## listEvents.size()= " + listEvents.size());
-						
+						/*
 						for (EventResult er : listEvents) {
 
 							if (er != null
@@ -513,7 +528,8 @@ public class MarketBean extends BaseBean implements Serializable {
 
 							}
 						}
-					}
+						*/
+				//	}
 			//		} // if
 				}
 			} catch (Exception e) {

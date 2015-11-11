@@ -119,8 +119,10 @@ public abstract class Entry implements Serializable {
 
 	public abstract void removeEntry(Entry entry);
 
-	public abstract List<TreeNode> getEvents();
+	public abstract List<TreeNode> getChildren();
 
-	public abstract List<TreeNode> getMarkets();
+	//public abstract List<TreeNode> getEvents();
+
+	//public abstract List<TreeNode> getMarkets();
 
 }

@@ -46,32 +46,7 @@ public class MarketNode extends Entry implements TreeNode {
 		return this.getMarket().getMarketName();
 	}
 
-	private List<TreeNode> events = new ArrayList<TreeNode>();
 
-	public List<TreeNode> getEvents() {
-/*
-		if (events != null) {
-			for (TreeNode tnode : events) {
-				System.out.println("sportNode.getEvents(): " + tnode);
-			}
-		}
-*/
-		return events;
-	}
-
-	public void setEvents(List<TreeNode> events) {
-		this.events = events;
-	}
-
-	private List<TreeNode> markets = new ArrayList<TreeNode>();
-
-	public List<TreeNode> getMarkets() {
-		return markets;
-	}
-
-	public void setMarkets(List<TreeNode> markets) {
-		this.markets = markets;
-	}
 
 
 	@Override
@@ -107,7 +82,7 @@ public class MarketNode extends Entry implements TreeNode {
 
 	}
 
-	public Iterator<TreeNode> getChildren() {
+	public List<TreeNode> getChildren() {
 		// TODO Auto-generated method stub
 		return null;
 	}
@@ -118,7 +93,7 @@ public class MarketNode extends Entry implements TreeNode {
 
 	public boolean isLeaf() {
 		// TODO Auto-generated method stub
-		return false;
+		return true;
 	}
 
 	public void removeChild(Object arg0) {
