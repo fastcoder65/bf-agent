@@ -3,6 +3,7 @@ package net.bir.web.beans.treeModel;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.List;
+import java.util.Objects;
 
 import javax.swing.tree.TreeNode;
 
@@ -24,8 +25,7 @@ public class SportNode extends Entry implements TreeNode {
 
 	public SportNode(EventType eventType) {
 		this.setId(eventType.getId());
-		System.out.println("SportNode construct -eventType.getName() "
-				+ eventType.getName());
+		//System.out.println("SportNode construct -eventType.getName() " + eventType.getName());
 		this.name = eventType.getName();
 		this.eventType = eventType;
 		type = "sport";
@@ -117,21 +117,27 @@ public class SportNode extends Entry implements TreeNode {
 	}
 
 	public void addSport(SportNode sportNode) {
-		System.out.println("sport: " + sportNode);
+	//	System.out.println("sport: " + sportNode);
 		sportNode.setParent((TreeNode) this);
 		eventTypes.add(sportNode);
 	}
 
 	@Override
 	public void addEntry(Entry entry) {
+
 		if (entry instanceof EventNode) {
 			addEvent((EventNode) entry);
 			// System.out.println("entry 'event' added : " + entry);
+
 		} else if (entry instanceof SportNode) {
 			addSport((SportNode) entry);
-			System.out.println("entry 'sport' added : " + entry);
+
+			// System.out.println("entry 'sport' added : " + entry);
+
 		} else {
+
 			System.out.println("entry of unknown type found!");
+
 		}
 	}
 
@@ -144,6 +150,10 @@ public class SportNode extends Entry implements TreeNode {
 	public String toString() {
 		return "SportNode [id=" + id + ", type=" + type + ", name=" + name
 				+ "]";
+	}
+
+	public List<TreeNode> getChildren() {
+		return events;
 	}
 
 	@Override
@@ -219,29 +229,20 @@ public class SportNode extends Entry implements TreeNode {
 	}
 
 	@Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = super.hashCode();
-		result = prime * result
-				+ ((eventType == null) ? 0 : eventType.hashCode());
-		return result;
+	public boolean equals(Object o) {
+		if (this == o) return true;
+		if (o == null || getClass() != o.getClass()) return false;
+		if (!super.equals(o)) return false;
+		SportNode sportNode = (SportNode) o;
+		return Objects.equals(parent, sportNode.parent) &&
+				Objects.equals(eventType, sportNode.eventType) &&
+				Objects.equals(eventTypes, sportNode.eventTypes) &&
+				Objects.equals(events, sportNode.events) &&
+				Objects.equals(groups, sportNode.groups);
 	}
 
 	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (!super.equals(obj))
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
-		SportNode other = (SportNode) obj;
-		if (eventType == null) {
-			if (other.eventType != null)
-				return false;
-		} else if (!eventType.equals(other.eventType))
-			return false;
-		return true;
+	public int hashCode() {
+		return Objects.hash(super.hashCode(), parent, eventType, eventTypes, events, groups);
 	}
-
 }

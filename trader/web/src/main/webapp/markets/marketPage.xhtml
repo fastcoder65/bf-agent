@@ -18,19 +18,25 @@
 						>
 
 					<rich:treeModelRecursiveAdaptor roots="#{marketBean.rootNodes}" nodes="#{item.children}">
-						<rich:treeNode>
-							#{item.name}
-						</rich:treeNode>
+						<rich:treeNode  title="#{item.name} (#{item.type})"
+										iconExpanded="images/tree-help/ftv2folderopen.gif"
+										iconCollapsed="images/tree-help/ftv2folderclosed.gif"
+								>#{item.name}</rich:treeNode>
 
+						<rich:treeModelAdaptor rendered="#{item.marketNode}"  nodes="#{item.markets}">
 
-						<rich:treeModelAdaptor id="marketItems" nodes="#{item.markets}">
-							<rich:treeNode id="marketItem" iconCollapsed="images/tree-help/ftv2doc.gif">
-								#{item.name}
-							<a4j:ajax event="dblclick" listener="#{marketBean.addToActiveMarkets}" render="marketRegion" />
+							<rich:treeNode title="#{item.name} (#{item.market.description.marketTime})"
+										   iconExpanded="images/tree-help/ftv2doc.gif"
+										   iconCollapsed="images/tree-help/ftv2doc.gif"
+									>#{item.name}<ui:remove>
+								<a4j:ajax
+										event="dblclick"
+										onevent="#{marketBean.addToActiveMarkets}"
+										render="marketRegion"/>
+								</ui:remove>
 							</rich:treeNode>
+
 						</rich:treeModelAdaptor>
-
-
 					</rich:treeModelRecursiveAdaptor>
 				</rich:tree>
 			</h:form>

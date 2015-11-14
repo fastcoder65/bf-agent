@@ -3,10 +3,13 @@ package net.bir.web.beans.treeModel;
 import javax.swing.tree.TreeNode;
 import java.io.Serializable;
 import java.util.List;
+import java.util.logging.Logger;
 
 public abstract class Entry implements Serializable {
 	
 	private static final long serialVersionUID = 1L;
+
+	protected final Logger log = Logger.getLogger(this.getClass().getName());
 
 	protected String id;
 	protected String name;
@@ -46,13 +49,17 @@ public abstract class Entry implements Serializable {
 
 	@Override
 	public String toString() {
-		return "Entry [id=" + id + ", name=" + name + ", parent=" + parent
+		return " Entry [id=" + id + ", name=" + name + ", parent=" + parent
 				+ ", type=" + type + "]";
 	}
 
 	public String getName() {
-		System.out.println("(" + this.getClass().getName() + ") getName( " + name + " )");
+		// System.out.println("(" + this.getClass().getName() + ") getName( " + name + " )");
 		return name;
+	}
+
+	public boolean isMarketNode() {
+		return false;
 	}
 
 	public void setName(String _name) {

@@ -1,28 +1,31 @@
 package net.bir.web.beans.treeModel;
 
+import com.betfair.aping.entities.Competition;
+import com.betfair.aping.entities.Event;
+import com.google.common.collect.Iterators;
+
+import javax.swing.tree.TreeNode;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.List;
 
-import javax.swing.tree.TreeNode;
-
-import com.betfair.aping.entities.Event;
-import com.google.common.collect.Iterators;
-//import org.richfaces.model.TreeNode;
-
-
 public class EventNode extends Entry implements TreeNode {
 
-	
-
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = -7742007242946255970L;
 
 	private TreeNode parent;
+
+	private Competition competition;
+
+	public Competition getCompetition() {
+		return competition;
+	}
+
+	public void setCompetition(Competition competition) {
+		this.competition = competition;
+	}
 
 	private Event event;
 
@@ -38,6 +41,14 @@ public class EventNode extends Entry implements TreeNode {
 		System.out.println("default constructor for EventNode: " + this);
 	}
 
+	public EventNode(Competition competition) {
+		id   = competition.getId();
+		name = competition.getName();
+		this.competition = competition;
+		type = "competition";
+//		System.out.println("" + this);
+	}
+
 	public EventNode(Event event) {
 	//	System.out.println("with arg event: " + event.getName());
 		
@@ -45,7 +56,13 @@ public class EventNode extends Entry implements TreeNode {
 		name = event.getName();
 		this.event = event;
 		type = "event";
-	//	System.out.println("" + this);
+//		System.out.println("" + this);
+	}
+
+	public boolean isMarketNode() {
+		boolean b =  "event".equals(this.type);
+//		System.out.println("isMarketNode(): " + b);
+		return b;
 	}
 
 	public EventNode(Event event, TreeNode parent) {
@@ -60,11 +77,13 @@ public class EventNode extends Entry implements TreeNode {
 
 
 	public List<TreeNode> getEvents() {
+/*
 		if (events != null) {
 		 for (TreeNode tnode: events) {
 			System.out.println("eventNode.getEvents(): " + tnode); 
 		 }
 		}
+*/
 		return events;
 	}
 
@@ -107,17 +126,16 @@ public class EventNode extends Entry implements TreeNode {
 	}
 
 	public void addEvent(EventNode eventNode) {
-		//addChild(new StringKey(MarketBean.NT_EVENT + event.getPath()), event);
 		eventNode.setParent((TreeNode) this);
 		events.add(eventNode);
 	}
 
-	
-
 	@Override
 	public String toString() {
-		return "EventNode [event=" + event + ", id=" + id + ", name=" + name
-				+ ", type=" + type + "]";
+		return "EventNode{" +
+				"competition=" + competition +
+				", event=" + event +
+				"} " + super.toString();
 	}
 
 	public void addMarket(MarketNode marketNode) {

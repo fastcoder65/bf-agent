@@ -15,11 +15,11 @@ public abstract class BaseBean {
 	//public static final NumberFormat currencyFormat = new NumberFormat()
 	public static final DateFormat timeFormat = new SimpleDateFormat("HH:mm:ss");
 
-	public static final DateFormat dateFormatObj = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
+	public static final DateFormat dateFormatObj = new SimpleDateFormat("dd.MM.yy HH:mm:ss");
 	
-	public static final DateFormat shortDateFormat = new SimpleDateFormat("dd-MM-yyyy HH:mm");
+	public static final DateFormat shortDateFormat = new SimpleDateFormat("dd.MM HH:mm");
 	
-	public static String dateFormat = "dd-MM-yyyy HH:mm";
+	public static String dateFormat = "dd.MM.yy HH:mm";
 
 	public String getDateFormat() {
 		return dateFormat;

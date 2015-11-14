@@ -9,6 +9,9 @@ import java.util.*;
 import javax.swing.tree.TreeNode;
 
 import com.betfair.aping.entities.MarketCatalogue;
+import com.google.common.base.*;
+import com.google.common.base.Objects;
+import net.bir.web.beans.BaseBean;
 
 
 public class MarketNode extends Entry implements TreeNode {
@@ -24,11 +27,17 @@ public class MarketNode extends Entry implements TreeNode {
 	}
 
 	public MarketNode(MarketCatalogue market) {
-		System.out.println( market );
+	//	System.out.println( market );
 		id = market.getMarketId();
-		name = market.getMarketName();
+
+ 	//	String _marketTime = (market.getDescription() != null ? BaseBean.shortDateFormat.format(market.getDescription().getMarketTime())+ " " : "");
+
+		this.name = market.getMarketName();
+
+	//	log.info("id: " + id + ", name: " + name + ", marketTime: " + _marketTime);
+
 		this.market = market;
-		type = "market";
+		this.type = "market";
 	}
 
 	public MarketNode(MarketCatalogue market, TreeNode parent) {
@@ -42,12 +51,22 @@ public class MarketNode extends Entry implements TreeNode {
 	
 	public static final DateFormat df = new SimpleDateFormat("HH:mm");
 
+/*
 	public String getName() {
 		return this.getMarket().getMarketName();
 	}
+*/
 
-
-
+	@Override
+	public String toString() {
+		return "MarketNode{" +
+				" id="+ id +
+				", name="+ name +
+				", type=" + type +
+				", market=" + market +
+				", parent=" + parent +
+				'}';
+	}
 
 	@Override
 	public void addEntry(Entry entry) {
@@ -106,11 +125,6 @@ public class MarketNode extends Entry implements TreeNode {
 
 	}
 
-	@Override
-	public String toString() {
-		return "MarketNode [market=" + market + ", parent=" + parent
-				+ ", type=" + type + "]";
-	}
 
 	public static class MarketNodeComparator implements Comparator<MarketNode>,
 			Serializable {
