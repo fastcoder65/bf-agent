@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
+import java.util.logging.Logger;
 
 import com.betfair.aping.entities.*;
 import com.betfair.aping.enums.MarketProjection;
@@ -25,6 +26,8 @@ public abstract class ApiNgOperations {
 	protected final String PRICE_PROJECTION = "priceProjection";
 	protected final String MATCH_PROJECTION = "matchProjection";
 	protected final String ORDER_PROJECTION = "orderProjection";
+
+	protected final Logger log = Logger.getLogger(this.getClass().getName());
 
 	protected final String locale = Locale.getDefault().toString();
 

@@ -31,7 +31,7 @@ public class ApiNgJsonRpcOperations extends ApiNgOperations {
 
 		String result = getInstance().makeKeepAliveRequest(appKey, ssoId);
 		if (ApiNGDemo.isDebug())
-			System.out.println("\nResponse: " + result);
+			log.info("'keepAlive' Response: " + result);
 		return result;
 	}
 
@@ -39,7 +39,7 @@ public class ApiNgJsonRpcOperations extends ApiNgOperations {
 
 		String result = getInstance().makeLogoutRequest(appKey, ssoId);
 		if (ApiNGDemo.isDebug())
-			System.out.println("\nResponse: " + result);
+			log.info("'logout' Response: " + result);
 
 		return result;
 	}
@@ -47,8 +47,8 @@ public class ApiNgJsonRpcOperations extends ApiNgOperations {
 	public List<EventTypeResult> listEventTypes(MarketFilter filter,
 			String appKey, String ssoId) throws APINGException {
 
-		System.out.println("appKey: " + appKey);
-		System.out.println("ssoId: " + ssoId);
+		log.info("appKey: " + appKey);
+		log.info("ssoId: " + ssoId);
 
 		Map<String, Object> params = new HashMap<String, Object>();
 		params.put(FILTER, filter);
@@ -58,7 +58,7 @@ public class ApiNgJsonRpcOperations extends ApiNgOperations {
 				ApiNgOperation.LISTEVENTTYPES.getOperationName(), params,
 				appKey, ssoId);
 		if (ApiNGDemo.isDebug())
-			System.out.println("\nResponse: " + result);
+			log.info("'listEventTypes' Response: " + result);
 
 		EventTypeResultContainer container = JsonConverter.convertFromJson(
 				result, EventTypeResultContainer.class);
@@ -83,7 +83,7 @@ public class ApiNgJsonRpcOperations extends ApiNgOperations {
 				ssoId);
 
 		if (ApiNGDemo.isDebug())
-			System.out.println("\nResponse: " + result);
+			log.info("'listCompetitions' Response: " + result);
 
 		CompetitionResultContainer container = JsonConverter.convertFromJson(result,
 				CompetitionResultContainer.class);
@@ -109,7 +109,7 @@ public class ApiNgJsonRpcOperations extends ApiNgOperations {
 				ssoId);
 
 		if (ApiNGDemo.isDebug())
-			System.out.println("\nResponse: " + result);
+			log.info("'listEvents' Response: " + result);
 
 		EventResultContainer container = JsonConverter.convertFromJson(result,
 				EventResultContainer.class);
@@ -137,7 +137,7 @@ public class ApiNgJsonRpcOperations extends ApiNgOperations {
 				ApiNgOperation.LISTMARKETBOOK.getOperationName(), params,
 				appKey, ssoId);
 		if (ApiNGDemo.isDebug())
-			System.out.println("\nResponse: " + result);
+			log.info("'listMarketBook' Response: " + result);
 
 		ListMarketBooksContainer container = JsonConverter.convertFromJson(
 				result, ListMarketBooksContainer.class);
@@ -164,7 +164,7 @@ public class ApiNgJsonRpcOperations extends ApiNgOperations {
 				ApiNgOperation.LISTMARKETCATALOGUE.getOperationName(), params,
 				appKey, ssoId);
 		if (ApiNGDemo.isDebug())
-			System.out.println("\nResponse: " + result);
+			log.info("'listMarketCatalogue' Response: " + result);
 
 		ListMarketCatalogueContainer container = JsonConverter.convertFromJson(
 				result, ListMarketCatalogueContainer.class);
@@ -188,7 +188,7 @@ public class ApiNgJsonRpcOperations extends ApiNgOperations {
 				ApiNgOperation.PLACORDERS.getOperationName(), params, appKey,
 				ssoId);
 		if (ApiNGDemo.isDebug())
-			System.out.println("\nResponse: " + result);
+			log.info("'placeOrders' Response: " + result);
 
 		PlaceOrdersContainer container = JsonConverter.convertFromJson(result,
 				PlaceOrdersContainer.class);
@@ -212,7 +212,7 @@ public class ApiNgJsonRpcOperations extends ApiNgOperations {
 
 		requestString = JsonConverter.convertToJson(request);
 		if (ApiNGDemo.isDebug())
-			System.out.println("\nRequest: " + requestString);
+			log.info("'makeRequest' Request: " + requestString);
 
 		// We need to pass the "sendPostRequest" method a string in util format:
 		// requestString

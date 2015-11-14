@@ -1,9 +1,6 @@
 package net.bir2.handler;
 
-import java.util.Date;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -107,39 +104,51 @@ public class GlobalAPI {
 		marketFilter.setTurnInPlayEnabled(true);
 
 		List<CompetitionResult> r = jsonOperations.listCompetitions(marketFilter,
-				MarketSort.FIRST_TO_START, "250", context.getProduct(),
+				MarketSort.FIRST_TO_START, "500", context.getProduct(),
 				context.getToken());
 		return r;
 	}
 
 
 	public static List<EventResult> getEvents(APIContext context,
-			Set<String> eventTypeIds, Set<String> eventIds)
+			Set<String> eventTypeIds,Set<String> competitionIds, Set<String> eventIds)
 			throws APINGException {
 		MarketFilter marketFilter = new MarketFilter();
 		Set<String> _eventTypeIds = new HashSet<String>();
+		Set<String> _competitionIds  = new HashSet<String>();
+		Set<String> _eventIds = new HashSet<String>();
 
 		if (eventTypeIds != null && eventTypeIds.size() > 0)
 			_eventTypeIds.addAll(eventTypeIds);
 
-		marketFilter.setEventTypeIds(_eventTypeIds);
-
-		Set<String> _eventIds = new HashSet<String>();
+		if (competitionIds != null && competitionIds.size() > 0)
+			_competitionIds.addAll(competitionIds);
 
 		if (eventIds != null && eventIds.size() > 0)
 			_eventIds.addAll(eventIds);
 
+		marketFilter.setEventTypeIds(_eventTypeIds);
+
+		marketFilter.setCompetitionIds(_competitionIds);
+
 		marketFilter.setEventIds(_eventIds);
+
 		TimeRange timeRange = new TimeRange();
 
-		timeRange.setFrom(DTAction.getTimeFormBegin(new Date()));
-		timeRange.setTo(DTAction.getTimeToEnd(new Date()));
+		Calendar c = Calendar.getInstance();
+
+		timeRange.setFrom(DTAction.getTimeFormBegin(c.getTime()));
+
+		c.add(Calendar.DAY_OF_YEAR, 3);
+
+		timeRange.setTo(DTAction.getTimeToEnd(c.getTime()));
 
 		marketFilter.setMarketStartTime(timeRange);
+
 		marketFilter.setTurnInPlayEnabled(true);
 
 		List<EventResult> r = jsonOperations.listEvents(marketFilter,
-				MarketSort.FIRST_TO_START, "250", context.getProduct(),
+				MarketSort.FIRST_TO_START, "500", context.getProduct(),
 				context.getToken());
 		return r;
 	}
@@ -155,9 +164,9 @@ public class GlobalAPI {
 			_eventIds.addAll(eventIds);
 			marketFilter.setEventIds(_eventIds);
 			
-			marketProjection.add(MarketProjection.COMPETITION);
+			//marketProjection.add(MarketProjection.COMPETITION);
 			marketProjection.add(MarketProjection.EVENT);
-			
+			marketProjection.add(MarketProjection.MARKET_DESCRIPTION);
 		}	
 		
 		Set<String> _marketIds = new HashSet<String>();
@@ -165,30 +174,33 @@ public class GlobalAPI {
 		if (marketIds != null && marketIds.size() > 0) {
 			_marketIds.addAll(marketIds);
 			marketFilter.setMarketIds(_marketIds);
-			marketProjection.add(MarketProjection.COMPETITION);
-			marketProjection.add(MarketProjection.EVENT);
+//			marketProjection.add(MarketProjection.COMPETITION);
+//			marketProjection.add(MarketProjection.EVENT);
 			marketProjection.add(MarketProjection.MARKET_DESCRIPTION);
 			marketProjection.add(MarketProjection.RUNNER_DESCRIPTION);
-			marketProjection.add(MarketProjection.RUNNER_METADATA);			
+			marketProjection.add(MarketProjection.RUNNER_METADATA);
+
 		}	
 		
 		TimeRange timeRange = new TimeRange();
+		Calendar c = Calendar.getInstance();
+		timeRange.setFrom(DTAction.getTimeFormBegin(c.getTime()));
 
-		timeRange.setFrom(DTAction.getTimeFormBegin(new Date()));
-		timeRange.setTo(DTAction.getTimeToEnd(new Date()));
+		c.add(Calendar.DAY_OF_YEAR, 3);
+		timeRange.setTo(DTAction.getTimeToEnd(c.getTime()));
 
 		marketFilter.setMarketStartTime(timeRange);
 		marketFilter.setTurnInPlayEnabled(true);
 // import com.betfair.aping.enums.MarketProjection;
 		
 
-		marketProjection.add(MarketProjection.COMPETITION);
+	//	marketProjection.add(MarketProjection.COMPETITION);
 		marketProjection.add(MarketProjection.EVENT);
 	//	marketProjection.add(MarketProjection.EVENT_TYPE);
-	//	marketProjection.add(MarketProjection.MARKET_DESCRIPTION);
-	//	marketProjection.add(MarketProjection.RUNNER_DESCRIPTION);
-	//	marketProjection.add(MarketProjection.RUNNER_METADATA);
-	//	marketProjection.add(MarketProjection.MARKET_START_TIME);
+		marketProjection.add(MarketProjection.MARKET_DESCRIPTION);
+		marketProjection.add(MarketProjection.RUNNER_DESCRIPTION);
+		marketProjection.add(MarketProjection.RUNNER_METADATA);
+		marketProjection.add(MarketProjection.MARKET_START_TIME);
 
 		
 		List<MarketCatalogue> r = jsonOperations.listMarketCatalogue(
