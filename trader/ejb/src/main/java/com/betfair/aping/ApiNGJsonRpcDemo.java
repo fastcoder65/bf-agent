@@ -35,9 +35,9 @@ public class ApiNGJsonRpcDemo {
             MarketFilter marketFilter;
             marketFilter = new MarketFilter();
             Set<String> eventTypeIds = new HashSet<String>();
-
+            MarketSort marketSort = MarketSort.FIRST_TO_START;
             System.out.println("1.(listEventTypes) Get all Event Types...\n");
-            List<EventTypeResult> r = jsonOperations.listEventTypes(marketFilter, applicationKey, sessionToken);
+            List<EventTypeResult> r = jsonOperations.listEventTypes(marketFilter, marketSort, applicationKey, sessionToken);
             System.out.println("2. Extract Event Type Id for Horse Racing...\n");
             for (EventTypeResult eventTypeResult : r) {
                 if(eventTypeResult.getEventType().getName().equals("Horse Racing")){

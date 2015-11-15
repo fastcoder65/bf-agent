@@ -31,7 +31,7 @@ public abstract class ApiNgOperations {
 
 	protected final String locale = Locale.getDefault().toString();
 
-	public abstract List<EventTypeResult> listEventTypes(MarketFilter filter,
+	public abstract List<EventTypeResult> listEventTypes(MarketFilter filter, MarketSort sort,
 			String appKey, String ssoId) throws APINGException;
 
 	public abstract List<EventResult> listEvents(MarketFilter filter,

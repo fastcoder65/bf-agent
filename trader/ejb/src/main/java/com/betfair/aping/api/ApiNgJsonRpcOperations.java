@@ -44,7 +44,7 @@ public class ApiNgJsonRpcOperations extends ApiNgOperations {
 		return result;
 	}
 
-	public List<EventTypeResult> listEventTypes(MarketFilter filter,
+	public List<EventTypeResult> listEventTypes(MarketFilter filter, MarketSort sort,
 			String appKey, String ssoId) throws APINGException {
 
 		log.info("appKey: " + appKey);
@@ -53,6 +53,7 @@ public class ApiNgJsonRpcOperations extends ApiNgOperations {
 		Map<String, Object> params = new HashMap<String, Object>();
 		params.put(FILTER, filter);
 		params.put(LOCALE, locale);
+		params.put(SORT, sort);
 
 		String result = getInstance().makeRequest(
 				ApiNgOperation.LISTEVENTTYPES.getOperationName(), params,
@@ -72,7 +73,8 @@ public class ApiNgJsonRpcOperations extends ApiNgOperations {
 	public List<CompetitionResult> listCompetitions
 			(MarketFilter filter, MarketSort sort, String maxResult, String appKey, String ssoId)
 			throws APINGException {
-		Map<String, Object> params = new HashMap<String, Object>();
+
+			Map<String, Object> params = new HashMap<String, Object>();
 		params.put(LOCALE, locale);
 		params.put(FILTER, filter);
 		params.put(SORT, sort);

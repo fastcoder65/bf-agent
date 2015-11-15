@@ -8,20 +8,14 @@ import java.util.Set;
 import java.util.logging.Logger;
 
 import javax.inject.Inject;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.NamedQueries;
-import javax.persistence.NamedQuery;
-import javax.persistence.OneToMany;
-import javax.persistence.Transient;
+import javax.persistence.*;
 
 import org.hibernate.Hibernate;
 
 /**
  * Entity implementation class for Entity: Market
  */
+
 @Entity
 @NamedQueries({
 		@NamedQuery(name = "MarketCountByMarketId", query = "select count(m) FROM Market m where m.marketId = :marketId"),
@@ -73,7 +67,18 @@ public class Market implements java.io.Serializable {
 	private String marketInfo;
 	private String removedRunners;
 	private Integer noOfWinners;
-	private Integer exchange;
+	//private Integer exchange;
+
+	@ManyToOne
+	private Exchange exchange;
+
+	public Exchange getExchange() {
+		return exchange;
+	}
+
+	public void setExchange(Exchange exchange) {
+		this.exchange = exchange;
+	}
 
 	private static final long serialVersionUID = 1L;
 
@@ -316,13 +321,6 @@ public class Market implements java.io.Serializable {
 		this.noOfWinners = noOfWinners;
 	}
 
-	public Integer getExchange() {
-		return exchange;
-	}
-
-	public void setExchange(Integer exchange) {
-		this.exchange = exchange;
-	}
 
 	public String toString() {
 		return "Market:  id=" + id + ", marketId=" + marketId + ", menuPath="

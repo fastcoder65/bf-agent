@@ -73,7 +73,7 @@ public class GlobalAPI {
 	public static List<EventTypeResult> getActiveEventTypes(APIContext context)
 			throws APINGException {
 		MarketFilter marketFilter = new MarketFilter();
-		List<EventTypeResult> r = jsonOperations.listEventTypes(marketFilter,
+		List<EventTypeResult> r = jsonOperations.listEventTypes(marketFilter, MarketSort.FIRST_TO_START,
 				context.getProduct(), context.getToken());
 		return r;
 	}
@@ -163,11 +163,10 @@ public class GlobalAPI {
 		if (eventIds != null && eventIds.size() > 0) {
 			_eventIds.addAll(eventIds);
 			marketFilter.setEventIds(_eventIds);
-			
 			//marketProjection.add(MarketProjection.COMPETITION);
 			marketProjection.add(MarketProjection.EVENT);
 			marketProjection.add(MarketProjection.MARKET_DESCRIPTION);
-		}	
+		}
 		
 		Set<String> _marketIds = new HashSet<String>();
 
@@ -179,9 +178,10 @@ public class GlobalAPI {
 			marketProjection.add(MarketProjection.MARKET_DESCRIPTION);
 			marketProjection.add(MarketProjection.RUNNER_DESCRIPTION);
 			marketProjection.add(MarketProjection.RUNNER_METADATA);
+		}
 
-		}	
-		
+		marketProjection.add(MarketProjection.MARKET_START_TIME);
+
 		TimeRange timeRange = new TimeRange();
 		Calendar c = Calendar.getInstance();
 		timeRange.setFrom(DTAction.getTimeFormBegin(c.getTime()));
@@ -191,18 +191,9 @@ public class GlobalAPI {
 
 		marketFilter.setMarketStartTime(timeRange);
 		marketFilter.setTurnInPlayEnabled(true);
-// import com.betfair.aping.enums.MarketProjection;
-		
 
-	//	marketProjection.add(MarketProjection.COMPETITION);
-		marketProjection.add(MarketProjection.EVENT);
-	//	marketProjection.add(MarketProjection.EVENT_TYPE);
-		marketProjection.add(MarketProjection.MARKET_DESCRIPTION);
-		marketProjection.add(MarketProjection.RUNNER_DESCRIPTION);
-		marketProjection.add(MarketProjection.RUNNER_METADATA);
-		marketProjection.add(MarketProjection.MARKET_START_TIME);
 
-		
+
 		List<MarketCatalogue> r = jsonOperations.listMarketCatalogue(
 				marketFilter, marketProjection, MarketSort.FIRST_TO_START,
 				"500", context.getProduct(), context.getToken());

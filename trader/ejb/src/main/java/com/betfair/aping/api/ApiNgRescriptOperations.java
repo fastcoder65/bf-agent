@@ -45,10 +45,11 @@ public class ApiNgRescriptOperations extends ApiNgOperations {
 	}
 
 	
-    public List<EventTypeResult> listEventTypes(MarketFilter filter,  String appKey, String ssoId) throws APINGException {
+    public List<EventTypeResult> listEventTypes(MarketFilter filter, MarketSort sort, String appKey, String ssoId) throws APINGException {
         Map<String, Object> params = new HashMap<String, Object>();
         params.put(FILTER, filter);
         params.put(LOCALE, locale);
+        params.put(SORT, sort);
         String result = getInstance().makeRequest(ApiNgOperation.LISTEVENTTYPES.getOperationName(), params, appKey, ssoId);
         if(ApiNGDemo.isDebug())
             System.out.println("\nResponse: "+result);

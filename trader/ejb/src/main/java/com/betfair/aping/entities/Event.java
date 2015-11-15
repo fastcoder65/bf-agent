@@ -65,7 +65,7 @@ public class Event extends Root {
 
 	@Override
 	public String toString() {
-		return "Event [countryCode=" + countryCode + ", timezone=" + timezone
+		return "Event( betfair entity ) [countryCode=" + countryCode + ", timezone=" + timezone
 				+ ", venue=" + venue + ", openDate=" + openDate + ", id=" + id
 				+ ", name=" + name + ", type=" + type + "]";
 	}
