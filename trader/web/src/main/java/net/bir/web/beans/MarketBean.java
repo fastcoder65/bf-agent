@@ -249,7 +249,7 @@ public class MarketBean extends BaseBean implements Serializable {
                 listCompetitions = GlobalAPI.getCompetitions(apiContext, eventTypeIds, eventIds);
 
                 if (listCompetitions == null || listCompetitions.size() == 0)
-                    listEvents = GlobalAPI.getEvents(apiContext, eventTypeIds, competitionIds, eventIds);
+                listEvents = GlobalAPI.getEvents(apiContext, eventTypeIds, competitionIds, eventIds);
 
             } catch (APINGException e1) {
                 // TODO Auto-generated catch block
@@ -267,7 +267,7 @@ public class MarketBean extends BaseBean implements Serializable {
 
                         EventNode _comp = new EventNode(cr.getCompetition());
 
-                      //  getLog().info("(parent is sportNode) sportEvent: " + _comp);
+                        getLog().info("(parent is sportNode) sportEvent: " + _comp);
 
                         sportNode.addEntry(_comp);
 
@@ -286,7 +286,7 @@ public class MarketBean extends BaseBean implements Serializable {
 
                         EventNode _event = new EventNode(er.getEvent());
 
-                       // getLog().info("(parent is sportNode) sportEvent: " + _event);
+                        getLog().info("(parent is sportNode) sportEvent: " + _event);
 
                         sportNode.addEntry(_event);
 

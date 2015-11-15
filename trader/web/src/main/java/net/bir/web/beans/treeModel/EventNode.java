@@ -56,7 +56,7 @@ public class EventNode extends Entry implements TreeNode {
 		name = event.getName();
 		this.event = event;
 		type = "event";
-//		System.out.println("" + this);
+		log.info("" + this);
 	}
 
 	public boolean isMarketNode() {
