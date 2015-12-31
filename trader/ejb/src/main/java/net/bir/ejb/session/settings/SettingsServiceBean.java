@@ -14,7 +14,9 @@ public class SettingsServiceBean implements SettingsService {
     private EntityManager em;
     
 	public JPASettings getJPASettings() {
-        return em.find(JPASettings.class, (long) 1);
+		JPASettings jpaSettings =  em.find(JPASettings.class, (long) 1);
+		System.out.println("getJPASettings() - jpaSettings is: " + jpaSettings);
+		return jpaSettings;
 	}
 	
 	public void saveJPASettings(JPASettings settings) {

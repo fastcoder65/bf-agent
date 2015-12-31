@@ -47,5 +47,12 @@ public class Market4UserId implements java.io.Serializable{
 		return true;
 	}
 
-	
+
+	@Override
+	public String toString() {
+		return "Market4UserId{" +
+				"marketId=" + marketId +
+				", userId=" + userId +
+				'}';
+	}
 }

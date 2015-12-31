@@ -115,19 +115,23 @@ public class BirSheduler {
 			}
 		}
 	}
-	
-	@Schedule(second = "*/1", minute = "*", hour = "*", info="UPDATE_MARKETS", persistent = false)
+
+
+//	 @Schedule(second = "*/1", minute = "*", hour = "*", info="UPDATE_MARKETS", persistent = false)
+
 	public void perform() {
 	//	System.out.println ("perform in 1 sec!");
 		sendRequest("LOAD_ACTIVE_USERS");
 		sendRequest("LOAD_ACTIVE_MARKETS");
 		sendRequest("UPDATE_MARKETS");
-		
 	}
-	
+
+
+
+
 	@Schedule( minute = "*/15", hour = "*", info="KEEP_ALIVE", persistent = false)
 	public void performKeepAlive() {
-		System.out.println ("perform in 15 min!");
+	//	System.out.println ("perform in 15 min!");
 		 sendRequest("KEEP_ALIVE");
 	}
 

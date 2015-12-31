@@ -20,6 +20,7 @@ public class DataFeed  implements java.io.Serializable {
 	 * 
 	 */
 	private static final long serialVersionUID = -519693628255399383L;
+
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private long id;

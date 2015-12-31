@@ -174,7 +174,7 @@ public class GlobalAPI {
 			_marketIds.addAll(marketIds);
 			marketFilter.setMarketIds(_marketIds);
 //			marketProjection.add(MarketProjection.COMPETITION);
-//			marketProjection.add(MarketProjection.EVENT);
+			marketProjection.add(MarketProjection.EVENT);
 			marketProjection.add(MarketProjection.MARKET_DESCRIPTION);
 			marketProjection.add(MarketProjection.RUNNER_DESCRIPTION);
 			marketProjection.add(MarketProjection.RUNNER_METADATA);

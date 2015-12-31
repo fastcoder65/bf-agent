@@ -2,18 +2,9 @@ package net.bir2.multitrade.ejb.entity;
 
 import javax.persistence.*;
 
-@NamedQueries( {
-	@NamedQuery(name = "ActiveExchanges", query = "SELECT df FROM Exchange df WHERE df.enabled = 1"),
-	@NamedQuery(name = "ActiveExchangesById", query = "SELECT df  FROM Exchange df WHERE df.enabled = 1 and df.id=:id")
-})
-
 @Entity
-public class Exchange implements java.io.Serializable {
-	
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = -519693628255399383L;
+public class Exchange  implements java.io.Serializable {
+	private static final long serialVersionUID = 1L;
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)

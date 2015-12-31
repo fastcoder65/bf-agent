@@ -18,10 +18,6 @@ import org.hibernate.annotations.Formula;
 @Entity
 @IdClass(Market4UserId.class)
 public class Market4User implements java.io.Serializable {
-
-	
-	
-
 	/**
 	 * 
 	 */
@@ -32,6 +28,14 @@ public class Market4User implements java.io.Serializable {
     private Logger log;
 
 	@Id
+	@Column(name = "market_id", insertable = false, updatable = false)
+	private long marketId;
+
+	public long getMarketId() {
+		return marketId;
+	}
+
+	@Id
 	@Column(name = "user_id", insertable = false, updatable = false)
 	private int userId;
 	
@@ -39,16 +43,9 @@ public class Market4User implements java.io.Serializable {
 		return userId;
 	}
 
-	@Id
-	@Column(name = "market_id", insertable = false, updatable = false)
-	private long marketId;
-	
-	public long getMarketId() {
-		return marketId;
-	}
 
-    public Market4User() {
-	}
+
+    public Market4User() {}
 
 	public Market4User(Uzer uzer, Market market, 
 			Integer turnOnTimeOffsetHours, 
@@ -74,6 +71,7 @@ public class Market4User implements java.io.Serializable {
 		
 		this.turnOnTimeOffsetHours = turnOnTimeOffsetHours;
 		this.turnOnTimeOffsetMinutes = turnOnTimeOffsetMinutes;
+
 	}
 
 	private Boolean onAir = false;
@@ -87,7 +85,7 @@ public class Market4User implements java.io.Serializable {
 	}
 
 	public void setOnAir(Boolean onAir) {
-		System.out.println ("set on air to \"" + onAir +"\" for " + this.toString());
+	//	System.out.println ("set on air to \"" + onAir +"\" for " + this.toString());
 		this.onAir = onAir;
 	}
 
