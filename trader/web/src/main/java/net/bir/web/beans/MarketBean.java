@@ -20,6 +20,7 @@ import javax.annotation.PreDestroy;
 import javax.ejb.EJB;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.SessionScoped;
+import javax.faces.component.ActionSource;
 import javax.faces.component.UIComponent;
 import javax.faces.component.html.HtmlInputText;
 import javax.faces.context.FacesContext;
@@ -452,16 +453,18 @@ public class MarketBean extends BaseBean implements Serializable {
         if (settings == null) {
             settings = settingsService.getJPASettings();
             if (settings == null) {
-                getLog().fine("initialize system settings..");
+                getLog().info("initialize system settings..");
                 settings = new JPASettings();
                 SystemSettings systemSettings = new SystemSettings();
-                getLog().fine(systemSettings.toString());
+                getLog().info(systemSettings.toString());
                 settings.setSystemSettings(systemSettings);
                 settingsService.saveJPASettings(settings);
                 settings = settingsService.getJPASettings();
             }
             getLog().info("load settings: " + settings);
         }
+
+    //    getLog().info("returned settings: " + settings);
         return settings;
     }
 
@@ -598,10 +601,15 @@ public class MarketBean extends BaseBean implements Serializable {
         return currentUser;
     }
 
-    public synchronized void addToActiveMarkets(
-            javax.faces.event.ActionEvent event) {
-        getLog().info("*** enter to double click event handler ***" + event);
-        UIComponent component = event.getComponent().getParent();
+    // javax.faces.event.ActionEvent event
+    // AjaxBehaviorEvent event
+/*
+    public void addToActiveMarkets() {
+
+        // getLog().info("*** enter to double click event handler ***" + event);
+        getLog().info("*** enter to double click event handler ***"  + getSelectedMarketId());
+
+        UIComponent component = null;// event.getComponent().getParent();
         getLog().info("component: " + component);
         UITree tree = null; // ((HtmlTreeNode) component).getUITree();
         if (tree == null) {
@@ -625,36 +633,31 @@ public class MarketBean extends BaseBean implements Serializable {
         }
         // }
     }
+*/
 
     public void add2ActiveMarkets() throws APINGException {
-        // generated.exchange.BFExchangeServiceStub.Market selectedMarket =
-        // null;
 
-        if (selectedMarketNode == null) {
-            getLog().warning("selectedMarketNode is null!");
+        if (selectedMarketId == null) {
+            getLog().warning("add2ActiveMarkets - selectedMarketId is null!");
             return;
         }
 
-        getLog().info(
-                "adding to selected markets - id: "
-                        + selectedMarketNode.getId() + ", name: "
-                        + selectedMarketNode.getName());
         setPollEnabled(false);
 
-        MarketCatalogue _mc = (MarketCatalogue) selectedMarketNode.getMarket();
+//        MarketCatalogue _mc = (MarketCatalogue) selectedMarketNode.getMarket();
 
         Set<String> marketIds = new HashSet<String>();
-        marketIds.add(_mc.getMarketId());
+        marketIds.add( selectedMarketId );
 
         List<MarketCatalogue> _listMarkets = GlobalAPI.getMarkets(apiContext,
                 null, marketIds);
         Iterator<MarketCatalogue> mi = _listMarkets.iterator();
 
-        MarketCatalogue mc = (mi.hasNext() ? (MarketCatalogue) mi.next() : null);
-        getLog().info("MarketCatalogue: " + mc);
+        MarketCatalogue mc = (mi.hasNext() ?  mi.next() : null);
+        getLog().info(" MarketCatalogue: " + mc.getMarketId());
 
         MarketDescription md = mc.getDescription();
-        getLog().info("MarketDescription: " + md);
+        getLog().info("MarketDescription.rules: " + md.getRules());
 
         // get marketbook there
         List<String> listMarketIds = new ArrayList<String>();
@@ -712,6 +715,8 @@ public class MarketBean extends BaseBean implements Serializable {
             Market market = new Market();
             market.setName(mc.getMarketName());
             market.setCountry(mc.getEvent().getCountryCode());
+
+           // market.setCountry("country is: "+ mc.getEvent());
 
             market.setMarketStatus(mb.getStatus());
             // getLog().info(selectedMarket.getMarketDisplayTime().getTime());
@@ -840,15 +845,15 @@ public class MarketBean extends BaseBean implements Serializable {
         dataTable.setRowKey(originalKey);
     }
 
-    public long getSelectedMarketId() {
+    public String getSelectedMarketId() {
         return selectedMarketId;
     }
 
-    public void setSelectedMarketId(long selectedMarketId) {
+    public void setSelectedMarketId(String selectedMarketId) {
         this.selectedMarketId = selectedMarketId;
     }
 
-    private long selectedMarketId = 0;
+    private String selectedMarketId = null;
 
     public void toggleRefresh() {
         boolean b = this.pollEnabled;

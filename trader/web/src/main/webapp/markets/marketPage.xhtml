@@ -9,6 +9,15 @@
 			<h:outputText value="All markets"/>
 		</f:facet>
 
+		<ui:remove>ondblclick="#{marketBean.addToActiveMarkets}"
+			<a4j:actionListener  listener="#{marketBean.addToActiveMarkets}"/>
+			<a4j:ajax event="dblclick" listener="#{marketBean.addToActiveMarkets}" />
+		</ui:remove>
+
+		<a4j:jsFunction name="doSelectMarket" action="#{marketBean.add2ActiveMarkets}">
+			<a4j:param  name="id" assignTo="#{marketBean.selectedMarketId}"></a4j:param>
+		</a4j:jsFunction>
+
 		<div>
 			<h:form>
 				<rich:tree toggleType="ajax" var="item"
@@ -28,14 +37,12 @@
 							<rich:treeNode title="#{item.name} (#{item.market.description.marketTime})"
 										   iconExpanded="images/tree-help/ftv2doc.gif"
 										   iconCollapsed="images/tree-help/ftv2doc.gif"
-									>#{item.name}<ui:remove>
-								<a4j:ajax
-										event="dblclick"
-										onevent="#{marketBean.addToActiveMarkets}"
-										render="marketRegion"/>
-								</ui:remove>
-							</rich:treeNode>
+											ondblclick="doSelectMarket('#{item.id}')"
+									>
+									<h:outputText value="#{item.name}"></h:outputText>
 
+
+							</rich:treeNode>
 						</rich:treeModelAdaptor>
 					</rich:treeModelRecursiveAdaptor>
 				</rich:tree>
