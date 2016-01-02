@@ -1,17 +1,12 @@
 package net.bir2.multitrade.ejb.entity;
 
 import javax.inject.Inject;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.IdClass;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.Transient;
+import javax.persistence.*;
 
 import net.bir2.ejb.session.market.BaseServiceBean;
 
 import java.util.logging.*;
+import org.hibernate.annotations.Formula;
 
 @Entity
 @IdClass(Runner4UserId.class)
@@ -21,11 +16,7 @@ public class Runner4User implements java.io.Serializable {
 	@Inject
     private Logger log;
 
-/*
-	private static final Logger log = Logger
-	.getLogger(Runner4User.class);
-*/
-	
+
 	private static final long serialVersionUID = 7193921041479085729L;
 
 	@Id
@@ -36,8 +27,6 @@ public class Runner4User implements java.io.Serializable {
 		return userId;
 	}
 
-
-	
 	@Id
 	@Column(name = "runner_id", insertable = false, updatable = false)
 	private long runnerId;
@@ -57,16 +46,16 @@ public class Runner4User implements java.io.Serializable {
 	}
 
 	@ManyToOne
-	@JoinColumn(name = "user_id")
-	Uzer linkedUser;
+	@PrimaryKeyJoinColumn(name = "user_id")
+	private Uzer linkedUser;
 
 	public Uzer getLinkedUser() {
 		return linkedUser;
 	}
 
 	@ManyToOne
-	@JoinColumn(name = "runner_id")
-	Runner linkedRunner;
+	@PrimaryKeyJoinColumn(name = "runner_id")
+	private Runner linkedRunner;
 
 	public Runner getLinkedRunner() {
 		return linkedRunner;
@@ -118,13 +107,14 @@ public class Runner4User implements java.io.Serializable {
         return (this.profitLoss < 0 ? "red" : "green");
 	}
 
-/* 	@Formula("(select coalesce(1/r4u.odds, 0) from Runner4User r4u  where r4u.user_id = userId  and r4u.runner_Id=runnerId)")
-	private Double _returnPercent;
+	@Transient
+	private Double _returnPercent=null;
 
+	@Formula("(select coalesce(1/r4u.odds, 0) from Runner4User r4u  where r4u.user_id = userId  and r4u.runner_Id=runnerId)")
 	public Double getReturnPercent() {
 		return _returnPercent;
 	}
-*/
+
 	@Transient
 	public Double getPrcWin() {
 		Double _sumReturnPercent = linkedRunner.getMarket()

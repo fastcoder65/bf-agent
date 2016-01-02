@@ -3,19 +3,14 @@ package net.bir2.multitrade.ejb.entity;
 import java.math.BigDecimal;
 
 import javax.inject.Inject;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.IdClass;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.Transient;
+import javax.persistence.*;
 
 import java.util.logging.*;
 
 import org.hibernate.annotations.Formula;
 
 @Entity
+@Access(AccessType.FIELD)
 @IdClass(Market4UserId.class)
 public class Market4User implements java.io.Serializable {
 	/**
@@ -28,15 +23,15 @@ public class Market4User implements java.io.Serializable {
     private Logger log;
 
 	@Id
-	@Column(name = "market_id", insertable = false, updatable = false)
+	@Column(name = "market_id", insertable = false, updatable = false ) // , insertable = false, updatable = false
 	private long marketId;
 
-	public long getMarketId() {
+	public long getMarketId(){
 		return marketId;
 	}
 
 	@Id
-	@Column(name = "user_id", insertable = false, updatable = false)
+	@Column(name = "user_id", insertable = false, updatable = false ) // , insertable = false, updatable = false
 	private int userId;
 	
 	public int getUserId() {
@@ -74,6 +69,7 @@ public class Market4User implements java.io.Serializable {
 
 	}
 
+	//@Transient // temp
 	private Boolean onAir = false;
 	
 	public Boolean isOnAir() {
@@ -89,6 +85,7 @@ public class Market4User implements java.io.Serializable {
 		this.onAir = onAir;
 	}
 
+	@Transient
 	private Double  volumeStake;
 	
 	public Double getVolumeStake() {
@@ -102,7 +99,7 @@ public class Market4User implements java.io.Serializable {
 		this.volumeStake = volumeStake;
 	}
 
-
+/*
 	public void setLinkedUser(Uzer linkedUser) {
 		
 	}
@@ -110,9 +107,10 @@ public class Market4User implements java.io.Serializable {
 	public void setLinkedMarket(Market linkedMarket) {
 		
 	}
+*/
 
 	@ManyToOne
-	@JoinColumn(name = "user_id")
+	@PrimaryKeyJoinColumn(name = "user_id")
 	private Uzer linkedUser;
 	
 	public Uzer getLinkedUser() {
@@ -120,7 +118,7 @@ public class Market4User implements java.io.Serializable {
 	}
 
 	@ManyToOne
-	@JoinColumn(name = "market_id")
+	@PrimaryKeyJoinColumn(name = "market_id")
 	private Market linkedMarket;
 	
 	public Market getLinkedMarket() {
@@ -128,12 +126,14 @@ public class Market4User implements java.io.Serializable {
 	}
 
 	@Transient
-	private Double _sumReturnPercent;
+	private Double _sumReturnPercent=null;
+
 
 	@Formula("(select coalesce(1/sum(1/r4u.odds), 0) from Runner4User r4u, Runner r where r4u.user_id = userId  and r.id=r4u.runner_id and r.market_id=marketId )")
 	public Double getSumReturnPercent() {
 		return _sumReturnPercent;	
 	}
+
 
 /*	@Transient
 	private Double sumRetPercent = 0.0;
@@ -159,6 +159,7 @@ public class Market4User implements java.io.Serializable {
 		return sumRetPercent;
 	}
 */
+
 	public Double getSumPrcWin() {
 		BigDecimal _result = BigDecimal.valueOf(0);
 		for (Runner runner : linkedMarket.getRunners()) {
@@ -179,6 +180,7 @@ public class Market4User implements java.io.Serializable {
 	  
 	}
 
+
 	public Double getMaxLossPerSelection() {
 		return maxLossPerSelection;
 	}
@@ -186,6 +188,7 @@ public class Market4User implements java.io.Serializable {
 	public void setMaxLossPerSelection(Double maxLossPerSelection) {
 		this.maxLossPerSelection = maxLossPerSelection;
 	}
+
 
 	public Integer getTurnOnTimeOffsetHours() {
 		return turnOnTimeOffsetHours;
@@ -218,8 +221,10 @@ public class Market4User implements java.io.Serializable {
 	public void setTurnOffTimeOffsetMinutes(Integer turnOffTimeOffsetMinutes) {
 		this.turnOffTimeOffsetMinutes = turnOffTimeOffsetMinutes;
 	}
-	
+
+	//@Transient // temp
 	private Double preCosmeticValue;
+
 	public Double getPreCosmeticValue() {
 		
 		if (preCosmeticValue == null) {
@@ -243,16 +248,25 @@ public class Market4User implements java.io.Serializable {
 		this.pseudoStakeVolume = pseudoStakeVolume;
 	}
 
+	//@Transient // temp
 	private Double maxLossPerSelection;
 
+	//@Transient // temp
 	private Integer turnOnTimeOffsetHours;
+
+	//@Transient // temp
 	private Integer turnOnTimeOffsetMinutes;
-	
+
+	//@Transient // temp
 	private Integer turnOffTimeOffsetHours;
+
+	//@Transient // temp
 	private Integer turnOffTimeOffsetMinutes;
 
+	//@Transient // temp
 	private Double pseudoStakeVolume;
-	
+
+	//@Transient // temp
 	private Double pseudoPinkStakeVolume;
 	
 	public Double getPseudoPinkStakeVolume() {
