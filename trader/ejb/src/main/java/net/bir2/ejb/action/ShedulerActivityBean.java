@@ -26,61 +26,62 @@ import net.bir2.multitrade.ejb.entity.Market;
 import net.bir2.multitrade.ejb.entity.Market4User;
 import net.bir2.multitrade.ejb.entity.Uzer;
 import net.bir2.multitrade.util.APIContext;
+
 import java.util.logging.*;
 
 @Singleton
 public class ShedulerActivityBean implements ShedulerActivity {
 
-	@EJB
-	private BaseService baseService;
+    @EJB
+    private BaseService baseService;
 
-	public BaseService getBaseService() {
-		return baseService;
-	}
+    public BaseService getBaseService() {
+        return baseService;
+    }
 
-	@EJB
-	private MarketService marketService;
+    @EJB
+    private MarketService marketService;
 /*
-	private static final Logger log = Logger.getLogger(ShedulerActivityBean.class);
+    private static final Logger log = Logger.getLogger(ShedulerActivityBean.class);
 */
 
-	@Inject
+    @Inject
     private Logger log;
 
-	private Map<String, Uzer> activeUsers = new ConcurrentHashMap<String, Uzer>();
+    private Map<String, Uzer> activeUsers = new ConcurrentHashMap<String, Uzer>();
 
-	public Map<String, Uzer> getActiveUsers() {
-		return activeUsers;
-	}
+    public Map<String, Uzer> getActiveUsers() {
+        return activeUsers;
+    }
 
-	public void setActiveUsers(Map<String, Uzer> activeUsers) {
-		this.activeUsers = activeUsers;
-	}
+    public void setActiveUsers(Map<String, Uzer> activeUsers) {
+        this.activeUsers = activeUsers;
+    }
 
-	private Map<String, Market> activeMarkets = new ConcurrentHashMap<String, Market>();
+    private Map<String, Market> activeMarkets = new ConcurrentHashMap<String, Market>();
 
 
-	public Map<String, Market> getActiveMarkets() {
-		return activeMarkets;
-	}
+    public Map<String, Market> getActiveMarkets() {
+        return activeMarkets;
+    }
 
-	public void setActiveMarkets(Map<String, Market> activeMarkets) {
-		this.activeMarkets = activeMarkets;
-	}
+    public void setActiveMarkets(Map<String, Market> activeMarkets) {
+        this.activeMarkets = activeMarkets;
+    }
 
-	public Market getActiveMarket(String marketId) {
-		Market result = null;
-		try {
-			result = activeMarkets.get(marketId);
-		} catch (Exception e) {
-			log.log(Level.SEVERE, "getActiveMarket ERROR:" + e);
-		}
-		return result;
-	}
+    public Market getActiveMarket(String marketId) {
+        Market result = null;
+        try {
+            result = activeMarkets.get(marketId);
+        } catch (Exception e) {
+            log.log(Level.SEVERE, "getActiveMarket ERROR:" + e);
+        }
+        return result;
+    }
 
-	public void setActiveMarket(String marketId, Market market) {
-		activeMarkets.put(marketId, market);
-	}
+    public void setActiveMarket(String marketId, Market market) {
+        activeMarkets.put(marketId, market);
+    }
 
 /*
 	public void updatePrices() {
@@ -92,231 +93,231 @@ public class ShedulerActivityBean implements ShedulerActivity {
 	}
 */
 
-	public void sendKeepAlive(String login) {
-		
-	Uzer currentUser = getActiveUsers().get(login);
-	try {
-		GlobalAPI.keepAlive(currentUser.getApiContext());
-	} catch (Exception e) {
-		e.printStackTrace();
-	}
+    public void sendKeepAlive(String login) {
 
-	}
-	
-	public boolean add2ActiveUsers(String login, Uzer uzer) {
-		APIContext apiContext = new APIContext();
-		boolean result = false;
-		try {
-			GlobalAPI.login(apiContext, uzer.getExLogin(), uzer
-					.getExPassword());
-			log.info(uzer + " has log in successfully.");
-			result = true;
-		} catch (Exception e) {
-			log.log(Level.SEVERE, "*** Failed to log in: ", e);
-		}
+        Uzer currentUser = getActiveUsers().get(login);
+        try {
+            if (currentUser != null)
 
-		if (result) {
-			uzer.setApiContext(apiContext);
-			activeUsers.put(login, uzer);
-		}
-		return result;
-	}
+                GlobalAPI.keepAlive(currentUser.getApiContext());
 
-	/**
-	 * ������� ����������� � ���, ��� ���� ��������� ��������� �������� �����
-	 * 
-	 * @param sourceSystem
-	 *            ������� �������
-	 */
+        } catch (Exception e) {
+            log.log(Level.SEVERE, " sendKeepAlive error: ", e);
+        }
 
-	public static final String priceRequestQueue = "/queue/bir-jms-priceRequestQueue";
+    }
 
-	public void sendRequest(Action action, String login, String marketId) {
-		javax.jms.Connection jmsConnection = null;
-		Session session = null;
-		MessageProducer producer = null;
-		try {
+    public boolean add2ActiveUsers(String login, Uzer uzer) {
+        APIContext apiContext = new APIContext();
+        boolean result = false;
+        try {
+            GlobalAPI.login(apiContext, uzer.getExLogin(), uzer
+                    .getExPassword());
+            log.info(uzer + " has log in successfully.");
+            result = true;
+        } catch (Exception e) {
+            log.log(Level.SEVERE, "*** Failed to log in: ", e);
+        }
 
-			InitialContext ctx = new InitialContext();
+        if (result) {
+            uzer.setApiContext(apiContext);
+            activeUsers.put(login, uzer);
+        }
+        return result;
+    }
 
-			Queue queue = (Queue) ctx.lookup(priceRequestQueue);
+    /**
+     * ������� ����������� � ���, ��� ���� ��������� ��������� �������� �����
+     *
+     * @param sourceSystem
+     * ������� �������
+     */
 
-			QueueConnectionFactory qcf = (QueueConnectionFactory) ctx
-			// .lookup("java:JmsXA");
-					.lookup("ConnectionFactory");
+    public static final String priceRequestQueue = "/queue/bir-jms-priceRequestQueue";
 
-			/**
-			 * ������������ � jms-����������
-			 */
-			jmsConnection = qcf.createConnection();
-			/**
-			 * ������� ������
-			 */
-			session = jmsConnection.createSession(false,
-					Session.AUTO_ACKNOWLEDGE);
-			/**
-			 * ������� ����������� (���������)
-			 */
-			producer = session.createProducer(queue);
+    public void sendRequest(Action action, String login, String marketId) {
+        javax.jms.Connection jmsConnection = null;
+        Session session = null;
+        MessageProducer producer = null;
+        try {
 
-			/**
-			 * ��������� ��������� �� �������� ��������� ��� ���� �� 1 ������
-			 * ��������� �� ����� ���������� �� ��� ����� ������� �� �������
-			 */
-			producer.setTimeToLive(60 * 1000); // 1 min
-			producer.setDeliveryMode(DeliveryMode.NON_PERSISTENT);
-			/**
-			 * ������� ���� ���������
-			 */
+            InitialContext ctx = new InitialContext();
 
-			MapMessage message = session.createMapMessage();
-			message.setString(SheduleRequestMessageListener.ACTION_PROPERTY,
-					action.name());
-			message.setString(SheduleRequestMessageListener.LOGIN_PROPERTY,
-					login);
-			message.setString(SheduleRequestMessageListener.MARKET_ID_PROPERTY,
-					marketId);
+            Queue queue = (Queue) ctx.lookup(priceRequestQueue);
 
-			/**
-			 * ����������
-			 */
-			producer.send(message);
-		} catch (JMSException jmse) {
-			log.log(Level.SEVERE, "��������� ������ ��� �������� ��������� ", jmse);
-		} catch (NameNotFoundException e) {
-			log
-					.severe("������� �� �������: " + priceRequestQueue);
-		} catch (NamingException e) {
-			log.log(Level.SEVERE, "��������� ������ ��� �������� ��������� ", e);
+            QueueConnectionFactory qcf = (QueueConnectionFactory) ctx
+                    // .lookup("java:JmsXA");
+                    .lookup("ConnectionFactory");
 
-		} finally {
-			try {
-				if (producer != null) {
-					producer.close();
-				}
-				if (session != null) {
-					session.close();
-				}
-				if (jmsConnection != null) {
-					jmsConnection.close();
-				}
-			} catch (JMSException jmse) {
-				log.log(Level.SEVERE, "��������� ������ ��� �������� �������� ", jmse);
-			}
-		}
-	}
+            /**
+             * ������������ � jms-����������
+             */
+            jmsConnection = qcf.createConnection();
+            /**
+             * ������� ������
+             */
+            session = jmsConnection.createSession(false,
+                    Session.AUTO_ACKNOWLEDGE);
+            /**
+             * ������� ����������� (���������)
+             */
+            producer = session.createProducer(queue);
 
-	
+            /**
+             * ��������� ��������� �� �������� ��������� ��� ���� �� 1 ������
+             * ��������� �� ����� ���������� �� ��� ����� ������� �� �������
+             */
+            producer.setTimeToLive(60 * 1000); // 1 min
+            producer.setDeliveryMode(DeliveryMode.NON_PERSISTENT);
+            /**
+             * ������� ���� ���������
+             */
 
-	public void updateUserMarkets() {
-		Calendar now = Calendar.getInstance();
+            MapMessage message = session.createMapMessage();
+            message.setString(SheduleRequestMessageListener.ACTION_PROPERTY,
+                    action.name());
+            message.setString(SheduleRequestMessageListener.LOGIN_PROPERTY,
+                    login);
+            message.setString(SheduleRequestMessageListener.MARKET_ID_PROPERTY,
+                    marketId);
 
-		for (Uzer uzer : activeUsers.values()) {
-			@SuppressWarnings("unused")
-			int i = 1;
-			for (Market4User market4User : uzer.getMarket4Users()) {
+            /**
+             * ����������
+             */
+            producer.send(message);
+        } catch (JMSException jmse) {
+            log.log(Level.SEVERE, "��������� ������ ��� �������� ��������� ", jmse);
+        } catch (NameNotFoundException e) {
+            log
+                    .severe("������� �� �������: " + priceRequestQueue);
+        } catch (NamingException e) {
+            log.log(Level.SEVERE, "��������� ������ ��� �������� ��������� ", e);
 
-				Date marketStartTime = market4User.getLinkedMarket()
-						.getMarketTime();
-				log.fine(new StringBuilder(100).append("### marketStartTime = ").append(marketStartTime).toString());
+        } finally {
+            try {
+                if (producer != null) {
+                    producer.close();
+                }
+                if (session != null) {
+                    session.close();
+                }
+                if (jmsConnection != null) {
+                    jmsConnection.close();
+                }
+            } catch (JMSException jmse) {
+                log.log(Level.SEVERE, "��������� ������ ��� �������� �������� ", jmse);
+            }
+        }
+    }
 
-				// Date marketSTime =
-				// market4User.getLinkedMarket().getMarketTime();
-				// log.info("@@@ marketSTime = " + marketSTime );
 
-				Calendar turnOnTime = Calendar.getInstance();
-				Calendar turnOffTime = Calendar.getInstance();
+    public void updateUserMarkets() {
+        Calendar now = Calendar.getInstance();
 
-				turnOnTime.setTime(marketStartTime);
-				turnOffTime.setTime(marketStartTime);
+        for (Uzer uzer : activeUsers.values()) {
+            @SuppressWarnings("unused")
+            int i = 1;
+            for (Market4User market4User : uzer.getMarket4Users()) {
 
-				Integer turnOnTimeOffsetHours = market4User
-						.getTurnOnTimeOffsetHours();
-				Integer turnOnTimeOffsetMinutes = market4User
-						.getTurnOnTimeOffsetMinutes();
+                Date marketStartTime = market4User.getLinkedMarket()
+                        .getMarketTime();
+                log.fine(new StringBuilder(100).append("### marketStartTime = ").append(marketStartTime).toString());
 
-				turnOnTime.add(Calendar.HOUR, turnOnTimeOffsetHours);
-				turnOnTime.add(Calendar.MINUTE, turnOnTimeOffsetMinutes);
+                // Date marketSTime =
+                // market4User.getLinkedMarket().getMarketTime();
+                // log.info("@@@ marketSTime = " + marketSTime );
 
-				Integer turnOffTimeOffsetHours = market4User
-						.getTurnOffTimeOffsetHours();
-				Integer turnOffTimeOffsetMinutes = market4User
-						.getTurnOffTimeOffsetMinutes();
+                Calendar turnOnTime = Calendar.getInstance();
+                Calendar turnOffTime = Calendar.getInstance();
 
-				turnOffTime.add(Calendar.HOUR, turnOffTimeOffsetHours);
-				turnOffTime.add(Calendar.MINUTE, turnOffTimeOffsetMinutes);
+                turnOnTime.setTime(marketStartTime);
+                turnOffTime.setTime(marketStartTime);
 
-				String _marketId = market4User.getLinkedMarket().getMarketId();
-				String marketName = new StringBuilder(100).append(market4User.getLinkedMarket().getMenuPath()).append('/').append(market4User.getLinkedMarket().getName()).toString();
-				log.fine(new StringBuilder(100).append("Market Id=").append(_marketId).append(", Market Name =").append(marketName).append(", turnOnTime=").append(turnOnTime.getTime()).append(", turnOffTime=").append(turnOffTime.getTime()).toString());
+                Integer turnOnTimeOffsetHours = market4User
+                        .getTurnOnTimeOffsetHours();
+                Integer turnOnTimeOffsetMinutes = market4User
+                        .getTurnOnTimeOffsetMinutes();
 
-				String market_id = String.valueOf(_marketId);
+                turnOnTime.add(Calendar.HOUR, turnOnTimeOffsetHours);
+                turnOnTime.add(Calendar.MINUTE, turnOnTimeOffsetMinutes);
 
-				if (activeMarkets.containsKey(_marketId)) {
-					if (!now.before(turnOnTime) && !now.after(turnOffTime)) {
-						boolean isOnAir = market4User.isOnAir();
-						if (!isOnAir) {
-							market4User.setOnAir(true);
-						 marketService.merge(market4User);
-						}
-					}
-					log.fine(new StringBuilder(100).append("### do update Market {marketId =").append(_marketId).append(", turnOnTime=").append(turnOnTime.getTime()).append(", turnOffTime=").append(turnOffTime.getTime()).append(" }").toString());
-					sendRequest(Action.UPDATE_MARKET, uzer.getLogin(),
-							market_id);
-					// baseService.sendDelayedRequest(Action.UPDATE_MARKET,
-					// user.getLogin(), market_id, i);
-				}
-				i++;
-			}
-		}
-	}
+                Integer turnOffTimeOffsetHours = market4User
+                        .getTurnOffTimeOffsetHours();
+                Integer turnOffTimeOffsetMinutes = market4User
+                        .getTurnOffTimeOffsetMinutes();
 
-	// Lifecycle methods
-	public void create() {
-		log.fine("ShedulerActivity() - Creating");
-		activeMarkets.clear();
-		// sendRequest(Action.LOAD_ACTIVE_USERS);
-		// sendRequest(Action.LOAD_ACTIVE_MARKETS);
-		// sendRequest(Action.UPDATE_MARKET_PRICES);
-	}
+                turnOffTime.add(Calendar.HOUR, turnOffTimeOffsetHours);
+                turnOffTime.add(Calendar.MINUTE, turnOffTimeOffsetMinutes);
 
-	private void logoutActiveUsers() {
-		for (Uzer uzer : activeUsers.values()) {
-			if (uzer.getApiContext() != null) {
-				try {
-					GlobalAPI.logout(uzer.getApiContext());
-					log.info(new StringBuilder(100).append("user ").append(uzer).append(" logout ok").toString());
-				} catch (Exception e) {
-					log.severe(new StringBuilder(100).append("user ").append(uzer).append(" failed to log out, ").append(e.getMessage()).toString());
-				}
-			}
-		}
-		activeUsers.clear();
-	}
+                String _marketId = market4User.getLinkedMarket().getMarketId();
+                String marketName = new StringBuilder(100).append(market4User.getLinkedMarket().getMenuPath()).append('/').append(market4User.getLinkedMarket().getName()).toString();
+                log.fine(new StringBuilder(100).append("Market Id=").append(_marketId).append(", Market Name =").append(marketName).append(", turnOnTime=").append(turnOnTime.getTime()).append(", turnOffTime=").append(turnOffTime.getTime()).toString());
 
-	/**
-	 * 
-	 * 
-	 * ���������� ����. ������ ����� ��������� ��� ������������ ���� ���
-	 * 
-	 * ������������ JBoss
-	 */
+                String market_id = String.valueOf(_marketId);
 
-	public void destroy() {
-		log.fine("ShedulerActivity() - Destroying");
-		
-		logoutActiveUsers();
-		activeMarkets.clear();
-	}
+                if (activeMarkets.containsKey(_marketId)) {
+                    if (!now.before(turnOnTime) && !now.after(turnOffTime)) {
+                        boolean isOnAir = market4User.isOnAir();
+                        if (!isOnAir) {
+                            market4User.setOnAir(true);
+                            marketService.merge(market4User);
+                        }
+                    }
+                    log.fine(new StringBuilder(100).append("### do update Market {marketId =").append(_marketId).append(", turnOnTime=").append(turnOnTime.getTime()).append(", turnOffTime=").append(turnOffTime.getTime()).append(" }").toString());
+                    sendRequest(Action.UPDATE_MARKET, uzer.getLogin(),
+                            market_id);
+                    // baseService.sendDelayedRequest(Action.UPDATE_MARKET,
+                    // user.getLogin(), market_id, i);
+                }
+                i++;
+            }
+        }
+    }
 
-	/**
-	 * 
-	 * ����������� (lookup) �������� ����
-	 * 
-	 * 
-	 * 
-	 * @return �������
-	 */
+    // Lifecycle methods
+    public void create() {
+        log.fine("ShedulerActivity() - Creating");
+        activeMarkets.clear();
+        // sendRequest(Action.LOAD_ACTIVE_USERS);
+        // sendRequest(Action.LOAD_ACTIVE_MARKETS);
+        // sendRequest(Action.UPDATE_MARKET_PRICES);
+    }
+
+    private void logoutActiveUsers() {
+        for (Uzer uzer : activeUsers.values()) {
+            if (uzer.getApiContext() != null) {
+                try {
+                    GlobalAPI.logout(uzer.getApiContext());
+                    log.info(new StringBuilder(100).append("user ").append(uzer).append(" logout ok").toString());
+                } catch (Exception e) {
+                    log.severe(new StringBuilder(100).append("user ").append(uzer).append(" failed to log out, ").append(e.getMessage()).toString());
+                }
+            }
+        }
+        activeUsers.clear();
+    }
+
+    /**
+     * ���������� ����. ������ ����� ��������� ��� ������������ ���� ���
+     * <p/>
+     * ������������ JBoss
+     */
+
+    public void destroy() {
+        log.fine("ShedulerActivity() - Destroying");
+
+        logoutActiveUsers();
+        activeMarkets.clear();
+    }
+
+    /**
+     *
+     * ����������� (lookup) �������� ����
+     *
+     *
+     *
+     * @return �������
+     */
 /*
 	public static ShedulerActivity getInstance() {
 		ShedulerActivity instance;

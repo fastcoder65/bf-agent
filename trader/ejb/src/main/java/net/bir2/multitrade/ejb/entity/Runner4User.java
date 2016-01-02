@@ -185,12 +185,13 @@ public class Runner4User implements java.io.Serializable {
 		result = (this.getBackPrice1() == 0 && this.getBackPrice2() == 0
 				&& this.getBackPrice3() == 0 && this.getLayPrice1() == 0
 				&& this.getLayPrice2() == 0 && this.getLayPrice3() == 0);
-
+/*
 		if (result) {
 			log.info(" getIsNonRunner(): " +
 					 this.linkedRunner.getName()
 					+ " is 'NonRunner' now!");
 		}
+*/
 		return result;
 	}
 

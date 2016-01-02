@@ -10,15 +10,7 @@ import java.util.Set;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.ManyToOne;
-import javax.persistence.NamedQueries;
-import javax.persistence.NamedQuery;
-import javax.persistence.OneToMany;
-import javax.persistence.Transient;
+import javax.persistence.*;
 
 import java.util.logging.*;
 
@@ -78,7 +70,7 @@ public class Runner implements Serializable {
 		this.selectionId = selectionId;
 	}
 
-	@OneToMany(mappedBy = "linkedRunner") // , fetch = FetchType.EAGER
+	@OneToMany(mappedBy = "linkedRunner", fetch = FetchType.EAGER)
 	private   Set<Runner4User> runner4Users;
 
 	public Set<Runner4User> getRunner4Users() {
@@ -167,9 +159,9 @@ public class Runner implements Serializable {
 		}
 	}
 	
-    @TransactionAttribute(TransactionAttributeType.REQUIRED)
+  //  @TransactionAttribute(TransactionAttributeType.REQUIRED)
     public Runner prefetchAll() {
-    	log.fine(""+ this.runner4Users.size());
+   // 	log.fine(""+ this.runner4Users.size());
     	return this;
     }
 
