@@ -87,7 +87,7 @@
                             rowClasses="rvgRowOne,rvgRowTwo">
 
 
-                        <a4j:ajax execute="@form" event="selectionchange"
+                        <a4j:ajax event="selectionchange"
                                   listener="#{marketBean.masterSelectionListener}"
                                   render=":runnerTable,:marketControls"/>
 
@@ -105,11 +105,11 @@
 
                         </rich:column>
 
-                        <rich:column title="#{mkt.menuPath}\\#{mkt.name}" width="250px" label="Event/Market name">
+                        <rich:column title="#{mkt.name}" width="250px" label="Event/Market name">
                             <f:facet name="header">
                                 <h:outputText value="Name" id="market_name"/>
                             </f:facet>
-                            <h:outputText title="#{mkt.menuPath}\\#{mkt.name}" value="#{mkt.menuPath}\\#{mkt.name}"/>
+                            <h:outputText title="#{mkt.name}" value="#{mkt.name}"/>
                         </rich:column>
 
                         <rich:column width="120px" label="Start event time">

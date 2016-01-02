@@ -421,12 +421,12 @@ public class MarketBean extends BaseBean implements Serializable {
         return allSports.getEventTypes();
     }
 
-    public synchronized List<Market> getActiveMarkets() {
+    public  List<Market> getActiveMarkets() {
 
         List<Market> result;
 
         result = getMarketService().getMyActiveMarkets();
-        getLog().fine(
+        getLog().info(
                 "getActiveMarkets(): read " + result.size()
                         + " active markets..");
 
