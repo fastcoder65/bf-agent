@@ -47,7 +47,7 @@ public class FeedRequestMessageListener implements MessageListener {
 		String act_name = message.getString(ACTION_PROPERTY);
 
 		if (act_name == null) {
-			log.severe("����������� ��������.");
+			log.severe("Unknown action!");
 			return;
 		}
 

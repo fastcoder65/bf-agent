@@ -82,7 +82,7 @@ public class Market implements java.io.Serializable {
 
 	private static final long serialVersionUID = 1L;
 
-	@OneToMany(mappedBy = "linkedMarket")
+	@OneToMany(mappedBy = "linkedMarket", fetch = FetchType.EAGER)
 	private Set<Market4User> market4Users = new HashSet<Market4User>(10);
 
 	public Set<Market4User> getMarket4Users() {

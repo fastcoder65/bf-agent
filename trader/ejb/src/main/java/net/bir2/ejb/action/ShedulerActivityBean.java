@@ -133,7 +133,7 @@ public class ShedulerActivityBean implements ShedulerActivity {
      * ������� �������
      */
 
-    public static final String priceRequestQueue = "/queue/bir-jms-priceRequestQueue";
+    public static final String priceRequestQueue = "/jms/queue/PriceRequestQueue";
 
     public void sendRequest(Action action, String login, String marketId) {
         javax.jms.Connection jmsConnection = null;
@@ -186,12 +186,12 @@ public class ShedulerActivityBean implements ShedulerActivity {
              */
             producer.send(message);
         } catch (JMSException jmse) {
-            log.log(Level.SEVERE, "��������� ������ ��� �������� ��������� ", jmse);
+            log.log(Level.SEVERE, "Can't send message: ", jmse);
         } catch (NameNotFoundException e) {
             log
-                    .severe("������� �� �������: " + priceRequestQueue);
+                    .severe("Queue not found: " + priceRequestQueue);
         } catch (NamingException e) {
-            log.log(Level.SEVERE, "��������� ������ ��� �������� ��������� ", e);
+            log.log(Level.SEVERE, "Naming exception: ", e);
 
         } finally {
             try {
@@ -205,7 +205,7 @@ public class ShedulerActivityBean implements ShedulerActivity {
                     jmsConnection.close();
                 }
             } catch (JMSException jmse) {
-                log.log(Level.SEVERE, "��������� ������ ��� �������� �������� ", jmse);
+                log.log(Level.SEVERE, "Error in finally block: ", jmse);
             }
         }
     }

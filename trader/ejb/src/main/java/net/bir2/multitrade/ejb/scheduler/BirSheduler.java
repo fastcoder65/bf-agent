@@ -117,8 +117,7 @@ public class BirSheduler {
 	}
 
 
-//	 @Schedule(second = "*/1", minute = "*", hour = "*", info="UPDATE_MARKETS", persistent = false)
-
+	@Schedule(second = "*/1", minute = "*", hour = "*", info="UPDATE_MARKETS", persistent = false)
 	public void perform() {
 	//	System.out.println ("perform in 1 sec!");
 		sendRequest("LOAD_ACTIVE_USERS");

@@ -360,5 +360,13 @@ public class Market4User implements java.io.Serializable {
 		}
 	  return _result.doubleValue();	
 	}
-    
+
+	@Override
+	public String toString() {
+		return "Market4User{" +
+				"marketId=" + marketId +
+				", userId=" + userId +
+				", onAir=" + onAir +
+				'}';
+	}
 }

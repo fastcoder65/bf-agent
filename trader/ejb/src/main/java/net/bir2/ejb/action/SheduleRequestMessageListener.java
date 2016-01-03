@@ -274,13 +274,13 @@ public class SheduleRequestMessageListener implements MessageListener {
 		Market4User market4User = currentMarket.getUserData4Market().get(
 				currentUser.getId());
 		
-			log.fine( "given: " + market4User);
+			log.info( "given market4User: " + market4User);
 
 		boolean isOnAir = market4User.isOnAir();
 
 		if (isOnAir) {
 			
-				log.fine("*** Update market prices for login: " + login
+				log.info("*** Update market prices for login: " + login
 						+ ", market: " + marketId);
 
 // 			selected_exchange = currentMarket.getExchange() == 1 ? Exchange.UK: Exchange.AUS;
@@ -291,7 +291,7 @@ public class SheduleRequestMessageListener implements MessageListener {
 
 			try {
 
-				currentBets = null; // ExchangeAPI.getMUBets(selected_exchange,currentUser.getApiContext(),Long.valueOf(currentMarket.getMarketId()).intValue());
+				currentBets =  ExchangeAPI.getMUBets(selected_exchange,currentUser.getApiContext(),Long.valueOf(currentMarket.getMarketId()).intValue());
 
 			} catch (Exception e) {
 				log.severe(" 'Get Current Bets' error, message: "
@@ -495,7 +495,7 @@ public class SheduleRequestMessageListener implements MessageListener {
 				currency = prices.getCurrency();
 				// System.setProperty(currency, value)
 			} catch (Exception e) {
-				log.severe("getPrices() error, message: " + e.getMessage());
+				log.log(Level.SEVERE, "getPrices() error: ", e);
 			}
 
 			endTime = System.currentTimeMillis();
@@ -1401,8 +1401,8 @@ public class SheduleRequestMessageListener implements MessageListener {
 		}
 
 		Action act = Action.valueOf(act_name);
-		
-			log.fine("given message with action: " + act.toString());
+
+		log.fine("given message with action: " + act.toString());
 
 		try {
 			switch (act) {
@@ -1437,11 +1437,11 @@ public class SheduleRequestMessageListener implements MessageListener {
 			}
 
 			default: {
-				log.severe("Unknown action: " + act.name());
+				log.log(Level.SEVERE, "Unknown action: " + act.name());
 			}
 			}
 		} catch (Throwable t) {
-			log.severe("processActionRequest: " + t);
+			log.log(Level.SEVERE, "processActionRequest: ", t);
 		}
 	}
 

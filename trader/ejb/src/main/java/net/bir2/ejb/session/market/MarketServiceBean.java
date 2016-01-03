@@ -116,7 +116,8 @@ public class MarketServiceBean implements MarketService {
 			result.setExLoginDec(result.getExLogin());
 			result.setExPasswordDec(result.getExPassword());
 		}
-		log.info("getUserByLogin - result: " + result);
+
+		// log.info("getUserByLogin - result: " + result);
 		return result;
 	}
 
@@ -152,7 +153,7 @@ public class MarketServiceBean implements MarketService {
 	public List<Runner> listRunners(String marketId) {
 		List<Runner> result;
 		result = em.createQuery(
-				" FROM Runner r where r.market.marketId = :marketId ")
+				"select r FROM Runner r where r.market.marketId = :marketId ")
 				.setParameter("marketId", marketId).getResultList();
 		for (Runner runner : result) {
 			runner.prefetchAll();
@@ -187,7 +188,7 @@ public class MarketServiceBean implements MarketService {
 	public boolean isMarketAlreadyExistsByMarketId(String marketId) {
 		long count = (Long) em.createNamedQuery("MarketCountByMarketId")
 				.setParameter("marketId", marketId).getSingleResult();
-		log.info("isMarketAlreadyExistsByMarketId - count:" + count);
+	//	log.info("isMarketAlreadyExistsByMarketId - count:" + count);
 		return (count > 0);
 	}
 
@@ -294,7 +295,7 @@ public class MarketServiceBean implements MarketService {
 		org.hibernate.Query query = session
 				.createSQLQuery("update user set exLogin=hex(aes_encrypt(?,?)), exPassword=hex( aes_encrypt(?,?)) where id=?");
 
-		query.setParameter(0, uzer.getExLoginDec()).setParameter(1,
+		query.setParameter(1, uzer.getExLoginDec()).setParameter(1,
 				getPassKey()).setParameter(2, uzer.getExPasswordDec())
 				.setParameter(3, getPassKey() + uzer.getExLoginDec())
 				.setParameter(4, uzer.getId()).executeUpdate();

@@ -178,6 +178,11 @@ public class ApiNgJsonRpcOperations extends ApiNgOperations {
 
 	}
 
+
+
+CurrentOrderSummaryReport  listCurrentOrders  ( Set<String>betIds,Set<String>marketIds, OrderProjection orderProjection, TimeRange placedDateRange, TimeRange dateRange, OrderBy orderBy, SortDir sortDir,intfromRecord,intrecordCount )  throws APINGException
+
+
 	public PlaceExecutionReport placeOrders(String marketId,
 			List<PlaceInstruction> instructions, String customerRef,
 			String appKey, String ssoId) throws APINGException {
