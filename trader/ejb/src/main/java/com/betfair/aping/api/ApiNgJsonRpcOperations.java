@@ -7,11 +7,9 @@ import com.betfair.aping.enums.*;
 import com.betfair.aping.exceptions.APINGException;
 import com.betfair.aping.util.JsonConverter;
 import com.betfair.aping.util.JsonrpcRequest;
+import net.bir2.util.DTAction;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 public class ApiNgJsonRpcOperations extends ApiNgOperations {
 
@@ -151,9 +149,10 @@ public class ApiNgJsonRpcOperations extends ApiNgOperations {
 
 	}
 
-	public List<MarketCatalogue> listMarketCatalogue(MarketFilter filter,
+	public List<MarketCatalogue> listMarketCatalogue ( MarketFilter filter,
 			Set<MarketProjection> marketProjection, MarketSort sort,
-			String maxResult, String appKey, String ssoId)
+			String maxResult, String appKey, String ssoId )
+
 			throws APINGException {
 		Map<String, Object> params = new HashMap<String, Object>();
 		params.put(LOCALE, locale);
@@ -180,7 +179,54 @@ public class ApiNgJsonRpcOperations extends ApiNgOperations {
 
 
 
-CurrentOrderSummaryReport  listCurrentOrders  ( Set<String>betIds,Set<String>marketIds, OrderProjection orderProjection, TimeRange placedDateRange, TimeRange dateRange, OrderBy orderBy, SortDir sortDir,intfromRecord,intrecordCount )  throws APINGException
+	public CurrentOrderSummaryReport  listCurrentOrders ( Set<String>betIds, Set<String>marketIds,
+														  OrderProjection orderProjection,
+
+														  // TimeRange dateRange,
+														  // OrderBy orderBy, SortDir sortDir,
+
+														  int recordCount,
+														  String appKey, String ssoId )
+			throws APINGException {
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put(LOCALE, locale);
+		params.put(MARKET_IDS, marketIds);
+		params.put(BET_IDS, betIds);
+		params.put(ORDER_PROJECTION, orderProjection);
+		params.put(MAX_RESULT, recordCount);
+
+
+		TimeRange timeRange = new TimeRange();
+
+		Calendar c = Calendar.getInstance();
+
+		c.add(Calendar.DAY_OF_YEAR, -3);
+
+		timeRange.setFrom(DTAction.getTimeFormBegin(c.getTime()));
+
+		c.add(Calendar.DAY_OF_YEAR, 4);
+
+		timeRange.setTo(DTAction.getTimeToEnd(c.getTime()));
+
+		params.put("dateRange", timeRange);
+
+		params.put("orderBy", OrderBy.BY_PLACE_TIME);
+
+		String result = getInstance().makeRequest(
+				ApiNgOperation.LISTCURRENTORDERS.getOperationName(), params,
+				appKey, ssoId);
+		if (ApiNGDemo.isDebug())
+			log.info("'listCurrentOrders' Response: " + result);
+
+		ListOrdersContainer container = JsonConverter.convertFromJson(
+				result, ListOrdersContainer.class);
+
+		if (container.getError() != null)
+			throw container.getError().getData().getAPINGException();
+
+		return container.getResult();
+
+	}
 
 
 	public PlaceExecutionReport placeOrders(String marketId,

@@ -6,11 +6,9 @@ import com.betfair.aping.enums.*;
 import com.betfair.aping.exceptions.APINGException;
 import com.betfair.aping.util.JsonConverter;
 import com.google.gson.reflect.TypeToken;
+import net.bir2.util.DTAction;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 
 public class ApiNgRescriptOperations extends ApiNgOperations {
@@ -110,6 +108,7 @@ public class ApiNgRescriptOperations extends ApiNgOperations {
 
     }
 
+
     public List<MarketCatalogue> listMarketCatalogue(MarketFilter filter, Set<MarketProjection> marketProjection,
                                                      MarketSort sort, String maxResult, String appKey, String ssoId) throws APINGException {
         Map<String, Object> params = new HashMap<String, Object>();
@@ -124,6 +123,43 @@ public class ApiNgRescriptOperations extends ApiNgOperations {
         List<MarketCatalogue> container = JsonConverter.convertFromJson(result, new TypeToken< List<MarketCatalogue>>(){}.getType() );
 
         return container;
+
+    }
+
+    public CurrentOrderSummaryReport  listCurrentOrders ( Set<String>betIds, Set<String>marketIds,
+                                                                   OrderProjection orderProjection,
+                                                                   int recordCount,
+                                                                   String appKey, String ssoId ) throws APINGException{
+        Map<String, Object> params = new HashMap<String, Object>();
+        params.put(LOCALE, locale);
+        params.put(MARKET_IDS, marketIds);
+        params.put(BET_IDS, betIds);
+        params.put(ORDER_PROJECTION, orderProjection);
+        params.put(MAX_RESULT, recordCount);
+
+
+        TimeRange timeRange = new TimeRange();
+
+        Calendar c = Calendar.getInstance();
+
+        c.add(Calendar.DAY_OF_YEAR, -3);
+
+        timeRange.setFrom(DTAction.getTimeFormBegin(c.getTime()));
+
+        c.add(Calendar.DAY_OF_YEAR, 4);
+
+        timeRange.setTo(DTAction.getTimeToEnd(c.getTime()));
+
+        params.put("dateRange", timeRange);
+
+        params.put("orderBy", OrderBy.BY_PLACE_TIME);
+
+        String result = getInstance().makeRequest(ApiNgOperation.LISTCURRENTORDERS.getOperationName(), params, appKey, ssoId);
+
+        if(ApiNGDemo.isDebug())
+            System.out.println("\nResponse: "+result);
+
+        return JsonConverter.convertFromJson(result, CurrentOrderSummaryReport.class);
 
     }
 

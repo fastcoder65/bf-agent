@@ -201,7 +201,7 @@ public class GlobalAPI {
 		return r;
 	}
 
-	public static List<MarketBook> listMarketBook(APIContext context, List<String> marketIds,
+	public static List<MarketBook> listMarketBook (APIContext context, List<String> marketIds,
 			PriceProjection priceProjection, OrderProjection orderProjection,
 			MatchProjection matchProjection, String currencyCode) {
 		
@@ -213,7 +213,25 @@ public class GlobalAPI {
 		}
 		return result;
 	}
-			
+
+	public static  List<CurrentOrderSummary> listCurrentOrders (APIContext context,
+																Set<String>betIds, Set<String>marketIds) {
+
+		List<CurrentOrderSummary> result = null;
+		OrderProjection orderProjection = OrderProjection.ALL;
+		try {
+
+			CurrentOrderSummaryReport res = jsonOperations.listCurrentOrders ( betIds, marketIds, orderProjection, 1000, context.getProduct(), context.getToken());
+			result = res.getCurrentOrders();
+
+		} catch (APINGException e) {
+			log.log(Level.SEVERE, "error getting marketBook ", e);
+		}
+		return result;
+
+	}
+
+
 	// @TODO Implement Keep alive for Italian jurisdiction
 
 	public static void keepAlive(APIContext context) throws Exception {

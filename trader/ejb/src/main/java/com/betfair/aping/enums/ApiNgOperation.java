@@ -8,9 +8,15 @@ public enum ApiNgOperation {
 	LISTMARKETTYPES("listMarketTypes"),
 	LISTCOUNTRIES("listCountries"),
 	LISTVENUES("listVenues"),
+
 	LISTMARKETCATALOGUE("listMarketCatalogue"),
+
 	LISTMARKETBOOK("listMarketBook"),
+
+	LISTCURRENTORDERS("listCurrentOrders"),
+
 	KEEPALIVE("keepAlive"),
+
 	PLACORDERS("placeOrders");
 	
 	private String operationName;
@@ -22,7 +28,5 @@ public enum ApiNgOperation {
 	public String getOperationName() {
 		return operationName;
 	}
-
-	
 
 }

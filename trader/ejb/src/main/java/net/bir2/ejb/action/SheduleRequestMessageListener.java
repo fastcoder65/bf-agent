@@ -1,5 +1,8 @@
 package net.bir2.ejb.action;
 
+import com.betfair.aping.entities.CurrentOrderSummary;
+import com.betfair.aping.enums.OrderStatus;
+import com.betfair.aping.enums.Side;
 import generated.exchange.BFExchangeServiceStub.BetCategoryTypeEnum;
 import generated.exchange.BFExchangeServiceStub.BetPersistenceTypeEnum;
 import generated.exchange.BFExchangeServiceStub.BetStatusEnum;
@@ -39,6 +42,7 @@ import net.bir2.ejb.session.market.BaseService;
 import net.bir2.ejb.session.market.BaseServiceBean;
 import net.bir2.ejb.session.market.DataFeedService;
 import net.bir2.ejb.session.market.MarketService;
+import net.bir2.handler.GlobalAPI;
 import net.bir2.multitrade.ejb.entity.DataFeedEvent;
 import net.bir2.multitrade.ejb.entity.Feed4Market4User;
 import net.bir2.multitrade.ejb.entity.Feed4Runner4User;
@@ -285,13 +289,17 @@ public class SheduleRequestMessageListener implements MessageListener {
 
 // 			selected_exchange = currentMarket.getExchange() == 1 ? Exchange.UK: Exchange.AUS;
 
-			List<MUBet> curBets = new ArrayList<MUBet>(10);
-			MUBet[] currentBets = null;
+			//List<MUBet> curBets = new ArrayList<MUBet>(10);
+			List<CurrentOrderSummary>  curBets = new ArrayList<CurrentOrderSummary>();
+			List<CurrentOrderSummary> currentBets = null;
+			Set<String> marketIds = new HashSet<String>();
 			long startTime = System.currentTimeMillis();
-
+			marketIds.add(currentMarket.getMarketId());
 			try {
 
-				currentBets =  ExchangeAPI.getMUBets(selected_exchange,currentUser.getApiContext(),Long.valueOf(currentMarket.getMarketId()).intValue());
+				//currentBets =  ExchangeAPI.getMUBets(selected_exchange, currentUser.getApiContext(),Long.valueOf(currentMarket.getMarketId()).intValue());
+
+				currentBets = GlobalAPI.listCurrentOrders(currentUser.getApiContext(), null, marketIds);
 
 			} catch (Exception e) {
 				log.severe(" 'Get Current Bets' error, message: "
@@ -306,17 +314,8 @@ public class SheduleRequestMessageListener implements MessageListener {
 						+ ((endTime - startTime) / 1000.0) + " second(s)");
 
 			if (currentBets != null)
-				for (MUBet bet : currentBets) {
-/*					
-						log.fine(new StringBuilder(100)
-								.append("bet: SelectionId=")
-								.append(bet.getSelectionId())
-								.append(", bet.getBetStatus()=")
-								.append(bet.getBetStatus()).append(", price=")
-								.append(bet.getPrice()).append(", size=")
-								.append(bet.getSize()).toString());
-*/
-					
+				for (CurrentOrderSummary bet : currentBets) {
+
 					Runner runner = currentMarket.getRunnersMap().get(
 							(long) bet.getSelectionId());
 
@@ -336,27 +335,25 @@ public class SheduleRequestMessageListener implements MessageListener {
 									.append("runner4user is null for userId=")
 									.append(currentUser.getId()).toString());
 						}
+
 						if (r4u != null) {
-							if (BetStatusEnum.U.equals(bet.getBetStatus())
-									&& BetTypeEnum.L.equals(bet.getBetType())) {
+							//bet.getPriceSize().getPrice(
+
+							if (OrderStatus.EXECUTABLE.equals(bet.getStatus()) // if (BetStatusEnum.U.equals
+									&& Side.LAY .equals(bet.getSide())) { // BetTypeEnum.L
 								
-									log.fine(new StringBuilder(100)
-											.append("get unmatched bet for selectionId=")
-											.append(bet.getSelectionId())
-											.toString());
-								r4u.setUnmatchedLayPrice(bet.getPrice());
-								r4u.setUnmatchedLayAmount(bet.getSize());
+
+								r4u.setUnmatchedLayPrice(bet.getPriceSize().getPrice());
+								r4u.setUnmatchedLayAmount(bet.getPriceSize().getSize());
 								curBets.add(bet);
 							}
 
-							if (BetStatusEnum.M.equals(bet.getBetStatus())
-									&& BetTypeEnum.L.equals(bet.getBetType())) {
-								log.info(new StringBuilder(100)
-										.append("get matched bet for selectionId=")
-										.append(bet.getSelectionId())
-										.toString());
-								r4u.setMatchedLayPrice(bet.getPrice());
-								r4u.setMatchedLayAmount(bet.getSize());
+							if (OrderStatus.EXECUTION_COMPLETE.equals(bet.getStatus()) // BetStatusEnum.M.equals
+									&& Side.LAY .equals(bet.getSide())) { // BetTypeEnum.L
+
+								r4u.setMatchedLayPrice(bet.getPriceSize().getPrice());
+								r4u.setMatchedLayAmount(bet.getPriceSize().getSize());
+
 							}
 							marketService.merge(r4u);
 						}
@@ -365,23 +362,24 @@ public class SheduleRequestMessageListener implements MessageListener {
 
 			Double sum = null;
 
-			for (MUBet currentBet : currentBets) {
-				if (BetStatusEnum.M.equals(currentBet.getBetStatus())) {
-					if (currentBet.getBetType() == BetTypeEnum.B) {
+			for (CurrentOrderSummary currentBet : currentBets) {
+				if (OrderStatus.EXECUTION_COMPLETE.equals(currentBet.getStatus())) { // BetStatusEnum.M.equals
+
+					if (Side.BACK.equals(currentBet.getSide())) { // == BetTypeEnum.B
 
 						if (sum == null) {
-							sum = currentBet.getSize();
+							sum = currentBet.getPriceSize().getSize();
 						} else {
-							sum += currentBet.getSize();
+							sum += currentBet.getPriceSize().getSize();
 						}
 
 						// sum += currentBets[i].getSize();
 					} else {
 
 						if (sum == null) {
-							sum = -currentBet.getSize();
+							sum = -currentBet.getPriceSize().getSize();
 						} else {
-							sum -= currentBet.getSize();
+							sum -= currentBet.getPriceSize().getSize();
 						}
 
 						// sum -= currentBets[i].getSize();
@@ -393,12 +391,12 @@ public class SheduleRequestMessageListener implements MessageListener {
 
 			Map<Long, Double> profitMap = new HashMap<Long, Double>(10);
 
-			if (currentBets != null && currentBets.length > 0) {
-				for (int i = 0; i < currentBets.length; i++) {
-					Long _key = (long) currentBets[i].getSelectionId();
+			if (currentBets != null && currentBets.size() > 0) {
+				for (int i = 0; i < currentBets.size(); i++) {
+					Long _key = currentBets.get(i).getSelectionId();
 
 					Double _profit = null;
-					if (BetStatusEnum.M.equals(currentBets[i].getBetStatus())) {
+					if (OrderStatus.EXECUTION_COMPLETE.equals(currentBets.get(i).getStatus())) { // BetStatusEnum.M.
 /*						
 							log.fine(new StringBuilder(100).append("i=")
 									.append(i).append(", betType=")
@@ -409,14 +407,14 @@ public class SheduleRequestMessageListener implements MessageListener {
 									.append(currentBets[i].getSize())
 									.toString());
 */
-						double _profitItem = currentBets[i].getSize()
-								* currentBets[i].getPrice();
+						double _profitItem = currentBets.get(i).getPriceSize().getSize()
+								* currentBets.get(i).getPriceSize().getPrice();
 					
 							log.fine(new StringBuilder(100)
 									.append("_profitItem=").append(_profitItem)
 									.toString());
 
-						if (currentBets[i].getBetType() == BetTypeEnum.B) {
+						if (Side.BACK.equals(currentBets.get(i).getSide())) { //  == BetTypeEnum.B
 
 							_profit = (_profit == null) ? new Double(
 									_profitItem) : _profit + _profitItem;
