@@ -48,7 +48,7 @@ public class Feed4Runner4User implements java.io.Serializable {
 	protected Feed4Runner4User() {
 	}
 
-	public Feed4Runner4User(Uzer uzer, Runner runner, DataFeedEvent dataFeedEvent) {
+	public Feed4Runner4User(Uzer uzer, MarketRunner runner, DataFeedEvent dataFeedEvent) {
 		this.userId = uzer.getId();
 		this.linkedUser = uzer;
 		this.runnerId = runner.getId();
@@ -67,9 +67,9 @@ public class Feed4Runner4User implements java.io.Serializable {
 
 	@ManyToOne
 	@JoinColumn(name = "runner_id")
-	private Runner linkedRunner;
+	private MarketRunner linkedRunner;
 
-	public Runner getLinkedRunner() {
+	public MarketRunner getLinkedRunner() {
 		return linkedRunner;
 	}
 

@@ -184,7 +184,7 @@ public class ApiNGJRescriptDemo {
         List<RunnerCatalog> runners = mk.getRunners();
         if(runners!=null){
             for(RunnerCatalog rCat : runners){
-                System.out.println("Runner Name: "+rCat.getRunnerName()+"; Selection Id: "+rCat.getSelectionId()+"\n");
+                System.out.println("MarketRunner Name: "+rCat.getRunnerName()+"; Selection Id: "+rCat.getSelectionId()+"\n");
             }
         }
     }

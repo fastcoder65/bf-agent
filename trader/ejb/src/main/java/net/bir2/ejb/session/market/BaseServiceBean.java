@@ -369,7 +369,7 @@ End Function
 	}
 
 	public String getCurrencySymbol(String currencyAlias) {
-	  String result = "�";
+	  String result = "$";
 	  if ("USD".equals(currencyAlias)) result = "$";
 	  if ("EUR".equals(currencyAlias)) result = "\u20AC";
 	  if ("GBP".equals(currencyAlias)) result = "\u00A3";

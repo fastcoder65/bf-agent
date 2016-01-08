@@ -5,16 +5,13 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import com.betfair.aping.entities.*;
+import com.betfair.aping.enums.*;
 import my.pack.util.AccountConstants;
 import net.bir2.multitrade.util.APIContext;
 import net.bir2.util.DTAction;
 
 import com.betfair.aping.api.ApiNgJsonRpcOperations;
 import com.betfair.aping.api.ApiNgOperations;
-import com.betfair.aping.enums.MarketProjection;
-import com.betfair.aping.enums.MarketSort;
-import com.betfair.aping.enums.MatchProjection;
-import com.betfair.aping.enums.OrderProjection;
 import com.betfair.aping.exceptions.APINGException;
 import com.betfair.aping.util.HttpClientSSO;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -153,6 +150,7 @@ public class GlobalAPI {
 		return r;
 	}
 
+
 	public static List<MarketCatalogue> getMarkets(APIContext context,
 			Set<String> eventIds, Set<String> marketIds) throws APINGException {
 		MarketFilter marketFilter = new MarketFilter();
@@ -200,6 +198,31 @@ public class GlobalAPI {
 
 		return r;
 	}
+
+
+	public static List<MarketBook>  getMarketPrices(APIContext context, String marketId, String currencyCode ) {
+
+	 	List<String> marketIds = new ArrayList<String>();
+		marketIds.add(marketId);
+
+		PriceProjection priceProjection = new PriceProjection();
+		Set<PriceData> priceData = new HashSet<PriceData>();
+
+		priceData.add(PriceData.EX_BEST_OFFERS);
+		priceProjection.setPriceData(priceData);
+		// EX_BEST_OFFERS EX_TRADED
+		Set<OrderProjection> orderProjection = new HashSet<OrderProjection>();
+		orderProjection.add(OrderProjection.EXECUTABLE);
+		Set<MatchProjection> matchProjection = new HashSet<MatchProjection>();
+		matchProjection.add(MatchProjection.ROLLED_UP_BY_PRICE);
+
+		return listMarketBook(context, marketIds, priceProjection, OrderProjection.EXECUTABLE, MatchProjection.ROLLED_UP_BY_PRICE, currencyCode);
+
+	}
+
+
+
+
 
 	public static List<MarketBook> listMarketBook (APIContext context, List<String> marketIds,
 			PriceProjection priceProjection, OrderProjection orderProjection,

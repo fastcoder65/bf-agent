@@ -123,19 +123,19 @@ public class Market implements java.io.Serializable {
 	}
 
 	@OneToMany(mappedBy = "market")
-	private Set<Runner> runners = new HashSet<Runner>();
+	private Set<MarketRunner> runners = new HashSet<MarketRunner>();
 
-	public Set<Runner> getRunners() {
+	public Set<MarketRunner> getRunners() {
 		return runners;
 	}
 
 	@Transient
-	private Map<Long, Runner> runnersMap = null;
+	private Map<Long, MarketRunner> runnersMap = null;
 
-	public Map<Long, Runner> getRunnersMap() {
+	public Map<Long, MarketRunner> getRunnersMap() {
 		if (runnersMap == null) {
-			runnersMap = new HashMap<Long, Runner>(20);
-			for (Runner runner : runners) {
+			runnersMap = new HashMap<Long, MarketRunner>(20);
+			for (MarketRunner runner : runners) {
 				Long key = Long.valueOf(runner.getSelectionId());
 				runnersMap.put(key, runner);
 			}

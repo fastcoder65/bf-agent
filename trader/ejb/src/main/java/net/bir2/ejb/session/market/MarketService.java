@@ -4,14 +4,8 @@ import java.util.List;
 
 import javax.ejb.Local;
 
-import net.bir2.multitrade.ejb.entity.Feed4Market4User;
-import net.bir2.multitrade.ejb.entity.Feed4Runner4User;
-import net.bir2.multitrade.ejb.entity.Market;
-import net.bir2.multitrade.ejb.entity.Market4User;
-import net.bir2.multitrade.ejb.entity.Runner;
-
-import net.bir2.multitrade.ejb.entity.Uzer;
-import net.bir2.multitrade.ejb.entity.Runner4User;
+import net.bir2.multitrade.ejb.entity.*;
+import net.bir2.multitrade.ejb.entity.MarketRunner;
 
 @Local
 public interface MarketService {
@@ -20,7 +14,7 @@ public interface MarketService {
 
 	List<Market> getMyActiveMarkets();
 	
-	List<Runner> listRunners(String marketId);
+	List<MarketRunner> listRunners(String marketId);
 
 	Market merge(Market market);
 
@@ -28,16 +22,16 @@ public interface MarketService {
 	Market getMarketByMarketId(String marketId);
 	boolean isMarketAlreadyExistsByMarketId(String marketId);
 
-	Runner merge(Runner runner);
+	MarketRunner merge(MarketRunner runner);
 
-	Runner getRunner(long id);
+	MarketRunner getRunner(long id);
 	
-    Runner getRunnerBySelectionId(long marketId, long selectionId);
+    MarketRunner getRunnerBySelectionId(long marketId, long selectionId);
 
 	void removeAllActiveMarkets();
 	void remove(Market market);
 	void remove(Market market, Uzer currentUser);
-	void remove(Runner runner);
+	void remove(MarketRunner runner);
 	
 
 	

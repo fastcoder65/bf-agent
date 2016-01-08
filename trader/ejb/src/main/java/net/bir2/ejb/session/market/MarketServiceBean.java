@@ -15,13 +15,8 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
 import net.bir2.ejb.action.ShedulerActivity;
-import net.bir2.multitrade.ejb.entity.Feed4Market4User;
-import net.bir2.multitrade.ejb.entity.Feed4Runner4User;
-import net.bir2.multitrade.ejb.entity.Market;
-import net.bir2.multitrade.ejb.entity.Market4User;
-import net.bir2.multitrade.ejb.entity.Runner;
-import net.bir2.multitrade.ejb.entity.Runner4User;
-import net.bir2.multitrade.ejb.entity.Uzer;
+import net.bir2.multitrade.ejb.entity.*;
+import net.bir2.multitrade.ejb.entity.MarketRunner;
 
 // import org.apache.log4j.Logger;
 
@@ -150,12 +145,12 @@ public class MarketServiceBean implements MarketService {
 	}
 
 	@SuppressWarnings("unchecked")
-	public List<Runner> listRunners(String marketId) {
-		List<Runner> result;
+	public List<MarketRunner> listRunners(String marketId) {
+		List<MarketRunner> result;
 		result = em.createQuery(
 				"select r FROM Runner r where r.market.marketId = :marketId ")
 				.setParameter("marketId", marketId).getResultList();
-		for (Runner runner : result) {
+		for (MarketRunner runner : result) {
 			runner.prefetchAll();
 		}
 		return result;
@@ -194,16 +189,16 @@ public class MarketServiceBean implements MarketService {
 
 	// "MarketByMarketId"
 
-	public Runner merge(Runner runner) {
+	public MarketRunner merge(MarketRunner runner) {
 		return em.merge(runner);
 	}
 
-	public Runner getRunner(long id) {
-		return em.find(Runner.class, id);
+	public MarketRunner getRunner(long id) {
+		return em.find(MarketRunner.class, id);
 	}
 
-	public Runner getRunnerBySelectionId(long marketId, long selectionId) {
-		return (Runner) em.createNamedQuery("RunnerBySelectionId")
+	public MarketRunner getRunnerBySelectionId(long marketId, long selectionId) {
+		return (MarketRunner) em.createNamedQuery("RunnerBySelectionId")
 				.setParameter("marketId", marketId).setParameter("selectionId",
 						selectionId).getSingleResult();
 	}
@@ -233,8 +228,8 @@ public class MarketServiceBean implements MarketService {
 				em.remove(m4u);
 			}
 		}
-		Set<Runner> runners = marketRef.getRunners();
-		for (Runner runner : runners) {
+		Set<MarketRunner> runners = marketRef.getRunners();
+		for (MarketRunner runner : runners) {
 
 			Set<Runner4User> runner4users = runner.getRunner4Users();
 			for (Runner4User r4u : runner4users) {
@@ -263,7 +258,7 @@ public class MarketServiceBean implements MarketService {
 		System.out.println("market " + marketRefName + " removed.");
 	}
 
-	public void remove(Runner runner) {
+	public void remove(MarketRunner runner) {
 		em.remove(runner);
 	}
 

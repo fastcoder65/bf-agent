@@ -7,8 +7,6 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-import javax.ejb.TransactionAttribute;
-import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
 import javax.persistence.*;
 
@@ -16,13 +14,14 @@ import java.util.logging.*;
 
 @Entity
 @NamedQueries( { 
-	@NamedQuery(name = "RunnerBySelectionId", query = "select r FROM Runner r where r.market.id = :marketId and r.selectionId = :selectionId")
+	@NamedQuery(name = "RunnerBySelectionId", query = "select r FROM MarketRunner r where r.market.id = :marketId and r.selectionId = :selectionId")
 	})
-public class Runner implements Serializable {
+@Table(name="runner")
+public class MarketRunner implements Serializable {
 	
 	private static final long serialVersionUID = 3898851916983929758L;
 
-	// private static  final Logger log = Logger.getLogger( Runner.class );
+	// private static  final Logger log = Logger.getLogger( MarketRunner.class );
 	@Transient
 	@Inject
     private Logger log;
@@ -32,7 +31,7 @@ public class Runner implements Serializable {
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private long id;
 
-    public Runner() {
+    public MarketRunner() {
         runner4Users = new HashSet<Runner4User>(10);
         feed4Runner4Users = new HashSet<Feed4Runner4User>(10);
     }
@@ -146,21 +145,21 @@ public class Runner implements Serializable {
 	
 	@Override
 	public String toString() {
-		return "Runner [id=" + id + ", name=" + name + ", selectionId="
+		return "MarketRunner [id=" + id + ", name=" + name + ", selectionId="
 				+ selectionId + ']';
 	}
 
-	public static class RunnerComparator implements Comparator<Runner>, Serializable {
+	public static class RunnerComparator implements Comparator<MarketRunner>, Serializable {
         private static final long serialVersionUID = -4683692958234206933L;
 
-        public int compare(Runner o1, Runner o2) {
+        public int compare(MarketRunner o1, MarketRunner o2) {
 		//	return o1.getSelectionId().compareTo(o2.getSelectionId());
 			return Long.valueOf(o1.getId()).compareTo(o2.getId());
 		}
 	}
 	
   //  @TransactionAttribute(TransactionAttributeType.REQUIRED)
-    public Runner prefetchAll() {
+    public MarketRunner prefetchAll() {
    // 	log.fine(""+ this.runner4Users.size());
     	return this;
     }

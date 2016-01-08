@@ -105,12 +105,12 @@ public class Feed4Market4User  implements java.io.Serializable {
 		this.linkedDataFeedEvent = dataFeedEvent; 
 	}
 	
-//	@Formula("(select coalesce(1/sum(1/f4r4u.feedOdds), 0) from Feed4Runner4User f4r4u, Runner r where f4r4u.user_id = userId  and r.id=f4r4u.runner_id and r.market_id=marketId and f4r4u.dataFeedEvent_id=dataFeedEventId )")
+//	@Formula("(select coalesce(1/sum(1/f4r4u.feedOdds), 0) from Feed4Runner4User f4r4u, MarketRunner r where f4r4u.user_id = userId  and r.id=f4r4u.runner_id and r.market_id=marketId and f4r4u.dataFeedEvent_id=dataFeedEventId )")
 
 	@Transient
 	private Double _sumReturnPercent;
 
-	@Formula("(select coalesce(1/sum(1/f4r4u.feedOdds), 0) from Feed4Runner4User f4r4u, Runner r where f4r4u.user_id = userId  and r.id=f4r4u.runner_id and r.market_id=marketId and f4r4u.dataFeedEvent_id=dataFeedEventId )")
+	@Formula("(select coalesce(1/sum(1/f4r4u.feedOdds), 0) from Feed4Runner4User f4r4u, MarketRunner r where f4r4u.user_id = userId  and r.id=f4r4u.runner_id and r.market_id=marketId and f4r4u.dataFeedEvent_id=dataFeedEventId )")
 	public Double getSumReturnPercent() {
 		return _sumReturnPercent;	
 	}

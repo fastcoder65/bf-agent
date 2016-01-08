@@ -1,11 +1,13 @@
 package net.bir2.ejb.action;
 
 import com.betfair.aping.entities.CurrentOrderSummary;
+import com.betfair.aping.entities.MarketBook;
+import com.betfair.aping.entities.PriceSize;
+import com.betfair.aping.entities.Runner;
 import com.betfair.aping.enums.OrderStatus;
 import com.betfair.aping.enums.Side;
 import generated.exchange.BFExchangeServiceStub.BetCategoryTypeEnum;
 import generated.exchange.BFExchangeServiceStub.BetPersistenceTypeEnum;
-import generated.exchange.BFExchangeServiceStub.BetStatusEnum;
 import generated.exchange.BFExchangeServiceStub.BetTypeEnum;
 import generated.exchange.BFExchangeServiceStub.CancelBets;
 import generated.exchange.BFExchangeServiceStub.CancelBetsResult;
@@ -43,14 +45,8 @@ import net.bir2.ejb.session.market.BaseServiceBean;
 import net.bir2.ejb.session.market.DataFeedService;
 import net.bir2.ejb.session.market.MarketService;
 import net.bir2.handler.GlobalAPI;
-import net.bir2.multitrade.ejb.entity.DataFeedEvent;
-import net.bir2.multitrade.ejb.entity.Feed4Market4User;
-import net.bir2.multitrade.ejb.entity.Feed4Runner4User;
-import net.bir2.multitrade.ejb.entity.Market;
-import net.bir2.multitrade.ejb.entity.Market4User;
-import net.bir2.multitrade.ejb.entity.Runner;
-import net.bir2.multitrade.ejb.entity.Runner4User;
-import net.bir2.multitrade.ejb.entity.Uzer;
+import net.bir2.multitrade.ejb.entity.*;
+import net.bir2.multitrade.ejb.entity.MarketRunner;
 import net.bir2.multitrade.util.InflatedMarketPrices.InflatedPrice;
 import net.bir2.multitrade.util.InflatedMarketPrices.InflatedRunner;
 
@@ -316,7 +312,7 @@ public class SheduleRequestMessageListener implements MessageListener {
 			if (currentBets != null)
 				for (CurrentOrderSummary bet : currentBets) {
 
-					Runner runner = currentMarket.getRunnersMap().get(
+					MarketRunner runner = currentMarket.getRunnersMap().get(
 							(long) bet.getSelectionId());
 
 					if (runner == null) {
@@ -448,7 +444,7 @@ public class SheduleRequestMessageListener implements MessageListener {
 				// System.out.println("profitMap filled.");
 			}
 
-			for (Runner runner : currentMarket.getRunners()) {
+			for (MarketRunner runner : currentMarket.getRunners()) {
 				Runner4User r4u = runner.getUserData4Runner().get(
 						currentUser.getId());
 				Long _key = runner.getSelectionId();
@@ -474,23 +470,30 @@ public class SheduleRequestMessageListener implements MessageListener {
 				}
 			}
 
-			net.bir2.multitrade.util.InflatedMarketPrices prices = null;
+			//net.bir2.multitrade.util.InflatedMarketPrices prices = null;
+			//List<MarketBook>  prices = null;
+			List<MarketBook>  marketBooks = null;
 			int inPlayDelay = 0;
 			startTime = System.currentTimeMillis();
-			String currency = "";
+			String currency = "USD";
+			MarketBook marketBook0 = null;
+
 			try {
-				
-				prices = null;
-/*
+
+				marketBooks = GlobalAPI.getMarketPrices(currentUser.getApiContext(),currentMarket.getMarketId(), "USD");
+
+				/*
 				ExchangeAPI.getMarketPrices(selected_exchange,
 						currentUser.getApiContext(),
 						Long.valueOf(currentMarket.getMarketId()).intValue());
-*/				
-				inPlayDelay = prices.getInPlayDelay();
+*/
+				 marketBook0 =  marketBooks.get(0);
+
+				inPlayDelay = marketBook0.getBetDelay();
 		
-					log.fine("inPlayDelay =" + inPlayDelay);
+				log.info("inPlayDelay =" + inPlayDelay);
 					
-				currency = prices.getCurrency();
+				//currency = marketBook0.getRunners()
 				// System.setProperty(currency, value)
 			} catch (Exception e) {
 				log.log(Level.SEVERE, "getPrices() error: ", e);
@@ -508,23 +511,24 @@ public class SheduleRequestMessageListener implements MessageListener {
 						+ ", runnersMap size="
 						+ currentMarket.getRunnersMap().size());
 
-			Map<Long, InflatedRunner> inflatedRunners = new HashMap<Long, InflatedRunner>(
-					10);
+			Map<Long, Runner> inflatedRunners = new HashMap<Long, Runner>();
 
-			if (prices != null)
-
-				for (InflatedRunner r : prices.getRunners()) {
-					inflatedRunners.put((long) r.getSelectionId(), r);
+			//if (prices != null)
+			if (marketBook0 != null) {
+				for (Runner r : marketBook0.getRunners()) {
+					inflatedRunners.put(r.getSelectionId(), r);
 				}
+			}
 
-			for (Runner runner : currentMarket.getRunners()) {
-				Runner4User r4u = runner.getUserData4Runner().get(
-						currentUser.getId());
+			for (MarketRunner runner : currentMarket.getRunners()) {
+				Runner4User r4u = runner.getUserData4Runner().get(currentUser.getId());
+
 				Long _key = runner.getSelectionId();
 
-				InflatedRunner r = inflatedRunners.get(_key);
+				Runner r = inflatedRunners.get(_key);
 
 				r4u.setCurrency(baseService.getCurrencySymbol(currency));
+
 				r4u.setBackPrice1(0.0);
 				r4u.setBackAmount1(0.0);
 
@@ -550,26 +554,27 @@ public class SheduleRequestMessageListener implements MessageListener {
 
 				if (r != null) {
 
-					if (r.getLayPrices() != null) {
+					//if (r.getLayPrices() != null) {
+					if (r.getEx().getAvailableToLay() != null && !(r.getEx().getAvailableToLay().size()< 3)) {
 					
-							log.fine(new StringBuilder(100)
-									.append("r.getLayPrices().size()=")
-									.append(r.getLayPrices().size()).toString());
-						for (InflatedPrice p : r.getLayPrices()) {
+							log.info(new StringBuilder(100)
+									.append("r.getEx().getAvailableToLay().size()=")
+									.append(r.getEx().getAvailableToLay().size()).toString());
+					//	for (InflatedPrice p : r.getLayPrices()) {
+						int priceDepth = 0;
+						for (PriceSize _priceSize : r.getEx().getAvailableToLay()) {
 
-							if ("B".equals(p.getType())) {
-							
-									log.fine(new StringBuilder(100)
-											.append("p.getType()=")
-											.append(p.getType())
-											.append(",\t p.getDepth()=")
-											.append(p.getDepth()).toString());
-								switch (p.getDepth()) {
+							priceDepth++;
+
+//							if ("B".equals(p.getType())) {
+
+								switch (priceDepth) {
 								case 1:
-									r4u.setBackAmount1(p.getAmountAvailable());
-									r4u.setBackPrice1(p.getPrice());
+
+									r4u.setBackAmount1(_priceSize.getSize());
+									r4u.setBackPrice1(_priceSize.getPrice());
 								
-										log.fine(new StringBuilder(100)
+										log.info(new StringBuilder(100)
 												.append("r4u.getBackPrice1()=")
 												.append(r4u.getBackPrice1())
 												.append(",\t r4u.getBackAmount1()")
@@ -578,10 +583,10 @@ public class SheduleRequestMessageListener implements MessageListener {
 									break;
 								case 2:
 
-									r4u.setBackAmount2(p.getAmountAvailable());
-									r4u.setBackPrice2(p.getPrice());
+									r4u.setBackAmount2( _priceSize.getSize());
+									r4u.setBackPrice2(_priceSize.getPrice());
 									
-										log.fine(new StringBuilder(100)
+										log.info(new StringBuilder(100)
 												.append("r4u.getBackPrice2()=")
 												.append(r4u.getBackPrice2())
 												.append(",\t r4u.getBackAmount2()")
@@ -589,10 +594,11 @@ public class SheduleRequestMessageListener implements MessageListener {
 												.toString());
 									break;
 								case 3:
-									r4u.setBackAmount3(p.getAmountAvailable());
-									r4u.setBackPrice3(p.getPrice());
+
+									r4u.setBackAmount3(_priceSize.getSize());
+									r4u.setBackPrice3(_priceSize.getPrice());
 									
-										log.fine(new StringBuilder(100)
+										log.info(new StringBuilder(100)
 												.append("r4u.getBackPrice3()=")
 												.append(r4u.getBackPrice3())
 												.append(",\t r4u.getBackAmount3()")
@@ -603,29 +609,27 @@ public class SheduleRequestMessageListener implements MessageListener {
 									log.log(Level.WARNING, "!!! enter to case: B default ");
 								}
 							}
-						}
+//						}
 					}
 
-					if (r.getBackPrices() != null) {
+					if ( r.getEx().getAvailableToBack() != null && !(r.getEx().getAvailableToBack().size() < 3) ) {
 
-							log.fine(new StringBuilder(100)
-									.append("r.getBackPrices().size()=")
-									.append(r.getBackPrices().size())
+							log.info(new StringBuilder(100)
+									.append("r.getEx().getAvailableToBack().size()=")
+									.append(r.getEx().getAvailableToBack().size())
 									.toString());
 
-						for (InflatedPrice p : r.getBackPrices()) {
+						int priceDepth = 0;
+						for (PriceSize _priceSize : r.getEx().getAvailableToBack()) {
+							priceDepth++;
 
-							if ("L".equals(p.getType())) {
+							// if ("L".equals(p.getType())) {
 
-									log.fine(new StringBuilder(100)
-											.append("p.getType()=")
-											.append(p.getType())
-											.append(",\t p.getDepth()=")
-											.append(p.getDepth()).toString());
-								switch (p.getDepth()) {
+								switch ( priceDepth ) {
+
 								case 1:
-									r4u.setLayAmount1(p.getAmountAvailable());
-									r4u.setLayPrice1(p.getPrice());
+									r4u.setLayAmount1 ( _priceSize.getSize() );
+									r4u.setLayPrice1  ( _priceSize.getPrice());
 
 										log.fine(new StringBuilder(100)
 												.append("r4u.getLayPrice1()=")
@@ -635,8 +639,8 @@ public class SheduleRequestMessageListener implements MessageListener {
 												.toString());
 									break;
 								case 2:
-									r4u.setLayAmount2(p.getAmountAvailable());
-									r4u.setLayPrice2(p.getPrice());
+									r4u.setLayAmount2( _priceSize.getSize() );
+									r4u.setLayPrice2 ( _priceSize.getPrice());
 
 										log.fine(new StringBuilder(100)
 												.append("r4u.getLayPrice2()=")
@@ -647,8 +651,8 @@ public class SheduleRequestMessageListener implements MessageListener {
 									break;
 
 								case 3:
-									r4u.setLayAmount3(p.getAmountAvailable());
-									r4u.setLayPrice3(p.getPrice());
+									r4u.setLayAmount3( _priceSize.getSize()  );
+									r4u.setLayPrice3 ( _priceSize.getPrice() );
 
 										log.fine(new StringBuilder(100)
 												.append("r4u.getLayPrice3()=")
@@ -662,16 +666,16 @@ public class SheduleRequestMessageListener implements MessageListener {
 									log.log(Level.WARNING, "enter to case: L default ");
 								}
 							}
-						}
+//						}
 					}
 
-					r4u.setTotalAmountMatched(r.getTotalAmountMatched());
-					r4u.setLastPriceMatched(r.getLastPriceMatched());
+					r4u.setTotalAmountMatched(marketBook0.getTotalMatched()); //  .getTotalAmountMatched()
+					r4u.setLastPriceMatched(0.0); // .getLastPriceMatched()
 
 				} else {
 
 						log.fine(new StringBuilder(100)
-								.append("!!! !!! !!! Runner with selectionId=")
+								.append("!!! !!! !!! MarketRunner with selectionId=")
 								.append(_key)
 								.append(" not found in 'inflatedRunners' map!")
 								.toString());
@@ -815,7 +819,7 @@ public class SheduleRequestMessageListener implements MessageListener {
 				feedRunners.put(runner.getRunnerName().toUpperCase(), runner);
 			}
 
-			for (Runner runner : market.getRunners()) {
+			for (MarketRunner runner : market.getRunners()) {
 
 				boolean rnrAlreadyExists = dataFeedService
 						.isFeed4Runner4UserAlreadyExists("UNITAB%",
@@ -866,7 +870,7 @@ public class SheduleRequestMessageListener implements MessageListener {
 		} else {
 			Set<String> runnerNames = new HashSet<String>(10);
 			// Market currentMarket = market4User.getLinkedMarket();
-			for (Runner runner : market.getRunners()) {
+			for (MarketRunner runner : market.getRunners()) {
 				runnerNames.add(runner.getName());
 			}
 			DataFeedEvent dataFeedEvent = dataFeedService
@@ -895,7 +899,7 @@ public class SheduleRequestMessageListener implements MessageListener {
 						market, dataFeedEvent);
 				marketService.merge(feed4Market4User);
 
-				for (Runner runner : market.getRunners()) {
+				for (MarketRunner runner : market.getRunners()) {
 
 					Feed4Runner4User feed4Runner4User = new Feed4Runner4User(
 							user, runner, dataFeedEvent);
@@ -1055,9 +1059,10 @@ public class SheduleRequestMessageListener implements MessageListener {
 		return result;
 	}
 
-	private void updateBets(Uzer currentUser, Market currentMarket,
-
-	Market4User market4User, List<MUBet> curBets) {
+	private void updateBets(Uzer currentUser, Market currentMarket, Market4User market4User,
+	//						List<MUBet> curBets
+							List<CurrentOrderSummary> curBets
+	) {
 
 		/*
 		 * Market4User market4User = currentMarket.getUserData4Market().get(
@@ -1157,7 +1162,7 @@ public class SheduleRequestMessageListener implements MessageListener {
 
 		List<PlaceBets> newBets = new ArrayList<PlaceBets>(64);
 
-		for (Runner runner : currentMarket.getRunners()) {
+		for (MarketRunner runner : currentMarket.getRunners()) {
 			Runner4User r4u = runner.getUserData4Runner().get(
 					currentUser.getId());
 			if (r4u.getSelectionPrice() > BaseServiceBean.MIN_ODDS

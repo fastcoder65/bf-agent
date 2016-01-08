@@ -129,7 +129,7 @@ public class Market4User implements java.io.Serializable {
 	private Double _sumReturnPercent=null;
 
 
-	@Formula("(select coalesce(1/sum(1/r4u.odds), 0) from Runner4User r4u, Runner r where r4u.user_id = userId  and r.id=r4u.runner_id and r.market_id=marketId )")
+	@Formula("(select coalesce(1/sum(1/r4u.odds), 0) from Runner4User r4u, MarketRunner r where r4u.user_id = userId  and r.id=r4u.runner_id and r.market_id=marketId )")
 	public Double getSumReturnPercent() {
 		return _sumReturnPercent;	
 	}
@@ -140,7 +140,7 @@ public class Market4User implements java.io.Serializable {
 
 	public Double getSumRetPercent() {
 		BigDecimal _result = BigDecimal.valueOf(0);
-		for (Runner runner : linkedMarket.getRunners()) {
+		for (MarketRunner runner : linkedMarket.getRunners()) {
 			if (runner.getUserData4Runner() != null) {
 				if (runner.getUserData4Runner().size() > 0) {
 					_result = _result.add(BigDecimal.valueOf( runner.getUserData4Runner().get(this.userId).getReturnPercent()));
@@ -162,7 +162,7 @@ public class Market4User implements java.io.Serializable {
 
 	public Double getSumPrcWin() {
 		BigDecimal _result = BigDecimal.valueOf(0);
-		for (Runner runner : linkedMarket.getRunners()) {
+		for (MarketRunner runner : linkedMarket.getRunners()) {
 			if (runner.getUserData4Runner() != null) {
 				if (!runner.getUserData4Runner().isEmpty()) {
 					_result=_result.add(BigDecimal.valueOf( runner.getUserData4Runner().get(this.userId)
@@ -284,7 +284,7 @@ public class Market4User implements java.io.Serializable {
 
 	public Double getSumPercentWinPink() {
     	BigDecimal _result = BigDecimal.valueOf(0);
-		for (Runner runner : linkedMarket.getRunners()) {
+		for (MarketRunner runner : linkedMarket.getRunners()) {
 			if (runner.getUserData4Runner() != null) {
 				if (!runner.getUserData4Runner().isEmpty()) {
 					BigDecimal _psr = BigDecimal.valueOf( runner.getUserData4Runner().get(this.userId).getPinkStakeReturn());
@@ -307,7 +307,7 @@ public class Market4User implements java.io.Serializable {
     @Transient
 	public Double getSumPrcWinPinkStakes() {
     	BigDecimal _result = BigDecimal.valueOf(0);
-		for (Runner runner : linkedMarket.getRunners()) {
+		for (MarketRunner runner : linkedMarket.getRunners()) {
 			if (runner.getUserData4Runner() != null) {
 				if (!runner.getUserData4Runner().isEmpty()) {
 					_result =_result.add(BigDecimal.valueOf(runner.getUserData4Runner().get(this.userId)
@@ -326,7 +326,7 @@ public class Market4User implements java.io.Serializable {
     @Transient
 	public Double getSummOfPsRealStPinkStakeHoldWithNR() {
 		BigDecimal _result = BigDecimal.valueOf(0);
-		for (Runner runner : linkedMarket.getRunners()) {
+		for (MarketRunner runner : linkedMarket.getRunners()) {
 			if (runner.getUserData4Runner() != null) {
 				if (!runner.getUserData4Runner().isEmpty()) {
 					_result =_result.add(BigDecimal.valueOf(runner.getUserData4Runner().get(this.userId)
@@ -345,7 +345,7 @@ public class Market4User implements java.io.Serializable {
 	@Transient	
 	public Double getSummPercWinSglajivWithNR() {
 		BigDecimal _result = BigDecimal.valueOf(0);
-		for (Runner runner : linkedMarket.getRunners()) {
+		for (MarketRunner runner : linkedMarket.getRunners()) {
 			if (runner.getUserData4Runner() != null) {
 				if (!runner.getUserData4Runner().isEmpty()) {
 					_result =_result.add(BigDecimal.valueOf( runner.getUserData4Runner().get(this.userId)

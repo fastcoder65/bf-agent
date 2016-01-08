@@ -38,7 +38,7 @@ public class Runner4User implements java.io.Serializable {
 	public Runner4User() {
 	}
 
-	public Runner4User(Uzer uzer, Runner runner) {
+	public Runner4User(Uzer uzer, MarketRunner runner) {
 		this.userId = uzer.getId();
 		this.linkedUser = uzer;
 		this.runnerId = runner.getId();
@@ -55,9 +55,9 @@ public class Runner4User implements java.io.Serializable {
 
 	@ManyToOne
 	@PrimaryKeyJoinColumn(name = "runner_id")
-	private Runner linkedRunner;
+	private MarketRunner linkedRunner;
 
-	public Runner getLinkedRunner() {
+	public MarketRunner getLinkedRunner() {
 		return linkedRunner;
 	}
 
