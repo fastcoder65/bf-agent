@@ -70,4 +70,16 @@ public class PlaceInstructionReport {
 		this.sizeMatched = sizeMatched;
 	}
 
+	@Override
+	public String toString() {
+		return "PlaceInstructionReport{" +
+				"averagePriceMatched=" + averagePriceMatched +
+				", status=" + status +
+				", errorCode=" + errorCode +
+				", instructionl=" + instructionl +
+				", betId='" + betId + '\'' +
+				", placedDate=" + placedDate +
+				", sizeMatched=" + sizeMatched +
+				'}';
+	}
 }

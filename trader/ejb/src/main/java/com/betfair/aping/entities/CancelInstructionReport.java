@@ -59,4 +59,15 @@ public class CancelInstructionReport {
     public void setSizeCancelled(double sizeCancelled) {
         this.sizeCancelled = sizeCancelled;
     }
+
+    @Override
+    public String toString() {
+        return "CancelInstructionReport{" +
+                "cancelledDate=" + cancelledDate +
+                ", status=" + status +
+                ", errorCode=" + errorCode +
+                ", instruction=" + instruction +
+                ", sizeCancelled=" + sizeCancelled +
+                '}';
+    }
 }

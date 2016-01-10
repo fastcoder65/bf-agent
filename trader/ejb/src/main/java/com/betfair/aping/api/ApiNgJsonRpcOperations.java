@@ -253,6 +253,32 @@ public class ApiNgJsonRpcOperations extends ApiNgOperations {
 
 	}
 
+	public ReplaceExecutionReport replaceOrders(String marketId,
+														 List<ReplaceInstruction> instructions, String customerRef,
+														 String appKey, String ssoId) throws APINGException {
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put(LOCALE, locale);
+		params.put(MARKET_ID, marketId);
+		params.put(INSTRUCTIONS, instructions);
+		params.put(CUSTOMER_REF, customerRef);
+
+		String result = getInstance().makeRequest(
+				ApiNgOperation.REPLACE_ORDERS.getOperationName(), params, appKey,
+				ssoId);
+
+		if (ApiNGDemo.isDebug())
+			log.info("'replaceOrders' Response: " + result);
+
+		ReplaceOrdersContainer container = JsonConverter.convertFromJson(result,
+				ReplaceOrdersContainer.class);
+
+		if (container.getError() != null)
+			throw container.getError().getData().getAPINGException();
+
+		return container.getResult();
+
+	}
+
 
 	public PlaceExecutionReport placeOrders(String marketId,
 			List<PlaceInstruction> instructions, String customerRef,

@@ -251,6 +251,32 @@ public class GlobalAPI {
         return result;
     }
 
+    public static PlaceExecutionReport placeOrders(APIContext context, String marketId,
+                                                   List<PlaceInstruction> instructions) {
+
+        PlaceExecutionReport result = null;
+        try {
+            result = jsonOperations.placeOrders(marketId, instructions, String.valueOf(customerRandom.nextLong()),
+                    context.getProduct(), context.getToken());
+        } catch (APINGException e) {
+            log.log(Level.SEVERE, "error placing orders ", e);
+        }
+        return result;
+    }
+
+    public static ReplaceExecutionReport replaceOrders(APIContext context, String marketId,
+                                                       List<ReplaceInstruction> instructions ) {
+
+        ReplaceExecutionReport result = null;
+        try {
+            result = jsonOperations.replaceOrders(marketId, instructions, String.valueOf(customerRandom.nextLong()),
+                    context.getProduct(), context.getToken());
+        } catch (APINGException e) {
+            log.log(Level.SEVERE, "error replacing orders ", e);
+        }
+        return result;
+    }
+
     public static CancelExecutionReport cancelOrders(APIContext context, String marketId, List<CancelInstruction> instructions) {
 
         CancelExecutionReport result = null;
@@ -258,7 +284,7 @@ public class GlobalAPI {
             result = jsonOperations.cancelOrders(marketId, instructions, String.valueOf(customerRandom.nextLong()),
                     context.getProduct(), context.getToken());
         } catch (APINGException e) {
-            log.log(Level.SEVERE, "error getting marketBook ", e);
+            log.log(Level.SEVERE, "error on cancel orders ", e);
         }
         return result;
     }

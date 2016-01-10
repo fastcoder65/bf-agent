@@ -1,6 +1,7 @@
 package com.betfair.aping.api;
 
 import com.betfair.aping.ApiNGDemo;
+import com.betfair.aping.containers.ReplaceOrdersContainer;
 import com.betfair.aping.entities.*;
 import com.betfair.aping.enums.*;
 import com.betfair.aping.exceptions.APINGException;
@@ -176,6 +177,23 @@ public class ApiNgRescriptOperations extends ApiNgOperations {
             System.out.println("\nResponse: "+result);
 
         return JsonConverter.convertFromJson(result, PlaceExecutionReport.class);
+
+    }
+
+    public ReplaceExecutionReport replaceOrders(String marketId,
+                                                List<ReplaceInstruction> instructions, String customerRef,
+                                                String appKey, String ssoId) throws APINGException {
+
+        Map<String, Object> params = new HashMap<String, Object>();
+        params.put(LOCALE, locale);
+        params.put(MARKET_ID, marketId);
+        params.put(INSTRUCTIONS, instructions);
+        params.put(CUSTOMER_REF, customerRef);
+        String result = getInstance().makeRequest(ApiNgOperation.REPLACE_ORDERS.getOperationName(), params, appKey, ssoId);
+        if(ApiNGDemo.isDebug())
+            System.out.println("\nResponse: "+result);
+
+        return JsonConverter.convertFromJson(result, ReplaceExecutionReport.class);
 
     }
 

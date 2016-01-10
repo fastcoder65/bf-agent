@@ -942,9 +942,9 @@ public class SheduleRequestMessageListener implements MessageListener {
 		return result;
 	}
 
-	private void makeUpdateList(final List<MUBet> curBets,
-			final List<PlaceBets> newBets, List<UpdateBets> cUpdates,
-			List<PlaceBets> cInserts, List<CancelBets> cDeletes) {
+	private void makeUpdateList(final List<CurrentOrderSummary> curBets,
+			final List<PlaceInstruction> newBets, List<ReplaceInstruction> cUpdates,
+			List<PlaceInstruction> cInserts, List<CancelInstruction> cDeletes) {
 
 			for (PlaceBets nb : newBets) {
 		
@@ -1171,7 +1171,7 @@ public class SheduleRequestMessageListener implements MessageListener {
 
 	//	List<UpdateBets> cUpdates = new ArrayList<UpdateBets>();
 
-		List<UpdateInstruction> cUpdates = new ArrayList<UpdateInstruction>();
+		List<ReplaceInstruction> cUpdates = new ArrayList<ReplaceInstruction>();
 
 		//List<PlaceBets> cInserts = new ArrayList<PlaceBets>();
 		List<PlaceInstruction> cInserts = new ArrayList<PlaceInstruction>();
@@ -1225,19 +1225,22 @@ public class SheduleRequestMessageListener implements MessageListener {
 					+ curBets.size());
 
 		makeUpdateList(curBets, newBets, cUpdates, cInserts, cDeletes);
-		UpdateBetsResult[] updateBetResults = null;
+
+		ReplaceExecutionReport replaceExecutionReport = null;
 
 		if (!cUpdates.isEmpty()) {
-			for (UpdateBets ubs : cUpdates) {
+			for (ReplaceInstruction ui : cUpdates) {
 				log.info(new StringBuilder(100).append("UpdateBets - BetId()=")
-						.append(ubs.getBetId()).append(", old price=")
-						.append(ubs.getOldPrice()).append(", old size=")
-						.append(ubs.getOldSize()).append(", new price=")
-						.append(ubs.getNewPrice()).append(", new size=")
-						.append(ubs.getNewSize()).toString());
+						.append(ui.getBetId()).append(", bet id = ")
+						.append(ui.getNewPrice()).append(", new price = ")
+						.toString());
 			}
 			try {
-				updateBetResults = null; // ExchangeAPI.updateBets(selected_exchange, \currentUser.getApiContext(), cUpdates);
+/*
+				replaceOrders(APIContext context, String marketId,
+                                                List<ReplaceInstruction> instructions
+				 */
+				replaceExecutionReport =  GlobalAPI.replaceOrders(currentUser.getApiContext(), currentMarket.getMarketId(), cUpdates);
 
 			} catch (Exception e) {
 				log.severe(new StringBuilder(100)
@@ -1248,23 +1251,24 @@ public class SheduleRequestMessageListener implements MessageListener {
 			}
 		}
 
-		if (updateBetResults != null) {
-			for (UpdateBetsResult ubr : updateBetResults) {
-				log.info(new StringBuilder(100).append("bet ")
-						.append(ubr.getBetId()).append(" updated ")
-						.append(ubr.getSuccess()).append(", ")
-						.append(ubr.getResultCode().getValue())
+		if (replaceExecutionReport != null) {
+			for (ReplaceInstructionReport rir : replaceExecutionReport.getInstructionReports()) {
+				log.info(new StringBuilder(100).append("orders cancelled: ")
+						.append(rir.getCancelInstructionReport())
+						.append(",\n status ").append(rir.getStatus())
+						.append(",\n orders placed: ")
+						.append(rir.getPlaceInstructionReport())
 						.append(", market: ")
-						.append(currentMarket.getMenuPath()).append(BS)
 						.append(currentMarket.getName()).toString());
 			}
 		}
 
-		CancelBetsResult[] cancelBetsResults = null;
+		CancelExecutionReport cancelExecutionReport = null;
 		
 		if (!cDeletes.isEmpty()) {
 			try {
-				cancelBetsResults = null; // ExchangeAPI.cancelBets(selected_exchange, currentUser.getApiContext(), cDeletes);
+				//cancelBetsResults = null; // ExchangeAPI.cancelBets(selected_exchange, currentUser.getApiContext(), cDeletes);
+				cancelExecutionReport = GlobalAPI.cancelOrders(currentUser.getApiContext(), currentMarket.getMarketId(), cDeletes);
 			} catch (Exception e) {
 				log.severe(new StringBuilder(100)
 						.append("ExchangeAPI.cancelBets error: ")
@@ -1274,15 +1278,17 @@ public class SheduleRequestMessageListener implements MessageListener {
 			}
 		}
 
-		if (cancelBetsResults != null) {
-			for (CancelBetsResult cbr : cancelBetsResults) {
+		if (cancelExecutionReport != null) {
+			for (CancelInstructionReport cir : cancelExecutionReport.getInstructionReports()) {
+
 				log.info(new StringBuilder(100).append("bet ")
-						.append(cbr.getBetId()).append(" canceled ")
-						.append(cbr.getSuccess()).append(", ")
-						.append(cbr.getResultCode().getValue())
+						.append(cir.getInstruction()).append(" canceled ")
+						.append(cir.getSizeCancelled()).append(", ")
+						.append(cir.getErrorCode())
 						.append(", market: ")
 						.append(currentMarket.getMenuPath()).append(BS)
 						.append(currentMarket.getName()).toString());
+
 			}
 		}
 

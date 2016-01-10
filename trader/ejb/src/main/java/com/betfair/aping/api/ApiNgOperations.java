@@ -80,4 +80,8 @@ public abstract class ApiNgOperations {
                                                      List<PlaceInstruction> instructions, String customerRef,
                                                      String appKey, String ssoId) throws APINGException;
 
+    public abstract ReplaceExecutionReport replaceOrders(String marketId,
+                                                     List<ReplaceInstruction> instructions, String customerRef,
+                                                     String appKey, String ssoId) throws APINGException;
+
 }
