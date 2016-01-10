@@ -23,4 +23,12 @@ public class CancelInstruction {
     public void setSizeReduction(double sizeReduction) {
         this.sizeReduction = sizeReduction;
     }
+
+    @Override
+    public String toString() {
+        return "CancelInstruction{" +
+                "betId='" + betId + '\'' +
+                ", sizeReduction=" + sizeReduction +
+                '}';
+    }
 }

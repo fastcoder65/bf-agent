@@ -17,7 +17,8 @@ public enum ApiNgOperation {
 
 	KEEPALIVE("keepAlive"),
 
-	PLACORDERS("placeOrders");
+	CANCEL_ORDERS("cancelOrders"),
+	PLACE_ORDERS("placeOrders");
 	
 	private String operationName;
 	

@@ -163,13 +163,15 @@ public class ApiNgRescriptOperations extends ApiNgOperations {
 
     }
 
+
     public PlaceExecutionReport placeOrders(String marketId, List<PlaceInstruction> instructions, String customerRef , String appKey, String ssoId) throws APINGException {
+
         Map<String, Object> params = new HashMap<String, Object>();
         params.put(LOCALE, locale);
         params.put(MARKET_ID, marketId);
         params.put(INSTRUCTIONS, instructions);
         params.put(CUSTOMER_REF, customerRef);
-        String result = getInstance().makeRequest(ApiNgOperation.PLACORDERS.getOperationName(), params, appKey, ssoId);
+        String result = getInstance().makeRequest(ApiNgOperation.PLACE_ORDERS.getOperationName(), params, appKey, ssoId);
         if(ApiNGDemo.isDebug())
             System.out.println("\nResponse: "+result);
 
@@ -177,8 +179,24 @@ public class ApiNgRescriptOperations extends ApiNgOperations {
 
     }
 
+    public CancelExecutionReport cancelOrders(String marketId, List<CancelInstruction> instructions, String customerRef,
+                                              String appKey, String ssoId ) throws APINGException{
 
-    protected String makeRequest(String operation, Map<String, Object> params, String appKey, String ssoToken)  throws  APINGException {
+        Map<String, Object> params = new HashMap<String, Object>();
+//        params.put(LOCALE, locale);
+        params.put(MARKET_ID, marketId);
+        params.put(INSTRUCTIONS, instructions);
+        params.put(CUSTOMER_REF, customerRef);
+        String result = getInstance().makeRequest(ApiNgOperation.CANCEL_ORDERS.getOperationName(), params, appKey, ssoId);
+        if(ApiNGDemo.isDebug())
+            System.out.println("\nResponse: "+result);
+
+        return JsonConverter.convertFromJson(result, CancelExecutionReport.class);
+
+    }
+
+
+        protected String makeRequest(String operation, Map<String, Object> params, String appKey, String ssoToken)  throws  APINGException {
         String requestString;
         //Handling the Rescript request
         params.put("id", 1);

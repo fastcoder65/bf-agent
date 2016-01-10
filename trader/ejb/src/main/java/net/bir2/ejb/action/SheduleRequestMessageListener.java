@@ -2,6 +2,8 @@ package net.bir2.ejb.action;
 
 import com.betfair.aping.entities.*;
 import com.betfair.aping.enums.OrderStatus;
+import com.betfair.aping.enums.OrderType;
+import com.betfair.aping.enums.PersistenceType;
 import com.betfair.aping.enums.Side;
 import generated.exchange.BFExchangeServiceStub.BetCategoryTypeEnum;
 import generated.exchange.BFExchangeServiceStub.BetPersistenceTypeEnum;
@@ -478,7 +480,8 @@ public class SheduleRequestMessageListener implements MessageListener {
 
 			try {
 
-				marketBooks = GlobalAPI.getMarketPrices(currentUser.getApiContext(),currentMarket.getMarketId(), "USD");
+				marketBooks = GlobalAPI.getMarketPrices(currentUser.getApiContext(), currentMarket.getMarketId(),
+						"USD");
 
 				/*
 				ExchangeAPI.getMarketPrices(selected_exchange,
@@ -942,7 +945,8 @@ public class SheduleRequestMessageListener implements MessageListener {
 	private void makeUpdateList(final List<MUBet> curBets,
 			final List<PlaceBets> newBets, List<UpdateBets> cUpdates,
 			List<PlaceBets> cInserts, List<CancelBets> cDeletes) {
-		for (PlaceBets nb : newBets) {
+
+			for (PlaceBets nb : newBets) {
 		
 				log.fine(new StringBuilder(100).append("nb.getAsianLineId()=")
 						.append(nb.getAsianLineId())
@@ -1013,6 +1017,7 @@ public class SheduleRequestMessageListener implements MessageListener {
 						CancelBets cab = new CancelBets();
 						cab.setBetId(cb.getBetId());
 						cDeletes.add(cab);
+
 						log.info(new StringBuilder(100)
 								.append("add bet to delete: cb.getBetId()=")
 								.append(cb.getBetId()).toString());
@@ -1110,7 +1115,7 @@ public class SheduleRequestMessageListener implements MessageListener {
 
 //		List<CancelBets> cDeletes = new ArrayList<CancelBets>();
 
-		List<CancelInstruction> cancelInstructions = new ArrayList<CancelInstruction>();
+		List<CancelInstruction> cDeletes = new ArrayList<CancelInstruction>();
 
 		if (!isOnAir) {
 			if (curBets != null && !curBets.isEmpty()) {
@@ -1121,35 +1126,36 @@ public class SheduleRequestMessageListener implements MessageListener {
 					//CancelBets cab = new CancelBets();
 					CancelInstruction ci = new CancelInstruction();
 					ci.setBetId(cb.getBetId());
-					cancelInstructions.add(ci);
+					cDeletes.add(ci);
 				}
 
 				//CancelBetsResult[] cancelBetsResults = null;
 				CancelExecutionReport cancelExecutionReport = null;
 
-				if (!cancelInstructions.isEmpty()) {
+				if (!cDeletes.isEmpty()) {
 					try {
-						cancelBetsResults = null;
+						cancelExecutionReport = GlobalAPI.cancelOrders(currentUser.getApiContext(), currentMarket.getMarketId(), cDeletes);
 
-/*								
+						/*
 								ExchangeAPI.cancelBets(
 								selected_exchange, currentUser.getApiContext(),
 								cDeletes);
-*/								
+*/
+
 					} catch (Exception e) {
 						log.severe(new StringBuilder(100)
-								.append("ExchangeAPI.cancelBets error: ")
+								.append("GlobalAPI.cancelOrders error: ")
 								.append(e.getMessage()).append(", market: ")
-								.append(currentMarket.getMenuPath()).append(BS)
-								.append(currentMarket.getName()).toString());
+								.append(currentMarket.getMarketId()).toString());
 					}
 				}
-				if (cancelBetsResults != null) {
-					for (CancelBetsResult cbr : cancelBetsResults) {
+				if (cancelExecutionReport != null) {
+					for (CancelInstructionReport cir : cancelExecutionReport.getInstructionReports()) {
+
 						log.info(new StringBuilder(100).append("bet ")
-								.append(cbr.getBetId()).append(" canceled ")
-								.append(cbr.getSuccess()).append(", ")
-								.append(cbr.getResultCode().getValue())
+								.append(cir.getInstruction()).append(" canceled ")
+								.append(cir.getSizeCancelled()).append(", ")
+								.append(cir.getErrorCode())
 								.append(", market: ")
 								.append(currentMarket.getMenuPath()).append(BS)
 								.append(currentMarket.getName()).toString());
@@ -1163,35 +1169,61 @@ public class SheduleRequestMessageListener implements MessageListener {
 			log.fine("*** On Air is ON for market " + currentMarket
 					+ ",\n DOING BETS!!");
 
-		List<UpdateBets> cUpdates = new ArrayList<UpdateBets>();
-		List<PlaceBets> cInserts = new ArrayList<PlaceBets>();
+	//	List<UpdateBets> cUpdates = new ArrayList<UpdateBets>();
 
-		List<PlaceBets> newBets = new ArrayList<PlaceBets>();
+		List<UpdateInstruction> cUpdates = new ArrayList<UpdateInstruction>();
+
+		//List<PlaceBets> cInserts = new ArrayList<PlaceBets>();
+		List<PlaceInstruction> cInserts = new ArrayList<PlaceInstruction>();
+
+		//List<PlaceBets> newBets = new ArrayList<PlaceBets>();
+		List<PlaceInstruction> newBets = new ArrayList<PlaceInstruction>();
 
 		for (MarketRunner runner : currentMarket.getRunners()) {
 			Runner4User r4u = runner.getUserData4Runner().get(
 					currentUser.getId());
+
 			if (r4u.getSelectionPrice() > BaseServiceBean.MIN_ODDS
 					&& r4u.getSelectionAmount() >= BaseServiceBean.MIN_STAKE_AMOUNT) {
-				PlaceBets pb = new PlaceBets();
 
-				pb.setMarketId(Long.valueOf(currentMarket.getMarketId())
-						.intValue());
-				pb.setSelectionId(Long.valueOf(runner.getSelectionId())
-						.intValue());
-				pb.setBetType(BetTypeEnum.L);
-				pb.setPrice(r4u.getSelectionPrice());
-				pb.setSize(r4u.getSelectionAmount());
-				pb.setBetCategoryType(BetCategoryTypeEnum.E);
-				pb.setBetPersistenceType(BetPersistenceTypeEnum.NONE);
-				pb.setAsianLineId(0);
-				newBets.add(pb);
+				PlaceInstruction pi = new PlaceInstruction();
+
+				pi.setSelectionId(runner.getSelectionId());
+
+				pi.setHandicap(0);
+				pi.setSide(Side.LAY);
+				pi.setOrderType(OrderType.LIMIT);
+
+				LimitOrder limitOrder = new LimitOrder();
+				limitOrder.setPersistenceType(PersistenceType.LAPSE);
+
+				limitOrder.setPrice(r4u.getSelectionPrice());
+				limitOrder.setSize(r4u.getSelectionAmount());
+				pi.setLimitOrder(limitOrder);
+				newBets.add(pi);
 			}
 		}
+/*
+                PlaceInstruction instruction = new PlaceInstruction();
+                instruction.setHandicap(0);
+                instruction.setSide(Side.BACK);
+                instruction.setOrderType(OrderType.LIMIT);
 
-			log.fine("newBets.size()=" + newBets.size() + ", curBets.size()="
+                LimitOrder limitOrder = new LimitOrder();
+                limitOrder.setPersistenceType(PersistenceType.LAPSE);
+                //API-NG will return an error with the default size=0.01. This is an expected behaviour.
+                //You can adjust the size and price value in the "apingdemo.properties" file
+                limitOrder.setPrice(getPrice());
+                limitOrder.setSize(getSize());
+
+                instruction.setLimitOrder(limitOrder);
+                instruction.setSelectionId(selectionId);
+                instructions.add(instruction);
+
+ */
+			log.info("newBets.size()=" + newBets.size() + ", curBets.size()="
 					+ curBets.size());
-			
+
 		makeUpdateList(curBets, newBets, cUpdates, cInserts, cDeletes);
 		UpdateBetsResult[] updateBetResults = null;
 

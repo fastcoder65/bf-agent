@@ -59,9 +59,6 @@ public abstract class ApiNgOperations {
             MarketSort sort, String maxResult, String appKey, String ssoId)
             throws APINGException;
 
-    public abstract PlaceExecutionReport placeOrders(String marketId,
-                                                     List<PlaceInstruction> instructions, String customerRef,
-                                                     String appKey, String ssoId) throws APINGException;
 
     public abstract String keepAlive(String appKey, String ssoId);
 
@@ -73,5 +70,14 @@ public abstract class ApiNgOperations {
 
     protected abstract String makeKeepAliveRequest(String appKey,
                                                    String ssoToken);
+
+    public abstract CancelExecutionReport cancelOrders(String marketId,
+                                                       List<CancelInstruction> instructions, String customerRef,
+                                                       String appKey, String ssoId ) throws APINGException;
+
+
+    public abstract PlaceExecutionReport placeOrders(String marketId,
+                                                     List<PlaceInstruction> instructions, String customerRef,
+                                                     String appKey, String ssoId) throws APINGException;
 
 }

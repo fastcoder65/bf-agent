@@ -228,17 +228,44 @@ public class ApiNgJsonRpcOperations extends ApiNgOperations {
 
 	}
 
+	public CancelExecutionReport cancelOrders(String marketId, List<CancelInstruction> instructions, String customerRef,
+														  String appKey, String ssoId ) throws APINGException{
+
+		Map<String, Object> params = new HashMap<String, Object>();
+
+//		params.put(LOCALE, locale);
+		params.put(MARKET_ID, marketId);
+		params.put(INSTRUCTIONS, instructions);
+		params.put(CUSTOMER_REF, customerRef);
+
+		String result = getInstance().makeRequest(ApiNgOperation.CANCEL_ORDERS.getOperationName(), params, appKey, ssoId);
+
+		if (ApiNGDemo.isDebug())
+			log.info("'cancelOrders' Response: " + result);
+
+		CancelOrdersContainer container = JsonConverter.convertFromJson(result,
+				CancelOrdersContainer.class);
+
+		if (container.getError() != null)
+			throw container.getError().getData().getAPINGException();
+
+		return container.getResult();
+
+	}
+
 
 	public PlaceExecutionReport placeOrders(String marketId,
 			List<PlaceInstruction> instructions, String customerRef,
 			String appKey, String ssoId) throws APINGException {
+
 		Map<String, Object> params = new HashMap<String, Object>();
 		params.put(LOCALE, locale);
 		params.put(MARKET_ID, marketId);
 		params.put(INSTRUCTIONS, instructions);
 		params.put(CUSTOMER_REF, customerRef);
+
 		String result = getInstance().makeRequest(
-				ApiNgOperation.PLACORDERS.getOperationName(), params, appKey,
+				ApiNgOperation.PLACE_ORDERS.getOperationName(), params, appKey,
 				ssoId);
 		if (ApiNGDemo.isDebug())
 			log.info("'placeOrders' Response: " + result);
