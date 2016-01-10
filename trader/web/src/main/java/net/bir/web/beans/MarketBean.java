@@ -20,7 +20,6 @@ import javax.annotation.PreDestroy;
 import javax.ejb.EJB;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.SessionScoped;
-import javax.faces.component.ActionSource;
 import javax.faces.component.UIComponent;
 import javax.faces.component.html.HtmlInputText;
 import javax.faces.context.FacesContext;
@@ -35,19 +34,14 @@ import net.bir.web.beans.treeModel.MarketNode;
 import net.bir.web.beans.treeModel.SportNode;
 import net.bir2.ejb.session.market.BaseServiceBean;
 import net.bir2.handler.GlobalAPI;
-import net.bir2.multitrade.ejb.entity.JPASettings;
+import net.bir2.multitrade.ejb.entity.*;
 import net.bir2.multitrade.ejb.entity.Market;
-import net.bir2.multitrade.ejb.entity.Market4User;
-import net.bir2.multitrade.ejb.entity.Runner;
-import net.bir2.multitrade.ejb.entity.Runner4User;
-import net.bir2.multitrade.ejb.entity.SystemSettings;
-import net.bir2.multitrade.ejb.entity.Uzer;
+import net.bir2.multitrade.ejb.entity.MarketRunner;
 import net.bir2.multitrade.util.APIContext;
 
 import org.richfaces.component.AbstractExtendedDataTable;
 import org.richfaces.component.AbstractTree;
 import org.richfaces.component.UITree;
-import org.richfaces.component.UITreeNode;
 import org.richfaces.event.TreeSelectionChangeEvent;
 import org.richfaces.event.TreeToggleEvent;
 
@@ -179,7 +173,7 @@ public class MarketBean extends BaseBean implements Serializable {
         return getMarketService().merge(market);
     }
 
-    public Runner merge(Runner runner) {
+    public MarketRunner merge(MarketRunner runner) {
         return getMarketService().merge(runner);
     }
 
@@ -468,9 +462,9 @@ public class MarketBean extends BaseBean implements Serializable {
         return settings;
     }
 
-    List<Runner> runners = new ArrayList<Runner>();
+    List<MarketRunner> runners = new ArrayList<MarketRunner>();
 
-    public List<Runner> getRunners() {
+    public List<MarketRunner> getRunners() {
         Iterator<Object> iterator = masterSelectionItems.iterator();
         while (iterator.hasNext()) {
             Object data = iterator.next();
@@ -488,7 +482,7 @@ public class MarketBean extends BaseBean implements Serializable {
 
                     runners.addAll(getMarketService().listRunners(
                             currentMarket.getMarketId()));
-                    Collections.sort(runners, new Runner.RunnerComparator());
+                    Collections.sort(runners, new MarketRunner.RunnerComparator());
                     getLog().info(
                             "method getRunners() completed, " + runners.size()
                                     + " runners found.");
@@ -518,7 +512,7 @@ public class MarketBean extends BaseBean implements Serializable {
 		 */
         Long _id = null;
         try {
-            for (Runner runner : runners) {
+            for (MarketRunner runner : runners) {
                 if (runner.getSelectionId().equals(_id)
                         && inputText.getValue() != null) {
 
@@ -572,7 +566,7 @@ public class MarketBean extends BaseBean implements Serializable {
 	 * getLog().fine("Processing inputText with id: " + has.getData());
 	 * 
 	 * if (has.getData() != null) { Long _id = (Long) has.getData(); try { for
-	 * (Runner runner : runners) { if (runner.getSelectionId().equals(_id) &&
+	 * (MarketRunner runner : runners) { if (runner.getSelectionId().equals(_id) &&
 	 * inputText.getValue() != null) {
 	 * 
 	 * Double _odds = (Double) inputText.getValue();
@@ -704,7 +698,7 @@ public class MarketBean extends BaseBean implements Serializable {
                             getSettings().getSystemSettings().getMaxLossPerSelection()));
 
             getMarketService().merge(market2add);
-            for (Runner runner : market2add.getRunners()) {
+            for (MarketRunner runner : market2add.getRunners()) {
                 Runner4User r4u = new Runner4User(currentUser, runner);
                 r4u = getMarketService().merge(r4u);
                 runner.getRunner4Users().add(r4u);
@@ -773,7 +767,7 @@ public class MarketBean extends BaseBean implements Serializable {
 
             if (runners != null) {
                 for (RunnerCatalog rc : runners) {
-                    Runner runner = new Runner();
+                    MarketRunner runner = new MarketRunner();
 
                     runner.setSelectionId((long) rc.getSelectionId());
                     runner.setMarket(market);
