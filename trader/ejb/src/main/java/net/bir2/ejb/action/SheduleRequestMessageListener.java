@@ -1,9 +1,6 @@
 package net.bir2.ejb.action;
 
-import com.betfair.aping.entities.CurrentOrderSummary;
-import com.betfair.aping.entities.MarketBook;
-import com.betfair.aping.entities.PriceSize;
-import com.betfair.aping.entities.Runner;
+import com.betfair.aping.entities.*;
 import com.betfair.aping.enums.OrderStatus;
 import com.betfair.aping.enums.Side;
 import generated.exchange.BFExchangeServiceStub.BetCategoryTypeEnum;
@@ -46,6 +43,7 @@ import net.bir2.ejb.session.market.DataFeedService;
 import net.bir2.ejb.session.market.MarketService;
 import net.bir2.handler.GlobalAPI;
 import net.bir2.multitrade.ejb.entity.*;
+import net.bir2.multitrade.ejb.entity.Market;
 import net.bir2.multitrade.ejb.entity.MarketRunner;
 import net.bir2.multitrade.util.InflatedMarketPrices.InflatedPrice;
 import net.bir2.multitrade.util.InflatedMarketPrices.InflatedRunner;
@@ -1110,21 +1108,29 @@ public class SheduleRequestMessageListener implements MessageListener {
 
 // 		Exchange selected_exchange = currentMarket.getExchange() == 1 ? Exchange.UK : Exchange.AUS;
 
-		List<CancelBets> cDeletes = new ArrayList<CancelBets>(100);
+//		List<CancelBets> cDeletes = new ArrayList<CancelBets>();
+
+		List<CancelInstruction> cancelInstructions = new ArrayList<CancelInstruction>();
 
 		if (!isOnAir) {
 			if (curBets != null && !curBets.isEmpty()) {
 				log.info("*** On Air is OFF for market " + currentMarket
 						+ ",\n CANCEL ALL BETS!!");
-				for (MUBet cb : curBets) {
-					CancelBets cab = new CancelBets();
-					cab.setBetId(cb.getBetId());
-					cDeletes.add(cab);
+
+				for (CurrentOrderSummary cb : curBets) {
+					//CancelBets cab = new CancelBets();
+					CancelInstruction ci = new CancelInstruction();
+					ci.setBetId(cb.getBetId());
+					cancelInstructions.add(ci);
 				}
-				CancelBetsResult[] cancelBetsResults = null;
-				if (!cDeletes.isEmpty()) {
+
+				//CancelBetsResult[] cancelBetsResults = null;
+				CancelExecutionReport cancelExecutionReport = null;
+
+				if (!cancelInstructions.isEmpty()) {
 					try {
 						cancelBetsResults = null;
+
 /*								
 								ExchangeAPI.cancelBets(
 								selected_exchange, currentUser.getApiContext(),
@@ -1157,10 +1163,10 @@ public class SheduleRequestMessageListener implements MessageListener {
 			log.fine("*** On Air is ON for market " + currentMarket
 					+ ",\n DOING BETS!!");
 
-		List<UpdateBets> cUpdates = new ArrayList<UpdateBets>(64);
-		List<PlaceBets> cInserts = new ArrayList<PlaceBets>(64);
+		List<UpdateBets> cUpdates = new ArrayList<UpdateBets>();
+		List<PlaceBets> cInserts = new ArrayList<PlaceBets>();
 
-		List<PlaceBets> newBets = new ArrayList<PlaceBets>(64);
+		List<PlaceBets> newBets = new ArrayList<PlaceBets>();
 
 		for (MarketRunner runner : currentMarket.getRunners()) {
 			Runner4User r4u = runner.getUserData4Runner().get(
