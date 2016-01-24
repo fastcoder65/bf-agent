@@ -122,7 +122,7 @@ public class Market implements java.io.Serializable {
 		return userData4Market;
 	}
 
-	@OneToMany(mappedBy = "market")
+	@OneToMany(mappedBy = "market",  fetch = FetchType.EAGER)
 	private Set<MarketRunner> runners = new HashSet<MarketRunner>();
 
 	public Set<MarketRunner> getRunners() {

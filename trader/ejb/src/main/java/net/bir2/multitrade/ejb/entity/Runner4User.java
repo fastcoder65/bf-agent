@@ -13,9 +13,7 @@ import org.hibernate.annotations.Formula;
 public class Runner4User implements java.io.Serializable {
 
 	@Transient
-	@Inject
-    private Logger log;
-
+    private static final Logger log = Logger.getLogger(Runner4User.class.getName());
 
 	private static final long serialVersionUID = 7193921041479085729L;
 
@@ -45,7 +43,7 @@ public class Runner4User implements java.io.Serializable {
 		this.linkedRunner = runner;
 	}
 
-	@ManyToOne
+	@ManyToOne ( fetch = FetchType.EAGER )
 	@PrimaryKeyJoinColumn(name = "user_id")
 	private Uzer linkedUser;
 
@@ -53,7 +51,7 @@ public class Runner4User implements java.io.Serializable {
 		return linkedUser;
 	}
 
-	@ManyToOne
+	@ManyToOne ( fetch = FetchType.EAGER )
 	@PrimaryKeyJoinColumn(name = "runner_id")
 	private MarketRunner linkedRunner;
 
@@ -119,7 +117,7 @@ public class Runner4User implements java.io.Serializable {
 	public Double getPrcWin() {
 		Double _sumReturnPercent = linkedRunner.getMarket()
 				.getUserData4Market().get(this.userId).getSumReturnPercent();
-		log.info ("*** _sumReturnPercent= "+ _sumReturnPercent);
+		System.out.println("*** _sumReturnPercent= " + _sumReturnPercent);
 		Double result =  (this.odds != null && this.odds > 0 ? _sumReturnPercent
 				/ this.odds
 				: 0.0);
@@ -185,21 +183,26 @@ public class Runner4User implements java.io.Serializable {
 		result = (this.getBackPrice1() == 0 && this.getBackPrice2() == 0
 				&& this.getBackPrice3() == 0 && this.getLayPrice1() == 0
 				&& this.getLayPrice2() == 0 && this.getLayPrice3() == 0);
-/*
+
+
 		if (result) {
-			log.info(" getIsNonRunner(): " +
-					 this.linkedRunner.getName()
-					+ " is 'NonRunner' now!");
+			if (this.linkedRunner != null) {
+				String _sName = (this.linkedRunner != null && this.linkedRunner.getName() != null ? this.linkedRunner.getName() : " null name!");
+				String s = new StringBuilder().append(" getIsNonRunner(): ").append(_sName).append(" is 'NonRunner' now!").toString();
+				System.out.println (s);
+				//log.info(new StringBuilder().append(" getIsNonRunner(): ").append(_sName).append(" is 'NonRunner' now!").toString());
+
+			}
 		}
-*/
+
 		return result;
 	}
 
 	@Transient
 	public Double getSumPseudoRealPseudoPinkStakesHoldWithNR() {
-		Double result = getIsNonRunner() ? 0
-				: getSumPseudoRealPseudoPinkStakes();
-		log.info ("getSumPseudoRealPseudoPinkStakesHoldWithNR="+result);
+		Double result = (getIsNonRunner() ? 0 : getSumPseudoRealPseudoPinkStakes());
+		System.out.println("log: " + log);
+		System.out.println("getSumPseudoRealPseudoPinkStakesHoldWithNR="+ result);
 		return result;
 	}
 

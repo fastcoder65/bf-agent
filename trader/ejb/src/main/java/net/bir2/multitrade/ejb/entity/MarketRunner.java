@@ -1,5 +1,7 @@
 package net.bir2.multitrade.ejb.entity;
 
+import org.hibernate.Hibernate;
+
 import java.io.Serializable;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -95,14 +97,22 @@ public class MarketRunner implements Serializable {
 	private   Map<Integer, Runner4User> userData4Runner = null;
 
 	public Map<Integer, Runner4User> getUserData4Runner() {
+
 		if (userData4Runner == null) {
-			//prefetchAll();
-			userData4Runner = new HashMap<Integer, Runner4User>(10);
-			for (Runner4User u4r : runner4Users) {
-				userData4Runner.put(u4r.getUserId(), u4r);
+			prefetchAll();
+
+		//	log.info("getUserData4Runner(): runner4Users.size()=" + runner4Users);
+
+			if (runner4Users != null) {
+				userData4Runner = new HashMap<Integer, Runner4User>();
+
+				for (Runner4User u4r : runner4Users) {
+					userData4Runner.put(u4r.getUserId(), u4r);
+				}
 			}
+
+		//	log.info("userData4Runner.size()= " + userData4Runner);
 		}
-    //    System.out.println ("userData4Runner.size()= " + userData4Runner.size());		
 		return userData4Runner;
 	}
 
@@ -160,8 +170,12 @@ public class MarketRunner implements Serializable {
 	
   //  @TransactionAttribute(TransactionAttributeType.REQUIRED)
     public MarketRunner prefetchAll() {
-   // 	log.fine(""+ this.runner4Users.size());
-    	return this;
+		Hibernate.initialize(this.runner4Users);
+
+		if (this.runner4Users == null)
+			log.info("this.runner4Users is NULL!");
+
+	return this;
     }
 
 	

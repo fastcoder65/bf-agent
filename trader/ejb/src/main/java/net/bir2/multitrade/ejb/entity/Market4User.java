@@ -19,8 +19,7 @@ public class Market4User implements java.io.Serializable {
 	private static final long serialVersionUID = -5769032763323594143L;
 
 	@Transient
-	@Inject
-    private Logger log;
+	private static final Logger log = Logger.getLogger(Market4User.class.getName());
 
 	@Id
 	@Column(name = "market_id", insertable = false, updatable = false ) // , insertable = false, updatable = false
@@ -109,7 +108,7 @@ public class Market4User implements java.io.Serializable {
 	}
 */
 
-	@ManyToOne
+	@ManyToOne ( fetch = FetchType.EAGER )
 	@PrimaryKeyJoinColumn(name = "user_id")
 	private Uzer linkedUser;
 	
@@ -117,7 +116,7 @@ public class Market4User implements java.io.Serializable {
 		return linkedUser;
 	}
 
-	@ManyToOne
+	@ManyToOne ( fetch = FetchType.EAGER)
 	@PrimaryKeyJoinColumn(name = "market_id")
 	private Market linkedMarket;
 	
@@ -126,8 +125,7 @@ public class Market4User implements java.io.Serializable {
 	}
 
 	@Transient
-	private Double _sumReturnPercent=null;
-
+	private Double _sumReturnPercent;
 
 	@Formula("(select coalesce(1/sum(1/r4u.odds), 0) from Runner4User r4u, MarketRunner r where r4u.user_id = userId  and r.id=r4u.runner_id and r.market_id=marketId )")
 	public Double getSumReturnPercent() {

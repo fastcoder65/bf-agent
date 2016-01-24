@@ -17,6 +17,7 @@ import javax.persistence.PersistenceContext;
 import net.bir2.ejb.action.ShedulerActivity;
 import net.bir2.multitrade.ejb.entity.*;
 import net.bir2.multitrade.ejb.entity.MarketRunner;
+import org.hibernate.Hibernate;
 
 // import org.apache.log4j.Logger;
 
@@ -144,12 +145,14 @@ public class MarketServiceBean implements MarketService {
 		return result;
 	}
 
-	@SuppressWarnings("unchecked")
+
 	public List<MarketRunner> listRunners(String marketId) {
-		List<MarketRunner> result;
-		result = em.createQuery(
-				"select r FROM Runner r where r.market.marketId = :marketId ")
+		List<MarketRunner> result = em.createQuery(
+
+				"select r FROM MarketRunner r where r.market.marketId = :marketId "
+		)
 				.setParameter("marketId", marketId).getResultList();
+
 		for (MarketRunner runner : result) {
 			runner.prefetchAll();
 		}
@@ -169,7 +172,12 @@ public class MarketServiceBean implements MarketService {
 	}
 
 	public Market getMarket(long id) {
-		return em.find(Market.class, id);
+		Market result =  em.find(Market.class, id);
+		if (result != null) {
+			Hibernate.initialize(result.getRunners());
+			log.info("getMarket() - result.getRunners().size()= " + result.getRunners().size());
+		}
+		return result;
 	}
 
 	public Market getMarketByMarketId(String marketId) {
