@@ -92,80 +92,58 @@
 					</rich:column>
 				</ui:remove>
 
-				<rich:column label="Price3Lay" styleClass="backCol">
+				<rich:column label="PriceBack3" styleClass="backCol">
 					<f:facet name="header">
-						<h:outputText value="L3" />
+						<h:outputText value="B3" />
 					</f:facet>
 
 					<h:panelGrid columns="1" style="text-align:right;margin-left:auto; margin-right:0;">
 
 						<h:outputFormat styleClass="price" value="{0, number}"
-							rendered="#{rnr.userData4Runner[marketBean.currentUser.id].layPrice3 > 0}">
+							rendered="#{rnr.userData4Runner[marketBean.currentUser.id].backPrice3 > 0}">
 							<f:param
-								value="#{rnr.userData4Runner[marketBean.currentUser.id].layPrice3}" />
+								value="#{rnr.userData4Runner[marketBean.currentUser.id].backPrice3}" />
 						</h:outputFormat>
 
 						<h:outputFormat styleClass="amount"
 							value="#{marketBean.currencyFormatValue}"
-							rendered="#{rnr.userData4Runner[marketBean.currentUser.id].layAmount3 > 0}">
+							rendered="#{rnr.userData4Runner[marketBean.currentUser.id].backAmount3 > 0}">
 							<f:param
 								value="#{rnr.userData4Runner[marketBean.currentUser.id].currency}" />
 							<f:param
-								value="#{rnr.userData4Runner[marketBean.currentUser.id].layAmount3}" />
+								value="#{rnr.userData4Runner[marketBean.currentUser.id].backAmount3}" />
 						</h:outputFormat>
 					</h:panelGrid>
 				</rich:column>
 
-				<rich:column label="Price2Lay" styleClass="backCol">
+				<rich:column label="PriceBack2" styleClass="backCol">
 					<f:facet name="header">
-						<h:outputText value="L2" />
-					</f:facet>
-					<h:panelGrid columns="1" style="text-align:right;margin-left:auto; margin-right:0;">
-						<h:outputFormat styleClass="price" value="{0, number}"
-							rendered="#{rnr.userData4Runner[marketBean.currentUser.id].layPrice2 > 0}">
-							<f:param
-								value="#{rnr.userData4Runner[marketBean.currentUser.id].layPrice2}" />
-						</h:outputFormat>
-
-						<h:outputFormat styleClass="amount"
-							value="#{marketBean.currencyFormatValue}"
-							rendered="#{rnr.userData4Runner[marketBean.currentUser.id].layAmount2 > 0}">
-							<f:param
-								value="#{rnr.userData4Runner[marketBean.currentUser.id].currency}" />
-							<f:param
-								value="#{rnr.userData4Runner[marketBean.currentUser.id].layAmount2}" />
-						</h:outputFormat>
-					</h:panelGrid>
-				</rich:column>
-
-				<rich:column label="Price1Lay" styleClass="backCol">
-					<f:facet name="header">
-						<h:outputText value="L1" />
+						<h:outputText value="B2" />
 					</f:facet>
 
 					<h:panelGrid columns="1" style="text-align:right;margin-left:auto; margin-right:0;">
 						<h:outputFormat styleClass="price" value="{0, number}"
-							rendered="#{rnr.userData4Runner[marketBean.currentUser.id].layPrice1 > 0}">
+							rendered="#{rnr.userData4Runner[marketBean.currentUser.id].backPrice2 > 0}">
 							<f:param
-								value="#{rnr.userData4Runner[marketBean.currentUser.id].layPrice1}" />
+								value="#{rnr.userData4Runner[marketBean.currentUser.id].backPrice2}" />
 						</h:outputFormat>
 
 						<h:outputFormat styleClass="amount"
 							value="#{marketBean.currencyFormatValue}"
-							rendered="#{rnr.userData4Runner[marketBean.currentUser.id].layAmount1 > 0}">
+							rendered="#{rnr.userData4Runner[marketBean.currentUser.id].backAmount2 > 0}">
 							<f:param
 								value="#{rnr.userData4Runner[marketBean.currentUser.id].currency}" />
 							<f:param
-								value="#{rnr.userData4Runner[marketBean.currentUser.id].layAmount1}" />
+								value="#{rnr.userData4Runner[marketBean.currentUser.id].backAmount2}" />
 						</h:outputFormat>
 					</h:panelGrid>
-
 				</rich:column>
 
-				<rich:column label="Price1Back" styleClass="layCol">
+				<rich:column label="PriceBack1" styleClass="backCol">
 					<f:facet name="header">
 						<h:outputText value="B1" />
 					</f:facet>
+
 					<h:panelGrid columns="1" style="text-align:right;margin-left:auto; margin-right:0;">
 						<h:outputFormat styleClass="price" value="{0, number}"
 							rendered="#{rnr.userData4Runner[marketBean.currentUser.id].backPrice1 > 0}">
@@ -182,49 +160,72 @@
 								value="#{rnr.userData4Runner[marketBean.currentUser.id].backAmount1}" />
 						</h:outputFormat>
 					</h:panelGrid>
+
 				</rich:column>
 
-				<rich:column label="Price2Back" styleClass="layCol">
+				<rich:column label="PriceLay1" styleClass="layCol">
 					<f:facet name="header">
-						<h:outputText value="B2" />
+						<h:outputText value="L1" />
 					</f:facet>
 					<h:panelGrid columns="1" style="text-align:right;margin-left:auto; margin-right:0;">
 						<h:outputFormat styleClass="price" value="{0, number}"
-							rendered="#{rnr.userData4Runner[marketBean.currentUser.id].backPrice2 > 0}">
+							rendered="#{rnr.userData4Runner[marketBean.currentUser.id].layPrice1 > 0}">
 							<f:param
-								value="#{rnr.userData4Runner[marketBean.currentUser.id].backPrice2}" />
+								value="#{rnr.userData4Runner[marketBean.currentUser.id].layPrice1}" />
 						</h:outputFormat>
 
 						<h:outputFormat styleClass="amount"
 							value="#{marketBean.currencyFormatValue}"
-							rendered="#{rnr.userData4Runner[marketBean.currentUser.id].backPrice2 > 0}">
+							rendered="#{rnr.userData4Runner[marketBean.currentUser.id].layAmount1 > 0}">
 							<f:param
 								value="#{rnr.userData4Runner[marketBean.currentUser.id].currency}" />
 							<f:param
-								value="#{rnr.userData4Runner[marketBean.currentUser.id].backAmount2}" />
+								value="#{rnr.userData4Runner[marketBean.currentUser.id].layAmount1}" />
 						</h:outputFormat>
 					</h:panelGrid>
 				</rich:column>
 
-				<rich:column label="Price3Back" styleClass="layCol">
+				<rich:column label="PriceLay2" styleClass="layCol">
 					<f:facet name="header">
-						<h:outputText value="B3" />
+						<h:outputText value="L2" />
 					</f:facet>
-
-					<h:panelGrid id="panelGrid33" columns="1" style="text-align:right;margin-left:auto; margin-right:0;">
+					<h:panelGrid columns="1" style="text-align:right;margin-left:auto; margin-right:0;">
 						<h:outputFormat styleClass="price" value="{0, number}"
-							rendered="#{rnr.userData4Runner[marketBean.currentUser.id].backPrice3 > 0}">
+							rendered="#{rnr.userData4Runner[marketBean.currentUser.id].layPrice2 > 0}">
 							<f:param
-								value="#{rnr.userData4Runner[marketBean.currentUser.id].backPrice3}" />
+								value="#{rnr.userData4Runner[marketBean.currentUser.id].layPrice2}" />
 						</h:outputFormat>
 
 						<h:outputFormat styleClass="amount"
 							value="#{marketBean.currencyFormatValue}"
-							rendered="#{rnr.userData4Runner[marketBean.currentUser.id].backAmount3 > 0}">
+							rendered="#{rnr.userData4Runner[marketBean.currentUser.id].layPrice2 > 0}">
 							<f:param
 								value="#{rnr.userData4Runner[marketBean.currentUser.id].currency}" />
 							<f:param
-								value="#{rnr.userData4Runner[marketBean.currentUser.id].backAmount3}" />
+								value="#{rnr.userData4Runner[marketBean.currentUser.id].layAmount2}" />
+						</h:outputFormat>
+					</h:panelGrid>
+				</rich:column>
+
+				<rich:column label="PriceLay3" styleClass="layCol">
+					<f:facet name="header">
+						<h:outputText value="L3" />
+					</f:facet>
+
+					<h:panelGrid id="panelGrid33" columns="1" style="text-align:right;margin-left:auto; margin-right:0;">
+						<h:outputFormat styleClass="price" value="{0, number}"
+							rendered="#{rnr.userData4Runner[marketBean.currentUser.id].layPrice3 > 0}">
+							<f:param
+								value="#{rnr.userData4Runner[marketBean.currentUser.id].layPrice3}" />
+						</h:outputFormat>
+
+						<h:outputFormat styleClass="amount"
+							value="#{marketBean.currencyFormatValue}"
+							rendered="#{rnr.userData4Runner[marketBean.currentUser.id].layAmount3 > 0}">
+							<f:param
+								value="#{rnr.userData4Runner[marketBean.currentUser.id].currency}" />
+							<f:param
+								value="#{rnr.userData4Runner[marketBean.currentUser.id].layAmount3}" />
 						</h:outputFormat>
 					</h:panelGrid>
 				</rich:column>
