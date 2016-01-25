@@ -14,7 +14,7 @@
 			<a4j:ajax event="dblclick" listener="#{marketBean.addToActiveMarkets}" />
 		</ui:remove>
 
-		<a4j:jsFunction name="doSelectMarket" action="#{marketBean.add2ActiveMarkets}">
+		<a4j:jsFunction name="doSelectMarket" action="#{marketBean.add2ActiveMarkets}" render="marketRegion">
 			<a4j:param  name="id" assignTo="#{marketBean.selectedMarketId}"></a4j:param>
 		</a4j:jsFunction>
 

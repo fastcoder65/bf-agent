@@ -7,8 +7,8 @@
 
     <a4j:region id="pollRegion">
         <h:form>
-            <a4j:poll id="pollMarkets" interval="30000" enabled="#{marketBean.pollEnabled}"
-                      reRender="pollMarkets,marketTable,marketServerTime,runnerTable,serverTime"/>
+            <a4j:poll id="pollMarkets" interval="10000" enabled="#{marketBean.pollEnabled}"
+                      render="pollMarkets,marketTable,marketServerTime,runnerTable,serverTime"/>
         </h:form>
     </a4j:region>
 
@@ -33,23 +33,23 @@
 
                     <a4j:queue requestDelay="100" ignoreDupResponce="true"/>
 
-                    <a4j:commandLink reRender="marketRegion,marketMessages,runnerTable"
+                    <a4j:commandLink render="marketRegion,marketMessages,runnerTable"
                                      action="#{marketBean.deleteMarket}"
                                      title="Remove market" style="margin-right:20px">
                         <h:graphicImage style="border-width:0" value="/images/buttons/ev.delete.jpg"/>
                     </a4j:commandLink>
 
-                    <a4j:commandLink reRender="marketRegion,marketMessages" action="#{marketBean.setOnAirOn}"
+                    <a4j:commandLink render="marketRegion,marketMessages" action="#{marketBean.setOnAirOn}"
                                      title="OnAir On" style="margin-right:20px">
                         <h:graphicImage style="border-width:0" value="/images/buttons/ev.play.jpg"/>
                     </a4j:commandLink>
 
-                    <a4j:commandLink reRender="marketRegion,marketMessages" action="#{marketBean.setOnAirOff}"
+                    <a4j:commandLink render="marketRegion,marketMessages" action="#{marketBean.setOnAirOff}"
                                      title="OnAir Off" style="margin-right:20px">
                         <h:graphicImage style="border-width:0" value="/images/buttons/ev.pause.jpg"/>
                     </a4j:commandLink>
 
-                    <a4j:commandLink reRender="marketRegion,pollMarkets,marketMessages,autoRefreshStatus"
+                    <a4j:commandLink render="marketRegion,pollMarkets,marketMessages, marketControls"
                                      action="#{marketBean.toggleRefresh}"
                                      title="Refresh On/Off" style="margin-right:20px">
                         <h:graphicImage style="border-width:0" value="/images/buttons/ev.rec.jpg"/>
@@ -58,7 +58,7 @@
                     <!--  onclick="#{rich:component('mp')}.show()" -->
 
                     <a4j:commandLink rendered="#{marketBean.currentMarket4User != null}"
-                                     oncomplete="Richfaces.showModalPanel('mp');" reRender="modPanelMarket4User"
+                                     oncomplete="Richfaces.showModalPanel('mp');" render="modPanelMarket4User"
                                      action="#{marketBean.customMyMarketProperties}">
                         <h:graphicImage style="border-width:0" value="/images/eventer/dir-edit.gif" id="showlink"/>
                     </a4j:commandLink>
