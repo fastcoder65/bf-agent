@@ -105,14 +105,19 @@ public class Runner4User implements java.io.Serializable {
         return (this.profitLoss < 0 ? "red" : "green");
 	}
 
-	@Transient
-	private Double _returnPercent=null;
+	@Formula("(select coalesce(1/r4u.odds, 0) from Runner4User r4u  where r4u.user_id = user_id  and r4u.runner_Id = runner_id)")
+	private Double _returnPercent;
 
-	@Formula("(select coalesce(1/r4u.odds, 0) from Runner4User r4u  where r4u.user_id = userId  and r4u.runner_Id=runnerId)")
 	public Double getReturnPercent() {
 		return _returnPercent;
 	}
 
+	/*
+	@Formula("(select coalesce(1/r4u.odds, 0) from Runner4User r4u  where r4u.user_id = userId  and r4u.runner_Id=runnerId)")
+	public Double getReturnPercent() {
+		return _returnPercent;
+	}
+*/
 	@Transient
 	public Double getPrcWin() {
 		Double _sumReturnPercent = linkedRunner.getMarket()

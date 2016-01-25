@@ -124,14 +124,19 @@ public class Market4User implements java.io.Serializable {
 		return linkedMarket;
 	}
 
-	@Transient
+	@Formula("(select coalesce(1/sum(1/r4u.odds), 0) from Runner4User r4u, Runner r where r4u.user_id = user_id  and r.id=r4u.runner_id and r.market_id= market_id )")
 	private Double _sumReturnPercent;
 
+	public Double getSumReturnPercent() {
+		return _sumReturnPercent;
+	}
+
+/*
 	@Formula("(select coalesce(1/sum(1/r4u.odds), 0) from Runner4User r4u, MarketRunner r where r4u.user_id = userId  and r.id=r4u.runner_id and r.market_id=marketId )")
 	public Double getSumReturnPercent() {
 		return _sumReturnPercent;	
 	}
-
+*/
 
 /*	@Transient
 	private Double sumRetPercent = 0.0;

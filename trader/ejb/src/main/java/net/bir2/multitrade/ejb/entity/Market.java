@@ -94,7 +94,7 @@ public class Market implements java.io.Serializable {
 	}
 
 	// Feed4Market4User
-	@OneToMany(mappedBy = "linkedMarket")
+	@OneToMany(mappedBy = "linkedMarket" , fetch = FetchType.EAGER )
 	private Set<Feed4Market4User> feed4Market4Users = new HashSet<Feed4Market4User>(
 			10);
 

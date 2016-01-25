@@ -91,14 +91,11 @@ public class Feed4Runner4User implements java.io.Serializable {
 
 	private Double feedOdds;
 
- 	
+	@Formula("(select coalesce(1/f4r4u.feedOdds, 0) from Feed4Runner4User f4r4u  where f4r4u.user_id = user_id  and f4r4u.runner_Id=runner_id and f4r4u.dataFeedEvent_id = dataFeedEvent_id)")
 	private Double retPercent;
 
-	@Formula("(select coalesce(1/f4r4u.feedOdds, 0) from Feed4Runner4User f4r4u  where f4r4u.user_id = userId  and f4r4u.runner_Id=runnerId and f4r4u.dataFeedEvent_id=dataFeedEventId)")
 	public Double getRetPercent() {
 		return retPercent;
 	}
-	
-	
-	
+
 }

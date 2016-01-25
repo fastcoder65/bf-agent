@@ -121,7 +121,8 @@ public class MarketServiceBean implements MarketService {
 	public List<Market> listMarkets() {
 		return em.createQuery(
 				"SELECT m FROM Market m where m.marketStatus <> :marketStatus")
-				.setParameter("marketStatus", "CLOSED").getResultList();
+				.setParameter("marketStatus", "CLOSED")
+				.getResultList();
 	}
 
 	@SuppressWarnings("unchecked")
@@ -222,8 +223,8 @@ public class MarketServiceBean implements MarketService {
 		String marketRefName = String.valueOf(marketRef);
 		System.out.println("start removing market " + marketRefName);
 
-		Set<Feed4Market4User> feed4Market4Users = marketRef
-				.getFeed4Market4Users();
+		Set<Feed4Market4User> feed4Market4Users = marketRef.getFeed4Market4Users();
+
 		for (Feed4Market4User m4u : feed4Market4Users) {
 			if (m4u.getUserId() == currentUser.getId()) {
 				em.remove(m4u);
