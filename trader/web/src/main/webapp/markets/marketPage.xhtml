@@ -9,10 +9,17 @@
 			<h:outputText value="All markets"/>
 		</f:facet>
 
-		<ui:remove>ondblclick="#{marketBean.addToActiveMarkets}"
-			<a4j:actionListener  listener="#{marketBean.addToActiveMarkets}"/>
-			<a4j:ajax event="dblclick" listener="#{marketBean.addToActiveMarkets}" />
-		</ui:remove>
+		<div  style="position: absolute;left:10em;top:5em">
+			<a4j:status>
+				<f:facet name="start">
+					<h:graphicImage style="border-width:0" value="/images/ai.gif" alt="tree is loading.." />
+				</f:facet>
+				<f:facet name="stop">
+					<h:graphicImage style="border-width:0" value="/images/spacer.gif" alt="tree loaded" />
+				</f:facet>
+
+			</a4j:status>
+		</div>
 
 		<a4j:jsFunction name="doSelectMarket" action="#{marketBean.add2ActiveMarkets}" render="marketRegion">
 			<a4j:param  name="id" assignTo="#{marketBean.selectedMarketId}"></a4j:param>
@@ -20,7 +27,7 @@
 
 		<div>
 			<h:form>
-				<rich:tree toggleType="ajax" var="item"
+				<rich:tree var="item"
 						   nodeClass="net.bir.web.beans.treeModel.Entry"
 						   toggleListener="#{marketBean.toggleListener}"
 						   selectionChangeListener="#{marketBean.selectionChanged}"
