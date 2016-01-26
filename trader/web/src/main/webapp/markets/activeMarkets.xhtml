@@ -32,6 +32,12 @@
                 <h:panelGroup id="marketControls">
 
                     <a4j:queue requestDelay="100" ignoreDupResponce="true"/>
+                    <a4j:status>
+                        <f:facet name="start">
+                            <h:graphicImage style="border-width:0" value="/images/ai.gif" alt="ai" />
+                        </f:facet>
+                    </a4j:status>
+
 
                     <a4j:commandLink render="marketRegion,marketMessages,runnerTable"
                                      action="#{marketBean.deleteMarket}"
