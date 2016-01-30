@@ -420,7 +420,7 @@ public class MarketBean extends BaseBean implements Serializable {
         List<Market> result;
 
         result = getMarketService().getMyActiveMarkets();
-        getLog().info(
+        getLog().fine(
                 "getActiveMarkets(): read " + result.size()
                         + " active markets..");
 
@@ -468,7 +468,7 @@ public class MarketBean extends BaseBean implements Serializable {
         Iterator<Object> iterator = masterSelectionItems.iterator();
         while (iterator.hasNext()) {
             Object data = iterator.next();
-            System.out.println("master data:" + data);
+            log.fine("master data:" + data);
 
             if (data instanceof Market) {
                 Market _market = (Market) data;
@@ -1008,13 +1008,12 @@ public class MarketBean extends BaseBean implements Serializable {
         public void run() {
             try {
                 Thread.sleep(1000);
-                log.log(Level.INFO, "call GlobalAPI.keepAlive(" + apiContext
-                        + ")");
+                log.fine( "call GlobalAPI.keepAlive(" + apiContext + ")");
                 GlobalAPI.keepAlive(apiContext);
             } catch (Exception e) {
                 log.log(Level.SEVERE, "error on keep-alive request", e);
             }
-            log.log(Level.INFO, "run finished");
+            log.fine("run finished");
         }
     }
 }

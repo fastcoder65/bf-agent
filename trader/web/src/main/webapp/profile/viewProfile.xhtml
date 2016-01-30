@@ -8,11 +8,11 @@
 	xmlns:rich="http://richfaces.org/rich"
 	xmlns:f="http://java.sun.com/jsf/core">
 
-<head>
+<h:head>
 <title><h:outputText value="#{labels['profile.title']}" /></title>
 <link rel='stylesheet' href='css/mainStyle.css' type='text/css' />
-</head>
-<body>
+</h:head>
+<h:body>
 <f:view>
 		<a4j:outputPanel id="messagesPanel" >
 				 <rich:messages id="messages" ajaxRendered="true" globalOnly="true" infoStyle="color:green"	warnStyle="color:#FF9900" errorStyle="color:red" showSummary="true"	 showDetail="true" />
@@ -189,5 +189,5 @@
  -->
  
 </f:view>
-</body>
+</h:body>
 </html>

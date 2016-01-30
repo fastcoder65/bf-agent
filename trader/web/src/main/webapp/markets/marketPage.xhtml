@@ -4,7 +4,18 @@
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:a4j="http://richfaces.org/a4j"
 	xmlns:rich="http://richfaces.org/rich">
-	<rich:panel bodyClass="inPanelBody">
+	<h:outputStylesheet>
+		.top {
+			vertical-align: top;
+			width: 50%;
+		}
+
+		.bold {
+			font-weight: bold;
+		}
+	</h:outputStylesheet>
+
+	<rich:panel styleClass="inPanelBody">
 		<f:facet name="header">
 			<h:outputText value="All markets"/>
 		</f:facet>
@@ -27,13 +38,13 @@
 
 		<div>
 			<h:form>
-				<rich:tree var="item"
+				<rich:tree id="myTree" var="item"
 						   nodeClass="net.bir.web.beans.treeModel.Entry"
 						   toggleListener="#{marketBean.toggleListener}"
 						   selectionChangeListener="#{marketBean.selectionChanged}"
 						>
 
-					<rich:treeModelRecursiveAdaptor roots="#{marketBean.rootNodes}" nodes="#{item.children}">
+					<rich:treeModelRecursiveAdaptor id="tmRA" roots="#{marketBean.rootNodes}" nodes="#{item.children}">
 						<rich:treeNode  title="#{item.name} (#{item.type})"
 										iconExpanded="images/tree-help/ftv2folderopen.gif"
 										iconCollapsed="images/tree-help/ftv2folderclosed.gif"
@@ -41,18 +52,27 @@
 
 						<rich:treeModelAdaptor rendered="#{item.marketNode}"  nodes="#{item.markets}">
 
-							<rich:treeNode title="#{item.name} (#{item.market.description.marketTime})"
+							<rich:treeNode  title="#{item.name} (#{item.market.description.marketTime})"
 										   iconExpanded="images/tree-help/ftv2doc.gif"
 										   iconCollapsed="images/tree-help/ftv2doc.gif"
 											ondblclick="doSelectMarket('#{item.id}')"
 									>
 									<h:outputText value="#{item.name}"></h:outputText>
 
-
 							</rich:treeNode>
+
 						</rich:treeModelAdaptor>
+
+						<rich:contextMenu mode="ajax" target="tmRA">
+							<rich:menuItem label="Add to My Markets" onclick="doSelectMarket('#{item.id}')"
+										   mode="ajax" icon="images/buttons/add.blue.gif"/>
+						</rich:contextMenu>
+
 					</rich:treeModelRecursiveAdaptor>
+
+
 				</rich:tree>
+
 			</h:form>
 		</div>
 	</rich:panel>

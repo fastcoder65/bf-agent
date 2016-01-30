@@ -5,6 +5,11 @@
                 xmlns:a4j="http://richfaces.org/a4j"
                 xmlns:rich="http://richfaces.org/rich">
 
+    <rich:panel styleClass="marketPanelBody">
+        <f:facet name="header">
+            <h:outputText value="My markets"/>
+        </f:facet>
+
     <a4j:region id="pollRegion">
         <h:form>
             <a4j:poll id="pollMarkets" interval="10000" enabled="#{marketBean.pollEnabled}"
@@ -13,8 +18,6 @@
     </a4j:region>
 
     <h:form id="activeMarketsForm">
-
-        <rich:togglePanel bodyClass="marketPanelBody" switchType="client" label="My Markets">
 
             <h:panelGrid>
 
@@ -32,17 +35,6 @@
                 <h:panelGroup id="marketControls">
 
                     <a4j:queue requestDelay="100" ignoreDupResponce="true"/>
-                    <div  style="position: absolute;left:20em;top:2em">
-                    <a4j:status>
-                        <f:facet name="start">
-                            <h:graphicImage style="border-width:0" value="/images/ai.gif" alt="ai" />
-                        </f:facet>
-                        <f:facet name="stop">
-                            <h:graphicImage style="border-width:0" value="/images/spacer.gif" alt="ai" />
-                        </f:facet>
-
-                    </a4j:status>
-                    </div>
 
                     <a4j:commandLink render="marketRegion,marketMessages,runnerTable"
                                      action="#{marketBean.deleteMarket}"
@@ -90,7 +82,7 @@
                             rowKeyVar="rkv" var="mkt"
                             onRowMouseOver="this.style.backgroundColor='#{a4jSkin.additionalBackgroundColor}'"
                             onRowMouseOut="this.style.backgroundColor=''"
-                            width="100%"
+
                             selectedClass="rich-sdt-row-selected"
                             sortMode="single"
                             selectionMode="multiple"
@@ -154,8 +146,7 @@
 
             </h:panelGrid>
 
-        </rich:togglePanel>
     </h:form>
-
+    </rich:panel>
 
 </ui:composition>

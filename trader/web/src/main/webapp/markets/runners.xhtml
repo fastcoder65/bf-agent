@@ -5,9 +5,12 @@
 	xmlns:a4j="http://richfaces.org/a4j"
 	xmlns:rich="http://richfaces.org/rich">
 
-	<h:form id="runnerForm">
-		
-	<rich:togglePanel bodyClass="marketPanelBody" switchType="client" label="Runners">
+	<rich:panel styleClass="marketPanelBody">
+		<f:facet name="header">
+			<h:outputText value="Runners"/>
+		</f:facet>
+
+		<h:form id="runnerForm">
 
 		<h:panelGrid>
 
@@ -23,7 +26,7 @@
 
 
 			<rich:dataTable value="#{marketBean.runners}" var="rnr"
-				id="runnerTable" rowKeyVar="rkv" sortMode="single" width="100%">
+				id="runnerTable" rowKeyVar="rkv" sortMode="single" >
 
 				<rich:column sortable="true" sortBy="#{rnr.name}"
 					label="Runner Name">
@@ -448,8 +451,6 @@
 
 			</rich:dataTable>
 
-	</rich:togglePanel>
-		
 		</h:form>
-		
+	</rich:panel>
 </ui:composition>
