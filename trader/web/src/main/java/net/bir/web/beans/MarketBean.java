@@ -262,7 +262,7 @@ public class MarketBean extends BaseBean implements Serializable {
 
                         EventNode _comp = new EventNode(cr.getCompetition());
 
-                        getLog().info("(parent is sportNode) sportEvent: " + _comp);
+                        getLog().fine("(parent is sportNode) sportEvent: " + _comp);
 
                         sportNode.addEntry(_comp);
 
@@ -281,7 +281,7 @@ public class MarketBean extends BaseBean implements Serializable {
 
                         EventNode _event = new EventNode(er.getEvent());
 
-                        getLog().info("(parent is sportNode) sportEvent: " + _event);
+                        getLog().fine("(parent is sportNode) sportEvent: " + _event);
 
                         sportNode.addEntry(_event);
 
@@ -365,6 +365,7 @@ public class MarketBean extends BaseBean implements Serializable {
                     for (MarketCatalogue mc : listMarkets) {
                        // getLog().info("\n market:" + mc.getMarketName());
                         MarketNode aMarketNode = new MarketNode(mc);
+
                         if (curEventNode != null) {
                             curEventNode.addEntry(aMarketNode);
                           //  getLog().info(""+ aMarketNode);
@@ -409,7 +410,7 @@ public class MarketBean extends BaseBean implements Serializable {
                 getLog().severe(e.getMessage());
             }
 
-            getLog().info("sports.getEventTypes().size(): " + allSports.getEventTypes().size());
+            getLog().fine("sports.getEventTypes().size(): " + allSports.getEventTypes().size());
         }
 
         return allSports.getEventTypes();
@@ -447,7 +448,7 @@ public class MarketBean extends BaseBean implements Serializable {
         if (settings == null) {
             settings = settingsService.getJPASettings();
             if (settings == null) {
-                getLog().info("initialize system settings..");
+                getLog().fine("initialize system settings..");
                 settings = new JPASettings();
                 SystemSettings systemSettings = new SystemSettings();
                 getLog().info(systemSettings.toString());
@@ -1008,7 +1009,7 @@ public class MarketBean extends BaseBean implements Serializable {
         public void run() {
             try {
                 Thread.sleep(1000);
-                log.fine( "call GlobalAPI.keepAlive(" + apiContext + ")");
+                log.fine("call GlobalAPI.keepAlive(" + apiContext + ")");
                 GlobalAPI.keepAlive(apiContext);
             } catch (Exception e) {
                 log.log(Level.SEVERE, "error on keep-alive request", e);

@@ -14,6 +14,7 @@ public abstract class BaseBean {
 
 	//public static final NumberFormat currencyFormat = new NumberFormat()
 	public static final DateFormat timeFormat = new SimpleDateFormat("HH:mm:ss");
+	public static final DateFormat shortTimeFormat = new SimpleDateFormat("HH:mm");
 
 	public static final DateFormat dateFormatObj = new SimpleDateFormat("dd.MM.yy HH:mm:ss");
 	

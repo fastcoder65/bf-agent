@@ -30,11 +30,11 @@ public class MarketNode extends Entry implements TreeNode {
 	//	System.out.println( market );
 		id = market.getMarketId();
 
- 	//	String _marketTime = (market.getDescription() != null ? BaseBean.shortDateFormat.format(market.getDescription().getMarketTime())+ " " : "");
+ 		String _marketTime = (market.getDescription() != null ? BaseBean.shortTimeFormat.format(market.getDescription().getMarketTime())+ " " : "");
 
-		this.name = market.getMarketName();
+		this.name = _marketTime + market.getMarketName();
 
-	//	log.info("id: " + id + ", name: " + name + ", marketTime: " + _marketTime);
+//		log.info("id: " + id + ", name: " + name + ", marketTime: " + _marketTime);
 
 		this.market = market;
 		this.type = "market";
