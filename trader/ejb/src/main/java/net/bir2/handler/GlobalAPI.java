@@ -57,7 +57,7 @@ public class GlobalAPI {
             if (jsonNode.get(SESSION_TOKEN) != null)
                 sessionToken = jsonNode.get(SESSION_TOKEN).textValue();
 
-            log.info("Session token:" + sessionToken);
+            log.fine("Session token:" + sessionToken);
         } else {
             log.severe("Getting null session token from BetFair");
         }

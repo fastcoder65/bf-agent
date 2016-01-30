@@ -1198,8 +1198,8 @@ public class SheduleRequestMessageListener implements MessageListener {
 
 			if (r4u == null) continue;
 
-			if (r4u.getSelectionPrice() > BaseServiceBean.MIN_ODDS
-					&& r4u.getSelectionAmount() >= BaseServiceBean.MIN_STAKE_AMOUNT) {
+			if ( r4u.getSelectionPrice() != null && r4u.getSelectionPrice() > BaseServiceBean.MIN_ODDS
+					&& r4u.getSelectionAmount() != null && r4u.getSelectionAmount() >= BaseServiceBean.MIN_STAKE_AMOUNT) {
 
 				PlaceInstruction pi = new PlaceInstruction();
 
