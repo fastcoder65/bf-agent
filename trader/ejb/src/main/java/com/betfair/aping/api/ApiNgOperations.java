@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import com.betfair.aping.entities.*;
@@ -31,6 +32,40 @@ public abstract class ApiNgOperations {
     protected final Logger log = Logger.getLogger(this.getClass().getName());
 
     protected final String locale = Locale.getDefault().toString();
+
+    public void printLog(String logMessage) {
+        if (log.isLoggable(Level.FINE)) {
+            log.fine (logMessage);
+        }
+    }
+
+    public void printLog(Level level , String logMessage) {
+        if (log.isLoggable(level)) {
+            log.log(level, logMessage);
+        }
+    }
+
+    public void printLog(Level level , String logMessage, Throwable t) {
+        if (log.isLoggable(level)) {
+            log.log(level, logMessage, t);
+        }
+    }
+
+    public void logError(String logMessage, Throwable t) {
+        printLog(Level.SEVERE, logMessage, t);
+    }
+
+    public void logWarn(String logMessage) {
+        printLog(Level.WARNING, logMessage);
+    }
+
+    public void logWarn(String logMessage, Throwable t) {
+        printLog(Level.WARNING, logMessage, t);
+    }
+
+    public void logInfo(String logMessage) {
+        printLog(Level.INFO, logMessage);
+    }
 
     public abstract List<EventTypeResult> listEventTypes(MarketFilter filter, MarketSort sort,
                                                          String appKey, String ssoId) throws APINGException;

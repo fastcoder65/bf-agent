@@ -21,6 +21,13 @@ public class Market4User implements java.io.Serializable {
 	@Transient
 	private static final Logger log = Logger.getLogger(Market4User.class.getName());
 
+	@Transient
+	private static void printLog(String logMessage) {
+		if (log.isLoggable(Level.FINE)) {
+			log.fine (logMessage);
+		}
+	}
+
 	@Id
 	@Column(name = "market_id", insertable = false, updatable = false ) // , insertable = false, updatable = false
 	private long marketId;
@@ -303,7 +310,7 @@ public class Market4User implements java.io.Serializable {
 		}
 			
 		sumPercentWinPink =  1 / _result.doubleValue();
-		log.info("sumPercentWinPink: "+ sumPercentWinPink);
+		printLog("sumPercentWinPink: " + sumPercentWinPink);
 		return sumPercentWinPink;
 	}
 	

@@ -30,7 +30,7 @@ public class ApiNgRescriptOperations extends ApiNgOperations {
 		String result = getInstance().makeKeepAliveRequest(
 				appKey, ssoId);
 		if (ApiNGDemo.isDebug())
-			System.out.println("\nResponse: " + result);
+            printLog("Response: " + result);
 		return result;
 	}
 
@@ -39,7 +39,7 @@ public class ApiNgRescriptOperations extends ApiNgOperations {
 		String result = getInstance().makeLogoutRequest(
 				appKey, ssoId);
 		if (ApiNGDemo.isDebug())
-			System.out.println("\nResponse: " + result);
+            printLog("Response: " + result);
 		return result;
 	}
 
@@ -51,7 +51,7 @@ public class ApiNgRescriptOperations extends ApiNgOperations {
         params.put(SORT, sort);
         String result = getInstance().makeRequest(ApiNgOperation.LISTEVENTTYPES.getOperationName(), params, appKey, ssoId);
         if(ApiNGDemo.isDebug())
-            System.out.println("\nResponse: "+result);
+            printLog("Response: " + result);
 
         List<EventTypeResult> container = JsonConverter.convertFromJson(result, new TypeToken<List<EventTypeResult>>() {}.getType());
 
@@ -68,7 +68,7 @@ public class ApiNgRescriptOperations extends ApiNgOperations {
         params.put(LOCALE, locale);
         String result = getInstance().makeRequest(ApiNgOperation.LISTCOMPETITIONS.getOperationName(), params, appKey, ssoId);
         if(ApiNGDemo.isDebug())
-            System.out.println("\nResponse: "+result);
+            printLog("Response: " + result);
 
         List<CompetitionResult> container = JsonConverter.convertFromJson(result, new TypeToken<List<CompetitionResult>>() {}.getType());
 
@@ -86,7 +86,7 @@ public class ApiNgRescriptOperations extends ApiNgOperations {
         params.put(LOCALE, locale);
         String result = getInstance().makeRequest(ApiNgOperation.LISTEVENTS.getOperationName(), params, appKey, ssoId);
         if(ApiNGDemo.isDebug())
-            System.out.println("\nResponse: "+result);
+            printLog("Response: "+result);
 
         List<EventResult> container = JsonConverter.convertFromJson(result, new TypeToken<List<EventTypeResult>>() {}.getType());
 
@@ -101,7 +101,7 @@ public class ApiNgRescriptOperations extends ApiNgOperations {
         params.put(MARKET_IDS, marketIds);
         String result = getInstance().makeRequest(ApiNgOperation.LISTMARKETBOOK.getOperationName(), params, appKey, ssoId);
         if(ApiNGDemo.isDebug())
-            System.out.println("\nResponse: "+result);
+            printLog("Response: " + result);
 
         List<MarketBook> container = JsonConverter.convertFromJson(result, new TypeToken<List<MarketBook>>(){}.getType() );
 
@@ -119,7 +119,7 @@ public class ApiNgRescriptOperations extends ApiNgOperations {
         params.put(MAX_RESULT, maxResult);
         String result = getInstance().makeRequest(ApiNgOperation.LISTMARKETCATALOGUE.getOperationName(), params, appKey, ssoId);
         if(ApiNGDemo.isDebug())
-            System.out.println("\nResponse: "+result);
+            printLog("Response: " + result);
 
         List<MarketCatalogue> container = JsonConverter.convertFromJson(result, new TypeToken< List<MarketCatalogue>>(){}.getType() );
 
@@ -158,7 +158,7 @@ public class ApiNgRescriptOperations extends ApiNgOperations {
         String result = getInstance().makeRequest(ApiNgOperation.LISTCURRENTORDERS.getOperationName(), params, appKey, ssoId);
 
         if(ApiNGDemo.isDebug())
-            System.out.println("\nResponse: "+result);
+            printLog("Response: " + result);
 
         return JsonConverter.convertFromJson(result, CurrentOrderSummaryReport.class);
 
@@ -173,8 +173,9 @@ public class ApiNgRescriptOperations extends ApiNgOperations {
         params.put(INSTRUCTIONS, instructions);
         params.put(CUSTOMER_REF, customerRef);
         String result = getInstance().makeRequest(ApiNgOperation.PLACE_ORDERS.getOperationName(), params, appKey, ssoId);
+
         if(ApiNGDemo.isDebug())
-            System.out.println("\nResponse: "+result);
+            printLog("Response: " + result);
 
         return JsonConverter.convertFromJson(result, PlaceExecutionReport.class);
 
@@ -191,7 +192,7 @@ public class ApiNgRescriptOperations extends ApiNgOperations {
         params.put(CUSTOMER_REF, customerRef);
         String result = getInstance().makeRequest(ApiNgOperation.REPLACE_ORDERS.getOperationName(), params, appKey, ssoId);
         if(ApiNGDemo.isDebug())
-            System.out.println("\nResponse: "+result);
+            printLog("Response: " + result);
 
         return JsonConverter.convertFromJson(result, ReplaceExecutionReport.class);
 
@@ -207,7 +208,7 @@ public class ApiNgRescriptOperations extends ApiNgOperations {
         params.put(CUSTOMER_REF, customerRef);
         String result = getInstance().makeRequest(ApiNgOperation.CANCEL_ORDERS.getOperationName(), params, appKey, ssoId);
         if(ApiNGDemo.isDebug())
-            System.out.println("\nResponse: "+result);
+            printLog("Response: " + result);
 
         return JsonConverter.convertFromJson(result, CancelExecutionReport.class);
 
@@ -221,7 +222,7 @@ public class ApiNgRescriptOperations extends ApiNgOperations {
 
         requestString =  JsonConverter.convertToJson(params);
         if(ApiNGDemo.isDebug())
-            System.out.println("\nRequest: "+requestString);
+            printLog("Request: "+requestString);
 
         //We need to pass the "sendPostRequest" method a string in util format:  requestString
         HttpUtil requester = new HttpUtil();

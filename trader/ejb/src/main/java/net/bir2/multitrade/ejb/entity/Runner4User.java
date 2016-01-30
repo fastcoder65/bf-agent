@@ -122,12 +122,12 @@ public class Runner4User implements java.io.Serializable {
 	public Double getPrcWin() {
 		Double _sumReturnPercent = linkedRunner.getMarket()
 				.getUserData4Market().get(this.userId).getSumReturnPercent();
-		System.out.println("*** _sumReturnPercent= " + _sumReturnPercent);
+		printLog("*** _sumReturnPercent= " + _sumReturnPercent);
 		Double result =  (this.odds != null && this.odds > 0 ? _sumReturnPercent
 				/ this.odds
 				: 0.0);
-		
-		 log.info ("* getPrcWin()= "+result);
+
+		printLog ("* getPrcWin()= "+result);
 		return result;
 	}
 
@@ -135,16 +135,16 @@ public class Runner4User implements java.io.Serializable {
 	public Double getPseudoStake() {
 	 Double _psv = 	linkedRunner.getMarket().getUserData4Market().get(
 				this.userId).getPseudoStakeVolume();
-	  log.info ("* Pseudo Stake Volume= "+_psv);
+		printLog("* Pseudo Stake Volume= " + _psv);
      Double result = _psv * getPrcWin();
-     log.info ("* getPseudoStake()= "+result);
+		printLog("* getPseudoStake()= " + result);
      return result;
 	}
 
 	@Transient
 	public Double getPinkStakeReturn() {
      Double result =  (( getBackPrice1() == 0.0) ? 1 / 1000.0 : 1 / getBackPrice1());
-     log.info("* getPinkStakeReturn()= "+result);
+		printLog("* getPinkStakeReturn()= " + result);
      return result;
 	}
 
@@ -153,14 +153,14 @@ public class Runner4User implements java.io.Serializable {
 
 		Double _sumPercentWinPink = linkedRunner.getMarket()
 				.getUserData4Market().get(this.userId).getSumPercentWinPink();
-		log.info("getPrcWinPinkStakes(): _sumPercentWinPink="+ _sumPercentWinPink);
+		printLog("getPrcWinPinkStakes(): _sumPercentWinPink=" + _sumPercentWinPink);
 		
 		Double price1b = getBackPrice1(); // getLinkedRunner().getBackPrices().get(1).getPrice();
 		
 		Double _prcWinPink = (price1b == null || price1b ==0.0 ? _sumPercentWinPink / 1000.0
 				: _sumPercentWinPink / price1b);
-				
-		log.info ("getPrcWinPinkStakes(): _prcWinPink=" + _prcWinPink);
+
+		printLog("getPrcWinPinkStakes(): _prcWinPink=" + _prcWinPink);
 		return _prcWinPink;
 	}
 
@@ -169,11 +169,18 @@ public class Runner4User implements java.io.Serializable {
 		Double _pseudoPinkStakeVolume = linkedRunner.getMarket()
 				.getUserData4Market().get(this.userId)
 				.getPseudoPinkStakeVolume();
-		
-		log.info ("_pseudoPinkStakeVolume=" + _pseudoPinkStakeVolume);
+
+		printLog("_pseudoPinkStakeVolume=" + _pseudoPinkStakeVolume);
 		Double result = _pseudoPinkStakeVolume * getPrcWinPinkStakes();
-		log.info ("getPseudoPinkStake result=" + result);
+		printLog("getPseudoPinkStake result=" + result);
 		return result;
+	}
+
+	@Transient
+	private static void printLog(String logMessage) {
+	 if (log.isLoggable(Level.FINE)) {
+		 log.fine (logMessage);
+	 }
 	}
 
 	@Transient
@@ -194,7 +201,7 @@ public class Runner4User implements java.io.Serializable {
 			if (this.linkedRunner != null) {
 				String _sName = (this.linkedRunner != null && this.linkedRunner.getName() != null ? this.linkedRunner.getName() : " null name!");
 				String s = new StringBuilder().append(" getIsNonRunner(): ").append(_sName).append(" is 'NonRunner' now!").toString();
-				System.out.println (s);
+				printLog (s);
 				//log.info(new StringBuilder().append(" getIsNonRunner(): ").append(_sName).append(" is 'NonRunner' now!").toString());
 
 			}
@@ -206,8 +213,8 @@ public class Runner4User implements java.io.Serializable {
 	@Transient
 	public Double getSumPseudoRealPseudoPinkStakesHoldWithNR() {
 		Double result = (getIsNonRunner() ? 0 : getSumPseudoRealPseudoPinkStakes());
-		System.out.println("log: " + log);
-		System.out.println("getSumPseudoRealPseudoPinkStakesHoldWithNR="+ result);
+		printLog("log: " + log);
+		printLog("getSumPseudoRealPseudoPinkStakesHoldWithNR="+ result);
 		return result;
 	}
 
@@ -215,10 +222,9 @@ public class Runner4User implements java.io.Serializable {
 	public Double getPercWinSglajivWithNR() {
 		Double _x = linkedRunner.getMarket().getUserData4Market().get(
 				this.userId).getSummOfPsRealStPinkStakeHoldWithNR();
-		// //System.out.println (" _x=" +  _x);
-		Double result = (_x > 0) ? getSumPseudoRealPseudoPinkStakesHoldWithNR()
-				/ _x : 0.0;
-		log.info ("getPercWinSglajivWithNR=" + result);
+
+		Double result = (_x > 0) ? getSumPseudoRealPseudoPinkStakesHoldWithNR() / _x : 0.0;
+		printLog ("getPercWinSglajivWithNR=" + result);
 		return result;
 	}
 
@@ -400,7 +406,7 @@ public class Runner4User implements java.io.Serializable {
 
 	public Double getMatchedLayAmount() {
 	 Double result = matchedLayAmount == null ? 0.0 : matchedLayAmount;
-	 //System.out.println ("matchedLayAmount=" + result);
+		printLog ("matchedLayAmount=" + result);
 	 return result;
 	}
 
@@ -488,5 +494,4 @@ public class Runner4User implements java.io.Serializable {
 	private Double totalAmountMatched;
 	private Double lastPriceMatched;
 
-	
 }

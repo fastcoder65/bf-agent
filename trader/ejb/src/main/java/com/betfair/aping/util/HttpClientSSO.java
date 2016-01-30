@@ -12,6 +12,7 @@ import java.security.KeyStore;
 import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
 
 import javax.net.ssl.KeyManager;
 import javax.net.ssl.KeyManagerFactory;
@@ -45,16 +46,31 @@ import org.apache.http.impl.conn.DefaultProxyRoutePlanner;
 import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.util.EntityUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import java.util.logging.*;
+
 
 // import org.apache.http.impl.client.DefaultHttpClient;
 
 public class HttpClientSSO {
 
 	private static final int PORT = 443;
-	private static final Logger log = LoggerFactory
-			.getLogger(HttpClientSSO.class);
+	private static final Logger log = Logger.getLogger(HttpClientSSO.class.getName());
+
+	private static void printLog(String logMessage) {
+		if (log.isLoggable(Level.FINE)) {
+			log.fine (logMessage);
+		}
+	}
+
+	public static void printLog(Level level , String logMessage, Throwable t) {
+		if (log.isLoggable(level)) {
+			log.log(level, logMessage, t);
+		}
+	}
+
+	public static void logError(String logMessage, Throwable t) {
+		printLog(Level.SEVERE, logMessage, t);
+	}
 
 	private static boolean isSet(Object sysProperty) {
 		return sysProperty != null
@@ -138,20 +154,20 @@ public class HttpClientSSO {
 
 			httpPost.setEntity(new UrlEncodedFormEntity(nvps));
 			httpPost.setHeader("X-Application", appKey);
-			log.info("executing request {}", httpPost.getRequestLine());
+			printLog("executing request " + httpPost.getRequestLine());
 
 			HttpResponse response = httpClient.execute(httpPost, localContext);
 			
 			// HttpResponse response = httpClient.execute(httpPost);
 			HttpEntity entity = response.getEntity();
 
-			log.info("Response status line: {}", response.getStatusLine());
+			printLog("Response status line: " + response.getStatusLine());
 			if (entity != null) {
 				responseString = EntityUtils.toString(entity);
-				log.info("Session token: {}", responseString);
+				printLog("Session token: " + responseString);
 			}
 		} catch (Exception e) {
-			log.error("Exception while get sessionToken: {}", e);
+			logError("Exception while get sessionToken: ", e);
 		} finally {
 			try {
 				if ( httpClient != null )
@@ -265,18 +281,18 @@ public class HttpClientSSO {
 
 			httpPost.setEntity(new UrlEncodedFormEntity(nvps));
 			httpPost.setHeader("X-Application", appKey);
-			log.info("executing request {}", httpPost.getRequestLine());
+			printLog("executing request {}" + httpPost.getRequestLine());
 
 			HttpResponse response = httpClient.execute(httpPost, localContext);
 			HttpEntity entity = response.getEntity();
 
-			log.info("Response status line: {}", response.getStatusLine());
+			printLog("Response status line: " + response.getStatusLine());
 			if (entity != null) {
 				responseString = EntityUtils.toString(entity);
-				log.info("Session token: {}", responseString);
+				printLog("Session token: " + responseString);
 			}
 		} catch (Exception e) {
-			log.error("Exception while get sessionToken: {}", e);
+			logError("Exception while get sessionToken: ", e);
 		} finally {
 			try {
 				httpClient.close();

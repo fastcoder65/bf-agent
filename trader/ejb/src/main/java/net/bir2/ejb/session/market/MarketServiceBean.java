@@ -176,7 +176,7 @@ public class MarketServiceBean implements MarketService {
 		Market result =  em.find(Market.class, id);
 		if (result != null) {
 			Hibernate.initialize(result.getRunners());
-			log.info("getMarket() - result.getRunners().size()= " + result.getRunners().size());
+			log.fine("getMarket() - result.getRunners().size()= " + result.getRunners().size());
 		}
 		return result;
 	}

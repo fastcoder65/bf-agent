@@ -29,7 +29,7 @@ public class ApiNgJsonRpcOperations extends ApiNgOperations {
 
 		String result = getInstance().makeKeepAliveRequest(appKey, ssoId);
 		if (ApiNGDemo.isDebug())
-			log.info("'keepAlive' Response: " + result);
+			printLog("'keepAlive' Response: " + result);
 		return result;
 	}
 
@@ -37,7 +37,7 @@ public class ApiNgJsonRpcOperations extends ApiNgOperations {
 
 		String result = getInstance().makeLogoutRequest(appKey, ssoId);
 		if (ApiNGDemo.isDebug())
-			log.info("'logout' Response: " + result);
+			printLog("'logout' Response: " + result);
 
 		return result;
 	}
@@ -45,8 +45,8 @@ public class ApiNgJsonRpcOperations extends ApiNgOperations {
 	public List<EventTypeResult> listEventTypes(MarketFilter filter, MarketSort sort,
 			String appKey, String ssoId) throws APINGException {
 
-		log.info("appKey: " + appKey);
-		log.info("ssoId: " + ssoId);
+		printLog("appKey: " + appKey);
+		printLog("ssoId: " + ssoId);
 
 		Map<String, Object> params = new HashMap<String, Object>();
 		params.put(FILTER, filter);
@@ -57,7 +57,7 @@ public class ApiNgJsonRpcOperations extends ApiNgOperations {
 				ApiNgOperation.LISTEVENTTYPES.getOperationName(), params,
 				appKey, ssoId);
 		if (ApiNGDemo.isDebug())
-			log.info("'listEventTypes' Response: " + result);
+			printLog("'listEventTypes' Response: " + result);
 
 		EventTypeResultContainer container = JsonConverter.convertFromJson(
 				result, EventTypeResultContainer.class);
@@ -83,7 +83,7 @@ public class ApiNgJsonRpcOperations extends ApiNgOperations {
 				ssoId);
 
 		if (ApiNGDemo.isDebug())
-			log.info("'listCompetitions' Response: " + result);
+			printLog("'listCompetitions' Response: " + result);
 
 		CompetitionResultContainer container = JsonConverter.convertFromJson(result,
 				CompetitionResultContainer.class);
@@ -92,7 +92,6 @@ public class ApiNgJsonRpcOperations extends ApiNgOperations {
 			throw container.getError().getData().getAPINGException();
 
 		return container.getResult();
-
 	}
 
 	public List<EventResult> listEvents(MarketFilter filter, MarketSort sort,
@@ -109,7 +108,7 @@ public class ApiNgJsonRpcOperations extends ApiNgOperations {
 				ssoId);
 
 		if (ApiNGDemo.isDebug())
-			log.info("'listEvents' Response: " + result);
+			printLog("'listEvents' Response: " + result);
 
 		EventResultContainer container = JsonConverter.convertFromJson(result,
 				EventResultContainer.class);
@@ -137,7 +136,7 @@ public class ApiNgJsonRpcOperations extends ApiNgOperations {
 				ApiNgOperation.LISTMARKETBOOK.getOperationName(), params,
 				appKey, ssoId);
 		if (ApiNGDemo.isDebug())
-			log.info("'listMarketBook' Response: " + result);
+			printLog("'listMarketBook' Response: " + result);
 
 		ListMarketBooksContainer container = JsonConverter.convertFromJson(
 				result, ListMarketBooksContainer.class);
@@ -165,7 +164,7 @@ public class ApiNgJsonRpcOperations extends ApiNgOperations {
 				ApiNgOperation.LISTMARKETCATALOGUE.getOperationName(), params,
 				appKey, ssoId);
 		if (ApiNGDemo.isDebug())
-			log.info("'listMarketCatalogue' Response: " + result);
+			printLog("'listMarketCatalogue' Response: " + result);
 
 		ListMarketCatalogueContainer container = JsonConverter.convertFromJson(
 				result, ListMarketCatalogueContainer.class);
@@ -216,7 +215,7 @@ public class ApiNgJsonRpcOperations extends ApiNgOperations {
 				ApiNgOperation.LISTCURRENTORDERS.getOperationName(), params,
 				appKey, ssoId);
 		if (ApiNGDemo.isDebug())
-			log.info("'listCurrentOrders' Response: " + result);
+			printLog("'listCurrentOrders' Response: " + result);
 
 		ListOrdersContainer container = JsonConverter.convertFromJson(
 				result, ListOrdersContainer.class);
@@ -241,7 +240,7 @@ public class ApiNgJsonRpcOperations extends ApiNgOperations {
 		String result = getInstance().makeRequest(ApiNgOperation.CANCEL_ORDERS.getOperationName(), params, appKey, ssoId);
 
 		if (ApiNGDemo.isDebug())
-			log.info("'cancelOrders' Response: " + result);
+			printLog("'cancelOrders' Response: " + result);
 
 		CancelOrdersContainer container = JsonConverter.convertFromJson(result,
 				CancelOrdersContainer.class);
@@ -267,7 +266,7 @@ public class ApiNgJsonRpcOperations extends ApiNgOperations {
 				ssoId);
 
 		if (ApiNGDemo.isDebug())
-			log.info("'replaceOrders' Response: " + result);
+			printLog("'replaceOrders' Response: " + result);
 
 		ReplaceOrdersContainer container = JsonConverter.convertFromJson(result,
 				ReplaceOrdersContainer.class);
@@ -294,7 +293,7 @@ public class ApiNgJsonRpcOperations extends ApiNgOperations {
 				ApiNgOperation.PLACE_ORDERS.getOperationName(), params, appKey,
 				ssoId);
 		if (ApiNGDemo.isDebug())
-			log.info("'placeOrders' Response: " + result);
+			printLog("'placeOrders' Response: " + result);
 
 		PlaceOrdersContainer container = JsonConverter.convertFromJson(result,
 				PlaceOrdersContainer.class);
@@ -318,7 +317,7 @@ public class ApiNgJsonRpcOperations extends ApiNgOperations {
 
 		requestString = JsonConverter.convertToJson(request);
 		if (ApiNGDemo.isDebug())
-			log.info("'makeRequest' Request: " + requestString);
+			printLog("'makeRequest' Request: " + requestString);
 
 		// We need to pass the "sendPostRequest" method a string in util format:
 		// requestString

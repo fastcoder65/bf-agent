@@ -27,8 +27,6 @@ import com.betfair.aping.ApiNGDemo;
 import com.betfair.aping.exceptions.APINGException;
 import com.betfair.aping.util.JsonResponseHandler;
 import com.betfair.aping.util.RescriptResponseHandler;
-//import org.apache.commons.httpclient.auth.DigestScheme;
-//import org.apache.commons.httpclient.auth.AuthScheme;
 
 public class HttpUtil {
 

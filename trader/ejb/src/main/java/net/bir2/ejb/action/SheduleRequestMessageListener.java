@@ -5,40 +5,8 @@ import com.betfair.aping.enums.OrderStatus;
 import com.betfair.aping.enums.OrderType;
 import com.betfair.aping.enums.PersistenceType;
 import com.betfair.aping.enums.Side;
-import generated.exchange.BFExchangeServiceStub.BetCategoryTypeEnum;
-import generated.exchange.BFExchangeServiceStub.BetPersistenceTypeEnum;
-import generated.exchange.BFExchangeServiceStub.BetTypeEnum;
-import generated.exchange.BFExchangeServiceStub.CancelBets;
-import generated.exchange.BFExchangeServiceStub.CancelBetsResult;
-import generated.exchange.BFExchangeServiceStub.MUBet;
+import com.unitab.race.Race;
 import generated.exchange.BFExchangeServiceStub.MarketLite;
-import generated.exchange.BFExchangeServiceStub.PlaceBets;
-import generated.exchange.BFExchangeServiceStub.PlaceBetsResult;
-import generated.exchange.BFExchangeServiceStub.UpdateBets;
-import generated.exchange.BFExchangeServiceStub.UpdateBetsResult;
-
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-
-import javax.ejb.ActivationConfigProperty;
-import javax.ejb.EJB;
-import javax.ejb.MessageDriven;
-import javax.ejb.TransactionAttribute;
-import javax.ejb.TransactionAttributeType;
-import javax.inject.Inject;
-import javax.jms.JMSException;
-import javax.jms.MapMessage;
-import javax.jms.Message;
-import javax.jms.MessageListener;
-
 import net.bir2.ejb.session.market.BaseService;
 import net.bir2.ejb.session.market.BaseServiceBean;
 import net.bir2.ejb.session.market.DataFeedService;
@@ -46,14 +14,16 @@ import net.bir2.ejb.session.market.MarketService;
 import net.bir2.handler.GlobalAPI;
 import net.bir2.multitrade.ejb.entity.*;
 import net.bir2.multitrade.ejb.entity.Market;
-import net.bir2.multitrade.ejb.entity.MarketRunner;
-import net.bir2.multitrade.util.InflatedMarketPrices.InflatedPrice;
-import net.bir2.multitrade.util.InflatedMarketPrices.InflatedRunner;
 
-import com.unitab.race.Race;
-//import net.bir2.handler.ExchangeAPI;
-//import net.bir2.handler.ExchangeAPI.Exchange;
-//import org.apache.log4j.Logger;
+import javax.ejb.*;
+import javax.inject.Inject;
+import javax.jms.JMSException;
+import javax.jms.MapMessage;
+import javax.jms.Message;
+import javax.jms.MessageListener;
+import java.util.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 @MessageDriven(activationConfig = {
 		@ActivationConfigProperty(propertyName = "destinationType", propertyValue = "javax.jms.Queue"),
@@ -74,7 +44,41 @@ public class SheduleRequestMessageListener implements MessageListener {
 	@Inject
     private Logger log;
 
-	
+	private void printLog(String logMessage) {
+		if (log.isLoggable(Level.FINE)) {
+			log.fine (logMessage);
+		}
+	}
+
+	private void printLog(Level level , String logMessage) {
+		if (log.isLoggable(level)) {
+			log.log(level, logMessage);
+		}
+	}
+
+	private void printLog(Level level , String logMessage, Throwable t) {
+		if (log.isLoggable(level)) {
+			log.log(level, logMessage, t);
+		}
+	}
+
+	private void logError(String logMessage, Throwable t) {
+		printLog(Level.SEVERE, logMessage, t);
+	}
+
+	private void logWarn(String logMessage) {
+		printLog(Level.WARNING, logMessage);
+	}
+
+	private void logWarn(String logMessage, Throwable t) {
+		printLog(Level.WARNING, logMessage, t);
+	}
+
+	private void logInfo(String logMessage) {
+		printLog(Level.INFO, logMessage);
+	}
+
+
 	@EJB
 	private BaseService baseService;
 
@@ -108,7 +112,7 @@ public class SheduleRequestMessageListener implements MessageListener {
 				processActionRequest(message);
 			}
 		} catch (Exception e) {
-			log.log(Level.SEVERE,"error on Message..", e);
+			logError("error on Message..", e);
 		}
 	}
 
@@ -129,10 +133,10 @@ public class SheduleRequestMessageListener implements MessageListener {
 	
 	private void doKeepAliveRequests(){
 
-		log.info("* send keep-alive request to all active users..");
+		printLog("* send keep-alive request to all active users..");
 		
 	if (marketService == null) {
-		log.log(Level.WARNING, "marketService is null!");
+		logWarn("*** !!!  marketService is null!!! ***");
 
 	} else {
 		for (Uzer uzer : marketService.getActiveUsers()) {
@@ -149,10 +153,10 @@ public class SheduleRequestMessageListener implements MessageListener {
 	public static final String UNKNOWN = "UNKNOWN";
 
 	private void actionUpdateMarketStatus(String login, String marketId) {
-		
-			log.fine(new StringBuilder(100)
-					.append("actionUpdateMarketStatus: login=").append(login)
-					.append(", marketId=").append(marketId).toString());
+
+		printLog(new StringBuilder(100)
+				.append("actionUpdateMarketStatus: login=").append(login)
+				.append(", marketId=").append(marketId).toString());
 
 		// int lastDigit = (int) (System.currentTimeMillis() % 10L);
 
@@ -165,8 +169,7 @@ public class SheduleRequestMessageListener implements MessageListener {
 			try {
 				currentMarket = serviceBean.getActiveMarket(marketId);
 			} catch (Exception e) {
-				log.log(Level.SEVERE, "ERROR READING CURRENT MARKET FOR STATUS RENEW , MSG "
-						, e);
+				logError("ERROR READING CURRENT MARKET FOR STATUS RENEW , MSG ", e);
 			}
 		} else {
 			serviceBean.getActiveMarkets().remove(marketId);
@@ -176,12 +179,12 @@ public class SheduleRequestMessageListener implements MessageListener {
 		Uzer currentUser = serviceBean.getActiveUsers().get(login);
 
 		if (currentMarket == null) {
-			log.log(Level.WARNING, "currentMarket is not found for market_id:" + marketId);
+			logWarn("currentMarket is not found for market_id:" + marketId);
 			return;
 		}
 
 		if (currentUser == null) {
-			log.log(Level.WARNING, "currentUser is not found for login:" + login);
+			logWarn("currentUser is not found for login:" + login);
 			return;
 		}
 
@@ -200,7 +203,7 @@ public class SheduleRequestMessageListener implements MessageListener {
 		if (!needUpdate)
 			return;
 
-			log.fine("currentMarket: " + currentMarket.getMenuPath() + BS
+		printLog("currentMarket: " + currentMarket.getMenuPath() + BS
 					+ currentMarket.getName() + ", minutes to start: " + km
 					+ ", refreshInt(second(s)):" + refreshInt);
 
@@ -213,8 +216,8 @@ public class SheduleRequestMessageListener implements MessageListener {
 			MarketLite marketLite = null; // ExchangeAPI.getMarketInfo(selected_exchange, currentUser.getApiContext(), Long.valueOf(currentMarket.getMarketId()).intValue());
 
 			long endTime = System.currentTimeMillis();
-			
-				log.fine("Update Market Status completed, login=" + login
+
+			printLog("Update Market Status completed, login=" + login
 						+ ", marketId=" + marketId + ", refreshInt:"
 						+ refreshInt + " second(s), time consumed: "
 						+ ((endTime - startTime) / 1000.0) + " second(s)");
@@ -228,7 +231,7 @@ public class SheduleRequestMessageListener implements MessageListener {
 
 		} catch (Exception e) {
 			if (e.getMessage() != null && !e.getMessage().contains("EXCEEDED_THROTTLE"))
-				log.log(Level.SEVERE, "UpdateMarketStatus error, message: ", e);
+				logError("UpdateMarketStatus error, message: ", e);
 		}
 
 
@@ -256,32 +259,31 @@ public class SheduleRequestMessageListener implements MessageListener {
 						currentMarket);
 			}
 		} catch (Exception e) {
-			log.log(Level.SEVERE, "ERROR GETTING CURRENT MARKET , MSG ", e);
+			logError("ERROR GETTING CURRENT MARKET , MSG ", e);
 		}
 
 		if (currentMarket == null) {
-			log.log(Level.WARNING, "currentMarket is not found for market_id:"+ marketId);
+			logWarn("currentMarket is not found for market_id:" + marketId);
 			return;
 		}
 
 		Uzer currentUser = serviceBean.getActiveUsers().get(login);
 
 		if (currentUser == null) {
-			log.log(Level.WARNING,"currentUser is not found for login:" + login);
+			logWarn("currentUser is not found for login:" + login);
 			return;
 		}
 
 		Market4User market4User = currentMarket.getUserData4Market().get(
 				currentUser.getId());
-		
-			log.info( "given market4User: " + market4User);
+
+		printLog( "given market4User: " + market4User);
 
 		boolean isOnAir = market4User.isOnAir();
 
 		if (isOnAir) {
-			
-				log.info("*** Update market prices for login: " + login
-						+ ", market: " + marketId);
+
+			printLog("*** Update market prices for login: " + login	+ ", market: " + marketId);
 
 // 			selected_exchange = currentMarket.getExchange() == 1 ? Exchange.UK: Exchange.AUS;
 
@@ -298,13 +300,12 @@ public class SheduleRequestMessageListener implements MessageListener {
 				currentBets = GlobalAPI.listCurrentOrders(currentUser.getApiContext(), null, marketIds);
 
 			} catch (Exception e) {
-				log.severe(" 'Get Current Bets' error, message: "
-						+ e.getMessage());
+				logError(" 'Get Current Bets' error, message: ", e);
 			}
 
 			long endTime = System.currentTimeMillis();
-			
-				log.fine("action 'Get Current Bets' COMPLETED, login="
+
+			printLog("action 'Get Current Bets' COMPLETED, login="
 						+ currentUser.getLogin() + ", marketId="
 						+ currentMarket.getMarketId() + ", time consumed: "
 						+ ((endTime - startTime) / 1000.0) + " second(s)");
@@ -316,7 +317,7 @@ public class SheduleRequestMessageListener implements MessageListener {
 							(long) bet.getSelectionId());
 
 					if (runner == null) {
-						log.severe(new StringBuilder(100)
+						logWarn(new StringBuilder(100)
 								.append("runner is null for selectionId=")
 								.append(bet.getSelectionId()).toString());
 					}
@@ -327,7 +328,7 @@ public class SheduleRequestMessageListener implements MessageListener {
 								currentUser.getId());
 
 						if (r4u == null) {
-							log.severe(new StringBuilder(100)
+							logWarn(new StringBuilder(100)
 									.append("runner4user is null for userId=")
 									.append(currentUser.getId()).toString());
 						}
@@ -383,7 +384,7 @@ public class SheduleRequestMessageListener implements MessageListener {
 				}
 			}
 
-				log.fine("sum=" + sum);
+			printLog("sum=" + sum);
 
 			Map<Long, Double> profitMap = new HashMap<Long, Double>(10);
 
@@ -405,8 +406,8 @@ public class SheduleRequestMessageListener implements MessageListener {
 */
 						double _profitItem = currentBets.get(i).getPriceSize().getSize()
 								* currentBets.get(i).getPriceSize().getPrice();
-					
-							log.fine(new StringBuilder(100)
+
+						printLog(new StringBuilder(100)
 									.append("_profitItem=").append(_profitItem)
 									.toString());
 
@@ -433,9 +434,7 @@ public class SheduleRequestMessageListener implements MessageListener {
 
 					if (_profit != null) {
 						profitMap.put(_key, _profit);
-					
-							log.fine(new StringBuilder(100).append("_profit=")
-									.append(_profit).toString());
+						printLog(new StringBuilder(100).append("_profit=").append(_profit).toString());
 					}
 					// r4u.setProfitLoss(_profit);
 					// r4u = marketService.merge(r4u);
@@ -462,9 +461,10 @@ public class SheduleRequestMessageListener implements MessageListener {
 				}
 
 				if (_profit != null) {
-				
-						log.fine(new StringBuilder(100).append("_profit=")
+
+					printLog(new StringBuilder(100).append("_profit=")
 								.append(_profit).toString());
+
 					r4u.setProfitLoss(_profit);
 					marketService.merge(r4u);
 				}
@@ -491,22 +491,20 @@ public class SheduleRequestMessageListener implements MessageListener {
 				 marketBook0 =  marketBooks.get(0);
 
 				inPlayDelay = marketBook0.getBetDelay();
-		
-				log.info("inPlayDelay =" + inPlayDelay);
+
+				printLog("inPlayDelay =" + inPlayDelay);
 					
-				//currency = marketBook0.getRunners()
-				// System.setProperty(currency, value)
 			} catch (Exception e) {
-				log.log(Level.SEVERE, "getPrices() error: ", e);
+				logError("getPrices() error: ", e);
 			}
 
 			endTime = System.currentTimeMillis();
-			
-				log.fine("actionUpdateMarketPrices COMPLETED, login=" + login
+
+			printLog("actionUpdateMarketPrices COMPLETED, login=" + login
 						+ ", marketId=" + marketId + ", time consumed: "
 						+ ((endTime - startTime) / 1000.0) + " second(s)");
-			
-				log.fine("currentMarket: name=" + currentMarket.getName()
+
+			printLog("currentMarket: name=" + currentMarket.getName()
 						+ ", runners count="
 						+ currentMarket.getRunners().size()
 						+ ", runnersMap size="
@@ -521,15 +519,16 @@ public class SheduleRequestMessageListener implements MessageListener {
 				}
 			}
 
-			log.info("currentUser: " + currentUser);
+			printLog("currentUser: " + currentUser);
 
 			for (MarketRunner runner : currentMarket.getRunners()) {
 
-				log.info("iterate next runner: " + runner);
+				printLog("iterate next runner: " + runner);
 
 				Runner4User r4u = runner.getUserData4Runner().get(currentUser.getId());
 
-				log.info("r4u: " + r4u);
+				printLog("r4u: " + r4u);
+
 				if (r4u == null) continue;
 
 				Long _key = runner.getSelectionId();
@@ -537,11 +536,11 @@ public class SheduleRequestMessageListener implements MessageListener {
 				Runner r = inflatedRunners.get(_key);
 
 				if (baseService != null) {
-					log.info("baseService: " + baseService + ", currency: " + currency);
+					printLog("baseService: " + baseService + ", currency: " + currency);
 					r4u.setCurrency(baseService.getCurrencySymbol(currency));
 
 				} else
-					log.info("baseService is NULL!!!");
+					printLog("baseService is NULL!!!");
 
 
 				r4u.setBackPrice1(0.0);
@@ -571,8 +570,8 @@ public class SheduleRequestMessageListener implements MessageListener {
 
 					//if (r.getLayPrices() != null) {
 					if (r.getEx().getAvailableToLay() != null && !(r.getEx().getAvailableToLay().size() < 3)) {
-					
-							log.info(new StringBuilder(100)
+
+						printLog(new StringBuilder(100)
 									.append("r.getEx().getAvailableToLay().size()=")
 									.append(r.getEx().getAvailableToLay().size()).toString());
 					//	for (InflatedPrice p : r.getLayPrices()) {
@@ -589,8 +588,8 @@ public class SheduleRequestMessageListener implements MessageListener {
 
 									r4u.setLayAmount1(_priceSize.getSize());
 									r4u.setLayPrice1(_priceSize.getPrice());
-								
-										log.info(new StringBuilder(100)
+
+									printLog(new StringBuilder(100)
 												.append("r4u.getLayPrice1()=")
 												.append(r4u.getLayPrice1())
 												.append(",\t r4u.getLayAmount1()")
@@ -601,8 +600,8 @@ public class SheduleRequestMessageListener implements MessageListener {
 
 									r4u.setLayAmount2(_priceSize.getSize());
 									r4u.setLayPrice2(_priceSize.getPrice());
-									
-										log.info(new StringBuilder(100)
+
+									printLog(new StringBuilder(100)
 												.append("r4u.getLayPrice2()=")
 												.append(r4u.getLayPrice2())
 												.append(",\t r4u.getLayAmount2()")
@@ -613,8 +612,8 @@ public class SheduleRequestMessageListener implements MessageListener {
 
 									r4u.setLayAmount3(_priceSize.getSize());
 									r4u.setLayPrice3(_priceSize.getPrice());
-									
-										log.info(new StringBuilder(100)
+
+									printLog (new StringBuilder(100)
 												.append("r4u.getLayPrice3()=")
 												.append(r4u.getBackPrice3())
 												.append(",\t r4u.getLayAmount3()")
@@ -622,7 +621,7 @@ public class SheduleRequestMessageListener implements MessageListener {
 												.toString());
 									break;
 								default:
-									log.log(Level.WARNING, "!!! enter to case: 'Lay' default ");
+									logWarn("!!! enter to case: 'Lay' default ");
 								}
 							}
 //						}
@@ -630,7 +629,7 @@ public class SheduleRequestMessageListener implements MessageListener {
 
 					if ( r.getEx().getAvailableToBack() != null && !(r.getEx().getAvailableToBack().size() < 3) ) {
 
-							log.info(new StringBuilder(100)
+						printLog(new StringBuilder(100)
 									.append("r.getEx().getAvailableToBack().size()=")
 									.append(r.getEx().getAvailableToBack().size())
 									.toString());
@@ -648,7 +647,7 @@ public class SheduleRequestMessageListener implements MessageListener {
 									r4u.setBackAmount1(_priceSize.getSize());
 									r4u.setBackPrice1(_priceSize.getPrice());
 
-										log.fine(new StringBuilder(100)
+									printLog(new StringBuilder(100)
 												.append("r4u.getBackPrice1()=")
 												.append(r4u.getBackPrice1())
 												.append(",\t r4u.getBackAmount1()")
@@ -660,10 +659,9 @@ public class SheduleRequestMessageListener implements MessageListener {
 									r4u.setBackAmount2(_priceSize.getSize());
 									r4u.setBackPrice2(_priceSize.getPrice());
 
-										log.fine(new StringBuilder(100)
+									printLog(new StringBuilder(100)
 												.append("r4u.getBackPrice2()=")
 												.append(r4u.getBackPrice2())
-
 												.append(",\t r4u.getBackAmount2()")
 												.append(r4u.getBackAmount2())
 												.toString());
@@ -674,18 +672,16 @@ public class SheduleRequestMessageListener implements MessageListener {
 									r4u.setBackAmount3(_priceSize.getSize());
 									r4u.setBackPrice3(_priceSize.getPrice());
 
-										log.fine(new StringBuilder(100)
-
+									printLog(new StringBuilder(100)
 												.append("r4u.getBackPrice3()=")
 												.append(r4u.getBackPrice3())
-
 												.append(",\t r4u.getBackAmount3()")
 												.append(r4u.getBackAmount3())
 												.toString());
 									break;
 
 								default:
-									log.log(Level.WARNING, "enter to case: 'Back' default ");
+									logWarn("enter to case: 'Back' default ");
 								}
 							}
 //						}
@@ -695,8 +691,7 @@ public class SheduleRequestMessageListener implements MessageListener {
 					r4u.setLastPriceMatched(0.0); // .getLastPriceMatched()
 
 				} else {
-
-						log.fine(new StringBuilder(100)
+					printLog(new StringBuilder(100)
 								.append("!!! !!! !!! MarketRunner with selectionId=")
 								.append(_key)
 								.append(" not found in 'inflatedRunners' map!")
@@ -708,24 +703,24 @@ public class SheduleRequestMessageListener implements MessageListener {
 				// @@@@
 				Double _ak = r4u.getPercWinSglajivWithNR();
 
-					log.fine(new StringBuilder(100).append("_ak[")
+				printLog(new StringBuilder(100).append("_ak[")
 							.append(runner.getSelectionId()).append("]=")
 							.append(_ak).toString());
+
 				Double oddsPrecosmeticVal = r4u.getLinkedRunner().getMarket()
 						.getUserData4Market().get(currentUser.getId())
 						.getPreCosmeticValue();
 				Double _oddsPrecosmetic = (_ak > 0) ? oddsPrecosmeticVal / _ak
 						: 1.01;
 
-					log.fine(new StringBuilder(100)
+				printLog(new StringBuilder(100)
 							.append("** raw  oddsPrecosmetic =")
 							.append(_oddsPrecosmetic).toString());
 
-				Double _precosmOdds = baseService
-						.getNearestOdds(_oddsPrecosmetic);
+				Double _precosmOdds = baseService.getNearestOdds(_oddsPrecosmetic);
 
-					log.fine(new StringBuilder(100).append("_precosmOdds: ")
-							.append(_precosmOdds).toString());
+				printLog(new StringBuilder(100).append("_precosmOdds: ").append(_precosmOdds).toString());
+
 				r4u.setOddsPrecosmetic(_precosmOdds);
 
 				Double blueOdds1 = r4u.getLayPrice1();
@@ -744,7 +739,7 @@ public class SheduleRequestMessageListener implements MessageListener {
 
 				if (_cosmeticOdds == null) {
 					_cosmeticOdds = BaseServiceBean.FAKE_ODDS;
-					log.log(Level.WARNING, new StringBuilder(100)
+					logWarn(new StringBuilder(100)
 							.append("!!!calculate  _cosmeticOdds is null, set to:  ")
 							.append(_cosmeticOdds).toString());
 				}
@@ -781,12 +776,12 @@ public class SheduleRequestMessageListener implements MessageListener {
 
 				r4u = marketService.merge(r4u);
 
-					log.fine(new StringBuilder(100).append("** runner=")
+					printLog(new StringBuilder(100).append("** runner=")
 							.append(r4u.getLinkedRunner().getName())
 							.append(" result profitLoss=")
 							.append(r4u.getProfitLoss()).toString());
 
-					log.fine(new StringBuilder(100)
+				printLog(new StringBuilder(100)
 							.append("r4u.getOddsPrecosmetic()=")
 							.append(r4u.getOddsPrecosmetic())
 							.append(",\t r4u.getOddsCosmetic()=")
@@ -796,7 +791,7 @@ public class SheduleRequestMessageListener implements MessageListener {
 							.append(",\t _selectionAmount=")
 							.append(_selectionAmount).toString());
 
-				// log.fine(r4u);
+				printLog(""+ r4u);
 			}
 
 			getFeedData(market4User);
@@ -817,7 +812,7 @@ public class SheduleRequestMessageListener implements MessageListener {
 		// ###
 		int foundCount = 0;
 
-			log.fine("== market is already Exists: " + mktAlreadyExists);
+		printLog("== market is already Exists: " + mktAlreadyExists);
 			
 		if (mktAlreadyExists) {
 			Feed4Market4User feed4Market4User = null;
@@ -825,10 +820,11 @@ public class SheduleRequestMessageListener implements MessageListener {
 				feed4Market4User = dataFeedService.getFeed4Market4User(
 						"UNITAB%", market.getId(), user.getId());
 			} catch (Throwable t) {
-				log.severe("error call getFeed4Market4User: " + t);
+				logError("error call getFeed4Market4User: ", t);
 			}
+
 			if (feed4Market4User == null) {
-				log.log(Level.WARNING, "feed4Market4User is null, return");
+				logWarn("feed4Market4User is null, return");
 				return;
 			}
 
@@ -855,9 +851,7 @@ public class SheduleRequestMessageListener implements MessageListener {
 						feed4Runner4User = dataFeedService.getFeed4Runner4User(
 								"UNITAB%", runner.getId(), user.getId());
 					} catch (Throwable t) {
-						log.severe(new StringBuilder(100)
-								.append("error call getFeed4Runner4User: ")
-								.append(t).toString());
+						logError("error call getFeed4Runner4User: ", t);
 					}
 				else {
 					feed4Runner4User = new Feed4Runner4User(user, runner,
@@ -902,18 +896,18 @@ public class SheduleRequestMessageListener implements MessageListener {
 			if (dataFeedEvent != null) {
 				Race race = dataFeedService.getFreshedUnitabRace(dataFeedEvent);
 				if (race == null) {
-					log.log(Level.WARNING, "freshed race: " + race);
+					logWarn("freshed race: " + race);
 					return;
 				}
-	
-				
-					log.fine("freshed race: " + race);
-					log.fine("freshed race: getRunnerList().size(): "
+
+
+				printLog("freshed race: " + race);
+				printLog("freshed race: getRunnerList().size(): "
 							+ race.getRunnerList().size());
 				
 
-				Map<String, com.unitab.race.Runner> feedRunners = new HashMap<String, com.unitab.race.Runner>(
-						10);
+				Map<String, com.unitab.race.Runner> feedRunners = new HashMap<String, com.unitab.race.Runner>(10);
+
 				for (com.unitab.race.Runner runner : race.getRunnerList()) {
 					feedRunners.put(runner.getRunnerName().toUpperCase(),
 							runner);
@@ -952,15 +946,15 @@ public class SheduleRequestMessageListener implements MessageListener {
 		}
 
 		if (foundCount > 0)
-			log.info("getUnitabFeedData: found fixed odds:" + foundCount
+			printLog("getUnitabFeedData: found fixed odds:" + foundCount
 					+ " for " + market.getRunners().size() + " runners");
 
 	}
 
 	public boolean isEqual(Double arg1, Double arg2) {
 		boolean result = baseService.isEqual(arg1, arg2);
-		
-			log.fine("isEqual(): arg1=" + arg1 + ", arg2=" + arg2
+
+		printLog("isEqual(): arg1=" + arg1 + ", arg2=" + arg2
 					+ ", result=" + result);
 		return result;
 	}
@@ -970,14 +964,14 @@ public class SheduleRequestMessageListener implements MessageListener {
 			List<PlaceInstruction> cInserts, List<CancelInstruction> cDeletes) {
 
 			for (PlaceInstruction nb : newBets) {
-		
-				log.fine(new StringBuilder(100)
+
+				printLog(new StringBuilder(100)
 						.append(",  nb.getSelectionId()=").append(nb.getSelectionId())
 						.toString());
 
 			for (CurrentOrderSummary cb : curBets) {
-		
-					log.info(new StringBuilder(100)
+
+				printLog(new StringBuilder(100)
 							.append(",  cb.getSelectionId()=")
 							.append(cb.getSelectionId())
 							.append(", cb.getPrice()=").append(cb.getPriceSize().getPrice())
@@ -985,8 +979,8 @@ public class SheduleRequestMessageListener implements MessageListener {
 							.toString());
 
 				if (cb.getSelectionId() == nb.getSelectionId()) {
-		
-						log.fine(new StringBuilder(100)
+
+					printLog(new StringBuilder(100)
 								.append("process bet with cb.getSelectionId()=")
 								.append(cb.getSelectionId())
 								.append(", cb.getAsianLineId()=")
@@ -1020,7 +1014,7 @@ public class SheduleRequestMessageListener implements MessageListener {
 						ub.setNewPrice(nb.getLimitOrder().getPrice());
 						//ub.setNewSize(nb.getSize());
 						cUpdates.add(ub);
-						log.info(new StringBuilder(100)
+						printLog(new StringBuilder(100)
 								.append("add bet to update: ub.getNewPrice()=")
 								.append(ub.getNewPrice())
 								.toString());
@@ -1039,7 +1033,7 @@ public class SheduleRequestMessageListener implements MessageListener {
 						ci.setBetId(cb.getBetId());
 						cDeletes.add(ci);
 
-						log.info(new StringBuilder(100)
+						printLog(Level.INFO, new StringBuilder(100)
 								.append("add bet to delete: cb.getBetId()=")
 								.append(cb.getBetId()).toString());
 					}
@@ -1052,7 +1046,7 @@ public class SheduleRequestMessageListener implements MessageListener {
 							&& (!(isEqual(cb.getPriceSize().getPrice(), nb.getLimitOrder().getPrice())) || !(isEqual(
 							cb.getPriceSize().getSize(), nb.getLimitOrder().getSize())))) {
 						cInserts.add(nb);
-						log.info(new StringBuilder(100)
+						logInfo(new StringBuilder(100)
 								.append("add bet to insert: nb.getPrice()=")
 								.append(nb.getLimitOrder().getPrice())
 								.append(", nb.getSize()=").append(nb.getLimitOrder().getSize())
@@ -1063,7 +1057,7 @@ public class SheduleRequestMessageListener implements MessageListener {
 			}
 		}
 		
-			log.fine(new StringBuilder(100).append("cUpdates.size()=")
+			logInfo(new StringBuilder(100).append("cUpdates.size()=")
 					.append(cUpdates.size()).append(", cDeletes.size()=")
 					.append(cDeletes.size()).append(", cInserts.size()=")
 					.append(cInserts.size()).toString());
@@ -1095,7 +1089,7 @@ public class SheduleRequestMessageListener implements MessageListener {
 		Calendar now = Calendar.getInstance();
 		Date marketStartTime = currentMarket.getMarketTime();
 		
-			log.fine("###@@@ MarketDisplayTime = " + marketStartTime);
+			printLog("###@@@ MarketDisplayTime = " + marketStartTime);
 
 		Calendar turnOffTime = Calendar.getInstance();
 		turnOffTime.setTime(marketStartTime);
@@ -1108,7 +1102,7 @@ public class SheduleRequestMessageListener implements MessageListener {
 		turnOffTime.add(Calendar.HOUR, turnOffTimeOffsetHours);
 		turnOffTime.add(Calendar.MINUTE, turnOffTimeOffsetMinutes);
 		
-			log.fine("* DO TURN OFF: Market Id: "
+			printLog("* DO TURN OFF: Market Id: "
 					+ currentMarket.getMarketId() + ", Market Name: "
 					+ currentMarket.getMenuPath() + BS
 					+ currentMarket.getName() + ", turnOffTime="
@@ -1116,20 +1110,20 @@ public class SheduleRequestMessageListener implements MessageListener {
 
 		if (now.after(turnOffTime)) {
 			boolean isOnAir = market4User.isOnAir();
-		
-				log.fine("** DO TURN OFF: Market '" + currentMarket
-						+ "' isOnAir=" + isOnAir);
+
+			printLog("** DO TURN OFF: Market '" + currentMarket
+					+ "' isOnAir=" + isOnAir);
 			if (isOnAir) {
 				market4User.setOnAir(false);
 				market4User = marketService.merge(market4User);
-				log.log(Level.WARNING, "*** DO TURN OFF: Market " + currentMarket
+				logWarn("*** DO TURN OFF: Market " + currentMarket
 						+ " is set 'OnAir' OFF!!");
 			}
 		}
 
 		boolean isOnAir = market4User.isOnAir();
 
-			log.fine("*** for market " + currentMarket + " onAir is " + isOnAir);
+			printLog("*** for market " + currentMarket + " onAir is " + isOnAir);
 
 // 		Exchange selected_exchange = currentMarket.getExchange() == 1 ? Exchange.UK : Exchange.AUS;
 
@@ -1139,8 +1133,7 @@ public class SheduleRequestMessageListener implements MessageListener {
 
 		if (!isOnAir) {
 			if (curBets != null && !curBets.isEmpty()) {
-				log.info("*** On Air is OFF for market " + currentMarket
-						+ ",\n CANCEL ALL BETS!!");
+				logInfo("*** On Air is OFF for market " + currentMarket + ",\n CANCEL ALL BETS!!");
 
 				for (CurrentOrderSummary cb : curBets) {
 					//CancelBets cab = new CancelBets();
@@ -1163,16 +1156,16 @@ public class SheduleRequestMessageListener implements MessageListener {
 */
 
 					} catch (Exception e) {
-						log.severe(new StringBuilder(100)
+						logError(new StringBuilder(100)
 								.append("GlobalAPI.cancelOrders error: ")
 								.append(e.getMessage()).append(", market: ")
-								.append(currentMarket.getMarketId()).toString());
+								.append(currentMarket.getMarketId()).toString(), e);
 					}
 				}
 				if (cancelExecutionReport != null) {
 					for (CancelInstructionReport cir : cancelExecutionReport.getInstructionReports()) {
 
-						log.info(new StringBuilder(100).append("bet ")
+						logInfo(new StringBuilder(100).append("bet ")
 								.append(cir.getInstruction()).append(" canceled ")
 								.append(cir.getSizeCancelled()).append(", ")
 								.append(cir.getErrorCode())
@@ -1181,13 +1174,13 @@ public class SheduleRequestMessageListener implements MessageListener {
 								.append(currentMarket.getName()).toString());
 					}
 				}
-				log.info(curBets.size() + " bets canceled.");
+
+				logInfo(curBets.size() + " bets canceled.");
 			}
 			return;
 		}
 
-			log.fine("*** On Air is ON for market " + currentMarket
-					+ ",\n DOING BETS!!");
+			logInfo("*** On Air is ON for market " + currentMarket + ",\n DOING BETS!!");
 
 	//	List<UpdateBets> cUpdates = new ArrayList<UpdateBets>();
 
@@ -1202,6 +1195,7 @@ public class SheduleRequestMessageListener implements MessageListener {
 		for (MarketRunner runner : currentMarket.getRunners()) {
 
 			Runner4User r4u = runner.getUserData4Runner().get(currentUser.getId());
+
 			if (r4u == null) continue;
 
 			if (r4u.getSelectionPrice() > BaseServiceBean.MIN_ODDS
@@ -1242,8 +1236,7 @@ public class SheduleRequestMessageListener implements MessageListener {
                 instructions.add(instruction);
 
  */
-			log.info("newBets.size()=" + newBets.size() + ", curBets.size()="
-					+ curBets.size());
+			logInfo("newBets.size()=" + newBets.size() + ", curBets.size()=" + curBets.size());
 
 		makeUpdateList(curBets, newBets, cUpdates, cInserts, cDeletes);
 
@@ -1251,7 +1244,7 @@ public class SheduleRequestMessageListener implements MessageListener {
 
 		if (!cUpdates.isEmpty()) {
 			for (ReplaceInstruction ui : cUpdates) {
-				log.info(new StringBuilder(100).append("UpdateBets - BetId()=")
+				logInfo(new StringBuilder(100).append("UpdateBets - BetId()=")
 						.append(ui.getBetId()).append(", bet id = ")
 						.append(ui.getNewPrice()).append(", new price = ")
 						.toString());
@@ -1264,17 +1257,17 @@ public class SheduleRequestMessageListener implements MessageListener {
 				replaceExecutionReport =  GlobalAPI.replaceOrders(currentUser.getApiContext(), currentMarket.getMarketId(), cUpdates);
 
 			} catch (Exception e) {
-				log.severe(new StringBuilder(100)
+				logError(new StringBuilder(100)
 						.append("ExchangeAPI.updateBets error: ")
 						.append(e.getMessage()).append(", market: ")
 						.append(currentMarket.getMenuPath()).append(BS)
-						.append(currentMarket.getName()).toString());
+						.append(currentMarket.getName()).toString(), e);
 			}
 		}
 
 		if (replaceExecutionReport != null) {
 			for (ReplaceInstructionReport rir : replaceExecutionReport.getInstructionReports()) {
-				log.info(new StringBuilder(100).append("orders cancelled: ")
+				logInfo(new StringBuilder(100).append("orders cancelled: ")
 						.append(rir.getCancelInstructionReport())
 						.append(",\n status ").append(rir.getStatus())
 						.append(",\n orders placed: ")
@@ -1291,18 +1284,18 @@ public class SheduleRequestMessageListener implements MessageListener {
 				//cancelBetsResults = null; // ExchangeAPI.cancelBets(selected_exchange, currentUser.getApiContext(), cDeletes);
 				cancelExecutionReport = GlobalAPI.cancelOrders(currentUser.getApiContext(), currentMarket.getMarketId(), cDeletes);
 			} catch (Exception e) {
-				log.severe(new StringBuilder(100)
+				logError(new StringBuilder(100)
 						.append("ExchangeAPI.cancelBets error: ")
 						.append(e.getMessage()).append(", market: ")
 						.append(currentMarket.getMenuPath()).append(BS)
-						.append(currentMarket.getName()).toString());
+						.append(currentMarket.getName()).toString(), e);
 			}
 		}
 
 		if (cancelExecutionReport != null) {
 			for (CancelInstructionReport cir : cancelExecutionReport.getInstructionReports()) {
 
-				log.info(new StringBuilder(100).append("bet ")
+				logInfo(new StringBuilder(100).append("bet ")
 						.append(cir.getInstruction()).append(" canceled ")
 						.append(cir.getSizeCancelled()).append(", ")
 						.append(cir.getErrorCode())
@@ -1346,8 +1339,10 @@ public class SheduleRequestMessageListener implements MessageListener {
 			}
 
 			if (!oBets.isEmpty()) {
+/*
+
 				for (PlaceInstruction pbs : oBets) {
-					/*					
+
 					log.info(new StringBuilder(100)
 							.append("PlaceBets - AsianLineId=")
 							.append(pbs.getAsianLineId()).append(", marketId=")
@@ -1356,20 +1351,33 @@ public class SheduleRequestMessageListener implements MessageListener {
 							.append(pbs.getPrice()).append(", size=")
 							.append(pbs.getSize()).append(", betType=")
 							.append(pbs.getBetType()).toString());
+
+
 				}
 */
-				}
+
 				try {
 				//	placeBetsResults = null; // ExchangeAPI.placeBets(selected_exchange, currentUser.getApiContext(), oBets);
 
 					placeExecutionReport = GlobalAPI.placeOrders(currentUser.getApiContext(), currentMarket.getMarketId(), oBets);
 
+					for (PlaceInstructionReport pir : placeExecutionReport.getInstructionReports()) {
+						logInfo(new StringBuilder(100).append("bet ")
+								.append(pir.getBetId()).append(" placed, status: ")
+								.append(pir.getStatus()).append(", errorCode: ")
+								.append(pir.getErrorCode())
+								.append(", market: ")
+								.append(currentMarket.getMenuPath()).append(BS)
+								.append(currentMarket.getName()).toString());
+					}
+
+
 				} catch (Exception e) {
-					log.severe(new StringBuilder(100)
+					logError(new StringBuilder(100)
 							.append("ExchangeAPI.placeBets error: ")
 							.append(e.getMessage()).append(", market: ")
 							.append(currentMarket.getMenuPath()).append(BS)
-							.append(currentMarket.getName()).toString());
+							.append(currentMarket.getName()).toString(), e);
 				}
 			}
 
@@ -1377,21 +1385,6 @@ public class SheduleRequestMessageListener implements MessageListener {
 				bMore = (newBets.size() > _endRecord);
 
 		} while (bMore);
-
-	//	if (placeBetsResults != null) {
-			
-/*		
-			for (PlaceBetsResult pbr : placeBetsResults) {
-				log.info(new StringBuilder(100).append("bet ")
-						.append(pbr.getBetId()).append(" placed, status: ")
-						.append(pbr.getSuccess()).append(", message: ")
-						.append(pbr.getResultCode().getValue())
-						.append(", market: ")
-						.append(currentMarket.getMenuPath()).append(BS)
-						.append(currentMarket.getName()).toString());
-			}
-*/			
-		// }
 
 	}
 
@@ -1407,9 +1400,9 @@ public class SheduleRequestMessageListener implements MessageListener {
 
 	private void loadAllActiveMarkets() {
 	
-			log.fine("* Loading active markets..");
+			printLog("* Loading active markets..");
 		if (marketService == null) {
-			log.log(Level.WARNING, "marketService is null!");
+			logWarn("marketService is null!");
 			
 		} else {
 
@@ -1420,23 +1413,23 @@ public class SheduleRequestMessageListener implements MessageListener {
 
 					serviceBean.getActiveMarkets().put(market.getMarketId(),
 							market);
-					log.info(new StringBuilder(100).append("market added: ")
+					logInfo(new StringBuilder(100).append("market added: ")
 							.append(market.getMenuPath()).append('/')
 							.append(market.getName()).toString());
 					i++;
 				}
 			}
 			if (i > 0)
-				log.info(i + " active market(s) loaded.");
+				logInfo(i + " active market(s) loaded.");
 		}
 	}
 
 	private void loadActiveUsers() {
 
-			log.fine("* Loading active users..");
+			printLog("* Loading active users..");
 			
 		if (marketService == null) {
-			log.log(Level.WARNING, "marketService is null!");
+			logWarn("marketService is null!");
 
 		} else {
 			int i = 0;
@@ -1447,7 +1440,7 @@ public class SheduleRequestMessageListener implements MessageListener {
 					boolean result = serviceBean.add2ActiveUsers(uzer.getLogin(), uzer);
 
 					if (result) {
-						log.info(new StringBuilder(100)
+						logInfo(new StringBuilder(100)
 								.append("user added ok: ").append(uzer)
 								.toString());
 						i++;
@@ -1455,7 +1448,7 @@ public class SheduleRequestMessageListener implements MessageListener {
 				}
 			}
 			if (i > 0)
-				log.info(i + " active user(s) loaded.");
+				logInfo(i + " active user(s) loaded.");
 
 		}
 	}
@@ -1468,13 +1461,13 @@ public class SheduleRequestMessageListener implements MessageListener {
 		//Long marketId = market_id == null ? null : Long.valueOf(market_id);
 
 		if (act_name == null) {
-			log.severe("Unknown action!");
+			logWarn("Unknown action!");
 			return;
 		}
 
 		Action act = Action.valueOf(act_name);
 
-		log.fine("given message with action: " + act.toString());
+		printLog("given message with action: " + act.toString());
 
 		try {
 			switch (act) {
@@ -1509,11 +1502,11 @@ public class SheduleRequestMessageListener implements MessageListener {
 			}
 
 			default: {
-				log.log(Level.SEVERE, "Unknown action: " + act.name());
+				logWarn("Unknown action: " + act.name());
 			}
 			}
 		} catch (Throwable t) {
-			log.log(Level.SEVERE, "processActionRequest: ", t);
+			logError("processActionRequest: ", t);
 		}
 	}
 
