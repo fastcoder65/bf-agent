@@ -5,7 +5,7 @@
 	xmlns:a4j="http://richfaces.org/a4j"
 	xmlns:rich="http://richfaces.org/rich">
 
-	<rich:panel styleClass="marketPanelBody">
+	<rich:panel styleClass="runnerPanelBody">
 		<f:facet name="header">
 			<h:outputText value="Runners"/>
 		</f:facet>
@@ -63,7 +63,7 @@
 					</h:inputText>
 				</rich:column>
 
-				<ui:remove>
+
 					<rich:column width="45px" label="Return %" styleClass="numCol">
 						<f:facet name="header">
 							<h:outputFormat value="Return %(X),{0, number}">
@@ -77,14 +77,14 @@
 								value="#{rnr.userData4Runner[marketBean.currentUser.id].returnPercent}" />
 						</h:outputFormat>
 					</rich:column>
-				</ui:remove>
 
-				<ui:remove>
+
+
 					<rich:column label="%% win" styleClass="numCol">
 						<f:facet name="header">
 							<h:outputFormat value="%% win(Y),{0, number, percent}">
 								<f:param
-									value="#{marketBean.currentMarket.userData4Market[marketBean.currentUser.id].prcWin}" />
+									value="#{marketBean.currentMarket.userData4Market[marketBean.currentUser.id].sumPrcWin}" />
 							</h:outputFormat>
 						</f:facet>
 
@@ -93,7 +93,7 @@
 								value="#{rnr.userData4Runner[marketBean.currentUser.id].prcWin}" />
 						</h:outputFormat>
 					</rich:column>
-				</ui:remove>
+
 
 				<rich:column label="PriceBack3" styleClass="backCol">
 					<f:facet name="header">
@@ -233,7 +233,7 @@
 					</h:panelGrid>
 				</rich:column>
 
-				<ui:remove>
+
 					<rich:column label="Pseudo stavki" styleClass="oddsCol">
 						<f:facet name="header">
 							<h:outputText value="Pseudo stavki(AD)" />
@@ -351,8 +351,6 @@
 								value="#{rnr.userData4Runner[marketBean.currentUser.id].percWinSglajivWithNR}" />
 						</h:outputFormat>
 					</rich:column>
-
-				</ui:remove>
 
 				<rich:column label="M.Price&amp;Size" styleClass="oddsCol">
 					<f:facet name="header">

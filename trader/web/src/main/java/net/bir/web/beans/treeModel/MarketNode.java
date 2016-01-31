@@ -92,13 +92,12 @@ public class MarketNode extends Entry implements TreeNode {
 	private TreeNode parent;
 
 	@Override
-	public MarketNode getParent() {
-		return (MarketNode) parent;
+	public Entry getParent() {
+		return (Entry) parent;
 	}
 
-	public void setParent(TreeNode arg0) {
-		// TODO Auto-generated method stub
-
+	public void setParent(Entry node) {
+		this.parent = node;
 	}
 
 	public List<TreeNode> getChildren() {

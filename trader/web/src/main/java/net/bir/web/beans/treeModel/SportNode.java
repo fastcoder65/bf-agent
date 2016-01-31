@@ -9,7 +9,6 @@ import javax.swing.tree.TreeNode;
 
 import com.betfair.aping.entities.EventType;
 
-//import org.richfaces.model.TreeNode;
 
 public class SportNode extends Entry implements TreeNode {
 
@@ -28,6 +27,7 @@ public class SportNode extends Entry implements TreeNode {
 		//System.out.println("SportNode construct -eventType.getName() " + eventType.getName());
 		this.name = eventType.getName();
 		this.eventType = eventType;
+
 		type = "sport";
 	}
 
@@ -99,26 +99,29 @@ public class SportNode extends Entry implements TreeNode {
 	}
 
 	@Override
-	public SportNode getParent() {
-		return (SportNode) parent;
+	public Entry getParent() {
+		return (Entry) parent;
 	}
 
 	public boolean isLeaf() {
 		return events.isEmpty();
 	}
 
-	public void setParent(TreeNode node) {
+	public void setParent(Entry node) {
 		this.parent = node;
 	}
 
 	public void addEvent(EventNode eventNode) {
-		eventNode.setParent((TreeNode) this);
+	//	System.out.println("SportNode.addEvent - parent node is : " + ((Entry)this));
+		eventNode.setParent((Entry)this);
+	//	System.out.println("SportNode.addEvent: " + (Entry)eventNode.getParent());
 		events.add(eventNode);
 	}
 
 	public void addSport(SportNode sportNode) {
-	//	System.out.println("sport: " + sportNode);
-		sportNode.setParent((TreeNode) this);
+	//	System.out.println("SportNode.addSport - parent node is : " + ((Entry)this));
+		sportNode.setParent((Entry)this);
+	//	System.out.println("SportNode.addSport: " + (Entry)sportNode.getParent());
 		eventTypes.add(sportNode);
 	}
 

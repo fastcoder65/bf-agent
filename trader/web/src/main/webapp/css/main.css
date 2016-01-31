@@ -21,7 +21,14 @@ html, body {
 .marketPanelBody {
     margin: 1px;
     padding: 1px;
-    height: 300px;
+    height: 250px;
+    overflow: auto;
+}
+
+.runnerPanelBody {
+    margin: 1px;
+    padding: 1px;
+    height: 350px;
     overflow: auto;
 }
 

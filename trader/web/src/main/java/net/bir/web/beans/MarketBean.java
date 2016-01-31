@@ -1,14 +1,7 @@
 package net.bir.web.beans;
 
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -29,6 +22,7 @@ import javax.swing.tree.TreeNode;
 import com.betfair.aping.entities.*;
 import net.bir.ejb.session.settings.SettingsService;
 import net.bir.util.WebUtils;
+import net.bir.web.beans.treeModel.Entry;
 import net.bir.web.beans.treeModel.EventNode;
 import net.bir.web.beans.treeModel.MarketNode;
 import net.bir.web.beans.treeModel.SportNode;
@@ -60,6 +54,8 @@ public class MarketBean extends BaseBean implements Serializable {
     private APIContext apiContext = null;
 
     private TreeNode currentSelection = null;
+
+    private HashMap<String, Entry> cachedEntries = new HashMap<String, Entry>();
 
     public TreeNode getCurrentSelection() {
         return currentSelection;
@@ -266,6 +262,9 @@ public class MarketBean extends BaseBean implements Serializable {
 
                         sportNode.addEntry(_comp);
 
+                        if (!cachedEntries.containsKey(_comp.getId()))
+                        cachedEntries.put(_comp.getId(), _comp);
+
                     }
                 }
             }
@@ -285,6 +284,9 @@ public class MarketBean extends BaseBean implements Serializable {
 
                         sportNode.addEntry(_event);
 
+                        if (!cachedEntries.containsKey(_event.getId()))
+                        cachedEntries.put(_event.getId(), _event);
+
                     }
                 }
             }
@@ -297,14 +299,7 @@ public class MarketBean extends BaseBean implements Serializable {
             Set<String> eventTypeIds = new HashSet<String>();
             Set<String> eventIds = new HashSet<String>();
             Set<String> competitionIds = new HashSet<String>();
-/*
-            if ( curEventNode != null && "event".equals(curEventNode.getType())) {
 
-				getLog().info("added to eventIds: " + curEventNode.getId());
-				eventIds.add("" + curEventNode.getId() );
-
-			}
-*/
             if (curEventNode != null && "competition".equals(curEventNode.getType())) {
 
                 getLog().info(" added to competitionIds: " + curEventNode.getId());
@@ -339,7 +334,8 @@ public class MarketBean extends BaseBean implements Serializable {
                        // getLog().info(i + ") (parent is eventNode)" + "sport Event: " + _eventNode.getEvent());
 
                         curEventNode.addEntry(_eventNode);
-
+                        if (!cachedEntries.containsKey(_eventNode.getId()))
+                        cachedEntries.put(_eventNode.getId(), _eventNode);
                     }
                 }
             }
@@ -368,6 +364,8 @@ public class MarketBean extends BaseBean implements Serializable {
 
                         if (curEventNode != null) {
                             curEventNode.addEntry(aMarketNode);
+                            if (!cachedEntries.containsKey(aMarketNode.getId()))
+                            cachedEntries.put(aMarketNode.getId(), aMarketNode);
                           //  getLog().info(""+ aMarketNode);
                         }
                     }
@@ -402,6 +400,10 @@ public class MarketBean extends BaseBean implements Serializable {
                     i++;
                     SportNode sport = new SportNode(et.getEventType());
                     allSports.addEntry(sport);
+
+                    if (!cachedEntries.containsKey(sport.getId()))
+                    cachedEntries.put(sport.getId(), sport);
+
                     Set<String> eventTypeIds = new HashSet<String>();
                     eventTypeIds.add(String.valueOf(sport.getId()));
 
@@ -439,6 +441,7 @@ public class MarketBean extends BaseBean implements Serializable {
     }
 
     public Market getCurrentMarket() {
+     //   log.info("current market is: " + currentMarket);
         return currentMarket;
     }
 
@@ -479,12 +482,13 @@ public class MarketBean extends BaseBean implements Serializable {
                     setCurrentMarket(_market);
 
                     runners.clear();
-                    getLog().info("read runners for " + currentMarket.getId());
+
+                    getLog().fine("read runners for " + currentMarket.getId());
 
                     runners.addAll(getMarketService().listRunners(
                             currentMarket.getMarketId()));
                     Collections.sort(runners, new MarketRunner.RunnerComparator());
-                    getLog().info(
+                    getLog().fine(
                             "method getRunners() completed, " + runners.size()
                                     + " runners found.");
                     break;
@@ -629,6 +633,23 @@ public class MarketBean extends BaseBean implements Serializable {
         // }
     }
 */
+    private String getMenuPath(String marketId) {
+       List<String> results = new ArrayList<String>();
+       String currentId = marketId;
+        Entry foundEntry = null;
+       while  ((foundEntry = cachedEntries.get(currentId))!= null) {
+           log.fine("foundEntry: " + foundEntry);
+           currentId = foundEntry.getParent().getId();
+           results.add(foundEntry.getName());
+       }
+       String menuPath = "";
+       for (int i = results.size(); i > 1; i--) {
+           menuPath += ("/" + String.valueOf(results.get(i-1)));
+       }
+
+        log.fine("menuPath: " + menuPath);
+        return menuPath;
+    }
 
     public void add2ActiveMarkets() throws APINGException {
 
@@ -726,7 +747,8 @@ public class MarketBean extends BaseBean implements Serializable {
             market.setNoOfWinners(mb.getNumberOfWinners()); // selectedMarket.getNumberOfWinners());
             // market.setRunnersMayBeAdded(m
             // selectedMarket.getRunnersMayBeAdded());
-            // market.setMenuPath(//selectedMarket.getMenuPath());
+
+             market.setMenuPath(getMenuPath(market.getMarketId()));
             market.setMarketType(md.getMarketType());
             market.setTimeZone(mc.getEvent().getTimezone());// selectedMarket.getTimezone());
             market = merge(market);

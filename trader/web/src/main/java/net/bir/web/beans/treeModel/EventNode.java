@@ -68,7 +68,7 @@ public class EventNode extends Entry implements TreeNode {
 	public EventNode(Event event, TreeNode parent) {
 		this(event);
 		this.parent = parent;
-		System.out.println("EventNode() with parent: " + parent + ", " + this);
+	//	System.out.println("EventNode() with parent: " + parent + ", " + this);
 	}
 	
 	public static final DateFormat df = new SimpleDateFormat("HH:mm");
@@ -106,8 +106,12 @@ public class EventNode extends Entry implements TreeNode {
 	}
 
 	@Override
-	public EventNode getParent() {
-		return (EventNode) parent;
+	public Entry getParent() {
+		return (Entry) parent;
+	}
+
+	public void setParent(Entry node) {
+		this.parent = node;
 	}
 
 	public boolean isLeaf() {
@@ -121,12 +125,12 @@ public class EventNode extends Entry implements TreeNode {
 	public void setData(Object data) {
 	}
 
-	public void setParent(TreeNode node) {
-		this.parent = node;
-	}
+
 
 	public void addEvent(EventNode eventNode) {
-		eventNode.setParent((TreeNode) this);
+	//	System.out.println("EventNode.addEvent - parent node is : " + ((Entry)this));
+		eventNode.setParent((Entry)this);
+	//	System.out.println("EventNode.addEvent: " +  eventNode.getParent());
 		events.add(eventNode);
 	}
 
@@ -139,7 +143,9 @@ public class EventNode extends Entry implements TreeNode {
 	}
 
 	public void addMarket(MarketNode marketNode) {
-		marketNode.setParent((TreeNode) this);
+	//	System.out.println("EventNode.addMarket - parent node is : " + ((Entry)this));
+		marketNode.setParent((Entry) this);
+	//	System.out.println("EventNode.addMarket: " + marketNode.getParent());
 		markets.add(marketNode);
 	}
 

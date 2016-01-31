@@ -5,7 +5,7 @@ import java.io.Serializable;
 import java.util.List;
 import java.util.logging.Logger;
 
-public abstract class Entry implements Serializable {
+public abstract class Entry implements TreeNode {
 	
 	private static final long serialVersionUID = 1L;
 
