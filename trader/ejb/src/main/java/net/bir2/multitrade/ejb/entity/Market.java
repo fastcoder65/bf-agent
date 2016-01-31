@@ -28,10 +28,8 @@ import org.hibernate.Hibernate;
 
 public class Market implements java.io.Serializable {
 
-	// private static final Logger log = Logger.getLogger(Market.class);
 	@Transient
-	@Inject
-	private Logger log;
+	private static final Logger log = Logger.getLogger(Market.class.getName());
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
@@ -115,10 +113,8 @@ public class Market implements java.io.Serializable {
 			for (Market4User m4u : market4Users) {
 				userData4Market.put(m4u.getUserId(), m4u);
 			}
+		//	log.info("userData4Market.size()=" + userData4Market.size());
 		}
-
-		//log.info("userData4Market.size()=" + userData4Market !userData4Market.size());
-
 		return userData4Market;
 	}
 
