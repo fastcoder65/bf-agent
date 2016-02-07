@@ -5,6 +5,10 @@
 	xmlns:a4j="http://richfaces.org/a4j"
 	xmlns:rich="http://richfaces.org/rich">
 
+	<a4j:jsFunction name="setSelectionId">
+		<a4j:param  name="selectionId" assignTo="#{marketBean.selectionId}"></a4j:param>
+	</a4j:jsFunction>
+
 	<rich:panel styleClass="runnerPanelBody">
 		<f:facet name="header">
 			<h:outputText value="Runners"/>
@@ -50,19 +54,50 @@
 					<f:facet name="header">
 						<h:outputText value="Bukm.Odds" id="BukmOdds" />
 					</f:facet>
+
+					<a4j:ajax listener="#{marketBean.saveOdds}" event="change"
+							  data="#{rnr.selectionId}"
+							  render=":pollMarkets,:marketControls,:marketRegion,:runnerTable">
+
 					<h:inputText
 						disabled="#{rnr.userData4Runner[marketBean.currentUser.id].isNonRunner}"
-						style="width:100%" styleClass="oddsCol"
+						styleClass="oddsCol"
+						onchange="setSelectionId(#{rnr.selectionId})"
 						value="#{rnr.userData4Runner[marketBean.currentUser.id].odds}">
 
-						<a4j:ajax
-							data="#{rnr.selectionId}"
-							listener="#{marketBean.saveOdds}" event="keyup"
-							render="runnersMessages,pollMarkets,autoRefreshStatus" />
-							
 					</h:inputText>
+
+					</a4j:ajax>
+
 				</rich:column>
 
+				<ui:remove>
+	<h:inputText
+			disabled="#{rnr.userData4Runner[marketBean.currentUser.id].isNonRunner}"
+			styleClass="oddsCol"
+			value="#{rnr.userData4Runner[marketBean.currentUser.id].odds}"
+			valueChangeListener="#{marketBean.saveOdds}"
+			>
+
+		<a4j:param  name="selectionId" value="#{rnr.selectionId}" assignTo="#{marketBean.selectionId}"></a4j:param>
+
+		<a4j:ajax  event="keyup" action="#{marketBean.setOnAirOff}">
+			<a4j:param  name="selectionId" value="#{rnr.selectionId}" assignTo="#{marketBean.selectionId}"></a4j:param>
+		</a4j:ajax>
+
+	</h:inputText>
+
+	<a4j:ajax listener="#{marketBean.saveOdds}" event="keyup"
+			  data="#{rnr.selectionId}"
+			  render=":runnerTable,:pollMarkets,:marketControls"
+
+			>
+
+		<a4j:param  name="selectionId" assignTo="#{marketBean.selectionId}"></a4j:param>
+
+	</a4j:ajax>
+
+</ui:remove>
 
 					<rich:column width="45px" label="Return %" styleClass="numCol">
 						<f:facet name="header">

@@ -1,25 +1,9 @@
 package net.bir.web.beans;
 
-import java.io.Serializable;
-import java.util.*;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-
-import javax.annotation.PostConstruct;
-import javax.annotation.PreDestroy;
-import javax.ejb.EJB;
-import javax.faces.bean.ManagedBean;
-import javax.faces.bean.SessionScoped;
-import javax.faces.component.UIComponent;
-import javax.faces.component.html.HtmlInputText;
-import javax.faces.context.FacesContext;
-import javax.faces.event.AjaxBehaviorEvent;
-import javax.swing.tree.TreeNode;
-
 import com.betfair.aping.entities.*;
+import com.betfair.aping.enums.MatchProjection;
+import com.betfair.aping.enums.OrderProjection;
+import com.betfair.aping.exceptions.APINGException;
 import net.bir.ejb.session.settings.SettingsService;
 import net.bir.util.WebUtils;
 import net.bir.web.beans.treeModel.Entry;
@@ -30,18 +14,30 @@ import net.bir2.ejb.session.market.BaseServiceBean;
 import net.bir2.handler.GlobalAPI;
 import net.bir2.multitrade.ejb.entity.*;
 import net.bir2.multitrade.ejb.entity.Market;
-import net.bir2.multitrade.ejb.entity.MarketRunner;
 import net.bir2.multitrade.util.APIContext;
-
 import org.richfaces.component.AbstractExtendedDataTable;
 import org.richfaces.component.AbstractTree;
 import org.richfaces.component.UITree;
 import org.richfaces.event.TreeSelectionChangeEvent;
 import org.richfaces.event.TreeToggleEvent;
 
-import com.betfair.aping.enums.MatchProjection;
-import com.betfair.aping.enums.OrderProjection;
-import com.betfair.aping.exceptions.APINGException;
+import javax.annotation.PostConstruct;
+import javax.annotation.PreDestroy;
+import javax.ejb.EJB;
+import javax.faces.bean.ManagedBean;
+import javax.faces.bean.SessionScoped;
+import javax.faces.component.html.HtmlInputText;
+import javax.faces.context.FacesContext;
+import javax.faces.event.AjaxBehaviorEvent;
+import javax.faces.event.ValueChangeEvent;
+import javax.swing.tree.TreeNode;
+import java.io.Serializable;
+import java.util.*;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 @ManagedBean
 @SessionScoped
@@ -53,9 +49,11 @@ public class MarketBean extends BaseBean implements Serializable {
 
     private APIContext apiContext = null;
 
-    private TreeNode currentSelection = null;
 
     private HashMap<String, Entry> cachedEntries = new HashMap<String, Entry>();
+
+
+    private TreeNode currentSelection = null;
 
     public TreeNode getCurrentSelection() {
         return currentSelection;
@@ -64,6 +62,7 @@ public class MarketBean extends BaseBean implements Serializable {
     public void setCurrentSelection(TreeNode currentSelection) {
         this.currentSelection = currentSelection;
     }
+
 
     @EJB(name = "BIR/SettingsServiceBean/local")
     protected SettingsService settingsService;
@@ -240,7 +239,7 @@ public class MarketBean extends BaseBean implements Serializable {
                 listCompetitions = GlobalAPI.getCompetitions(apiContext, eventTypeIds, eventIds);
 
                 if (listCompetitions == null || listCompetitions.size() == 0)
-                listEvents = GlobalAPI.getEvents(apiContext, eventTypeIds, competitionIds, eventIds);
+                    listEvents = GlobalAPI.getEvents(apiContext, eventTypeIds, competitionIds, eventIds);
 
             } catch (APINGException e1) {
                 // TODO Auto-generated catch block
@@ -263,7 +262,7 @@ public class MarketBean extends BaseBean implements Serializable {
                         sportNode.addEntry(_comp);
 
                         if (!cachedEntries.containsKey(_comp.getId()))
-                        cachedEntries.put(_comp.getId(), _comp);
+                            cachedEntries.put(_comp.getId(), _comp);
 
                     }
                 }
@@ -285,7 +284,7 @@ public class MarketBean extends BaseBean implements Serializable {
                         sportNode.addEntry(_event);
 
                         if (!cachedEntries.containsKey(_event.getId()))
-                        cachedEntries.put(_event.getId(), _event);
+                            cachedEntries.put(_event.getId(), _event);
 
                     }
                 }
@@ -331,11 +330,11 @@ public class MarketBean extends BaseBean implements Serializable {
 
                         EventNode _eventNode = new EventNode(er.getEvent());
 
-                       // getLog().info(i + ") (parent is eventNode)" + "sport Event: " + _eventNode.getEvent());
+                        // getLog().info(i + ") (parent is eventNode)" + "sport Event: " + _eventNode.getEvent());
 
                         curEventNode.addEntry(_eventNode);
                         if (!cachedEntries.containsKey(_eventNode.getId()))
-                        cachedEntries.put(_eventNode.getId(), _eventNode);
+                            cachedEntries.put(_eventNode.getId(), _eventNode);
                     }
                 }
             }
@@ -359,14 +358,14 @@ public class MarketBean extends BaseBean implements Serializable {
 
                 if (listMarkets != null)
                     for (MarketCatalogue mc : listMarkets) {
-                       // getLog().info("\n market:" + mc.getMarketName());
+                        // getLog().info("\n market:" + mc.getMarketName());
                         MarketNode aMarketNode = new MarketNode(mc);
 
                         if (curEventNode != null) {
                             curEventNode.addEntry(aMarketNode);
                             if (!cachedEntries.containsKey(aMarketNode.getId()))
-                            cachedEntries.put(aMarketNode.getId(), aMarketNode);
-                          //  getLog().info(""+ aMarketNode);
+                                cachedEntries.put(aMarketNode.getId(), aMarketNode);
+                            //  getLog().info(""+ aMarketNode);
                         }
                     }
             }
@@ -402,7 +401,7 @@ public class MarketBean extends BaseBean implements Serializable {
                     allSports.addEntry(sport);
 
                     if (!cachedEntries.containsKey(sport.getId()))
-                    cachedEntries.put(sport.getId(), sport);
+                        cachedEntries.put(sport.getId(), sport);
 
                     Set<String> eventTypeIds = new HashSet<String>();
                     eventTypeIds.add(String.valueOf(sport.getId()));
@@ -418,7 +417,7 @@ public class MarketBean extends BaseBean implements Serializable {
         return allSports.getEventTypes();
     }
 
-    public  List<Market> getActiveMarkets() {
+    public List<Market> getActiveMarkets() {
 
         List<Market> result;
 
@@ -432,7 +431,7 @@ public class MarketBean extends BaseBean implements Serializable {
 
     public void setCurrentMarket(Market currentMarket) {
         this.currentMarket = currentMarket;
-        getLog().fine("this.currentMarket=" + this.currentMarket);
+        getLog().info("this.currentMarket=" + this.currentMarket);
         if (this.currentMarket != null) {
             Market4User m4u = this.currentMarket.getUserData4Market().get(
                     getCurrentUser().getId());
@@ -441,7 +440,7 @@ public class MarketBean extends BaseBean implements Serializable {
     }
 
     public Market getCurrentMarket() {
-     //   log.info("current market is: " + currentMarket);
+        //   log.info("current market is: " + currentMarket);
         return currentMarket;
     }
 
@@ -462,13 +461,34 @@ public class MarketBean extends BaseBean implements Serializable {
             getLog().info("load settings: " + settings);
         }
 
-    //    getLog().info("returned settings: " + settings);
+        //    getLog().info("returned settings: " + settings);
         return settings;
     }
 
     List<MarketRunner> runners = new ArrayList<MarketRunner>();
 
     public List<MarketRunner> getRunners() {
+
+        runners.clear();
+
+        if (currentMarket != null) {
+            long startTime = System.currentTimeMillis();
+            runners.addAll(getMarketService().listRunners(currentMarket.getMarketId()));
+            long endTime = System.currentTimeMillis();
+
+            log.info("runners with price data reloaded, time consumed: " + (endTime - startTime) / 1000.0);
+
+            Collections.sort(runners, new MarketRunner.RunnerComparator());
+        }
+/*
+        getLog().fine(
+                "method getRunners() completed, " + runners.size()
+                        + " runners found.");
+*/
+        return runners;
+    }
+
+    public List<MarketRunner> getRunnersOld() {
         Iterator<Object> iterator = masterSelectionItems.iterator();
         while (iterator.hasNext()) {
             Object data = iterator.next();
@@ -477,16 +497,16 @@ public class MarketBean extends BaseBean implements Serializable {
             if (data instanceof Market) {
                 Market _market = (Market) data;
                 if (getCurrentMarket() == null
-                        || getCurrentMarket().getMarketId() != _market
-                        .getMarketId()) {
+                        || !getCurrentMarket().getMarketId().equals(_market.getMarketId())) {
+
                     setCurrentMarket(_market);
 
                     runners.clear();
 
                     getLog().fine("read runners for " + currentMarket.getId());
 
-                    runners.addAll(getMarketService().listRunners(
-                            currentMarket.getMarketId()));
+                    runners.addAll(getMarketService().listRunners(currentMarket.getMarketId()));
+
                     Collections.sort(runners, new MarketRunner.RunnerComparator());
                     getLog().fine(
                             "method getRunners() completed, " + runners.size()
@@ -498,44 +518,119 @@ public class MarketBean extends BaseBean implements Serializable {
         return runners;
     }
 
-    public synchronized void saveOdds(AjaxBehaviorEvent event) {
-        getLog().info(
-                "*** saveOdds fired, event: " + event.toString() + ", source:"
-                        + event.getSource().toString());
+    private Long selectionId;
 
-        UIComponent component = event.getComponent();
-        UIComponent parentComponent = component.getParent();
+    public Long getSelectionId() {
+        return selectionId;
+    }
 
-        getLog().info("component: " + component);
-        getLog().info("parentComponent: " + parentComponent);
+    public void setSelectionId(Long selectionId) {
+        this.selectionId = selectionId;
+        log.info("************************  new selection is: " + this.selectionId);
+    }
 
-        // HtmlAjaxSupport has = (HtmlAjaxSupport) component;
-        HtmlInputText inputText = (HtmlInputText) parentComponent;
-        // getLog().fine("Processing inputText with id: " + has.getData());
-		/*
-		 * if (has.getData() != null) { Long _id = (Long) has.getData();
-		 */
-        Long _id = null;
+    // AjaxBehaviorEvent event
+    public void saveOdds(AjaxBehaviorEvent event) {
+
+        this.setPollEnabled(false);
+
+        log.info("*** saveOdds fired, event: " + event);
+
+        HtmlInputText inputText = (HtmlInputText)event.getSource();
+        Long _selectionId = getSelectionId();
+
+        if (_selectionId == null ) {
+            log.info("*** _selectionId is null, odds not saved, exit. ");
+            return;
+        }
+
+        MarketRunner runner = currentMarket.getRunnersMap().get(_selectionId);
+        log.info("runner is : " + runner);
+
+        if (runner != null)
         try {
-            for (MarketRunner runner : runners) {
-                if (runner.getSelectionId().equals(_id)
-                        && inputText.getValue() != null) {
 
-                    Double _odds = (Double) inputText.getValue();
+                    Double _odds = Double.valueOf(inputText.getValue().toString());
+
+                    log.info("_odds : " + _odds);
 
                     _odds = (_odds == null || _odds == 0.0) ? BaseServiceBean.FAKE_ODDS
                             : _odds;
 
                     Runner4User r4u = runner.getUserData4Runner().get(
                             currentUser.getId());
-					/*
+                    /*
 					 * Market4User m4u = r4u.getLinkedRunner().getMarket()
 					 * .getUserData4Market().get(currentUser.getId());
 					 */
                     Market4User m4u = getCurrentMarket().getUserData4Market()
                             .get(currentUser.getId());
-                    getLog().fine(m4u.toString());
-                    this.setPollEnabled(false);
+                    getLog().info(m4u.toString());
+
+                    //this.setPollEnabled(false);
+
+                    m4u.setOnAir(false);
+                    r4u.setOdds(_odds);
+
+                    getLog().info(
+                            "** user odds " + _odds + " for runner "
+                                    + runner.getSelectionId() + " saved.");
+                    getMarketService().merge(m4u);
+                    getMarketService().merge(r4u);
+
+        } catch (Exception e) {
+            getLog().severe(
+                    "Error saving user odds, message: " + e.getMessage());
+        }
+
+    }
+
+    public void saveOdds_ve(ValueChangeEvent event) {
+
+        System.out.println("*** saveOdds fired!");
+
+        this.setPollEnabled(false);
+
+//        UIComponent component = event.getComponent();
+//        UIComponent parentComponent = component.getParent();
+
+//        getLog().info("component: " + component);
+//        getLog().info("parentComponent: " + parentComponent);
+
+        // HtmlAjaxSupport has = (HtmlAjaxSupport) component;
+
+//        HtmlInputText inputText = (HtmlInputText)component;
+
+        // getLog().fine("ProcessiutText with id: " + has.getData());
+        /*
+         * if (has.getData() != null) { Long _id = (Long) has.getData();
+		 */
+        //  Long _id = null;
+
+        try {
+            for (MarketRunner runner : runners) {
+                if (getSelectionId() != null && getSelectionId().equals(runner.getSelectionId())
+                        && runner.getUserData4Runner().get(currentUser.getId()).getOdds() != null) {
+
+                    Double _odds = Double.valueOf(event.getNewValue().toString());
+
+//runner.getUserData4Runner().get(currentUser.getId()).getOdds().doubleValue();
+
+                    log.info("_odds : " + _odds);
+
+                    _odds = (_odds == null || _odds == 0.0) ? BaseServiceBean.FAKE_ODDS
+                            : _odds;
+
+                    Runner4User r4u = runner.getUserData4Runner().get(
+                            currentUser.getId());
+                    /*
+					 * Market4User m4u = r4u.getLinkedRunner().getMarket()
+					 * .getUserData4Market().get(currentUser.getId());
+					 */
+                    Market4User m4u = getCurrentMarket().getUserData4Market()
+                            .get(currentUser.getId());
+                    getLog().info(m4u.toString());
+                    //this.setPollEnabled(false);
                     m4u.setOnAir(false);
                     r4u.setOdds(_odds);
 
@@ -634,18 +729,18 @@ public class MarketBean extends BaseBean implements Serializable {
     }
 */
     private String getMenuPath(String marketId) {
-       List<String> results = new ArrayList<String>();
-       String currentId = marketId;
-        Entry foundEntry = null;
-       while  ((foundEntry = cachedEntries.get(currentId))!= null) {
-           log.fine("foundEntry: " + foundEntry);
-           currentId = foundEntry.getParent().getId();
-           results.add(foundEntry.getName());
-       }
-       String menuPath = "";
-       for (int i = results.size(); i > 1; i--) {
-           menuPath += ("/" + String.valueOf(results.get(i-1)));
-       }
+        List<String> results = new ArrayList<String>();
+        String currentId = marketId;
+        Entry foundEntry;
+        while ((foundEntry = cachedEntries.get(currentId)) != null) {
+            log.fine("foundEntry: " + foundEntry);
+            currentId = foundEntry.getParent().getId();
+            results.add(foundEntry.getName());
+        }
+        String menuPath = "";
+        for (int i = results.size(); i > 1; i--) {
+            menuPath += ("/" + String.valueOf(results.get(i - 1)));
+        }
 
         log.fine("menuPath: " + menuPath);
         return menuPath;
@@ -663,13 +758,13 @@ public class MarketBean extends BaseBean implements Serializable {
 //        MarketCatalogue _mc = (MarketCatalogue) selectedMarketNode.getMarket();
 
         Set<String> marketIds = new HashSet<String>();
-        marketIds.add( selectedMarketId );
+        marketIds.add(selectedMarketId);
 
         List<MarketCatalogue> _listMarkets = GlobalAPI.getMarkets(apiContext,
                 null, marketIds);
         Iterator<MarketCatalogue> mi = _listMarkets.iterator();
 
-        MarketCatalogue mc = (mi.hasNext() ?  mi.next() : null);
+        MarketCatalogue mc = (mi.hasNext() ? mi.next() : null);
         getLog().info(" MarketCatalogue: " + mc.getMarketId());
 
         MarketDescription md = mc.getDescription();
@@ -732,7 +827,7 @@ public class MarketBean extends BaseBean implements Serializable {
             market.setName(mc.getMarketName());
             market.setCountry(mc.getEvent().getCountryCode());
 
-           // market.setCountry("country is: "+ mc.getEvent());
+            // market.setCountry("country is: "+ mc.getEvent());
 
             market.setMarketStatus(mb.getStatus());
             // getLog().info(selectedMarket.getMarketDisplayTime().getTime());
@@ -748,7 +843,7 @@ public class MarketBean extends BaseBean implements Serializable {
             // market.setRunnersMayBeAdded(m
             // selectedMarket.getRunnersMayBeAdded());
 
-             market.setMenuPath(getMenuPath(market.getMarketId()));
+            market.setMenuPath(getMenuPath(market.getMarketId()));
             market.setMarketType(md.getMarketType());
             market.setTimeZone(mc.getEvent().getTimezone());// selectedMarket.getTimezone());
             market = merge(market);
@@ -812,7 +907,7 @@ public class MarketBean extends BaseBean implements Serializable {
                         mc.getMarketName() + ": no runners found!");
             }
         }
-        setPollEnabled(true);
+        //   setPollEnabled(true);
     }
 
     public void changeSelection() {
@@ -830,7 +925,7 @@ public class MarketBean extends BaseBean implements Serializable {
         this.masterTableSelection = masterTableSelection;
         getLog().info(
                 "this.masterTableSelection = " + this.masterTableSelection);
-        setPollEnabled(true);
+        //  setPollEnabled(true);
     }
 
     private boolean pollEnabled = true;
@@ -842,7 +937,7 @@ public class MarketBean extends BaseBean implements Serializable {
     public void setPollEnabled(boolean pollEnabled) {
 
         this.pollEnabled = pollEnabled;
-        getLog().fine("pollEnabled =" + pollEnabled);
+        getLog().info("pollEnabled =" + pollEnabled);
     }
 
     private List<Object> masterSelectionItems = new ArrayList<Object>();
@@ -860,6 +955,34 @@ public class MarketBean extends BaseBean implements Serializable {
             }
         }
         dataTable.setRowKey(originalKey);
+        //@@@
+        Iterator<Object> iterator = masterSelectionItems.iterator();
+        while (iterator.hasNext()) {
+            Object data = iterator.next();
+            log.fine("master data:" + data);
+
+            if (data instanceof Market) {
+                Market _market = (Market) data;
+                if (getCurrentMarket() == null
+                        || !getCurrentMarket().getMarketId().equals(_market.getMarketId())) {
+
+                    setCurrentMarket(_market);
+
+                    runners.clear();
+
+                    getLog().fine("read runners for " + currentMarket.getId());
+
+                    runners.addAll(getMarketService().listRunners(currentMarket.getMarketId()));
+
+                    Collections.sort(runners, new MarketRunner.RunnerComparator());
+                    getLog().fine(
+                            "method getRunners() completed, " + runners.size()
+                                    + " runners found.");
+                    break;
+                }
+            }
+        }
+
     }
 
     public String getSelectedMarketId() {
@@ -995,7 +1118,7 @@ public class MarketBean extends BaseBean implements Serializable {
         m4u = getMarketService().merge(m4u);
         setCurrentMarket4User(m4u);
         getLog().info(m4u.toString());
-        setPollEnabled(true);
+        //   setPollEnabled(true);
         getLog().info("*** my market properties saved.");
         return null;
     }

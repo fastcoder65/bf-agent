@@ -43,7 +43,7 @@
 
 				<h:outputText value="#{labels['profile.betfairLogin']}"
 					styleClass="editlabel" />
-				<h:inputText value="#{profileBean.profileUser.exLoginDec}"
+				<h:inputText value="#{profileBean.profileUser.exLogin}"
 					styleClass="searchedit" />
 
 				<h:outputText value="#{labels['profile.maxLossPerSelection']}"
@@ -69,11 +69,13 @@
 
 				<h:outputText value="#{labels['profile.pseudoPinkStakeVolume']}"
 					styleClass="editlabel" />
+
 				<h:inputText value="#{profileBean.profileUser.pseudoPinkStakeVolume}"
 					styleClass="searchedit" />
 				
-				<a4j:commandButton reRender="messagesPanel" action="#{profileBean.saveProfileUser}"
-					value="#{labels['profile.saveButton']}" />
+				<a4j:commandButton render="messagesPanel"
+								   action="#{profileBean.saveProfileUser}"
+								   value="#{labels['profile.saveButton']}" />
 
 			</h:panelGrid>
 		</h:form>
@@ -101,7 +103,7 @@
 				<h:inputSecret value="#{profileBean.repeatNewPassword}"
 					styleClass="searchedit" />
 
-				<a4j:commandButton reRender="messagesPanel" action="#{profileBean.changeUserPassword}"
+				<a4j:commandButton render="messagesPanel" action="#{profileBean.changeUserPassword}"
 					value="#{labels['profile.changePassword']}" />
 	
 			</h:panelGrid>
@@ -127,7 +129,7 @@
 				<h:inputSecret value="#{profileBean.repeatNewPassword}"
 					styleClass="searchedit" />
 
-				<a4j:commandButton reRender="messagesPanel" action="#{profileBean.changeExternalPassword}"
+				<a4j:commandButton render="messagesPanel" action="#{profileBean.changeExternalPassword}"
 					value="#{labels['profile.changePassword']}" />
 
 			</h:panelGrid>
@@ -157,9 +159,6 @@
 				<h:inputText value="#{profileBean.settings.systemSettings.turnOnTimeOffsetMinutes}"
 					styleClass="searchedit" />
 
-
-
-
 				<h:outputText value="#{labels['profile.turnOffTimeOffsetHours']}" styleClass="editlabel" />
 				<h:inputText value="#{profileBean.settings.systemSettings.turnOffTimeOffsetHours}"
 					styleClass="searchedit" />
@@ -169,7 +168,7 @@
 					styleClass="searchedit" />
 
 
-				<a4j:commandButton reRender="messagesPanel" action="#{profileBean.saveSettings}"
+				<a4j:commandButton render="messagesPanel" action="#{profileBean.saveSettings}"
 					value="#{labels['profile.saveButton']}" />
 
 			</h:panelGrid>

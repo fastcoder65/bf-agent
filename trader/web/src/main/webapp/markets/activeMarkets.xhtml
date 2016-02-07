@@ -31,8 +31,9 @@
                                    showDetail="true"/>
                 </a4j:outputPanel>
 
+                <a4j:outputPanel id="marketControls">
 
-                <h:panelGroup id="marketControls">
+                <h:panelGroup>
 
                     <a4j:queue requestDelay="100" ignoreDupResponce="true"/>
 
@@ -66,13 +67,14 @@
                         <h:graphicImage style="border-width:0" value="/images/eventer/dir-edit.gif" id="showlink"/>
                     </a4j:commandLink>
 
-                    <a4j:outputPanel id="autoRefreshStatus">
+                    <a4j:region id="autoRefreshStatus">
                         <h:outputText value="AutoRefresh On" rendered="#{marketBean.pollEnabled}"></h:outputText>
                         <h:outputText value="AutoRefresh Off" rendered="#{!marketBean.pollEnabled}"></h:outputText>
-
-                    </a4j:outputPanel>
+                    </a4j:region>
 
                 </h:panelGroup>
+
+            </a4j:outputPanel>
 
                 <a4j:outputPanel id="marketRegion">
 
