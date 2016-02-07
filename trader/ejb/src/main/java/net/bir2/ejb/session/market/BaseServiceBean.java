@@ -160,7 +160,7 @@ public class BaseServiceBean implements BaseService, TimedObject {
 		Double myOdds = (_myOdds == null? 0.0: _myOdds); 
 		Double myAmount = (_myAmount==null? 0.0: _myAmount);
 		
-	    log.fine("getCosmeticOdds( blueOdds1=" + blueOdds1 + ", blueAmount1=" + blueAmount1 + ", blueOdds2=" + blueOdds2 + ", pinkOdds="+pinkOdds+", precosmOdds=" + precosmOdds + ", myOdds=" + myOdds + ", myAmount=" + myAmount+')');
+	    log.info("getCosmeticOdds( blueOdds1=" + blueOdds1 + ", blueAmount1=" + blueAmount1 + ", blueOdds2=" + blueOdds2 + ", pinkOdds="+pinkOdds+", precosmOdds=" + precosmOdds + ", myOdds=" + myOdds + ", myAmount=" + myAmount+')');
 
 		Double cosmOdds1;
 		Double cosmOdds2;
