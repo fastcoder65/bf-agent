@@ -135,6 +135,8 @@ public class Market implements java.io.Serializable {
 				Long key = Long.valueOf(runner.getSelectionId());
 				runnersMap.put(key, runner);
 			}
+
+		 log.info("runnersMap.size(): "+ runnersMap.size());
 		}
 		return runnersMap;
 	}
