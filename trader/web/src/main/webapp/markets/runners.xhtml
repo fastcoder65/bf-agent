@@ -5,16 +5,17 @@
 	xmlns:a4j="http://richfaces.org/a4j"
 	xmlns:rich="http://richfaces.org/rich">
 
-	<a4j:jsFunction name="setSelectionId">
-		<a4j:param  name="selectionId" assignTo="#{marketBean.selectionId}"></a4j:param>
-	</a4j:jsFunction>
 
 	<rich:panel styleClass="runnerPanelBody">
 		<f:facet name="header">
 			<h:outputText value="Runners"/>
 		</f:facet>
 
-		<h:form id="runnerForm">
+		<h:form>
+
+			<a4j:jsFunction name="setSelectionId">
+				<a4j:param  name="selectionId" assignTo="#{marketBean.selectionId}"></a4j:param>
+			</a4j:jsFunction>
 
 		<h:panelGrid>
 
@@ -27,7 +28,6 @@
 				errorStyle="color:red" showSummary="true" showDetail="true" />
 
 		</h:panelGrid>
-
 
 			<rich:dataTable value="#{marketBean.runners}" var="rnr"
 				id="runnerTable" rowKeyVar="rkv" sortMode="single" >
@@ -71,33 +71,6 @@
 
 				</rich:column>
 
-				<ui:remove>
-	<h:inputText
-			disabled="#{rnr.userData4Runner[marketBean.currentUser.id].isNonRunner}"
-			styleClass="oddsCol"
-			value="#{rnr.userData4Runner[marketBean.currentUser.id].odds}"
-			valueChangeListener="#{marketBean.saveOdds}"
-			>
-
-		<a4j:param  name="selectionId" value="#{rnr.selectionId}" assignTo="#{marketBean.selectionId}"></a4j:param>
-
-		<a4j:ajax  event="keyup" action="#{marketBean.setOnAirOff}">
-			<a4j:param  name="selectionId" value="#{rnr.selectionId}" assignTo="#{marketBean.selectionId}"></a4j:param>
-		</a4j:ajax>
-
-	</h:inputText>
-
-	<a4j:ajax listener="#{marketBean.saveOdds}" event="keyup"
-			  data="#{rnr.selectionId}"
-			  render=":runnerTable,:pollMarkets,:marketControls"
-
-			>
-
-		<a4j:param  name="selectionId" assignTo="#{marketBean.selectionId}"></a4j:param>
-
-	</a4j:ajax>
-
-</ui:remove>
 
 					<rich:column width="45px" label="Return %" styleClass="numCol">
 						<f:facet name="header">
@@ -485,5 +458,7 @@
 			</rich:dataTable>
 
 		</h:form>
+
 	</rich:panel>
+
 </ui:composition>

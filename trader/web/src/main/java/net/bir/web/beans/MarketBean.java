@@ -26,6 +26,7 @@ import javax.annotation.PreDestroy;
 import javax.ejb.EJB;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.SessionScoped;
+import javax.faces.component.UIForm;
 import javax.faces.component.html.HtmlInputText;
 import javax.faces.context.FacesContext;
 import javax.faces.event.AjaxBehaviorEvent;
@@ -38,6 +39,8 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import org.richfaces.component.*;
+
 
 @ManagedBean
 @SessionScoped
@@ -49,6 +52,26 @@ public class MarketBean extends BaseBean implements Serializable {
 
     private APIContext apiContext = null;
 
+
+    private UIForm runnerForm;
+
+    private UIForm marketForm;
+
+    public UIForm getRunnerForm() {
+        return runnerForm;
+    }
+
+    public void setRunnerForm(UIForm runnerForm) {
+        this.runnerForm = runnerForm;
+    }
+
+    public UIForm getMarketForm() {
+        return marketForm;
+    }
+
+    public void setMarketForm(UIForm marketForm) {
+        this.marketForm = marketForm;
+    }
 
     private HashMap<String, Entry> cachedEntries = new HashMap<String, Entry>();
 

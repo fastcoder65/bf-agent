@@ -5,19 +5,19 @@
                 xmlns:a4j="http://richfaces.org/a4j"
                 xmlns:rich="http://richfaces.org/rich">
 
-    <rich:panel styleClass="marketPanelBody">
+        <rich:panel styleClass="marketPanelBody">
         <f:facet name="header">
             <h:outputText value="My markets"/>
         </f:facet>
 
-    <a4j:region id="pollRegion">
-        <h:form>
-            <a4j:poll id="pollMarkets" interval="10000" enabled="#{marketBean.pollEnabled}"
-                      render="pollMarkets,marketTable,marketServerTime,runnerTable,serverTime"/>
-        </h:form>
-    </a4j:region>
+            <h:form>
+                <a4j:region id="pollRegion">
 
-    <h:form id="activeMarketsForm">
+                        <a4j:poll id="pollMarkets" interval="10000" enabled="#{marketBean.pollEnabled}"
+                                  render="pollMarkets,marketTable,marketServerTime,runnerTable,serverTime"/>
+
+
+                </a4j:region>
 
             <h:panelGrid>
 
@@ -149,8 +149,8 @@
                 </a4j:outputPanel>
 
             </h:panelGrid>
+            </h:form>
 
-    </h:form>
     </rich:panel>
 
 </ui:composition>
