@@ -7,6 +7,8 @@ import javax.persistence.*;
 
 import java.util.logging.*;
 
+import net.bir2.ejb.session.market.BaseService;
+import net.bir2.ejb.session.market.BaseServiceBean;
 import org.hibernate.annotations.Formula;
 
 @Entity
@@ -61,7 +63,11 @@ public class Market4User implements java.io.Serializable {
 		this.linkedMarket = market;
 		
 		this.maxLossPerSelection = (uzer.getMaxLossPerSelection() != null ? uzer.getMaxLossPerSelection() : maxLossPerSelection );
-		this.volumeStake = uzer.getVolumeStake();
+
+		this.volumeStake =  uzer.getVolumeStake();
+
+		System.out.println("Market4User constructor - this.volumeStake = " + this.volumeStake);
+
 		this.preCosmeticValue =uzer.getPreCosmeticValue();
 		
 		this.pseudoStakeVolume =uzer.getPseudoStakeVolume();
@@ -91,12 +97,12 @@ public class Market4User implements java.io.Serializable {
 		this.onAir = onAir;
 	}
 
-	@Transient
+	//@Transient
 	private Double  volumeStake;
 	
 	public Double getVolumeStake() {
 		if (volumeStake == null) {
-			volumeStake = 1.0; //minVolumeStake;
+			volumeStake = BaseServiceBean.FAKE_STAKE; //minVolumeStake;
 		}
 		return volumeStake;
 	}

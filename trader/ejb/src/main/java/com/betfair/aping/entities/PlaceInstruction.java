@@ -69,4 +69,16 @@ public class PlaceInstruction {
 		this.marketOnCloseOrder = marketOnCloseOrder;
 	}
 
+	@Override
+	public String toString() {
+		return "PlaceInstruction{" +
+				"handicap=" + handicap +
+				", orderType=" + orderType +
+				", selectionId=" + selectionId +
+				", side=" + side +
+				", limitOrder=" + limitOrder +
+				", limitOnCloseOrder=" + limitOnCloseOrder +
+				", marketOnCloseOrder=" + marketOnCloseOrder +
+				'}';
+	}
 }

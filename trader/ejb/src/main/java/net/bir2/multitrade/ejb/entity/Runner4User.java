@@ -184,6 +184,13 @@ public class Runner4User implements java.io.Serializable {
 	}
 
 	@Transient
+	private static void printLog(Level level, String logMessage) {
+		if (log.isLoggable(level)) {
+			log.log (level, logMessage);
+		}
+	}
+
+	@Transient
 	public Double getSumPseudoRealPseudoPinkStakes() {
         return getPseudoStake() + getMatchedLayAmount()
                 + getPseudoPinkStake();
@@ -201,7 +208,7 @@ public class Runner4User implements java.io.Serializable {
 			if (this.linkedRunner != null) {
 				String _sName = (this.linkedRunner != null && this.linkedRunner.getName() != null ? this.linkedRunner.getName() : " null name!");
 				String s = new StringBuilder().append(" getIsNonRunner(): ").append(_sName).append(" is 'NonRunner' now!").toString();
-				printLog (s);
+				printLog ( Level.INFO, s);
 				//log.info(new StringBuilder().append(" getIsNonRunner(): ").append(_sName).append(" is 'NonRunner' now!").toString());
 
 			}

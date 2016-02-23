@@ -310,11 +310,11 @@ public class SheduleRequestMessageListener implements MessageListener {
 						+ currentMarket.getMarketId() + ", time consumed: "
 						+ ((endTime - startTime) / 1000.0) + " second(s)");
 
-			if (currentBets != null)
+			if (currentBets != null) {
+
 				for (CurrentOrderSummary bet : currentBets) {
 
-					MarketRunner runner = currentMarket.getRunnersMap().get(
-							(long) bet.getSelectionId());
+					MarketRunner runner = currentMarket.getRunnersMap().get(bet.getSelectionId());
 
 					if (runner == null) {
 						logWarn(new StringBuilder(100)
@@ -334,29 +334,58 @@ public class SheduleRequestMessageListener implements MessageListener {
 						}
 
 						if (r4u != null) {
-							//bet.getPriceSize().getPrice(
-
-							if (OrderStatus.EXECUTABLE.equals(bet.getStatus()) // if (BetStatusEnum.U.equals
-									&& Side.LAY .equals(bet.getSide())) { // BetTypeEnum.L
-								
-
-								r4u.setUnmatchedLayPrice(bet.getPriceSize().getPrice());
-								r4u.setUnmatchedLayAmount(bet.getPriceSize().getSize());
-								curBets.add(bet);
-							}
 
 							if (OrderStatus.EXECUTION_COMPLETE.equals(bet.getStatus()) // BetStatusEnum.M.equals
-									&& Side.LAY .equals(bet.getSide())) { // BetTypeEnum.L
+									&& Side.LAY.equals(bet.getSide())) { // BetTypeEnum.L
 
 								r4u.setMatchedLayPrice(bet.getPriceSize().getPrice());
 								r4u.setMatchedLayAmount(bet.getPriceSize().getSize());
 
 							}
+
 							marketService.merge(r4u);
 						}
 					}
 				}
 
+				for (CurrentOrderSummary bet : currentBets) {
+
+					MarketRunner runner = currentMarket.getRunnersMap().get(bet.getSelectionId());
+
+					if (runner == null) {
+						logWarn(new StringBuilder(100)
+								.append("runner is null for selectionId=")
+								.append(bet.getSelectionId()).toString());
+					}
+
+					if (runner != null) {
+
+						Runner4User r4u = runner.getUserData4Runner().get(
+								currentUser.getId());
+
+						if (r4u == null) {
+							logWarn(new StringBuilder(100)
+									.append("runner4user is null for userId=")
+									.append(currentUser.getId()).toString());
+						}
+
+						if (r4u != null) {
+
+							if (OrderStatus.EXECUTABLE.equals(bet.getStatus()) // if (BetStatusEnum.U.equals
+									&& Side.LAY.equals(bet.getSide())) { // BetTypeEnum.L
+
+								r4u.setUnmatchedLayPrice(bet.getPriceSize().getPrice());
+								r4u.setUnmatchedLayAmount(bet.getPriceSize().getSize() - r4u.getMatchedLayAmount());
+								curBets.add(bet);
+							}
+
+							marketService.merge(r4u);
+						}
+					}
+				}
+
+
+			}
 			Double sum = null;
 
 			for (CurrentOrderSummary currentBet : currentBets) {
@@ -571,8 +600,8 @@ public class SheduleRequestMessageListener implements MessageListener {
 					//if (r.getLayPrices() != null) {
 					if (r.getEx().getAvailableToLay() != null && !(r.getEx().getAvailableToLay().size() < 3)) {
 
-						printLog(new StringBuilder(100)
-									.append("r.getEx().getAvailableToLay().size()=")
+						printLog(Level.INFO, new StringBuilder(100)
+									.append("r.getEx().getAvailableToLay().size()= ")
 									.append(r.getEx().getAvailableToLay().size()).toString());
 					//	for (InflatedPrice p : r.getLayPrices()) {
 						int priceDepth = 0;
@@ -589,22 +618,22 @@ public class SheduleRequestMessageListener implements MessageListener {
 									r4u.setLayAmount1(_priceSize.getSize());
 									r4u.setLayPrice1(_priceSize.getPrice());
 
-									printLog(new StringBuilder(100)
-												.append("r4u.getLayPrice1()=")
-												.append(r4u.getLayPrice1())
-												.append(",\t r4u.getLayAmount1()")
-												.append(r4u.getLayAmount1())
-												.toString());
+									printLog(Level.INFO, new StringBuilder(100)
+											.append("r4u.getLayPrice1()= ")
+											.append(r4u.getLayPrice1())
+											.append(",\t r4u.getLayAmount1()= ")
+											.append(r4u.getLayAmount1())
+											.toString());
 									break;
 								case 2:
 
 									r4u.setLayAmount2(_priceSize.getSize());
 									r4u.setLayPrice2(_priceSize.getPrice());
 
-									printLog(new StringBuilder(100)
-												.append("r4u.getLayPrice2()=")
+									printLog(Level.INFO,new StringBuilder(100)
+												.append("r4u.getLayPrice2()= ")
 												.append(r4u.getLayPrice2())
-												.append(",\t r4u.getLayAmount2()")
+												.append(",\t r4u.getLayAmount2()= ")
 												.append(r4u.getLayAmount2())
 												.toString());
 									break;
@@ -613,10 +642,10 @@ public class SheduleRequestMessageListener implements MessageListener {
 									r4u.setLayAmount3(_priceSize.getSize());
 									r4u.setLayPrice3(_priceSize.getPrice());
 
-									printLog (new StringBuilder(100)
-												.append("r4u.getLayPrice3()=")
+									printLog ( Level.INFO, new StringBuilder(100)
+												.append("r4u.getLayPrice3()= ")
 												.append(r4u.getBackPrice3())
-												.append(",\t r4u.getLayAmount3()")
+												.append(",\t r4u.getLayAmount3()= ")
 												.append(r4u.getBackAmount3())
 												.toString());
 									break;
@@ -629,8 +658,8 @@ public class SheduleRequestMessageListener implements MessageListener {
 
 					if ( r.getEx().getAvailableToBack() != null && !(r.getEx().getAvailableToBack().size() < 3) ) {
 
-						printLog(new StringBuilder(100)
-									.append("r.getEx().getAvailableToBack().size()=")
+						printLog(Level.INFO, new StringBuilder(100)
+									.append("r.getEx().getAvailableToBack().size()= ")
 									.append(r.getEx().getAvailableToBack().size())
 									.toString());
 
@@ -647,10 +676,10 @@ public class SheduleRequestMessageListener implements MessageListener {
 									r4u.setBackAmount1(_priceSize.getSize());
 									r4u.setBackPrice1(_priceSize.getPrice());
 
-									printLog(new StringBuilder(100)
-												.append("r4u.getBackPrice1()=")
+									printLog(Level.INFO,new StringBuilder(100)
+												.append("r4u.getBackPrice1()= ")
 												.append(r4u.getBackPrice1())
-												.append(",\t r4u.getBackAmount1()")
+												.append(",\t r4u.getBackAmount1()= ")
 												.append(r4u.getBackAmount1())
 												.toString());
 									break;
@@ -659,10 +688,10 @@ public class SheduleRequestMessageListener implements MessageListener {
 									r4u.setBackAmount2(_priceSize.getSize());
 									r4u.setBackPrice2(_priceSize.getPrice());
 
-									printLog(new StringBuilder(100)
-												.append("r4u.getBackPrice2()=")
+									printLog(Level.INFO, new StringBuilder(100)
+												.append("r4u.getBackPrice2()= ")
 												.append(r4u.getBackPrice2())
-												.append(",\t r4u.getBackAmount2()")
+												.append(",\t r4u.getBackAmount2()= ")
 												.append(r4u.getBackAmount2())
 												.toString());
 									break;
@@ -672,10 +701,10 @@ public class SheduleRequestMessageListener implements MessageListener {
 									r4u.setBackAmount3(_priceSize.getSize());
 									r4u.setBackPrice3(_priceSize.getPrice());
 
-									printLog(new StringBuilder(100)
-												.append("r4u.getBackPrice3()=")
+									printLog(Level.INFO, new StringBuilder(100)
+												.append("r4u.getBackPrice3()= ")
 												.append(r4u.getBackPrice3())
-												.append(",\t r4u.getBackAmount3()")
+												.append(",\t r4u.getBackAmount3()= ")
 												.append(r4u.getBackAmount3())
 												.toString());
 									break;
@@ -723,15 +752,14 @@ public class SheduleRequestMessageListener implements MessageListener {
 
 				r4u.setOddsPrecosmetic(_precosmOdds);
 
-				Double blueOdds1 = r4u.getLayPrice1();
-				Double blueAmount1 = (r4u.getLayAmount1() == null ? 0.0 : r4u
-						.getLayAmount1());
-				Double blueOdds2 = r4u.getLayPrice2();
-				Double pinkOdds = r4u.getBackPrice1();
+				Double blueOdds1 = r4u.getBackPrice1();
+				Double blueAmount1 = (r4u.getBackAmount1() == null ? 0.0 : r4u.getBackAmount1());
+				Double blueOdds2 = r4u.getBackPrice2();
+				Double pinkOdds = r4u.getLayPrice1();
 
 				Double myOdds = r4u.getUnmatchedLayPrice();
-				Double myAmount = (r4u.getUnmatchedLayAmount() == null ? 0.0
-						: r4u.getUnmatchedLayAmount());
+				Double myAmount = (r4u.getUnmatchedLayAmount() == null ? 0.0 : r4u.getUnmatchedLayAmount());
+
 				Double _cosmeticOdds;
 				_cosmeticOdds = baseService.getCosmeticOdds(blueOdds1,
 						blueAmount1, blueOdds2, pinkOdds, _precosmOdds, myOdds,
@@ -773,6 +801,8 @@ public class SheduleRequestMessageListener implements MessageListener {
 						currentMarket.getMarketStatus());
 
 				r4u.setSelectionAmount(_selectionAmount);
+
+				logInfo("+++ saved: r4u.getSelectionPrice(): " + r4u.getSelectionPrice() + ", r4u.getSelectionAmount(): " +  r4u.getSelectionAmount());
 
 				r4u = marketService.merge(r4u);
 
@@ -1123,7 +1153,7 @@ public class SheduleRequestMessageListener implements MessageListener {
 
 		boolean isOnAir = market4User.isOnAir();
 
-			printLog("*** for market " + currentMarket + " onAir is " + isOnAir);
+			printLog(Level.INFO, "*** updateBets: for market " + currentMarket + " onAir is " + isOnAir);
 
 // 		Exchange selected_exchange = currentMarket.getExchange() == 1 ? Exchange.UK : Exchange.AUS;
 
@@ -1180,7 +1210,7 @@ public class SheduleRequestMessageListener implements MessageListener {
 			return;
 		}
 
-			logInfo("*** On Air is ON for market " + currentMarket + ",\n DOING BETS!!");
+			logInfo("*** updateBets: On Air is ON for market " + currentMarket + ",\n DOING BETS!!");
 
 	//	List<UpdateBets> cUpdates = new ArrayList<UpdateBets>();
 
@@ -1198,8 +1228,12 @@ public class SheduleRequestMessageListener implements MessageListener {
 
 			if (r4u == null) continue;
 
+			logInfo("*** updateBets: r4u.getSelectionPrice(): " + r4u.getSelectionPrice() + ", r4u.getSelectionAmount(): " + r4u.getSelectionAmount());
+
 			if ( r4u.getSelectionPrice() != null && r4u.getSelectionPrice() > BaseServiceBean.MIN_ODDS
 					&& r4u.getSelectionAmount() != null && r4u.getSelectionAmount() >= BaseServiceBean.MIN_STAKE_AMOUNT) {
+
+		//		logInfo("*** updateBets: r4u.getSelectionPrice(): " + r4u.getSelectionPrice() + ", r4u.getSelectionAmount(): " + r4u.getSelectionAmount());
 
 				PlaceInstruction pi = new PlaceInstruction();
 
@@ -1215,6 +1249,7 @@ public class SheduleRequestMessageListener implements MessageListener {
 				limitOrder.setPrice(r4u.getSelectionPrice());
 				limitOrder.setSize(r4u.getSelectionAmount());
 				pi.setLimitOrder(limitOrder);
+				logInfo(" pi: " + pi );
 				newBets.add(pi);
 			}
 		}

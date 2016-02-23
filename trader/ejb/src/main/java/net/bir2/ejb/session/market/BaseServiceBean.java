@@ -174,13 +174,12 @@ public class BaseServiceBean implements BaseService, TimedObject {
 		// cosmOdds2 =  getUpOdds(blueOdds2);
 
 
-		cosmOdds1 = blueAmount1 > myAmount / 4 ? getUpOdds(blueOdds1)
+		cosmOdds1 = blueAmount1 > myAmount / 4.0 ? getUpOdds(blueOdds1)
 				: blueOdds1;
 				
 //		System.out.println ("===*** calc cosmOdds1=" + cosmOdds1);
 
-		cosmOdds2 = blueAmount1 > myAmount / 4 ? getUpOdds(blueOdds2)
-				: blueOdds2;
+		cosmOdds2 = blueAmount1 > myAmount / 4.0 ? getUpOdds(blueOdds2) : blueOdds2;
 				
 //		System.out.println ("===*** calc cosmOdds2=" + cosmOdds2);
 
@@ -232,7 +231,7 @@ public class BaseServiceBean implements BaseService, TimedObject {
 			}
 		}
 
-		log.fine("precosmOdds=" + precosmOdds + ", cosmOdds=" + result);
+		log.info("precosmOdds=" + precosmOdds + ", cosmOdds=" + result);
 		
 		if (result > precosmOdds ) {
 		 log.severe ("!!!===!!! cosmOdds ("+result+") > precosmOdds("+precosmOdds+") !!!");
@@ -242,13 +241,14 @@ public class BaseServiceBean implements BaseService, TimedObject {
 	
 	public Double getSelectionPrice ( Double finalOdds, Double sourceOdds, Double volumeStake, Double maxLoss, Double _profitLoss, Integer inplayDelay, String marketStatus, Boolean isNonRunner) {
 
-		log.fine("getSelectionPrice(): finalOdds: " + finalOdds+", sourceOdds: "+ sourceOdds+", volumeStake: "+volumeStake+", maxLoss: " + maxLoss+", profitLoss: "+ _profitLoss+", inplayDelay: " + inplayDelay+ ", marketStatus: "+marketStatus+ ", isNonRunner: " + isNonRunner);
-		Double profitLoss = (_profitLoss==null?0.0: _profitLoss);
+		log.info("getSelectionPrice(): finalOdds: " + finalOdds+", sourceOdds: "+ sourceOdds+", volumeStake: "+volumeStake+", maxLoss: " + maxLoss+", profitLoss: "+ _profitLoss+", inplayDelay: " + inplayDelay+ ", marketStatus: "+marketStatus+ ", isNonRunner: " + isNonRunner);
+		Double profitLoss = (_profitLoss==null? 0.0: _profitLoss);
+
 		Double result = FAKE_ODDS;
-		if ("ACTIVE".equals(marketStatus) && finalOdds > 0 && finalOdds >= MIN_ODDS && volumeStake > 0 && sourceOdds != null && sourceOdds >= MIN_ODDS ) {
+		if ("OPEN".equals(marketStatus) && finalOdds > 0 && finalOdds >= MIN_ODDS && volumeStake > 0 && sourceOdds != null && sourceOdds >= MIN_ODDS ) {
 		  if (!isNonRunner && (volumeStake / finalOdds > MIN_STAKE_AMOUNT) && (!(maxLoss + profitLoss < 0)) && inplayDelay == 0 ) {
 			  result = finalOdds;
-			  log.fine("getSelectionPrice(): finalOdds=" + finalOdds + ", result="+result);
+			  log.info("$$ getSelectionPrice(): finalOdds=" + finalOdds + ", result="+result);
 		  }
 		} 
 	   return result;	
@@ -280,7 +280,7 @@ End Function
 		log.fine("** getSelectionAmount(): finalOdds: "+ finalOdds + ", sourceOdds: "+ sourceOdds + ", volumeStake: " + volumeStake + ", marketStatus: " + marketStatus);
 
 		Double result = FAKE_STAKE;
-		if ( marketStatus != null && "ACTIVE".equals(marketStatus) && finalOdds != null && finalOdds >= MIN_ODDS && volumeStake != null && volumeStake > 0 && sourceOdds != null && sourceOdds >= MIN_ODDS ) {
+		if ( marketStatus != null && "OPEN".equals(marketStatus) && finalOdds != null && finalOdds >= MIN_ODDS && volumeStake != null && volumeStake > 0 && sourceOdds != null && sourceOdds >= MIN_ODDS ) {
 			if (volumeStake / finalOdds > MIN_STAKE_AMOUNT) {
 			  result = Math.floor(volumeStake/finalOdds); 
 			  log.fine("getSelectionAmount(): finalOdds=" + finalOdds + ", result="+result);		  	
