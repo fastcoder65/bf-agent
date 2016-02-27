@@ -24,4 +24,11 @@ public class TimeRange {
 		this.to = to;
 	}
 
+	@Override
+	public String toString() {
+		return "TimeRange{" +
+				"from=" + from +
+				", to=" + to +
+				'}';
+	}
 }

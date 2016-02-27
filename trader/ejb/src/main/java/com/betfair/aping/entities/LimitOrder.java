@@ -33,4 +33,12 @@ public class LimitOrder {
 		this.persistenceType = persistenceType;
 	}
 
+	@Override
+	public String toString() {
+		return "LimitOrder{" +
+				"persistenceType=" + persistenceType +
+				", size=" + size +
+				", price=" + price +
+				'}';
+	}
 }

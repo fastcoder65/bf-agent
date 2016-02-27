@@ -132,13 +132,18 @@ public class GlobalAPI {
 
         marketFilter.setEventIds(_eventIds);
 
+        Set<String> typesCode = new HashSet<String>();
+        typesCode.add("WIN");
+        typesCode.add("MATCH_ODDS");
+        marketFilter.setMarketTypeCodes(typesCode);
+
         TimeRange timeRange = new TimeRange();
 
         Calendar c = Calendar.getInstance();
 
         timeRange.setFrom(DTAction.getTimeFormBegin(c.getTime()));
 
-        c.add(Calendar.DAY_OF_YEAR, 3);
+        c.add(Calendar.DAY_OF_YEAR, 7);
 
         timeRange.setTo(DTAction.getTimeToEnd(c.getTime()));
 
@@ -170,14 +175,21 @@ public class GlobalAPI {
 
         Set<String> _marketIds = new HashSet<String>();
 
+        Set<String> typesCode = new HashSet<String>();
+        typesCode.add("WIN");
+        typesCode.add("MATCH_ODDS");
+
         if (marketIds != null && marketIds.size() > 0) {
             _marketIds.addAll(marketIds);
             marketFilter.setMarketIds(_marketIds);
+
+
 //			marketProjection.add(MarketProjection.COMPETITION);
             marketProjection.add(MarketProjection.EVENT);
             marketProjection.add(MarketProjection.MARKET_DESCRIPTION);
             marketProjection.add(MarketProjection.RUNNER_DESCRIPTION);
             marketProjection.add(MarketProjection.RUNNER_METADATA);
+
         }
 
         marketProjection.add(MarketProjection.MARKET_START_TIME);
@@ -186,12 +198,14 @@ public class GlobalAPI {
         Calendar c = Calendar.getInstance();
         timeRange.setFrom(DTAction.getTimeFormBegin(c.getTime()));
 
-        c.add(Calendar.DAY_OF_YEAR, 3);
+        c.add(Calendar.DAY_OF_YEAR, 7);
         timeRange.setTo(DTAction.getTimeToEnd(c.getTime()));
 
         marketFilter.setMarketStartTime(timeRange);
         marketFilter.setTurnInPlayEnabled(true);
+        marketFilter.setMarketTypeCodes(typesCode);
 
+        log.info("use marketFilter: " + marketFilter);
 
         List<MarketCatalogue> r = jsonOperations.listMarketCatalogue(
                 marketFilter, marketProjection, MarketSort.FIRST_TO_START,
@@ -210,12 +224,18 @@ public class GlobalAPI {
         Set<PriceData> priceData = new HashSet<PriceData>();
 
         priceData.add(PriceData.EX_BEST_OFFERS);
+ //       priceData.add(PriceData.EX_ALL_OFFERS);
+        priceData.add(PriceData.EX_TRADED);
+/*
+        priceData.add(PriceData.SP_AVAILABLE);
+        priceData.add(PriceData.SP_TRADED);
+*/
         priceProjection.setPriceData(priceData);
         // EX_BEST_OFFERS EX_TRADED
         Set<OrderProjection> orderProjection = new HashSet<OrderProjection>();
         orderProjection.add(OrderProjection.EXECUTABLE);
         Set<MatchProjection> matchProjection = new HashSet<MatchProjection>();
-        matchProjection.add(MatchProjection.ROLLED_UP_BY_PRICE);
+        matchProjection.add(MatchProjection.NO_ROLLUP);
 
         return listMarketBook(context, marketIds, priceProjection, OrderProjection.EXECUTABLE, MatchProjection.ROLLED_UP_BY_PRICE, currencyCode);
 
@@ -256,7 +276,9 @@ public class GlobalAPI {
 
         PlaceExecutionReport result = null;
         try {
-            result = jsonOperations.placeOrders(marketId, instructions, String.valueOf(customerRandom.nextLong()),
+            String _customRef = String.valueOf(customerRandom.nextLong());
+            log.log(Level.INFO, "_customRef: "+ _customRef);
+            result = jsonOperations.placeOrders(marketId, instructions, _customRef,
                     context.getProduct(), context.getToken());
         } catch (APINGException e) {
             log.log(Level.SEVERE, "error placing orders ", e);

@@ -45,6 +45,7 @@ import org.apache.http.impl.client.HttpClients;
 import org.apache.http.impl.conn.DefaultProxyRoutePlanner;
 import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
 import org.apache.http.message.BasicNameValuePair;
+import org.apache.http.params.CoreConnectionPNames;
 import org.apache.http.util.EntityUtils;
 import java.util.logging.*;
 
@@ -122,8 +123,16 @@ public class HttpClientSSO {
 			ctx.init(keyManagers, null, new SecureRandom());
 
 			SSLConnectionSocketFactory sslsf = new SSLConnectionSocketFactory(ctx, NoopHostnameVerifier.INSTANCE);
-			
-	        httpClient = hcBuilder.setSSLSocketFactory(sslsf).build();
+
+			RequestConfig.Builder requestBuilder = RequestConfig.custom();
+			requestBuilder = requestBuilder.setConnectTimeout(15 * 1000);
+			requestBuilder = requestBuilder.setConnectionRequestTimeout(15 * 1000);
+
+			//HttpClientBuilder builder = HttpClientBuilder.create();
+			hcBuilder.setDefaultRequestConfig(requestBuilder.build());
+
+			httpClient = hcBuilder.setSSLSocketFactory(sslsf).build();
+
 
 			HttpClientContext localContext = null;
 
@@ -143,7 +152,11 @@ public class HttpClientSSO {
 				// Add AuthCache to the execution context
 				localContext = HttpClientContext.create();
 				localContext.setAuthCache(authCache);
+
 			}  
+
+		//	RequestConfig requestConfig = localContext.getRequestConfig();
+
 
 			HttpPost httpPost = new HttpPost(AccountConstants.ENDPOINT_TO_CERTLOGIN);
 

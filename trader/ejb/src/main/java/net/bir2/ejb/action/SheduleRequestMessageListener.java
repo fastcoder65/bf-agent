@@ -388,6 +388,7 @@ public class SheduleRequestMessageListener implements MessageListener {
 			}
 			Double sum = null;
 
+			if (currentBets != null)
 			for (CurrentOrderSummary currentBet : currentBets) {
 				if (OrderStatus.EXECUTION_COMPLETE.equals(currentBet.getStatus())) { // BetStatusEnum.M.equals
 
@@ -1168,6 +1169,8 @@ public class SheduleRequestMessageListener implements MessageListener {
 				for (CurrentOrderSummary cb : curBets) {
 					//CancelBets cab = new CancelBets();
 					CancelInstruction ci = new CancelInstruction();
+					ci.setSizeReduction(cb.getSizeRemaining());
+
 					ci.setBetId(cb.getBetId());
 					cDeletes.add(ci);
 				}
@@ -1241,13 +1244,18 @@ public class SheduleRequestMessageListener implements MessageListener {
 
 				pi.setHandicap(0);
 				pi.setSide(Side.LAY);
+				//pi.setSide(Side.BACK);
 				pi.setOrderType(OrderType.LIMIT);
 
 				LimitOrder limitOrder = new LimitOrder();
 				limitOrder.setPersistenceType(PersistenceType.LAPSE);
 
-				limitOrder.setPrice(r4u.getSelectionPrice());
-				limitOrder.setSize(r4u.getSelectionAmount());
+//				limitOrder.setPrice(r4u.getSelectionPrice());
+				limitOrder.setPrice(1.01);
+				 limitOrder.setSize(r4u.getSelectionAmount());
+				//limitOrder.setPrice(100.0);
+				//limitOrder.setSize(4.0);
+
 				pi.setLimitOrder(limitOrder);
 				logInfo(" pi: " + pi );
 				newBets.add(pi);
