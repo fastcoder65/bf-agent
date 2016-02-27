@@ -11,8 +11,6 @@
 			<h:outputText value="Runners"/>
 		</f:facet>
 
-		<h:form>
-
 			<a4j:jsFunction name="setSelectionId">
 				<a4j:param  name="selectionId" assignTo="#{marketBean.selectionId}"></a4j:param>
 			</a4j:jsFunction>
@@ -28,6 +26,8 @@
 				errorStyle="color:red" showSummary="true" showDetail="true" />
 
 		</h:panelGrid>
+
+		<h:form>
 
 			<rich:dataTable value="#{marketBean.runners}" var="rnr"
 				id="runnerTable" rowKeyVar="rkv" sortMode="single" >
