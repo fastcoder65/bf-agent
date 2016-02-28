@@ -11,7 +11,7 @@
         <param-value>Development</param-value>
     </context-param>
 
-    <display-name>BIR Application 2</display-name>
+    <display-name>BIR Application (Rich Faces 4.5.x)</display-name>
 
     <context-param>
         <param-name>javax.faces.STATE_SAVING_METHOD</param-name>
@@ -21,11 +21,6 @@
     <context-param>
         <param-name>org.richfaces.CONTROL_SKINNING</param-name>
         <param-value>enable</param-value>
-    </context-param>
-
-    <context-param>
-        <param-name>facelets.RECREATE_VALUE_EXPRESSION_ON_BUILD_BEFORE_RESTORE</param-name>
-        <param-value>false</param-value>
     </context-param>
 
     <context-param>
@@ -44,35 +39,21 @@
     </context-param>
 
     <context-param>
-        <param-name>javax.faces.FACELETS_REFRESH_PERIOD</param-name>
-        <param-value>7</param-value>
+
+    <param-name>org.richfaces.enableControlSkinningClasses</param-name>
+    <param-value>true</param-value>
+
     </context-param>
 
     <context-param>
-        <param-name>org.richfaces.SKIN</param-name>
+        <param-name>org.richfaces.skin</param-name>
         <param-value>#{viewHelper.skin}</param-value>
-    </context-param>
-
-    <context-param>
-        <param-name>org.ajax4jsf.COMPRESS_SCRIPT</param-name>
-        <param-value>true</param-value>
-    </context-param>
-
-    <context-param>
-        <param-name>org.ajax4jsf.COMPRESS_STYLE</param-name>
-        <param-value>true</param-value>
     </context-param>
 
     <context-param>
         <param-name>javax.faces.FACELETS_VIEW_MAPPINGS</param-name>
         <param-value>*.xhtml</param-value>
     </context-param>
-
-    <context-param>
-        <param-name>org.ajax4jsf.SERIALIZE_SERVER_STATE</param-name>
-        <param-value>true</param-value>
-    </context-param>
-
 
         <context-param>
             <param-name>org.richfaces.push.jms.enabled</param-name>
@@ -81,6 +62,11 @@
 
     <context-param>
         <param-name>org.ajax4jsf.handleViewExpiredOnClient</param-name>
+        <param-value>true</param-value>
+    </context-param>
+
+    <context-param>
+        <param-name>org.richfaces.resourceOptimization.enabled</param-name>
         <param-value>true</param-value>
     </context-param>
 
