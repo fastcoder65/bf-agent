@@ -1250,8 +1250,8 @@ public class SheduleRequestMessageListener implements MessageListener {
 				LimitOrder limitOrder = new LimitOrder();
 				limitOrder.setPersistenceType(PersistenceType.LAPSE);
 
-//				limitOrder.setPrice(r4u.getSelectionPrice());
-				limitOrder.setPrice(1.01);
+				limitOrder.setPrice(r4u.getSelectionPrice());
+		//		limitOrder.setPrice(1.01);
 				 limitOrder.setSize(r4u.getSelectionAmount());
 				//limitOrder.setPrice(100.0);
 				//limitOrder.setSize(4.0);
