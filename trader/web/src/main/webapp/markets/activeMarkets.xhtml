@@ -63,10 +63,17 @@
 
                     <!--  onclick="#{rich:component('mp')}.show()" -->
 
+                    <ui:remove>
+                        oncomplete="Richfaces.showModalPanel('mp');"
+                    </ui:remove>
+
                     <a4j:commandLink rendered="#{marketBean.currentMarket4User != null}"
-                                     oncomplete="Richfaces.showModalPanel('mp');" render="modPanelMarket4User"
+                                     render="modPanelMarket4User"
+                                     onclick="#{rich:component('mp')}.show()"
                                      action="#{marketBean.customMyMarketProperties}">
+
                         <h:graphicImage style="border-width:0" value="/images/eventer/dir-edit.gif" id="showlink"/>
+
                     </a4j:commandLink>
 
                     <a4j:region id="autoRefreshStatus">

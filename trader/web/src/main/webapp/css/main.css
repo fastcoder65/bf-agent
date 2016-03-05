@@ -12,23 +12,39 @@ html, body {
 }
 
 .inPanelBody {
-    margin-top: 1px;
-    padding: 1px;
-    height: 630px;
+    margin: 1px;
+    height: 610px;
     overflow: auto;
+}
+
+.treePanel {
+    margin: 1px;
+    padding: 1px;
+    height: 655px;
+    overflow: hidden;
+}
+
+.treePanelBody {
+    height: 650px;
+    overflow: hidden;
 }
 
 .marketPanelBody {
     margin: 1px;
     padding: 1px;
-    height: 250px;
+    height: 300px;
     overflow: auto;
+}
+
+.runnerPanel {
+    margin: 1px;
+    height: 350px;
+    overflow: hidden;
 }
 
 .runnerPanelBody {
     margin: 1px;
-    padding: 1px;
-    height: 350px;
+    height: 330px;
     overflow: auto;
 }
 

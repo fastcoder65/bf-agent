@@ -499,7 +499,7 @@ public class MarketBean extends BaseBean implements Serializable {
             runners.addAll(getMarketService().listRunners(currentMarket.getMarketId()));
             long endTime = System.currentTimeMillis();
 
-            log.info("runners with price data reloaded, time consumed: " + (endTime - startTime) / 1000.0);
+            log.fine("runners with price data reloaded, time consumed: " + (endTime - startTime) / 1000.0);
 
             Collections.sort(runners, new MarketRunner.RunnerComparator());
         }

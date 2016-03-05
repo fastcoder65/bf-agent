@@ -24,15 +24,21 @@
 </h:head>
 
 <h:body>
-	<script type="text/javascript" src="https://seal.thawte.com/getthawteseal?host_name=www.bir24x7.net&amp;size=M&amp;lang=en"></script>
+
+	<ui:remove>
+		<script type="text/javascript" src="https://seal.thawte.com/getthawteseal?host_name=www.bir24x7.net&amp;size=M&amp;lang=en"></script>
+	</ui:remove>
 	<f:view>
+
+		<ui:include src="/layout/modalMarketPanel.xhtml" />
+
 		<div style="width:100%">
 			<ui:include src="/layout/toolbar.xhtml" />
 		</div>
 		<div style="width:20%;float:left;">
 			<ui:include src="/markets/marketPage.xhtml"/>
 		</div>
-		<div style="width:78%;overflow: auto;">
+		<div style="width:80%;overflow: auto;">
 				<ui:include src="/markets/activeMarkets.xhtml" />
     		    <ui:include src="/markets/runners.xhtml" />
 		</div>

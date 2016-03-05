@@ -1,6 +1,8 @@
 package net.bir.web.beans;
 
 import javax.ejb.EJB;
+import javax.faces.bean.ManagedBean;
+import javax.faces.bean.SessionScoped;
 import javax.faces.component.html.HtmlInputHidden;
 
 import net.bir2.multitrade.ejb.entity.JPASettings;
@@ -10,6 +12,8 @@ import net.bir.ejb.session.settings.SettingsService;
 
 import net.bir.util.WebUtils;
 
+@ManagedBean
+@SessionScoped
 public class ProfileBean extends BaseBean {
 
 	private Uzer profileUser;

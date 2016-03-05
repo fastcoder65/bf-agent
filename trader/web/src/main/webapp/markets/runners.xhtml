@@ -5,8 +5,42 @@
 	xmlns:a4j="http://richfaces.org/a4j"
 	xmlns:rich="http://richfaces.org/rich">
 
+	<h:outputStylesheet>
 
-	<rich:panel styleClass="runnerPanelBody">
+	.myTable .rf-edt-c {
+	height: 100%;
+	}
+
+	</h:outputStylesheet>
+
+
+	<h:outputStylesheet>
+
+			.autoSizeRows .rf-edt-hdr-c
+			{
+				border-right:none !important;
+				border-bottom:none !important;
+			}
+
+			.autoSizeRows .rf-edt-c
+			{
+				height: 100% !important;
+
+				border-right:none !important;
+
+				border-bottom:none !important;
+			}
+
+			.autoSizeRows .rf-edt-cnt td
+
+			{
+				border-bottom: 1px solid #9FC0E9;
+				border-right: 1px solid #9FC0E9;
+			}
+
+		</h:outputStylesheet>
+
+	<rich:panel styleClass="runnerPanel">
 		<f:facet name="header">
 			<h:outputText value="Runners"/>
 		</f:facet>
@@ -29,8 +63,18 @@
 
 		<h:form>
 
-			<rich:dataTable value="#{marketBean.runners}" var="rnr"
-				id="runnerTable" rowKeyVar="rkv" sortMode="single" >
+			<ui:remove>
+				styleClass="autoSizeRows"
+				frozenColumns="2"
+			</ui:remove>
+
+			<rich:extendedDataTable  value="#{marketBean.runners}" var="rnr"
+
+									 selectionMode="single"
+									 style="height:290px;width:1180px;"
+									 styleClass="autoSizeRows"
+									 id="runnerTable" rowKeyVar="rkv" sortMode="single"
+					>
 
 				<rich:column sortable="true" sortBy="#{rnr.name}"
 					label="Runner Name">
@@ -455,7 +499,8 @@
 					</h:outputFormat>
 				</rich:column>
 
-			</rich:dataTable>
+			</rich:extendedDataTable >
+
 
 		</h:form>
 

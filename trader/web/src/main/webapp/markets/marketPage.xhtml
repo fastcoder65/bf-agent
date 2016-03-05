@@ -15,34 +15,37 @@
 		}
 	</h:outputStylesheet>
 
-	<rich:panel styleClass="inPanelBody">
+	<div  style="position: absolute;left:10em;top:5em">
+		<a4j:status>
+			<f:facet name="start">
+				<h:graphicImage style="border-width:0" value="/images/ai.gif" alt="tree is loading.." />
+			</f:facet>
+			<f:facet name="stop">
+				<h:graphicImage style="border-width:0" value="/images/spacer.gif" alt="tree loaded" />
+			</f:facet>
+
+		</a4j:status>
+	</div>
+
+	<h:form>
+
+	<a4j:jsFunction name="doSelectMarket" action="#{marketBean.add2ActiveMarkets}" render="marketRegion">
+		<a4j:param  name="id" assignTo="#{marketBean.selectedMarketId}"></a4j:param>
+	</a4j:jsFunction>
+
+	<rich:panel styleClass="treePanel" bodyClass="treePanelBody">
 		<f:facet name="header">
 			<h:outputText value="All markets"/>
 		</f:facet>
 
-		<div  style="position: absolute;left:10em;top:5em">
-			<a4j:status>
-				<f:facet name="start">
-					<h:graphicImage style="border-width:0" value="/images/ai.gif" alt="tree is loading.." />
-				</f:facet>
-				<f:facet name="stop">
-					<h:graphicImage style="border-width:0" value="/images/spacer.gif" alt="tree loaded" />
-				</f:facet>
+		<rich:panel styleClass="inPanelBody">
 
-			</a4j:status>
-		</div>
-
-		<a4j:jsFunction name="doSelectMarket" action="#{marketBean.add2ActiveMarkets}" render="marketRegion">
-			<a4j:param  name="id" assignTo="#{marketBean.selectedMarketId}"></a4j:param>
-		</a4j:jsFunction>
-
-		<div>
-			<h:form>
 				<rich:tree id="myTree" var="item"
 						   nodeClass="net.bir.web.beans.treeModel.Entry"
 						   toggleListener="#{marketBean.toggleListener}"
 						   selectionChangeListener="#{marketBean.selectionChanged}"
 						>
+
 
 					<rich:treeModelRecursiveAdaptor id="tmRA" roots="#{marketBean.rootNodes}" nodes="#{item.children}">
 						<rich:treeNode  title="#{item.name} (#{item.type})"
@@ -67,15 +70,11 @@
 							<rich:menuItem label="Add to My Markets" onclick="doSelectMarket('#{item.id}')"
 										   mode="ajax" icon="images/buttons/add.blue.gif"/>
 						</rich:contextMenu>
-
 					</rich:treeModelRecursiveAdaptor>
-
-
 				</rich:tree>
-
-			</h:form>
-		</div>
+		</rich:panel>
 	</rich:panel>
+	</h:form>
 
 </ui:composition>
 

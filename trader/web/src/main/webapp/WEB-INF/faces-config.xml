@@ -13,11 +13,14 @@
 		<managed-bean-scope>session</managed-bean-scope>
 	</managed-bean>
  -->
+ <!--
  <managed-bean>
   <managed-bean-name>profileBean</managed-bean-name>
   <managed-bean-class>net.bir.web.beans.ProfileBean</managed-bean-class>
   <managed-bean-scope>session</managed-bean-scope>
  </managed-bean>
+ -->
+
  <managed-bean>
   <managed-bean-name>menucontrolBean</managed-bean-name>
   <managed-bean-class>net.bir.web.beans.MenuControlBean</managed-bean-class>
