@@ -31,17 +31,23 @@
 	<f:view>
 
 		<ui:include src="/layout/modalMarketPanel.xhtml" />
+		<ui:include src="/layout/marketPanel.xhtml" />
 
 		<div style="width:100%">
 			<ui:include src="/layout/toolbar.xhtml" />
 		</div>
+
+		<ui:remove>
 		<div style="width:20%;float:left;">
 			<ui:include src="/markets/marketPage.xhtml"/>
 		</div>
-		<div style="width:80%;overflow: auto;">
+		</ui:remove>
+
+		<div style="width:100%;overflow: auto;">
 				<ui:include src="/markets/activeMarkets.xhtml" />
     		    <ui:include src="/markets/runners.xhtml" />
 		</div>
+
 </f:view>
 </h:body>
 </html>

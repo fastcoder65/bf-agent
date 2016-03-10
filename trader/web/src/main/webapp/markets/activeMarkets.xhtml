@@ -5,6 +5,18 @@
                 xmlns:a4j="http://richfaces.org/a4j"
                 xmlns:rich="http://richfaces.org/rich">
 
+    <div  style="position: absolute;left:10em;top:5em">
+        <a4j:status>
+            <f:facet name="start">
+                <h:graphicImage style="border-width:0" value="/images/ai.gif" alt="tree is loading.." />
+            </f:facet>
+            <f:facet name="stop">
+                <h:graphicImage style="border-width:0" value="/images/spacer.gif" alt="tree loaded" />
+            </f:facet>
+
+        </a4j:status>
+    </div>
+
         <rich:panel styleClass="marketPanelBody">
         <f:facet name="header">
             <h:outputText value="My markets"/>
@@ -39,6 +51,12 @@
 
                     <a4j:queue requestDelay="100" ignoreDupResponce="true"/>
 
+                    <a4j:commandLink onclick="#{rich:component('popupMarkets')}.show()">
+
+                        <h:graphicImage style="border-width:0" value="/images/tree/ftv2folderopen.gif" id="showMarketslink"/>
+
+                    </a4j:commandLink>
+
                     <a4j:commandLink render="marketRegion,marketMessages,runnerTable"
                                      action="#{marketBean.deleteMarket}"
                                      title="Remove market" style="margin-right:20px">
@@ -61,11 +79,6 @@
                         <h:graphicImage style="border-width:0" value="/images/buttons/ev.rec.jpg"/>
                     </a4j:commandLink>
 
-                    <!--  onclick="#{rich:component('mp')}.show()" -->
-
-                    <ui:remove>
-                        oncomplete="Richfaces.showModalPanel('mp');"
-                    </ui:remove>
 
                     <a4j:commandLink rendered="#{marketBean.currentMarket4User != null}"
                                      render="modPanelMarket4User"

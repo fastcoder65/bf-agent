@@ -1,0 +1,38 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:a4j="http://richfaces.org/a4j"
+      xmlns:rich="http://richfaces.org/rich">
+            
+        <script>
+         function getRightTop(ref) {
+           var position = new Object();
+           position.top = 0; //ref.offsetTop;
+           position.left =0; // ref.offsetLeft+ref.clientWidth+6;
+           return position;
+         }
+        </script>
+
+            <rich:popupPanel id="popupMarkets" modal="false" minHeight="300" minWidth="300" height="550" width="650"
+                             resizeable="true" onmaskclick="#{rich:component('mp')}.hide()">
+
+            <f:facet name="header">
+                <h:outputText value="#{labels['marketWindow.caption']}" />
+            </f:facet>
+
+            <f:facet name="controls">
+			  <h:panelGroup>
+
+                  <a4j:commandLink onclick="#{rich:component('popupMarkets')}.hide()">
+                    <h:graphicImage style="border-width:0" title="Close dialog" value="/images/eventer/dir-delete.gif" id="hidelink"/>
+                  </a4j:commandLink>
+
+              </h:panelGroup>
+            </f:facet>
+
+                <ui:include src="/layout/marketPageInc.xhtml"/>
+
+        </rich:popupPanel>
+
+</ui:composition>

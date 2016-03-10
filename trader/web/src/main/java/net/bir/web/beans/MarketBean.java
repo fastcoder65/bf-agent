@@ -15,6 +15,7 @@ import net.bir2.handler.GlobalAPI;
 import net.bir2.multitrade.ejb.entity.*;
 import net.bir2.multitrade.ejb.entity.Market;
 import net.bir2.multitrade.util.APIContext;
+
 import org.richfaces.component.AbstractExtendedDataTable;
 import org.richfaces.component.AbstractTree;
 import org.richfaces.component.UITree;
@@ -31,6 +32,9 @@ import javax.faces.component.html.HtmlInputText;
 import javax.faces.context.FacesContext;
 import javax.faces.event.AjaxBehaviorEvent;
 import javax.faces.event.ValueChangeEvent;
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.swing.tree.TreeNode;
 import java.io.Serializable;
 import java.util.*;
@@ -236,6 +240,56 @@ public class MarketBean extends BaseBean implements Serializable {
             getLog().info("marketNode: " + marketNode);
         }
 
+    }
+
+    public List<Double> allValidOdds=null;
+
+    public List<Double> getAllValidOdds() {
+
+          if (allValidOdds == null) {
+            if (marketService != null && marketService.getServiceBean() != null) {
+                log.info("getting valid odds from singleton..");
+                allValidOdds = marketService.getServiceBean().getAllValidOdds();
+            }
+              if (allValidOdds != null)
+                  log.info("singleton valid odds found " + allValidOdds.size() + " odds.");
+
+          }
+        return allValidOdds;
+    }
+
+    public  List<String> oddsAutoComplete(String prefix) {
+        log.info("oddsAutoComplete - prefix: " + prefix);
+
+        List<Double> _allValidOdds = getAllValidOdds();
+
+        ArrayList<String> result = new ArrayList<String>();
+
+        if (_allValidOdds == null) {
+            log.warning("!! no items selected for autocomplete (");
+            return result;
+        }
+        if ((prefix == null) || (prefix.length() == 0)) {
+            for (int i = 0; i < 10; i++) {
+                result.add(String.valueOf(_allValidOdds.get(i)));
+            }
+        } else {
+            Iterator<Double> iterator = _allValidOdds.iterator();
+            while (iterator.hasNext()) {
+                Double elem = iterator.next();
+                if ((elem != null && String.valueOf(elem).indexOf(prefix) == 0)
+                        || "".equals(prefix)) {
+                    result.add(String.valueOf(elem));
+                }
+            }
+        }
+        /*
+        for (String sItem: result) {
+           log.info("autocomplete  selected: " + sItem );
+        }
+        */
+        log.info("autocomplete  selected items: " + result.size() );
+        return result;
     }
 
     public synchronized void toggleListener(TreeToggleEvent ttEvent) {
@@ -559,7 +613,10 @@ public class MarketBean extends BaseBean implements Serializable {
 
         log.info("*** saveOdds fired, event: " + event);
 
-        HtmlInputText inputText = (HtmlInputText)event.getSource();
+       // HtmlInputText inputText = (HtmlInputText)event.getSource();
+
+        UIAutocomplete uiOddsAutoComplete = (UIAutocomplete) event.getSource();
+
         Long _selectionId = getSelectionId();
 
         if (_selectionId == null ) {
@@ -573,7 +630,7 @@ public class MarketBean extends BaseBean implements Serializable {
         if (runner != null)
         try {
 
-                    Double _odds = Double.valueOf(inputText.getValue().toString());
+                    Double _odds = Double.valueOf(uiOddsAutoComplete.getValue().toString());
 
                     log.info("_odds : " + _odds);
 
@@ -1185,4 +1242,39 @@ public class MarketBean extends BaseBean implements Serializable {
             log.fine("run finished");
         }
     }
+
+    private String runnerTableState = null;
+
+    private final String CN_RUNNER_TABLE_STATE = "runnerTabelState";
+
+    public String getRunnerTableState() {
+        if ( runnerTableState == null) {
+            // try to get state from cookies
+            Cookie[] cookies = ((HttpServletRequest) FacesContext
+                    .getCurrentInstance().getExternalContext().getRequest())
+                    .getCookies();
+            if (cookies != null) {
+                for (Cookie c : cookies) {
+                    if (c.getName().equals(CN_RUNNER_TABLE_STATE)) {
+                        log.info("found state for client table: [" + c.getName() + "=" + c.getValue() + "] ");
+                        runnerTableState = c.getValue();
+                        break;
+                    }
+                }
+            }
+        }
+        log.info("tableState: " + runnerTableState);
+        return runnerTableState;
+    }
+
+    public void setRunnerTableState(String tableState) {
+        this.runnerTableState = tableState;
+        // save state in cookies
+        Cookie stateCookie = new Cookie(CN_RUNNER_TABLE_STATE, this.runnerTableState);
+        log.info("save state for client table: [" + stateCookie.getName() + "=" + this.runnerTableState + "]: " );
+        stateCookie.setMaxAge(Integer.MAX_VALUE);
+        ((HttpServletResponse) FacesContext.getCurrentInstance()
+                .getExternalContext().getResponse()).addCookie(stateCookie);
+    }
+
 }

@@ -66,19 +66,26 @@
 			<ui:remove>
 				styleClass="autoSizeRows"
 				frozenColumns="2"
+				showColumnControl="true"
 			</ui:remove>
 
 			<rich:extendedDataTable  value="#{marketBean.runners}" var="rnr"
 
+
 									 selectionMode="single"
-									 style="height:290px;width:1180px;"
+									 style="height:290px;width:100%"
 									 styleClass="autoSizeRows"
 									 id="runnerTable" rowKeyVar="rkv" sortMode="single"
+										keepSaved="true"
+									 tableState="#{marketBean.runnerTableState}"
 					>
 
+
 				<rich:column sortable="true" sortBy="#{rnr.name}"
-					label="Runner Name">
-					<f:facet name="header">
+							 title="Runner Name"
+							 label="Runner Name">
+
+					<f:facet name="header" >
 						<h:outputText value="Runner" id="Runner" />
 					</f:facet>
 
@@ -103,13 +110,16 @@
 							  data="#{rnr.selectionId}"
 							  render=":pollMarkets,:marketControls,:marketRegion,:runnerTable">
 
-					<h:inputText
-						disabled="#{rnr.userData4Runner[marketBean.currentUser.id].isNonRunner}"
-						styleClass="oddsCol"
-						onchange="setSelectionId(#{rnr.selectionId})"
-						value="#{rnr.userData4Runner[marketBean.currentUser.id].odds}">
+						<rich:autocomplete
+							disabled="#{rnr.userData4Runner[marketBean.currentUser.id].isNonRunner}"
+							styleClass="oddsCol"
+							onchange="setSelectionId(#{rnr.selectionId})"
+							autocompleteMethod="#{marketBean.oddsAutoComplete}" mode="cachedAjax" minChars="1"
+							autofill="false" selectFirst="false"
 
-					</h:inputText>
+							value="#{rnr.userData4Runner[marketBean.currentUser.id].odds}">
+
+						</rich:autocomplete>
 
 					</a4j:ajax>
 
@@ -285,6 +295,7 @@
 					</h:panelGrid>
 				</rich:column>
 
+				<ui:remove>
 
 					<rich:column label="Pseudo stavki" styleClass="oddsCol">
 						<f:facet name="header">
@@ -295,6 +306,8 @@
 								value="#{rnr.userData4Runner[marketBean.currentUser.id].pseudoStake}" />
 						</h:outputFormat>
 					</rich:column>
+
+
 
 					<rich:column label="Real stavki" styleClass="numCol">
 						<f:facet name="header">
@@ -396,6 +409,7 @@
 								<f:param
 									value="#{marketBean.currentMarket.userData4Market[marketBean.currentUser.id].summPercWinSglajivWithNR}" />
 							</h:outputFormat>
+
 						</f:facet>
 
 						<h:outputFormat value="{0, number}">
@@ -403,6 +417,8 @@
 								value="#{rnr.userData4Runner[marketBean.currentUser.id].percWinSglajivWithNR}" />
 						</h:outputFormat>
 					</rich:column>
+
+				</ui:remove>
 
 				<rich:column label="M.Price&amp;Size" styleClass="oddsCol">
 					<f:facet name="header">
