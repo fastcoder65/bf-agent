@@ -10,6 +10,7 @@ import com.google.gson.reflect.TypeToken;
 import net.bir2.util.DTAction;
 
 import java.util.*;
+import java.util.logging.Level;
 
 
 public class ApiNgRescriptOperations extends ApiNgOperations {
@@ -218,11 +219,14 @@ public class ApiNgRescriptOperations extends ApiNgOperations {
         protected String makeRequest(String operation, Map<String, Object> params, String appKey, String ssoToken)  throws  APINGException {
         String requestString;
         //Handling the Rescript request
-        params.put("id", 1);
+            String _requestId = String.valueOf(customerRandom.nextLong());
+            log.log(Level.INFO, "_requestId: "+ _requestId);
+
+        params.put("id", _requestId);
 
         requestString =  JsonConverter.convertToJson(params);
         if(ApiNGDemo.isDebug())
-            printLog("Request: "+requestString);
+            log.info("Request: "+requestString);
 
         //We need to pass the "sendPostRequest" method a string in util format:  requestString
         HttpUtil requester = new HttpUtil();

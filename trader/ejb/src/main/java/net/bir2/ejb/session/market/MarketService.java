@@ -4,11 +4,14 @@ import java.util.List;
 
 import javax.ejb.Local;
 
+import net.bir2.ejb.action.ShedulerActivity;
 import net.bir2.multitrade.ejb.entity.*;
 import net.bir2.multitrade.ejb.entity.MarketRunner;
 
 @Local
 public interface MarketService {
+
+	ShedulerActivity getServiceBean();
 
 	List<Market> listMarkets();
 

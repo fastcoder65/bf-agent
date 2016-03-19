@@ -10,6 +10,7 @@ import com.betfair.aping.util.JsonrpcRequest;
 import net.bir2.util.DTAction;
 
 import java.util.*;
+import java.util.logging.Level;
 
 public class ApiNgJsonRpcOperations extends ApiNgOperations {
 
@@ -310,7 +311,11 @@ public class ApiNgJsonRpcOperations extends ApiNgOperations {
 		String requestString;
 		// Handling the JSON-RPC request
 		JsonrpcRequest request = new JsonrpcRequest();
-		request.setId("1");
+		String _requestId = String.valueOf(customerRandom.nextLong());
+		log.log(Level.INFO, "_requestId: "+ _requestId);
+
+		request.setId(_requestId);
+
 		request.setMethod(ApiNGDemo.getProp().getProperty("SPORTS_APING_V1_0")
 				+ operation);
 		request.setParams(params);
@@ -322,6 +327,7 @@ public class ApiNgJsonRpcOperations extends ApiNgOperations {
 		// We need to pass the "sendPostRequest" method a string in util format:
 		// requestString
 		HttpUtil requester = new HttpUtil();
+
 		return requester.sendPostRequestJsonRpc(requestString, operation,
 				appKey, ssoToken);
 	}

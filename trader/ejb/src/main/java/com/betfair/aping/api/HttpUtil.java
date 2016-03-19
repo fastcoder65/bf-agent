@@ -2,7 +2,9 @@ package com.betfair.aping.api;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.util.logging.Logger;
 
+import org.apache.commons.httpclient.Header;
 import org.apache.http.auth.AuthScheme;
 import org.apache.http.auth.AuthScope;
 import org.apache.http.auth.UsernamePasswordCredentials;
@@ -35,6 +37,8 @@ public class HttpUtil {
 	private final String HTTP_HEADER_CONTENT_TYPE = "Content-Type";
 	private final String HTTP_HEADER_ACCEPT = "Accept";
 	private final String HTTP_HEADER_ACCEPT_CHARSET = "Accept-Charset";
+
+	protected final Logger log = Logger.getLogger(this.getClass().getName());
 
 	public HttpUtil() {
 		super();
@@ -104,6 +108,9 @@ public class HttpUtil {
 			post.setHeader(HTTP_HEADER_X_APPLICATION, appKey);
 			post.setHeader(HTTP_HEADER_X_AUTHENTICATION, ssoToken);
 
+			post.setHeader("Accept-Encoding", "gzip, deflate");
+			post.setHeader("Keep-Alive", "1, timeout=120, max=100");
+
 			if (jsonRequest != null)
 				post.setEntity(new StringEntity(jsonRequest, ApiNGDemo
 						.getProp().getProperty("ENCODING_UTF8")));
@@ -166,8 +173,18 @@ public class HttpUtil {
 			}
 
 			CloseableHttpClient httpClient = hcBuilder.build();
+			long startTime = System.currentTimeMillis();
 
 			resp = httpClient.execute(post, reqHandler, context);
+
+			long endTime = System.currentTimeMillis();
+
+			for (org.apache.http.Header hdr : post.getAllHeaders()) {
+				log.fine("found header: " + hdr.getName()+ " = " + hdr.getValue());
+			}
+
+			log.info("web request "+ aURL + " executed in " + (endTime- startTime)/
+					1000.0 + " second(s).");
 
 		} catch (UnsupportedEncodingException e1) {
 			// Do something

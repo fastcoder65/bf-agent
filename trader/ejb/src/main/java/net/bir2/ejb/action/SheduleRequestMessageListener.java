@@ -1242,19 +1242,20 @@ public class SheduleRequestMessageListener implements MessageListener {
 
 				pi.setSelectionId(runner.getSelectionId());
 
-				pi.setHandicap(0);
-				pi.setSide(Side.LAY);
-				//pi.setSide(Side.BACK);
+				//pi.setHandicap(0);
+				//pi.setSide(Side.LAY);
+				pi.setSide(Side.BACK);
 				pi.setOrderType(OrderType.LIMIT);
 
 				LimitOrder limitOrder = new LimitOrder();
 				limitOrder.setPersistenceType(PersistenceType.LAPSE);
 
-				limitOrder.setPrice(r4u.getSelectionPrice());
-		//		limitOrder.setPrice(1.01);
-				 limitOrder.setSize(r4u.getSelectionAmount());
-				//limitOrder.setPrice(100.0);
-				//limitOrder.setSize(4.0);
+		//		limitOrder.setPrice(r4u.getSelectionPrice());
+//				limitOrder.setPrice(1.02);
+//				limitOrder.setSize(r4u.getSelectionAmount());
+
+				limitOrder.setPrice(100.0);
+				limitOrder.setSize(4.0);
 
 				pi.setLimitOrder(limitOrder);
 				logInfo(" pi: " + pi );

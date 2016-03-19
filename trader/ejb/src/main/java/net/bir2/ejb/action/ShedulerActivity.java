@@ -1,5 +1,6 @@
 package net.bir2.ejb.action;
 
+import java.util.List;
 import java.util.Map;
 
 import net.bir2.multitrade.ejb.entity.Market;
@@ -20,5 +21,6 @@ public interface ShedulerActivity {
 	 boolean add2ActiveUsers(String login, Uzer uzer);
 	 void sendKeepAlive(String login);
 	 void sendRequest(Action action, String login, String marketId);
-	
+	 List<Double> getAllValidOdds();
+
 }

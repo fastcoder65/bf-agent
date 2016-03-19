@@ -53,8 +53,14 @@ public class MarketServiceBean implements MarketService {
     @Resource
     private EJBContext context;
 
+
     @EJB
     ShedulerActivity serviceBean;
+
+    public ShedulerActivity getServiceBean() {
+        return serviceBean;
+    }
+
 
 
     public EJBContext getContext() {

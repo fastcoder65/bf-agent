@@ -1,9 +1,6 @@
 package com.betfair.aping.api;
 
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -32,6 +29,8 @@ public abstract class ApiNgOperations {
     protected final Logger log = Logger.getLogger(this.getClass().getName());
 
     protected final String locale = Locale.getDefault().toString();
+
+    protected static final Random customerRandom = new Random((new Date()).getTime());
 
     public void printLog(String logMessage) {
         if (log.isLoggable(Level.FINE)) {

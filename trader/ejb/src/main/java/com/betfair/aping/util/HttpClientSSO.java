@@ -167,6 +167,10 @@ public class HttpClientSSO {
 
 			httpPost.setEntity(new UrlEncodedFormEntity(nvps));
 			httpPost.setHeader("X-Application", appKey);
+			httpPost.setHeader("Accept-Encoding", "gzip, deflate");
+			httpPost.setHeader("Keep-Alive", "1, timeout=120, max=100");
+
+
 			printLog("executing request " + httpPost.getRequestLine());
 
 			HttpResponse response = httpClient.execute(httpPost, localContext);
@@ -294,6 +298,9 @@ public class HttpClientSSO {
 
 			httpPost.setEntity(new UrlEncodedFormEntity(nvps));
 			httpPost.setHeader("X-Application", appKey);
+			httpPost.setHeader("Accept-Encoding", "gzip, deflate");
+			httpPost.setHeader("Keep-Alive", "1, timeout=120, max=100");
+
 			printLog("executing request {}" + httpPost.getRequestLine());
 
 			HttpResponse response = httpClient.execute(httpPost, localContext);

@@ -1,8 +1,6 @@
 package net.bir2.ejb.action;
 
-import java.util.Calendar;
-import java.util.Date;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
 import javax.ejb.EJB;
@@ -20,6 +18,7 @@ import javax.naming.NameNotFoundException;
 import javax.naming.NamingException;
 
 import net.bir2.ejb.session.market.BaseService;
+import net.bir2.ejb.session.market.BaseServiceBean;
 import net.bir2.ejb.session.market.MarketService;
 import net.bir2.handler.GlobalAPI;
 import net.bir2.multitrade.ejb.entity.Market;
@@ -77,6 +76,33 @@ public class ShedulerActivityBean implements ShedulerActivity {
             log.log(Level.SEVERE, "getActiveMarket ERROR:" + e);
         }
         return result;
+    }
+
+    private List<Double> allValidOdds;
+
+    public List<Double> getAllValidOdds() {
+        if (allValidOdds == null) {
+            log.warning("!! allValidOdds is null!! ");
+            allValidOdds = retrieveValidOdds();
+            log.info("getAllValidOdds() - found valid odds: " + allValidOdds.size());
+        }
+        return allValidOdds;
+    }
+
+    public List<Double> retrieveValidOdds() {
+
+            List<Double> allValidOdds = new ArrayList<Double>();
+            Double currentOdds = BaseServiceBean.MIN_ODDS;
+            allValidOdds.add(currentOdds);
+
+            while (currentOdds < BaseServiceBean.MAX_ODDS) {
+                currentOdds = baseService.getUpOdds(currentOdds);
+                //   log.info("get next odds: " + currentOdds);
+                allValidOdds.add(currentOdds);
+            }
+            log.info("getAllValidOdds() - found valid odds: " + allValidOdds.size());
+
+        return allValidOdds;
     }
 
     public void setActiveMarket(String marketId, Market market) {

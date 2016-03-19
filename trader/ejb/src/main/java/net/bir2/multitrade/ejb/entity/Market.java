@@ -200,7 +200,7 @@ public class Market implements java.io.Serializable {
 	@Transient
 	public String getStatusClass() {
 		String statusClass;
-		if ("ACTIVE".equals(marketStatus))
+		if ("OPEN".equals(marketStatus))
 			statusClass = "statusGreen";
 		else if ("CLOSED".equals(marketStatus))
 			statusClass = "statusBlack";
