@@ -29,6 +29,7 @@ import com.betfair.aping.ApiNGDemo;
 import com.betfair.aping.exceptions.APINGException;
 import com.betfair.aping.util.JsonResponseHandler;
 import com.betfair.aping.util.RescriptResponseHandler;
+import org.apache.http.protocol.HTTP;
 
 public class HttpUtil {
 
@@ -109,7 +110,7 @@ public class HttpUtil {
 			post.setHeader(HTTP_HEADER_X_AUTHENTICATION, ssoToken);
 
 			post.setHeader("Accept-Encoding", "gzip, deflate");
-			post.setHeader("Keep-Alive", "1, timeout=120, max=100");
+			post.setHeader(HTTP.CONN_DIRECTIVE, HTTP.CONN_KEEP_ALIVE);
 
 			if (jsonRequest != null)
 				post.setEntity(new StringEntity(jsonRequest, ApiNGDemo

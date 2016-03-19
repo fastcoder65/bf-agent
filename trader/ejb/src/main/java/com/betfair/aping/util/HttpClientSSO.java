@@ -46,6 +46,7 @@ import org.apache.http.impl.conn.DefaultProxyRoutePlanner;
 import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.params.CoreConnectionPNames;
+import org.apache.http.protocol.HTTP;
 import org.apache.http.util.EntityUtils;
 import java.util.logging.*;
 
@@ -299,7 +300,7 @@ public class HttpClientSSO {
 			httpPost.setEntity(new UrlEncodedFormEntity(nvps));
 			httpPost.setHeader("X-Application", appKey);
 			httpPost.setHeader("Accept-Encoding", "gzip, deflate");
-			httpPost.setHeader("Keep-Alive", "1, timeout=120, max=100");
+			httpPost.setHeader(HTTP.CONN_DIRECTIVE, HTTP.CONN_KEEP_ALIVE);
 
 			printLog("executing request {}" + httpPost.getRequestLine());
 
