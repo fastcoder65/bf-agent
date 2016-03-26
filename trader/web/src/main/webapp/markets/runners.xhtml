@@ -40,15 +40,16 @@
 
 		</h:outputStylesheet>
 
+	<a4j:jsFunction name="setSelectionId">
+		<a4j:param  name="selectionId" assignTo="#{marketBean.selectionId}"></a4j:param>
+	</a4j:jsFunction>
+
 	<rich:panel styleClass="runnerPanel">
 		<f:facet name="header">
 			<h:outputText value="Runners"/>
 		</f:facet>
 
-			<a4j:jsFunction name="setSelectionId">
-				<a4j:param  name="selectionId" assignTo="#{marketBean.selectionId}"></a4j:param>
-			</a4j:jsFunction>
-
+	<ui:remove>
 		<h:panelGrid>
 
 			<a4j:outputPanel>
@@ -60,24 +61,29 @@
 				errorStyle="color:red" showSummary="true" showDetail="true" />
 
 		</h:panelGrid>
+	</ui:remove>
 
-		<h:form>
+
 
 			<ui:remove>
 				styleClass="autoSizeRows"
 				frozenColumns="2"
 				showColumnControl="true"
+
+				keepSaved="true"
+				tableState="#{marketBean.runnerTableState}"
+
 			</ui:remove>
 
-			<rich:extendedDataTable  value="#{marketBean.runners}" var="rnr"
+			<rich:panel styleClass="runnerPanelBody">
 
+				<h:form>
 
+					<rich:dataTable  value="#{marketBean.runners}" var="rnr"
 									 selectionMode="single"
-									 style="height:290px;width:100%"
-									 styleClass="autoSizeRows"
+									 style="height:300px;width:100%"
+									 rowClasses="rvgRowOne,rvgRowTwo"
 									 id="runnerTable" rowKeyVar="rkv" sortMode="single"
-										keepSaved="true"
-									 tableState="#{marketBean.runnerTableState}"
 					>
 
 
@@ -295,7 +301,7 @@
 					</h:panelGrid>
 				</rich:column>
 
-				<ui:remove>
+
 
 					<rich:column label="Pseudo stavki" styleClass="oddsCol">
 						<f:facet name="header">
@@ -337,6 +343,8 @@
 						</h:outputFormat>
 
 					</rich:column>
+
+				<ui:remove>
 
 					<rich:column label="%% win Pink stake" styleClass="numCol">
 						<f:facet name="header">
@@ -515,10 +523,11 @@
 					</h:outputFormat>
 				</rich:column>
 
-			</rich:extendedDataTable >
+			</rich:dataTable>
 
+				</h:form>
 
-		</h:form>
+			</rich:panel>
 
 	</rich:panel>
 

@@ -32,19 +32,19 @@ html, body {
 .marketPanelBody {
     margin: 1px;
     padding: 1px;
-    height: 290px;
+    height: 260px;
     overflow: auto;
 }
 
 .runnerPanel {
     margin: 1px;
-    height: 340px;
+    height: 360px;
     overflow: hidden;
 }
 
 .runnerPanelBody {
     margin: 1px;
-    height: 330px;
+    height: 320px;
     overflow: auto;
 }
 

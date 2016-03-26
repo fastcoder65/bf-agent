@@ -8,26 +8,27 @@
 	xmlns:rich="http://richfaces.org/rich"
 	xmlns:f="http://java.sun.com/jsf/core">
 
-<head>
+<h:head>
 <title>BIR Solutions</title>
 <ui:include src="/include/meta/content-type.xhtml" />
-<link rel="SHORTCUT ICON" href='./images/favicon.ico'
-	type="image/x-icon" />
+<link rel="SHORTCUT ICON" href='./images/favicon.ico' type="image/x-icon" />
 <link rel="ICON" href='./images/favicon.ico' type="image/x-icon" />
 <link rel="stylesheet" type="text/css" href='css/mainStyle.css' />
 
-<style>
+</h:head>
 
-.rvgRowOne {
- background-color: #{a4jSkin.additionalBackgroundColor}
-}
-.rvgRowTwo {
- background-color:  #{a4jSkin.generalBackgroundColor
-}
-</style>
-</head>
+<h:body>
+<h:outputStylesheet target="head">
 
-<body>
+	.rvgRowOne {
+		background-color: #{a4jSkin.additionalBackgroundColor}
+
+	.rvgRowTwo {
+		background-color: #{a4jSkin.generalBackgroundColor}
+
+
+</h:outputStylesheet>
+
 <f:view>
 	<rich:panel>
 	<f:facet name="Menu"/>	
@@ -42,5 +43,5 @@
 	</ul>
 	</rich:panel>
 </f:view>
-</body>
+</h:body>
 </html>
