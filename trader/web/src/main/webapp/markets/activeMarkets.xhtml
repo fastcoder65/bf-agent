@@ -23,10 +23,23 @@
         </f:facet>
 
             <h:form>
+                <a4j:push id="pushTopics" address="pushTopicsContext">
+                    <a4j:ajax event="dataavailable" render="uuid,marketServerTime,serverTime" />
+                </a4j:push>
+
+                <h:panelGrid columns="2">
+                    <h:outputLabel value="New UUID:" />
+                    <a4j:outputPanel id="uuid" layout="block">
+                        #{pushBean.UUID}
+                    </a4j:outputPanel>
+                </h:panelGrid>
+            </h:form>
+
+            <h:form>
                 <a4j:region id="pollRegion">
 
                         <a4j:poll id="pollMarkets" interval="10000" enabled="#{marketBean.pollEnabled}"
-                                  render="pollMarkets,marketTable,marketServerTime,runnerTable,serverTime"/>
+                                  render="pollMarkets,marketTable,runnerTable"/>
 
 
                 </a4j:region>
