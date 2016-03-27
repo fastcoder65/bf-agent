@@ -4,13 +4,7 @@ import java.math.BigDecimal;
 import java.util.logging.Logger;
 
 import javax.annotation.Resource;
-import javax.ejb.EJB;
-import javax.ejb.EJBContext;
-import javax.ejb.Local;
-import javax.ejb.Stateless;
-import javax.ejb.TimedObject;
-import javax.ejb.Timer;
-import javax.ejb.TimerService;
+import javax.ejb.*;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -45,25 +39,34 @@ public class BaseServiceBean implements BaseService, TimedObject {
 	public static final double FAKE_STAKE = 1.0;
 	public static final double MIN_STAKE_AMOUNT = 4.0;
 	
+	private static final String  GetValidOddsRange = " select v FROM ValidOdds v where :value between v.lowMargin and v.highMargin ";
+
+	private static final String GetMinLowMargin = " select min(vo.lowMargin) FROM ValidOdds vo where vo.lowMargin > :value ";
 
 	private ValidOdds getValidOddsRange(Double rawValue) {
-		return (ValidOdds) em.createNamedQuery("GetValidOddsRange")
+		return (ValidOdds) em.createQuery(GetValidOddsRange)
 				.setParameter("value", rawValue).getSingleResult();
 	}
 
+	private static final String GetValidOddsRangeCount =  " select count(v) FROM ValidOdds v where :value between v.lowMargin and v.highMargin ";
+
 	private Long getValidOddsRangeCount(Double value) {
-		return (Long) em.createNamedQuery("GetValidOddsRangeCount")
+		return (Long) em.createQuery(GetValidOddsRangeCount)
 				.setParameter("value", value).getSingleResult();
 	}
 
+	private static final String GetMaxHighMargin = " select max(v.highMargin) FROM ValidOdds v where v.highMargin < :value ";
+
 	private Double getMaxHighMargin(Double value) {
-		return (Double) em.createNamedQuery("GetMaxHighMargin").setParameter(
-				"value", value).getSingleResult();
+		return (Double) em.createQuery(GetMaxHighMargin)
+				.setParameter("value", value)
+				.getSingleResult();
 	}
 
 	private Double getMinLowMargin(Double value) {
-		return (Double) em.createNamedQuery("GetMinLowMargin").setParameter(
-				"value", value).getSingleResult();
+		return (Double) em.createQuery(GetMinLowMargin)
+				.setParameter("value", value)
+				.getSingleResult();
 	}
 
 	public Double getUpOdds(Double cOdds) {
@@ -315,11 +318,16 @@ End Function
 	public void createTimer(EJBContext context, String eventId, long duration) {
 		TimerService timerService;
 		try {
+			TimerConfig tconfig = new TimerConfig();
+			tconfig.setPersistent(false);
+			tconfig.setInfo(eventId);
 			timerService = context.getTimerService();
-			timerService.createTimer(duration, eventId);
-			log.fine(this.getClass().getName() + ": createTimer (" + context
+
+			timerService.createSingleActionTimer(duration, tconfig);
+
+			log.info(this.getClass().getName() + ": createTimer (" + context
 					+ ") timer initialized for event  [eventId=" + eventId
-					+ "] - " + this.hashCode());
+					+ "] - hashcode: " + this.hashCode());
 		} catch (Exception e) {
 			String msg = e.getMessage();
 			log.severe("error creating timer: " + ((msg != null) ? msg : ""));
@@ -352,7 +360,7 @@ End Function
 					+ e.getMessage());
 		}
 
-		log.fine("timerInfo: " + timerInfo);
+		log.info("ejbTimeout() - timerInfo: " + timerInfo);
 	//	ShedulerActivity serviceBean = ShedulerActivityBean.getInstance();
 		if (timerInfo.startsWith(Action.UPDATE_MARKET.toString())) {
 			String[] procInfo = timerInfo.split("=");

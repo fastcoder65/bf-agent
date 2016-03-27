@@ -1201,7 +1201,7 @@ public class SheduleRequestMessageListener implements MessageListener {
 						logInfo(new StringBuilder(100).append("bet ")
 								.append(cir.getInstruction()).append(" canceled ")
 								.append(cir.getSizeCancelled()).append(", ")
-								.append(cir.getErrorCode())
+								.append(cancelExecutionReport.getErrorCode())
 								.append(", market: ")
 								.append(currentMarket.getMenuPath()).append(BS)
 								.append(currentMarket.getName()).toString());
@@ -1313,11 +1313,10 @@ public class SheduleRequestMessageListener implements MessageListener {
 			for (ReplaceInstructionReport rir : replaceExecutionReport.getInstructionReports()) {
 				logInfo(new StringBuilder(100).append("orders cancelled: ")
 						.append(rir.getCancelInstructionReport())
-						.append(",\n status ").append(rir.getStatus())
-						.append(",\n orders placed: ")
-						.append(rir.getPlaceInstructionReport())
-						.append(", market: ")
-						.append(currentMarket.getName()).toString());
+						.append(",\n status: ").append(rir.getStatus())
+						.append(", \n errorCode: ").append(replaceExecutionReport.getErrorCode())
+						.append(",\n orders placed: ").append(rir.getPlaceInstructionReport())
+						.append(", market: ").append(currentMarket.getName()).toString());
 			}
 		}
 
@@ -1338,15 +1337,13 @@ public class SheduleRequestMessageListener implements MessageListener {
 
 		if (cancelExecutionReport != null) {
 			for (CancelInstructionReport cir : cancelExecutionReport.getInstructionReports()) {
-
 				logInfo(new StringBuilder(100).append("bet ")
 						.append(cir.getInstruction()).append(" canceled ")
 						.append(cir.getSizeCancelled()).append(", ")
-						.append(cir.getErrorCode())
+						.append(cancelExecutionReport.getErrorCode())
 						.append(", market: ")
 						.append(currentMarket.getMenuPath()).append(BS)
 						.append(currentMarket.getName()).toString());
-
 			}
 		}
 
@@ -1406,13 +1403,12 @@ public class SheduleRequestMessageListener implements MessageListener {
 					placeExecutionReport = GlobalAPI.placeOrders(currentUser.getApiContext(), currentMarket.getMarketId(), oBets);
 
 					for (PlaceInstructionReport pir : placeExecutionReport.getInstructionReports()) {
-						logInfo(new StringBuilder(100).append("bet ")
-								.append(pir.getBetId()).append(" placed, status: ")
-								.append(pir.getStatus()).append(", errorCode: ")
-								.append(pir.getErrorCode())
-								.append(", market: ")
-								.append(currentMarket.getMenuPath()).append(BS)
-								.append(currentMarket.getName()).toString());
+						logInfo(new StringBuilder(100).append("bet ").append(pir.getBetId())
+								.append(" placed, status: ").append(pir.getStatus())
+								.append(", errorCode: ").append(pir.getErrorCode().ordinal())
+								.append(", cause: ").append(placeExecutionReport.getErrorCode())
+								.append(", market: ").append(currentMarket.getMenuPath())
+								.append(BS).append(currentMarket.getName()).toString());
 					}
 
 
