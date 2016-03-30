@@ -40,16 +40,13 @@
 
 		</h:outputStylesheet>
 
-	<a4j:jsFunction name="setSelectionId">
-		<a4j:param  name="selectionId" assignTo="#{marketBean.selectionId}"></a4j:param>
-	</a4j:jsFunction>
 
 	<rich:panel styleClass="runnerPanel">
 		<f:facet name="header">
 			<h:outputText value="Runners"/>
 		</f:facet>
 
-	<ui:remove>
+
 		<h:panelGrid>
 
 			<a4j:outputPanel>
@@ -61,23 +58,25 @@
 				errorStyle="color:red" showSummary="true" showDetail="true" />
 
 		</h:panelGrid>
-	</ui:remove>
 
+<ui:remove>
+	<h:form>
 
+		<a4j:push address="reloadRunnersJob"
+				  ondataavailable="alert('ACK recept')">
+			<a4j:ajax event="dataavailable" render="runnerPanelBody"/>
+		</a4j:push>
 
-			<ui:remove>
-				styleClass="autoSizeRows"
-				frozenColumns="2"
-				showColumnControl="true"
-
-				keepSaved="true"
-				tableState="#{marketBean.runnerTableState}"
-
-			</ui:remove>
+	</h:form>
+</ui:remove>
 
 			<rich:panel styleClass="runnerPanelBody">
 
 				<h:form>
+
+					<a4j:jsFunction name="setSelectionId">
+						<a4j:param  name="selectionId" assignTo="#{marketBean.selectionId}"></a4j:param>
+					</a4j:jsFunction>
 
 					<rich:dataTable  value="#{marketBean.runners}" var="rnr"
 									 selectionMode="single"

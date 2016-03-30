@@ -1,0 +1,25 @@
+
+
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:a4j="http://richfaces.org/a4j"
+                xmlns:rich="http://richfaces.org/rich">
+
+    <h:form>
+        <h:panelGrid columns="4">
+            <h:outputLabel value="Message:"/>
+            <h:inputText id="messageInput" styleClass="message" value="#{pushCdiBean.message}">
+                <f:validator validatorId="safeHtml"/>
+            </h:inputText>
+
+            <a4j:commandButton value="Send" action="#{pushCdiBean.sendMessage}"
+                               execute="@form" render="messageInput"/>
+
+            <rich:messages for="messageInput"/>
+        </h:panelGrid>
+
+
+    </h:form>
+</ui:composition>
