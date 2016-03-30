@@ -152,8 +152,15 @@ public class BaseServiceBean implements BaseService, TimedObject {
 		return (Math.abs(arg1 - arg2) < prec);	
 	}
 
-	public  boolean isEqual(Double arg1, Double arg2) {
+	public  boolean isEqual0(Double arg1, Double arg2) {
 		return isEqual(arg1, arg2, 0.001);	
+	}
+
+	public  boolean isEqual(Double arg1, Double arg2) {
+		if (arg1 != null && !arg1.equals(Double.NaN) && arg2 != null && !arg2.equals(Double.NaN))
+		return (0 == Double.compare(arg1, arg2));
+		else
+		return false;
 	}
 
 	public Double getCosmeticOdds(Double blueOdds1, Double blueAmount1,

@@ -290,8 +290,9 @@ public class ShedulerActivityBean implements ShedulerActivity {
                         }
                     }
                     log.fine(new StringBuilder(100).append("### do update Market {marketId =").append(_marketId).append(", turnOnTime=").append(turnOnTime.getTime()).append(", turnOffTime=").append(turnOffTime.getTime()).append(" }").toString());
-                    sendRequest(Action.UPDATE_MARKET, uzer.getLogin(),
-                            market_id);
+
+                    sendRequest(Action.UPDATE_MARKET, uzer.getLogin(), market_id);
+
                     // baseService.sendDelayedRequest(Action.UPDATE_MARKET,
                     // user.getLogin(), market_id, i);
                 }

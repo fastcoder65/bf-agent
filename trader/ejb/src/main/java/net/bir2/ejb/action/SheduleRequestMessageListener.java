@@ -203,7 +203,7 @@ public class SheduleRequestMessageListener implements MessageListener {
 		if (!needUpdate)
 			return;
 
-		printLog("currentMarket: " + currentMarket.getMenuPath() + BS
+		logInfo("currentMarket: " + currentMarket.getMenuPath() + BS
 					+ currentMarket.getName() + ", minutes to start: " + km
 					+ ", refreshInt(second(s)):" + refreshInt);
 
@@ -827,6 +827,11 @@ public class SheduleRequestMessageListener implements MessageListener {
 
 			getFeedData(market4User);
 			updateBets(currentUser, currentMarket, market4User, curBets);
+/*
+			TopicKey topicKey = new TopicKey("topicNotificationsJobs");
+			TopicsContext topicsContext = TopicsContext.lookup();
+			topicsContext.publish("topicNotificationsJobs", null);
+*/
 		}
 	}
 
@@ -1043,6 +1048,7 @@ public class SheduleRequestMessageListener implements MessageListener {
 						//ub.setOldPrice(cb.getPrice());
 						//ub.setOldSize(cb.getSize());
 						ub.setNewPrice(nb.getLimitOrder().getPrice());
+
 						//ub.setNewSize(nb.getSize());
 						cUpdates.add(ub);
 						printLog(new StringBuilder(100)
@@ -1133,7 +1139,7 @@ public class SheduleRequestMessageListener implements MessageListener {
 		turnOffTime.add(Calendar.HOUR, turnOffTimeOffsetHours);
 		turnOffTime.add(Calendar.MINUTE, turnOffTimeOffsetMinutes);
 		
-			printLog("* DO TURN OFF: Market Id: "
+			logInfo("* DO TURN OFF: Market Id: "
 					+ currentMarket.getMarketId() + ", Market Name: "
 					+ currentMarket.getMenuPath() + BS
 					+ currentMarket.getName() + ", turnOffTime="
@@ -1142,7 +1148,7 @@ public class SheduleRequestMessageListener implements MessageListener {
 		if (now.after(turnOffTime)) {
 			boolean isOnAir = market4User.isOnAir();
 
-			printLog("** DO TURN OFF: Market '" + currentMarket
+			logInfo("** DO TURN OFF: Market '" + currentMarket
 					+ "' isOnAir=" + isOnAir);
 			if (isOnAir) {
 				market4User.setOnAir(false);
@@ -1154,7 +1160,7 @@ public class SheduleRequestMessageListener implements MessageListener {
 
 		boolean isOnAir = market4User.isOnAir();
 
-			printLog(Level.INFO, "*** updateBets: for market " + currentMarket + " onAir is " + isOnAir);
+			logInfo("*** updateBets: for market " + currentMarket + " onAir is " + isOnAir);
 
 // 		Exchange selected_exchange = currentMarket.getExchange() == 1 ? Exchange.UK : Exchange.AUS;
 
@@ -1169,9 +1175,9 @@ public class SheduleRequestMessageListener implements MessageListener {
 				for (CurrentOrderSummary cb : curBets) {
 					//CancelBets cab = new CancelBets();
 					CancelInstruction ci = new CancelInstruction();
-					ci.setSizeReduction(cb.getSizeRemaining());
+					// ci.setSizeReduction(cb.getSizeRemaining());
 
-					ci.setBetId(cb.getBetId());
+					// ci.setBetId(cb.getBetId());
 					cDeletes.add(ci);
 				}
 
@@ -1196,11 +1202,14 @@ public class SheduleRequestMessageListener implements MessageListener {
 					}
 				}
 				if (cancelExecutionReport != null) {
+
+					logInfo("cancelExecutionReport: " + cancelExecutionReport.toString());
+
 					for (CancelInstructionReport cir : cancelExecutionReport.getInstructionReports()) {
 
-						logInfo(new StringBuilder(100).append("bet ")
-								.append(cir.getInstruction()).append(" canceled ")
-								.append(cir.getSizeCancelled()).append(", ")
+						logInfo(new StringBuilder(100).append("betId: ")
+								.append(cir.getInstruction().getBetId()).append(", canceled size: ")
+								.append(cir.getSizeCancelled()).append(", errorCode: ")
 								.append(cancelExecutionReport.getErrorCode())
 								.append(", market: ")
 								.append(currentMarket.getMenuPath()).append(BS)
@@ -1242,20 +1251,20 @@ public class SheduleRequestMessageListener implements MessageListener {
 
 				pi.setSelectionId(runner.getSelectionId());
 
-				//pi.setHandicap(0);
-				//pi.setSide(Side.LAY);
-				pi.setSide(Side.BACK);
+				pi.setHandicap(0);
+				pi.setSide(Side.LAY);
+				// pi.setSide(Side.BACK);
 				pi.setOrderType(OrderType.LIMIT);
 
 				LimitOrder limitOrder = new LimitOrder();
 				limitOrder.setPersistenceType(PersistenceType.LAPSE);
 
-		//		limitOrder.setPrice(r4u.getSelectionPrice());
+				limitOrder.setPrice(r4u.getSelectionPrice());
 //				limitOrder.setPrice(1.02);
-//				limitOrder.setSize(r4u.getSelectionAmount());
+				limitOrder.setSize(r4u.getSelectionAmount());
 
-				limitOrder.setPrice(100.0);
-				limitOrder.setSize(4.0);
+//				limitOrder.setPrice(100.0);
+//				limitOrder.setSize(4.0);
 
 				pi.setLimitOrder(limitOrder);
 				logInfo(" pi: " + pi );
