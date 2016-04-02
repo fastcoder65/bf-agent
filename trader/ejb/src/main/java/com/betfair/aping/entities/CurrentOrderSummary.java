@@ -11,6 +11,31 @@ import java.util.Date;
  * Created by Eugene on 03.01.2016.
  */
 public class CurrentOrderSummary {
+    @Override
+    public String toString() {
+        return "CurrentOrderSummary{" +
+                "averagePriceMatched=" + averagePriceMatched +
+                ", betId='" + betId + '\'' +
+                ", marketId='" + marketId + '\'' +
+                ", selectionId=" + selectionId +
+                ", handicap=" + handicap +
+                ", priceSize=" + priceSize +
+                ", bspLiability=" + bspLiability +
+                ", side=" + side +
+                ", status=" + status +
+                ", persistenceType=" + persistenceType +
+                ", orderType=" + orderType +
+                ", placedDate=" + placedDate +
+                ", matchedDate=" + matchedDate +
+                ", sizeMatched=" + sizeMatched +
+                ", sizeRemaining=" + sizeRemaining +
+                ", sizeLapsed=" + sizeLapsed +
+                ", sizeCancelled=" + sizeCancelled +
+                ", sizeVoided=" + sizeVoided +
+                ", regulatorAuthCode='" + regulatorAuthCode + '\'' +
+                ", regulatorCode='" + regulatorCode + '\'' +
+                '}';
+    }
 
     public double getAveragePriceMatched() {
         return averagePriceMatched;

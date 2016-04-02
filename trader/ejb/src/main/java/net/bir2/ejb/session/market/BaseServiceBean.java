@@ -332,7 +332,7 @@ End Function
 
 			timerService.createSingleActionTimer(duration, tconfig);
 
-			log.info(this.getClass().getName() + ": createTimer (" + context
+			log.fine(this.getClass().getName() + ": createTimer (" + context
 					+ ") timer initialized for event  [eventId=" + eventId
 					+ "] - hashcode: " + this.hashCode());
 		} catch (Exception e) {
@@ -367,7 +367,7 @@ End Function
 					+ e.getMessage());
 		}
 
-		log.info("ejbTimeout() - timerInfo: " + timerInfo);
+		log.fine("ejbTimeout() - timerInfo: " + timerInfo);
 	//	ShedulerActivity serviceBean = ShedulerActivityBean.getInstance();
 		if (timerInfo.startsWith(Action.UPDATE_MARKET.toString())) {
 			String[] procInfo = timerInfo.split("=");

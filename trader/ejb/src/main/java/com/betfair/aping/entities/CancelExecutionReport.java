@@ -15,6 +15,17 @@ public class CancelExecutionReport {
 
     ExecutionReportErrorCode errorCode;
 
+    @Override
+    public String toString() {
+        return "CancelExecutionReport{" +
+                "customerRef='" + customerRef + '\'' +
+                ", status=" + status +
+                ", errorCode=" + errorCode +
+                ", marketId='" + marketId + '\'' +
+                ", instructionReports=" + instructionReports +
+                '}';
+    }
+
     String marketId; //    Echo of marketId passed
 
     List< CancelInstructionReport > instructionReports;

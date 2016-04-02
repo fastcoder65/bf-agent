@@ -284,10 +284,12 @@ public class ShedulerActivityBean implements ShedulerActivity {
                 if (activeMarkets.containsKey(_marketId)) {
                     if (!now.before(turnOnTime) && !now.after(turnOffTime)) {
                         boolean isOnAir = market4User.isOnAir();
+                        /*
                         if (!isOnAir) {
                             market4User.setOnAir(true);
                             marketService.merge(market4User);
                         }
+                        */
                     }
                     log.fine(new StringBuilder(100).append("### do update Market {marketId =").append(_marketId).append(", turnOnTime=").append(turnOnTime.getTime()).append(", turnOffTime=").append(turnOffTime.getTime()).append(" }").toString());
 

@@ -27,5 +27,11 @@ public class CurrentOrderSummaryReport {
         this.moreAvailable = moreAvailable;
     }
 
-
+    @Override
+    public String toString() {
+        return "CurrentOrderSummaryReport{" +
+                "currentOrders=" + currentOrders +
+                ", moreAvailable=" + moreAvailable +
+                '}';
+    }
 }
