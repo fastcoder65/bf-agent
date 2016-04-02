@@ -170,7 +170,7 @@ public class BaseServiceBean implements BaseService, TimedObject {
 		Double myOdds = (_myOdds == null? 0.0: _myOdds); 
 		Double myAmount = (_myAmount==null? 0.0: _myAmount);
 		
-	    log.info("getCosmeticOdds( blueOdds1=" + blueOdds1 + ", blueAmount1=" + blueAmount1 + ", blueOdds2=" + blueOdds2 + ", pinkOdds="+pinkOdds+", precosmOdds=" + precosmOdds + ", myOdds=" + myOdds + ", myAmount=" + myAmount+')');
+	    log.fine("getCosmeticOdds( blueOdds1=" + blueOdds1 + ", blueAmount1=" + blueAmount1 + ", blueOdds2=" + blueOdds2 + ", pinkOdds="+pinkOdds+", precosmOdds=" + precosmOdds + ", myOdds=" + myOdds + ", myAmount=" + myAmount+')');
 
 		Double cosmOdds1;
 		Double cosmOdds2;
@@ -241,7 +241,7 @@ public class BaseServiceBean implements BaseService, TimedObject {
 			}
 		}
 
-		log.info("precosmOdds=" + precosmOdds + ", cosmOdds=" + result);
+		log.fine("precosmOdds=" + precosmOdds + ", cosmOdds=" + result);
 		
 		if (result > precosmOdds ) {
 		 log.severe ("!!!===!!! cosmOdds ("+result+") > precosmOdds("+precosmOdds+") !!!");
@@ -251,14 +251,14 @@ public class BaseServiceBean implements BaseService, TimedObject {
 	
 	public Double getSelectionPrice ( Double finalOdds, Double sourceOdds, Double volumeStake, Double maxLoss, Double _profitLoss, Integer inplayDelay, String marketStatus, Boolean isNonRunner) {
 
-		log.info("getSelectionPrice(): finalOdds: " + finalOdds+", sourceOdds: "+ sourceOdds+", volumeStake: "+volumeStake+", maxLoss: " + maxLoss+", profitLoss: "+ _profitLoss+", inplayDelay: " + inplayDelay+ ", marketStatus: "+marketStatus+ ", isNonRunner: " + isNonRunner);
+		log.fine("getSelectionPrice(): finalOdds: " + finalOdds+", sourceOdds: "+ sourceOdds+", volumeStake: "+volumeStake+", maxLoss: " + maxLoss+", profitLoss: "+ _profitLoss+", inplayDelay: " + inplayDelay+ ", marketStatus: "+marketStatus+ ", isNonRunner: " + isNonRunner);
 		Double profitLoss = (_profitLoss==null? 0.0: _profitLoss);
 
 		Double result = FAKE_ODDS;
 		if ("OPEN".equals(marketStatus) && finalOdds > 0 && finalOdds >= MIN_ODDS && volumeStake > 0 && sourceOdds != null && sourceOdds >= MIN_ODDS ) {
 		  if (!isNonRunner && (volumeStake / finalOdds > MIN_STAKE_AMOUNT) && (!(maxLoss + profitLoss < 0)) && inplayDelay == 0 ) {
 			  result = finalOdds;
-			  log.info("$$ getSelectionPrice(): finalOdds=" + finalOdds + ", result="+result);
+			  log.fine("$$ getSelectionPrice(): finalOdds=" + finalOdds + ", result="+result);
 		  }
 		} 
 	   return result;	

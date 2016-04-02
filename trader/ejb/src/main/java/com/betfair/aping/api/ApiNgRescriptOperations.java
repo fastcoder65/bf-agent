@@ -1,6 +1,7 @@
 package com.betfair.aping.api;
 
 import com.betfair.aping.ApiNGDemo;
+import com.betfair.aping.containers.MarketProfitAndLossContainer;
 import com.betfair.aping.containers.ReplaceOrdersContainer;
 import com.betfair.aping.entities.*;
 import com.betfair.aping.enums.*;
@@ -215,8 +216,34 @@ public class ApiNgRescriptOperations extends ApiNgOperations {
 
     }
 
+    public  List<MarketProfitAndLoss> listMarketProfitAndLoss ( Set<String> marketIds, boolean includeSettledBets, boolean includeBspBets, boolean netOfCommission,
+                                                                String appKey, String ssoId) throws APINGException {
 
-        protected String makeRequest(String operation, Map<String, Object> params, String appKey, String ssoToken)  throws  APINGException {
+        Map<String, Object> params = new HashMap<String, Object>();
+        params.put(LOCALE, locale);
+        params.put(MARKET_IDS, marketIds);
+
+        params.put ( param_includeSettledBets, includeSettledBets);
+        params.put ( param_includeBspBets, includeBspBets);
+        params.put ( param_netOfCommission, netOfCommission);
+
+        String result = getInstance().makeRequest(ApiNgOperation.LIST_MARKET_PROFIT_AND_LOSS.getOperationName(), params, appKey, ssoId);
+
+        if (ApiNGDemo.isDebug())
+            printLog("'cancelOrders' Response: " + result);
+
+        MarketProfitAndLossContainer container = JsonConverter.convertFromJson(result,
+                MarketProfitAndLossContainer.class);
+
+        if (container.getError() != null)
+            throw container.getError().getData().getAPINGException();
+
+        return container.getResult();
+
+    }
+
+
+    protected String makeRequest(String operation, Map<String, Object> params, String appKey, String ssoToken)  throws  APINGException {
         String requestString;
         //Handling the Rescript request
             String _requestId = String.valueOf(customerRandom.nextLong());
@@ -246,6 +273,7 @@ public class ApiNgRescriptOperations extends ApiNgOperations {
 		HttpUtil requester = new HttpUtil();
 		return requester.sendLogoutRequest( appKey, ssoToken);
 	}
+
 
 }
 

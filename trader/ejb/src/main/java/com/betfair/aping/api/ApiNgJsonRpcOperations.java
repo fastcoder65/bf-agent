@@ -125,9 +125,11 @@ public class ApiNgJsonRpcOperations extends ApiNgOperations {
 			PriceProjection priceProjection, OrderProjection orderProjection,
 			MatchProjection matchProjection, String currencyCode,
 			String appKey, String ssoId) throws APINGException {
+
 		Map<String, Object> params = new HashMap<String, Object>();
 		params.put(LOCALE, locale);
 		params.put(MARKET_IDS, marketIds);
+
 		params.put(PRICE_PROJECTION, priceProjection);
 		params.put(ORDER_PROJECTION, orderProjection);
 		params.put(MATCH_PROJECTION, matchProjection);
@@ -227,6 +229,33 @@ public class ApiNgJsonRpcOperations extends ApiNgOperations {
 		return container.getResult();
 
 	}
+
+	public  List<MarketProfitAndLoss> listMarketProfitAndLoss ( Set<String> marketIds, boolean includeSettledBets, boolean includeBspBets, boolean netOfCommission,
+														  String appKey, String ssoId) throws APINGException {
+
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put(LOCALE, locale);
+		params.put(MARKET_IDS, marketIds);
+
+		params.put ( param_includeSettledBets, includeSettledBets);
+		params.put ( param_includeBspBets, includeBspBets);
+		params.put ( param_netOfCommission, netOfCommission);
+
+		String result = getInstance().makeRequest(ApiNgOperation.LIST_MARKET_PROFIT_AND_LOSS.getOperationName(), params, appKey, ssoId);
+
+		if (ApiNGDemo.isDebug())
+			printLog("'cancelOrders' Response: " + result);
+
+		MarketProfitAndLossContainer container = JsonConverter.convertFromJson(result,
+				MarketProfitAndLossContainer.class);
+
+		if (container.getError() != null)
+			throw container.getError().getData().getAPINGException();
+
+		return container.getResult();
+
+	}
+
 
 	public CancelExecutionReport cancelOrders(String marketId, List<CancelInstruction> instructions, String customerRef,
 														  String appKey, String ssoId ) throws APINGException{

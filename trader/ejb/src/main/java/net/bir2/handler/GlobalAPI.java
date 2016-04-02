@@ -255,7 +255,21 @@ public class GlobalAPI {
         return result;
     }
 
-    public static List<CurrentOrderSummary> listCurrentOrders(APIContext context,
+        public static  List<MarketProfitAndLoss> listMarketProfitAndLoss (APIContext context, Set<String> marketIds) {
+
+            List<MarketProfitAndLoss> result = null;
+            try {
+
+               result = jsonOperations.listMarketProfitAndLoss( marketIds, false, false, true,
+                        context.getProduct(), context.getToken());
+
+            } catch (APINGException e) {
+                log.log(Level.SEVERE, "error getting market profit and loss ", e);
+            }
+            return result;
+        }
+
+        public static List<CurrentOrderSummary> listCurrentOrders(APIContext context,
                                                               Set<String> betIds, Set<String> marketIds) {
 
         List<CurrentOrderSummary> result = null;

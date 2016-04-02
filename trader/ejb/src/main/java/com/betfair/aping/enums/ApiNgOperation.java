@@ -19,8 +19,9 @@ public enum ApiNgOperation {
 
 	CANCEL_ORDERS("cancelOrders"),
 	REPLACE_ORDERS("replaceOrders"),
+	LIST_MARKET_PROFIT_AND_LOSS("listMarketProfitAndLoss"),
 	PLACE_ORDERS("placeOrders");
-	
+
 	private String operationName;
 	
 	private ApiNgOperation(String operationName){

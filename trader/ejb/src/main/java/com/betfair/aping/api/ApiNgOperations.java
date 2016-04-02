@@ -26,6 +26,10 @@ public abstract class ApiNgOperations {
     protected final String MATCH_PROJECTION = "matchProjection";
     protected final String ORDER_PROJECTION = "orderProjection";
 
+    protected final String param_includeSettledBets   = "includeSettledBets";
+    protected final String param_includeBspBets       = "includeBspBets";
+    protected final String param_netOfCommission      = "netOfCommission";
+
     protected final Logger log = Logger.getLogger(this.getClass().getName());
 
     protected final String locale = Locale.getDefault().toString();
@@ -117,5 +121,8 @@ public abstract class ApiNgOperations {
     public abstract ReplaceExecutionReport replaceOrders(String marketId,
                                                      List<ReplaceInstruction> instructions, String customerRef,
                                                      String appKey, String ssoId) throws APINGException;
+
+    public abstract List<MarketProfitAndLoss> listMarketProfitAndLoss ( Set<String> marketIds, boolean includeSettledBets, boolean includeBspBets, boolean netOfCommission,
+                                                                  String appKey, String ssoId) throws APINGException;
 
 }

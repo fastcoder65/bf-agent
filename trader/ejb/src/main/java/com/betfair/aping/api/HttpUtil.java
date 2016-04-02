@@ -184,7 +184,7 @@ public class HttpUtil {
 				log.fine("found header: " + hdr.getName()+ " = " + hdr.getValue());
 			}
 
-			log.info("web request "+ aURL + " executed in " + (endTime- startTime)/
+			log.fine("web request "+ aURL + " executed in " + (endTime- startTime)/
 					1000.0 + " second(s).");
 
 		} catch (UnsupportedEncodingException e1) {

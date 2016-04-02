@@ -208,7 +208,7 @@ public class Runner4User implements java.io.Serializable {
 			if (this.linkedRunner != null) {
 				String _sName = (this.linkedRunner != null && this.linkedRunner.getName() != null ? this.linkedRunner.getName() : " null name!");
 				String s = new StringBuilder().append(" getIsNonRunner(): ").append(_sName).append(" is 'NonRunner' now!").toString();
-				printLog ( Level.INFO, s);
+				printLog ( Level.FINE, s);
 				//log.info(new StringBuilder().append(" getIsNonRunner(): ").append(_sName).append(" is 'NonRunner' now!").toString());
 
 			}

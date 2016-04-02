@@ -20,4 +20,11 @@ public class PriceSize {
 		this.size = size;
 	}
 
+	@Override
+	public String toString() {
+		return "PriceSize{" +
+				"price=" + price +
+				", size=" + size +
+				'}';
+	}
 }
