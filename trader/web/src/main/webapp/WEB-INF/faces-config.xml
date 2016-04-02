@@ -92,12 +92,12 @@
  </navigation-rule>
 
  <application>
-<!--
+
   <system-event-listener>
    <system-event-listener-class>net.bir.web.beans.push.TopicsContextMessageProducerInitializer</system-event-listener-class>
    <system-event-class>javax.faces.event.PostConstructApplicationEvent</system-event-class>
   </system-event-listener>
--->
+
 
   <locale-config>
    <default-locale>en</default-locale>
