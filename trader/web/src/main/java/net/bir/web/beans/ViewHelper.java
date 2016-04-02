@@ -17,9 +17,9 @@ import javax.servlet.http.HttpServletResponse;
 
 
 
-public class ViewHelper {
+public class ViewHelper implements java.io.Serializable {
 
-	protected Logger log = Logger.getLogger(this.getClass().getName());
+	protected transient Logger log = Logger.getLogger(this.getClass().getName());
 
 	public static enum RichSkins {
 		DEFAULT("Исходная"), emeraldTown("Изумрудный город"), blueSky(
