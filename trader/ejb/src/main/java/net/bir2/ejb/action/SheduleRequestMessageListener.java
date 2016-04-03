@@ -203,9 +203,11 @@ public class SheduleRequestMessageListener implements MessageListener {
         if (!needUpdate)
             return;
 
-        logInfo("currentMarket: " + currentMarket.getMenuPath() + BS
+        printLog("currentMarket: " + currentMarket.getMenuPath() + BS
                 + currentMarket.getName() + ", minutes to start: " + km
                 + ", refreshInt(second(s)):" + refreshInt);
+
+        // TODO place send message for push there!
 
         // selected_exchange = currentMarket.getExchange() == 1 ? Exchange.UK: Exchange.AUS;
 
@@ -277,7 +279,7 @@ public class SheduleRequestMessageListener implements MessageListener {
         Market4User market4User = currentMarket.getUserData4Market().get(
                 currentUser.getId());
 
-        logInfo("given market4User: " + market4User);
+        printLog(Level.FINE, "given market4User: " + market4User);
 
         boolean isOnAir = market4User.isOnAir();
 
@@ -292,10 +294,8 @@ public class SheduleRequestMessageListener implements MessageListener {
         marketIds.add(currentMarket.getMarketId());
 
         try {
-
             currentBets = GlobalAPI.listCurrentOrders(currentUser.getApiContext(), null, marketIds);
-
-            logInfo("??? on market " + currentMarket + ", found currentBets count: " + (currentBets == null ? "0" : "" + currentBets.size()));
+            printLog(Level.FINE, "??? on market " + currentMarket + ", found currentBets count: " + (currentBets == null ? "0" : "" + currentBets.size()));
 
         } catch (Exception e) {
             logError(" 'Get Current Bets' error, message: ", e);
@@ -303,12 +303,10 @@ public class SheduleRequestMessageListener implements MessageListener {
 
         long endTime = System.currentTimeMillis();
 
-        logInfo("action 'Get Current Bets' COMPLETED, login="
+        printLog("action 'Get Current Bets' COMPLETED, login="
                 + currentUser.getLogin() + ", marketId="
                 + currentMarket.getMarketId() + ", time consumed: "
                 + ((endTime - startTime) / 1000.0) + " second(s)");
-
-
 
         if (currentBets != null && currentBets.size() > 0) {
 
@@ -323,7 +321,6 @@ public class SheduleRequestMessageListener implements MessageListener {
                 MarketProfitAndLoss mpl = i.hasNext() ? (MarketProfitAndLoss) i.next() : null;
                 if (mpl != null) {
                     for (RunnerProfitAndLoss rpl : mpl.getProfitAndLosses()) {
-                        //     logInfo("filling 'profit and loss'- rpl.getSelectionId()= " + rpl.getSelectionId());
                         rProfitAndLosses.put(rpl.getSelectionId(), rpl);
                     }
                 }
@@ -333,7 +330,7 @@ public class SheduleRequestMessageListener implements MessageListener {
 
             endTime = System.currentTimeMillis();
 
-            logInfo("action 'listMarketProfitAndLoss' COMPLETED, login="
+            printLog(Level.FINE, "action 'listMarketProfitAndLoss' COMPLETED, login="
                     + currentUser.getLogin() + ", marketId="
                     + currentMarket.getMarketId() + ", time consumed: "
                     + ((endTime - startTime) / 1000.0) + " second(s)");
@@ -533,9 +530,9 @@ public class SheduleRequestMessageListener implements MessageListener {
 */
         }
 
-        if (true) {
+    //    if (true) {
 
-            logInfo("*** Update market prices for login: " + login + ", market: " + marketId);
+            printLog(Level.FINE, "*** Update market prices for login: " + login + ", market: " + marketId);
 
             List<MarketBook> marketBooks = null;
             int inPlayDelay = 0;
@@ -559,7 +556,7 @@ public class SheduleRequestMessageListener implements MessageListener {
 
             endTime = System.currentTimeMillis();
 
-            logInfo("actionUpdateMarketPrices COMPLETED, login=" + login
+            printLog(Level.FINE, "action UpdateMarketPrices COMPLETED, login=" + login
                     + ", marketId=" + marketId + ", time consumed: "
                     + ((endTime - startTime) / 1000.0) + " second(s)");
 
@@ -597,8 +594,8 @@ public class SheduleRequestMessageListener implements MessageListener {
                     printLog("baseService: " + baseService + ", currency: " + currency);
                     r4u.setCurrency(baseService.getCurrencySymbol(currency));
 
-                } else
-                    printLog("baseService is NULL!!!");
+                } /*else
+                    printLog("baseService is NULL!!!"); */
 
 
                 r4u.setBackPrice1(0.0);
@@ -627,25 +624,21 @@ public class SheduleRequestMessageListener implements MessageListener {
                 r4u.setTotalAmountMatched(0.0);
                 r4u.setLastPriceMatched(0.0);
 
-
                 r4u = marketService.merge(r4u);
 
                 if (r != null) {
 
-                    //if (r.getLayPrices() != null) {
                     if (r.getEx().getAvailableToLay() != null && !(r.getEx().getAvailableToLay().size() < 3)) {
 
                         printLog(new StringBuilder(100)
                                 .append("r.getEx().getAvailableToLay().size()= ")
                                 .append(r.getEx().getAvailableToLay().size()).toString());
-                        //	for (InflatedPrice p : r.getLayPrices()) {
+
                         int priceDepth = 0;
 
                         for (PriceSize _priceSize : r.getEx().getAvailableToLay()) {
 
                             priceDepth++;
-
-//							if ("B".equals(p.getType())) {
 
                             switch (priceDepth) {
                                 case 1:
@@ -810,10 +803,6 @@ public class SheduleRequestMessageListener implements MessageListener {
 
                 r4u.setOddsCosmetic(_cosmeticOdds);
 
-                // r4u = marketService.merge(r4u);
-                // System.out.println
-                // ("***// r4u = marketService.merge(r4u)");
-
                 Double _volumeStake = r4u.getLinkedRunner().getMarket()
                         .getUserData4Market().get(currentUser.getId())
                         .getVolumeStake();
@@ -860,8 +849,8 @@ public class SheduleRequestMessageListener implements MessageListener {
                 printLog("" + r4u);
             }
 
-            getFeedData(market4User);
-        }
+         //   getFeedData(market4User);
+       // }
         updateBets(currentUser, currentMarket, market4User, curBets);
     }
 
@@ -1144,14 +1133,13 @@ public class SheduleRequestMessageListener implements MessageListener {
         return result;
     }
 
-    private void updateBets(Uzer currentUser, Market currentMarket, Market4User market4User,
-                            //						List<MUBet> curBets
-                            List<CurrentOrderSummary> curBets
-    ) {
-
+    private void updateBets(Uzer currentUser,
+                            Market currentMarket,
+                            Market4User market4User,
+                            List<CurrentOrderSummary> curBets) {
 
         Market4User _market4User = currentMarket.getUserData4Market().get(currentUser.getId());
-        logInfo("$$$ updateBets - _market4User: " + _market4User);
+        printLog("$$$ updateBets - _market4User: " + _market4User);
 
         Calendar now = Calendar.getInstance();
         Date marketStartTime = currentMarket.getMarketTime();
@@ -1190,7 +1178,7 @@ public class SheduleRequestMessageListener implements MessageListener {
 
         boolean isOnAir = market4User.isOnAir();
 
-        logInfo("*** updateBets: for market " + currentMarket + ", isOnAir=" + isOnAir);
+        printLog(Level.FINE, "*** updateBets: for market " + currentMarket + ", isOnAir=" + isOnAir);
 
 // 		Exchange selected_exchange = currentMarket.getExchange() == 1 ? Exchange.UK : Exchange.AUS;
 
@@ -1205,7 +1193,7 @@ public class SheduleRequestMessageListener implements MessageListener {
 
                 for (CurrentOrderSummary cb : curBets) {
 
-                    logInfo("will be canceled: CurrentOrderSummary: " + cb);
+                    printLog("will be canceled: CurrentOrderSummary: " + cb);
 
                     //CancelBets cab = new CancelBets();
                     CancelInstruction ci = new CancelInstruction();
@@ -1213,11 +1201,10 @@ public class SheduleRequestMessageListener implements MessageListener {
                     ci.setBetId(cb.getBetId());
                     ci.setSizeReduction(cb.getSizeRemaining());
 
-                    logInfo("cancel betId: " + cb.getBetId());
+                    printLog("cancel betId: " + cb.getBetId());
                     cDeletes.add(ci);
                 }
 
-                //CancelBetsResult[] cancelBetsResults = null;
                 CancelExecutionReport cancelExecutionReport = null;
 
                 if (!cDeletes.isEmpty()) {
@@ -1225,11 +1212,6 @@ public class SheduleRequestMessageListener implements MessageListener {
                         logInfo("*** On Air is OFF for market " + currentMarket.getName() + ", CANCEL ALL BETS for market " + currentMarket.getMarketId());
                         cancelExecutionReport = GlobalAPI.cancelOrders(currentUser.getApiContext(), currentMarket.getMarketId(), cDeletes);
 
-						/*
-								ExchangeAPI.cancelBets(
-								selected_exchange, currentUser.getApiContext(),
-								cDeletes);
-*/
 
                     } catch (Exception e) {
                         logError(new StringBuilder(100)
@@ -1254,12 +1236,12 @@ public class SheduleRequestMessageListener implements MessageListener {
                     }
                 }
 
-                logInfo(curBets.size() + " bets canceled.");
+                printLog(curBets.size() + " bets canceled.");
             }
             return;
         }
 
-        logInfo("*** updateBets: On Air is ON for market " + currentMarket + ",\n DOING BETS!!");
+        printLog("*** updateBets: On Air is ON for market " + currentMarket + ",\n DOING BETS!!");
 
         //	List<UpdateBets> cUpdates = new ArrayList<UpdateBets>();
 
@@ -1277,12 +1259,11 @@ public class SheduleRequestMessageListener implements MessageListener {
 
             if (r4u == null) continue;
 
-            logInfo("*** updateBets: r4u.getSelectionPrice(): " + r4u.getSelectionPrice() + ", r4u.getSelectionAmount(): " + r4u.getSelectionAmount());
+            printLog("*** updateBets: r4u.getSelectionPrice(): " + r4u.getSelectionPrice() + ", r4u.getSelectionAmount(): " + r4u.getSelectionAmount());
 
             if (r4u.getSelectionPrice() != null && r4u.getSelectionPrice() > BaseServiceBean.MIN_ODDS
-                    && r4u.getSelectionAmount() != null && r4u.getSelectionAmount() >= BaseServiceBean.MIN_STAKE_AMOUNT) {
-
-                //		logInfo("*** updateBets: r4u.getSelectionPrice(): " + r4u.getSelectionPrice() + ", r4u.getSelectionAmount(): " + r4u.getSelectionAmount());
+                    && r4u.getSelectionAmount() != null
+                    && r4u.getSelectionAmount() >= BaseServiceBean.MIN_STAKE_AMOUNT) {
 
                 PlaceInstruction pi = new PlaceInstruction();
 
@@ -1290,43 +1271,24 @@ public class SheduleRequestMessageListener implements MessageListener {
 
                 pi.setHandicap(0);
                 pi.setSide(Side.LAY);
-                // pi.setSide(Side.BACK);
                 pi.setOrderType(OrderType.LIMIT);
 
                 LimitOrder limitOrder = new LimitOrder();
                 limitOrder.setPersistenceType(PersistenceType.LAPSE);
 
                 limitOrder.setPrice(r4u.getSelectionPrice());
-//				limitOrder.setPrice(1.02);
+
                 limitOrder.setSize(r4u.getSelectionAmount());
 
-//				limitOrder.setPrice(100.0);
-//				limitOrder.setSize(4.0);
-
                 pi.setLimitOrder(limitOrder);
-                logInfo(" pi: " + pi);
+
+                printLog(" pi: " + pi);
+
                 newBets.add(pi);
             }
         }
-/*
-                PlaceInstruction instruction = new PlaceInstruction();
-                instruction.setHandicap(0);
-                instruction.setSide(Side.BACK);
-                instruction.setOrderType(OrderType.LIMIT);
 
-                LimitOrder limitOrder = new LimitOrder();
-                limitOrder.setPersistenceType(PersistenceType.LAPSE);
-                //API-NG will return an error with the default size=0.01. This is an expected behaviour.
-                //You can adjust the size and price value in the "apingdemo.properties" file
-                limitOrder.setPrice(getPrice());
-                limitOrder.setSize(getSize());
-
-                instruction.setLimitOrder(limitOrder);
-                instruction.setSelectionId(selectionId);
-                instructions.add(instruction);
-
- */
-        logInfo("newBets.size()=" + newBets.size() + ", curBets.size()=" + curBets.size());
+        printLog("newBets.size()=" + newBets.size() + ", curBets.size()=" + curBets.size());
 
         makeUpdateList(curBets, newBets, cUpdates, cInserts, cDeletes);
 
@@ -1340,15 +1302,12 @@ public class SheduleRequestMessageListener implements MessageListener {
                         .toString());
             }
             try {
-/*
-				replaceOrders(APIContext context, String marketId,
-                                                List<ReplaceInstruction> instructions
-				 */
+
                 replaceExecutionReport = GlobalAPI.replaceOrders(currentUser.getApiContext(), currentMarket.getMarketId(), cUpdates);
 
             } catch (Exception e) {
                 logError(new StringBuilder(100)
-                        .append("ExchangeAPI.updateBets error: ")
+                        .append("GlobalAPI.replaceOrders error: ")
                         .append(e.getMessage()).append(", market: ")
                         .append(currentMarket.getMenuPath()).append(BS)
                         .append(currentMarket.getName()).toString(), e);
@@ -1370,11 +1329,11 @@ public class SheduleRequestMessageListener implements MessageListener {
 
         if (!cDeletes.isEmpty()) {
             try {
-                //cancelBetsResults = null; // ExchangeAPI.cancelBets(selected_exchange, currentUser.getApiContext(), cDeletes);
+
                 cancelExecutionReport = GlobalAPI.cancelOrders(currentUser.getApiContext(), currentMarket.getMarketId(), cDeletes);
             } catch (Exception e) {
                 logError(new StringBuilder(100)
-                        .append("ExchangeAPI.cancelBets error: ")
+                        .append("GlobalAPI.cancelOrders error: ")
                         .append(e.getMessage()).append(", market: ")
                         .append(currentMarket.getMenuPath()).append(BS)
                         .append(currentMarket.getName()).toString(), e);
@@ -1426,42 +1385,23 @@ public class SheduleRequestMessageListener implements MessageListener {
             }
 
             if (!oBets.isEmpty()) {
-/*
-
-				for (PlaceInstruction pbs : oBets) {
-
-					log.info(new StringBuilder(100)
-							.append("PlaceBets - AsianLineId=")
-							.append(pbs.getAsianLineId()).append(", marketId=")
-							.append(pbs.getMarketId()).append(", selectionId=")
-							.append(pbs.getSelectionId()).append(", price=")
-							.append(pbs.getPrice()).append(", size=")
-							.append(pbs.getSize()).append(", betType=")
-							.append(pbs.getBetType()).toString());
-
-
-				}
-*/
-
                 try {
-                    //	placeBetsResults = null; // ExchangeAPI.placeBets(selected_exchange, currentUser.getApiContext(), oBets);
 
                     placeExecutionReport = GlobalAPI.placeOrders(currentUser.getApiContext(), currentMarket.getMarketId(), oBets);
-/*
+
+                    if (placeExecutionReport.getInstructionReports() != null)
 					for (PlaceInstructionReport pir : placeExecutionReport.getInstructionReports()) {
 
 						logInfo(new StringBuilder(100).append("bet ").append(pir.getBetId())
-								.append(" placed, status: ").append(pir.getStatus())
-								.append(", errorCode: ").append(pir.getErrorCode().ordinal())
-								.append(", cause: ").append(placeExecutionReport.getErrorCode())
-								.append(", market: ").append(currentMarket.getMenuPath())
-								.append(BS).append(currentMarket.getName()).toString());
+                                .append(" placed, status: ").append(placeExecutionReport.getStatus())
+                                .append(", errorCode: ").append(placeExecutionReport.getErrorCode())
+                                .append(", market: ").append(currentMarket.getMenuPath())
+                                .append(BS).append(currentMarket.getName()).toString());
 					}
-*/
 
                 } catch (Exception e) {
                     logError(new StringBuilder(100)
-                            .append("ExchangeAPI.placeBets error: ")
+                            .append("GlobalAPI.placeOrders error: ")
                             .append(e.getMessage()).append(", market: ")
                             .append(currentMarket.getMenuPath()).append(BS)
                             .append(currentMarket.getName()).toString(), e);
@@ -1472,7 +1412,6 @@ public class SheduleRequestMessageListener implements MessageListener {
                 bMore = (newBets.size() > _endRecord);
 
         } while (bMore);
-
     }
 
     void copyBets(List<PlaceInstruction> newBets, List<PlaceInstruction> oBets,

@@ -118,7 +118,7 @@ public class BIRFeedReader {
 	}
 
 
-	@Schedule( minute = "*/15", hour = "*", info="READ_FEEDS", persistent = false)
+	// @Schedule( minute = "*/15", hour = "*", info="READ_FEEDS", persistent = false)
 	public void perform() {
 	//	System.out.println ("perform in 15 min!");
 		 sendRequest("READ_FEEDS");

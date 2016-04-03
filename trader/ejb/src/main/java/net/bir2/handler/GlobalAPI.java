@@ -291,7 +291,7 @@ public class GlobalAPI {
         PlaceExecutionReport result = null;
         try {
             String _customRef = String.valueOf(customerRandom.nextLong());
-            log.log(Level.INFO, "_customRef: "+ _customRef);
+            log.log(Level.FINE, "_customRef: "+ _customRef);
             result = jsonOperations.placeOrders(marketId, instructions, _customRef,
                     context.getProduct(), context.getToken());
         } catch (APINGException e) {

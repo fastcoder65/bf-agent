@@ -135,20 +135,17 @@ public class ApiNgJsonRpcOperations extends ApiNgOperations {
 		params.put(MATCH_PROJECTION, matchProjection);
 		params.put("currencyCode", currencyCode);
 
-		String result = getInstance().makeRequest(
-				ApiNgOperation.LISTMARKETBOOK.getOperationName(), params,
-				appKey, ssoId);
+		String result = getInstance().makeRequest(ApiNgOperation.LISTMARKETBOOK.getOperationName(), params, appKey, ssoId);
+
 		if (ApiNGDemo.isDebug())
 			printLog("'listMarketBook' Response: " + result);
 
-		ListMarketBooksContainer container = JsonConverter.convertFromJson(
-				result, ListMarketBooksContainer.class);
+		ListMarketBooksContainer container = JsonConverter.convertFromJson(result, ListMarketBooksContainer.class);
 
-		if (container.getError() != null)
+		if (container != null && container.getError() != null)
 			throw container.getError().getData().getAPINGException();
 
-		return container.getResult();
-
+		return (container != null ? container.getResult(): null);
 	}
 
 	public List<MarketCatalogue> listMarketCatalogue ( MarketFilter filter,
@@ -341,7 +338,7 @@ public class ApiNgJsonRpcOperations extends ApiNgOperations {
 		// Handling the JSON-RPC request
 		JsonrpcRequest request = new JsonrpcRequest();
 		String _requestId = String.valueOf(customerRandom.nextLong());
-		log.log(Level.INFO, "_requestId: "+ _requestId);
+		log.log(Level.FINE, "_requestId: "+ _requestId);
 
 		request.setId(_requestId);
 
