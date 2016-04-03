@@ -26,15 +26,29 @@ public class MarketNode extends Entry implements TreeNode {
 	public MarketNode() {
 	}
 
+	private static Integer timeOffset;
+
+	private static Integer getTimeOffset() {
+		if (timeOffset == null) {
+
+			TimeZone myTimeZone = java.util.TimeZone.getDefault();
+
+			timeOffset = myTimeZone.getOffset((new Date()).getTime());
+		}
+	   return timeOffset;
+	}
+
 	public MarketNode(MarketCatalogue market) {
-	//	System.out.println( market );
+
 		id = market.getMarketId();
 
- 		String _marketTime = (market.getDescription() != null ? BaseBean.shortTimeFormat.format(market.getDescription().getMarketTime())+ " " : "");
+		Calendar c = Calendar.getInstance();
+		c.setTime(market.getDescription().getMarketTime());
+		c.add(Calendar.MILLISECOND, getTimeOffset());
+
+		String _marketTime = (market.getDescription() != null ? BaseBean.shortTimeFormat.format( c.getTime() )+ " " : "");
 
 		this.name = _marketTime + market.getMarketName();
-
-//		log.info("id: " + id + ", name: " + name + ", marketTime: " + _marketTime);
 
 		this.market = market;
 		this.type = "market";
