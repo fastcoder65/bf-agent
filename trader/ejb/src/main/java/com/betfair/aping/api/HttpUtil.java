@@ -110,7 +110,7 @@ public class HttpUtil {
 			post.setHeader(HTTP_HEADER_X_AUTHENTICATION, ssoToken);
 
 			post.setHeader("Accept-Encoding", "gzip, deflate");
-			post.setHeader(HTTP.CONN_DIRECTIVE, HTTP.CONN_KEEP_ALIVE);
+	//		post.setHeader(HTTP.CONN_DIRECTIVE, HTTP.CONN_KEEP_ALIVE);
 
 			if (jsonRequest != null)
 				post.setEntity(new StringEntity(jsonRequest, ApiNGDemo
