@@ -33,210 +33,213 @@ import org.apache.http.protocol.HTTP;
 
 public class HttpUtil {
 
-	private final String HTTP_HEADER_X_APPLICATION = "X-Application";
-	private final String HTTP_HEADER_X_AUTHENTICATION = "X-Authentication";
-	private final String HTTP_HEADER_CONTENT_TYPE = "Content-Type";
-	private final String HTTP_HEADER_ACCEPT = "Accept";
-	private final String HTTP_HEADER_ACCEPT_CHARSET = "Accept-Charset";
+    private final String HTTP_HEADER_X_APPLICATION = "X-Application";
+    private final String HTTP_HEADER_X_AUTHENTICATION = "X-Authentication";
+    private final String HTTP_HEADER_CONTENT_TYPE = "Content-Type";
+    private final String HTTP_HEADER_ACCEPT = "Accept";
+    private final String HTTP_HEADER_ACCEPT_CHARSET = "Accept-Charset";
 
-	protected final Logger log = Logger.getLogger(this.getClass().getName());
+    protected final Logger log = Logger.getLogger(this.getClass().getName());
 
-	public HttpUtil() {
-		super();
-	}
+    public HttpUtil() {
+        super();
+    }
 
-	private boolean isSet(Object sysProperty) {
-		return sysProperty != null
-				&& sysProperty.toString().trim().length() > 0;
-	}
+    private boolean isSet(Object sysProperty) {
+        return sysProperty != null
+                && sysProperty.toString().trim().length() > 0;
+    }
 
-	private HttpClient createHttpClientOrProxy() {
+    private HttpClient createHttpClientOrProxy() {
 
-		HttpClientBuilder hcBuilder = HttpClients.custom();
+        HttpClientBuilder hcBuilder = HttpClients.custom();
 
-		RequestConfig requestConfig = RequestConfig
-				.custom()
-				.setSocketTimeout(
-						new Integer(ApiNGDemo.getProp().getProperty("TIMEOUT"))
-								.intValue())
-				.setConnectTimeout(
-						new Integer(ApiNGDemo.getProp().getProperty("TIMEOUT"))
-								.intValue()).build();
+        RequestConfig requestConfig = RequestConfig
+                .custom()
+                .setSocketTimeout(
+                        new Integer(ApiNGDemo.getProp().getProperty("TIMEOUT"))
+                                .intValue())
+                .setConnectTimeout(
+                        new Integer(ApiNGDemo.getProp().getProperty("TIMEOUT"))
+                                .intValue()).build();
 
-		// Set HTTP proxy, if specified in system properties
-		if (isSet(System.getProperty("http.proxyHost"))) {
-			int port = 80;
-			if (isSet(System.getProperty("http.proxyPort"))) {
-				port = Integer.parseInt(System.getProperty("http.proxyPort"));
-			}
-			org.apache.http.HttpHost proxy = new org.apache.http.HttpHost(
-					System.getProperty("http.proxyHost"), port);
+        // Set HTTP proxy, if specified in system properties
+        if (isSet(System.getProperty("http.proxyHost"))) {
+            int port = 80;
+            if (isSet(System.getProperty("http.proxyPort"))) {
+                port = Integer.parseInt(System.getProperty("http.proxyPort"));
+            }
+            org.apache.http.HttpHost proxy = new org.apache.http.HttpHost(
+                    System.getProperty("http.proxyHost"), port);
 
-			org.apache.http.client.CredentialsProvider credsProvider = new BasicCredentialsProvider();
+            org.apache.http.client.CredentialsProvider credsProvider = new BasicCredentialsProvider();
 
-			credsProvider.setCredentials(new AuthScope(proxy.getHostName(),
-					proxy.getPort()), new UsernamePasswordCredentials(
-					"fastcoder65", "imxDr5OZimxDr5OZ"));
+            credsProvider.setCredentials(new AuthScope(proxy.getHostName(),
+                    proxy.getPort()), new UsernamePasswordCredentials(
+                    "fastcoder65", "imxDr5OZimxDr5OZ"));
 
-			DefaultProxyRoutePlanner routePlanner = new DefaultProxyRoutePlanner(
-					proxy);
+            DefaultProxyRoutePlanner routePlanner = new DefaultProxyRoutePlanner(
+                    proxy);
 
-			hcBuilder.setRoutePlanner(routePlanner);
-			hcBuilder.setDefaultRequestConfig(requestConfig)
-					.setDefaultCredentialsProvider(credsProvider);
-		}
+            hcBuilder.setRoutePlanner(routePlanner);
+            hcBuilder.setDefaultRequestConfig(requestConfig)
+                    .setDefaultCredentialsProvider(credsProvider);
+        }
 
-		CloseableHttpClient httpClient = hcBuilder.build();
+        CloseableHttpClient httpClient = hcBuilder.build();
 
-		return httpClient;
-	}
+        return httpClient;
+    }
 
-	private String sendPostRequest(String param, String operation,
-			String appKey, String ssoToken, String aURL,
-			ResponseHandler<String> reqHandler) {
-		String jsonRequest = param;
+    private String sendPostRequest(String param, String operation,
+                                   String appKey, String ssoToken, String aURL,
+                                   ResponseHandler<String> reqHandler) {
+        String jsonRequest = param;
 
-		HttpPost post = new HttpPost(aURL);
+        HttpPost post = new HttpPost(aURL);
 
-		String resp = null;
-		try {
-			post.setHeader(HTTP_HEADER_CONTENT_TYPE, ApiNGDemo.getProp()
-					.getProperty("APPLICATION_JSON"));
-			post.setHeader(HTTP_HEADER_ACCEPT,
-					ApiNGDemo.getProp().getProperty("APPLICATION_JSON"));
-			post.setHeader(HTTP_HEADER_ACCEPT_CHARSET, ApiNGDemo.getProp()
-					.getProperty("ENCODING_UTF8"));
-			post.setHeader(HTTP_HEADER_X_APPLICATION, appKey);
-			post.setHeader(HTTP_HEADER_X_AUTHENTICATION, ssoToken);
+        String resp = null;
+        try {
+            post.setHeader(HTTP_HEADER_CONTENT_TYPE, ApiNGDemo.getProp()
+                    .getProperty("APPLICATION_JSON"));
+            post.setHeader(HTTP_HEADER_ACCEPT,
+                    ApiNGDemo.getProp().getProperty("APPLICATION_JSON"));
+            post.setHeader(HTTP_HEADER_ACCEPT_CHARSET, ApiNGDemo.getProp()
+                    .getProperty("ENCODING_UTF8"));
+            post.setHeader(HTTP_HEADER_X_APPLICATION, appKey);
+            post.setHeader(HTTP_HEADER_X_AUTHENTICATION, ssoToken);
 
-			post.setHeader("Accept-Encoding", "gzip, deflate");
-	//		post.setHeader(HTTP.CONN_DIRECTIVE, HTTP.CONN_KEEP_ALIVE);
+            post.setHeader("Accept-Encoding", "gzip, deflate");
+            post.setHeader(HTTP.CONN_DIRECTIVE, HTTP.CONN_KEEP_ALIVE);
 
-			if (jsonRequest != null)
-				post.setEntity(new StringEntity(jsonRequest, ApiNGDemo
-						.getProp().getProperty("ENCODING_UTF8")));
+            if (jsonRequest != null)
+                post.setEntity(new StringEntity(jsonRequest, ApiNGDemo
+                        .getProp().getProperty("ENCODING_UTF8")));
 
-			HttpClientBuilder hcBuilder = HttpClients.custom();
+            HttpClientBuilder hcBuilder = HttpClients.custom();
 
-			RequestConfig requestConfig = RequestConfig
-					.custom()
-					.setSocketTimeout(
-							new Integer(ApiNGDemo.getProp().getProperty(
-									"TIMEOUT")).intValue())
-					.setConnectTimeout(
-							new Integer(ApiNGDemo.getProp().getProperty(
-									"TIMEOUT")).intValue()).build();
+            RequestConfig requestConfig = RequestConfig
+                    .custom()
+                    .setSocketTimeout(
+                            new Integer(ApiNGDemo.getProp().getProperty(
+                                    "TIMEOUT")).intValue())
+                    .setConnectTimeout(
+                            new Integer(ApiNGDemo.getProp().getProperty(
+                                    "TIMEOUT")).intValue()).build();
 
-			// Set HTTP proxy, if specified in system properties
+            // Set HTTP proxy, if specified in system properties
 
-			org.apache.http.HttpHost proxy = null;
-			HttpClientContext context = HttpClientContext.create();
+            org.apache.http.HttpHost proxy = null;
+            HttpClientContext context = HttpClientContext.create();
 
 // http.proxyHost = 54.75.241.179
 // http.proxyPort = 3128
-			
-			if (isSet(System.getProperty("http.proxyHost"))) {
-				int port = 80;
-				if (isSet(System.getProperty("http.proxyPort"))) {
-					port = Integer.parseInt(System
-							.getProperty("http.proxyPort"));
-				}
 
-				proxy = new org.apache.http.HttpHost(
-						System.getProperty("http.proxyHost"), port);
+            if (isSet(System.getProperty("http.proxyHost"))) {
+                int port = 80;
+                if (isSet(System.getProperty("http.proxyPort"))) {
+                    port = Integer.parseInt(System
+                            .getProperty("http.proxyPort"));
+                }
 
-				CredentialsProvider credsProvider = new BasicCredentialsProvider();
+                proxy = new org.apache.http.HttpHost(
+                        System.getProperty("http.proxyHost"), port);
 
-				credsProvider.setCredentials(new AuthScope(proxy.getHostName(),
-						proxy.getPort()), new UsernamePasswordCredentials(
-						"fastcoder65", "imxDr5OZimxDr5OZ"));
+                CredentialsProvider credsProvider = new BasicCredentialsProvider();
 
-				AuthCache authCache = new BasicAuthCache();
+                credsProvider.setCredentials(new AuthScope(proxy.getHostName(),
+                        proxy.getPort()), new UsernamePasswordCredentials(
+                        "fastcoder65", "imxDr5OZimxDr5OZ"));
 
-				DigestScheme asAuth = new DigestScheme();
-				// Suppose we already know the realm name
-				
-				asAuth.overrideParamter("realm", "MyPrivateEc2Proxy");
-				// Suppose we already know the expected nonce value
-				asAuth.overrideParamter("nonce", "XPFezyhHcEWult89wHfh31Kei6O");
+                AuthCache authCache = new BasicAuthCache();
 
-				authCache.put(proxy, asAuth);
+                DigestScheme asAuth = new DigestScheme();
+                // Suppose we already know the realm name
 
-				context.setCredentialsProvider(credsProvider);
-				context.setAuthCache(authCache);
+                asAuth.overrideParamter("realm", "MyPrivateEc2Proxy");
+                // Suppose we already know the expected nonce value
+                asAuth.overrideParamter("nonce", "XPFezyhHcEWult89wHfh31Kei6O");
 
-				DefaultProxyRoutePlanner routePlanner = new DefaultProxyRoutePlanner(
-						proxy);
+                authCache.put(proxy, asAuth);
 
-				hcBuilder.setRoutePlanner(routePlanner);
-				hcBuilder.setDefaultRequestConfig(requestConfig)
-						.setDefaultCredentialsProvider(credsProvider);
-			}
+                context.setCredentialsProvider(credsProvider);
+                context.setAuthCache(authCache);
 
-			CloseableHttpClient httpClient = hcBuilder.build();
-			long startTime = System.currentTimeMillis();
+                DefaultProxyRoutePlanner routePlanner = new DefaultProxyRoutePlanner(
+                        proxy);
 
-			resp = httpClient.execute(post, reqHandler, context);
+                hcBuilder.setRoutePlanner(routePlanner);
+                hcBuilder.setDefaultRequestConfig(requestConfig)
+                        .setDefaultCredentialsProvider(credsProvider);
+            }
 
-			long endTime = System.currentTimeMillis();
+            CloseableHttpClient httpClient = hcBuilder.build();
+            long startTime = System.currentTimeMillis();
 
-			for (org.apache.http.Header hdr : post.getAllHeaders()) {
-				log.fine("found header: " + hdr.getName()+ " = " + hdr.getValue());
-			}
+            resp = httpClient.execute(post, reqHandler, context);
 
-			log.fine("web request "+ aURL + " executed in " + (endTime- startTime)/
-					1000.0 + " second(s).");
+            long endTime = System.currentTimeMillis();
 
-		} catch (UnsupportedEncodingException e1) {
-			// Do something
-			e1.printStackTrace();
+            for (org.apache.http.Header hdr : post.getAllHeaders()) {
+                log.fine("found header: " + hdr.getName() + " = " + hdr.getValue());
+            }
 
-		} catch (ClientProtocolException e) {
-			// Do something
-			e.printStackTrace();
+            log.fine("web request " + aURL + " executed in " + (endTime - startTime) /
+                    1000.0 + " second(s).");
+        } catch (org.apache.http.conn.HttpHostConnectException e1) {
+            log.severe("method 'sendPostRequest' error: " + e1.getMessage());
+        } catch (UnsupportedEncodingException e1) {
+            // Do something
+            //e1.printStackTrace();
+            log.severe("method 'sendPostRequest' error: " + e1.getMessage());
 
-		} catch (IOException ioE) {
-			// Do something
-			ioE.printStackTrace();
-		}
+        } catch (ClientProtocolException e) {
+            // Do something
+            // e.printStackTrace();
+            log.severe("method 'sendPostRequest' error: " + e.getMessage());
 
-		return resp;
+        } catch (IOException ioE) {
+            // Do something
+            log.severe("method 'sendPostRequest' error: " + ioE.getMessage());
+        }
 
-	}
+        return resp;
 
-	public String sendPostRequestRescript(String param, String operation,
-			String appKey, String ssoToken) throws APINGException {
-		String apiNgURL = ApiNGDemo.getProp().getProperty("APING_URL")
-				+ ApiNGDemo.getProp().getProperty("RESCRIPT_SUFFIX")
-				+ operation + "/";
+    }
 
-		return sendPostRequest(param, operation, appKey, ssoToken, apiNgURL,
-				new RescriptResponseHandler());
+    public String sendPostRequestRescript(String param, String operation,
+                                          String appKey, String ssoToken) throws APINGException {
+        String apiNgURL = ApiNGDemo.getProp().getProperty("APING_URL")
+                + ApiNGDemo.getProp().getProperty("RESCRIPT_SUFFIX")
+                + operation + "/";
 
-	}
+        return sendPostRequest(param, operation, appKey, ssoToken, apiNgURL,
+                new RescriptResponseHandler());
 
-	public String sendPostRequestJsonRpc(String param, String operation,
-			String appKey, String ssoToken) {
-		String apiNgURL = ApiNGDemo.getProp().getProperty("APING_URL")
-				+ ApiNGDemo.getProp().getProperty("JSON_RPC_SUFFIX");
+    }
 
-		return sendPostRequest(param, operation, appKey, ssoToken, apiNgURL,
-				new JsonResponseHandler());
+    public String sendPostRequestJsonRpc(String param, String operation,
+                                         String appKey, String ssoToken) {
+        String apiNgURL = ApiNGDemo.getProp().getProperty("APING_URL")
+                + ApiNGDemo.getProp().getProperty("JSON_RPC_SUFFIX");
 
-	}
+        return sendPostRequest(param, operation, appKey, ssoToken, apiNgURL,
+                new JsonResponseHandler());
 
-	public String sendKeepAlivePostRequest(String appKey, String ssoToken) {
-		String apiNgURL = "https://identitysso.betfair.com/api/keepAlive"; // ApiNGDemo.getProp().getProperty("INTER_KA_URL");
+    }
 
-		return sendPostRequest(null, null, appKey, ssoToken, apiNgURL,
-				new JsonResponseHandler());
-	}
+    public String sendKeepAlivePostRequest(String appKey, String ssoToken) {
+        String apiNgURL = "https://identitysso.betfair.com/api/keepAlive"; // ApiNGDemo.getProp().getProperty("INTER_KA_URL");
 
-	public String sendLogoutRequest(String appKey, String ssoToken) {
-		String apiNgURL = "https://identitysso.betfair.com/api/logout"; // ApiNGDemo.getProp().getProperty("INTER_KA_URL");
+        return sendPostRequest(null, null, appKey, ssoToken, apiNgURL,
+                new JsonResponseHandler());
+    }
 
-		return sendPostRequest(null, null, appKey, ssoToken, apiNgURL,
-				new JsonResponseHandler());
-	}
+    public String sendLogoutRequest(String appKey, String ssoToken) {
+        String apiNgURL = "https://identitysso.betfair.com/api/logout"; // ApiNGDemo.getProp().getProperty("INTER_KA_URL");
+
+        return sendPostRequest(null, null, appKey, ssoToken, apiNgURL,
+                new JsonResponseHandler());
+    }
 
 }

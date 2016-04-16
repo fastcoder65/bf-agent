@@ -16,6 +16,8 @@ import net.bir2.multitrade.ejb.entity.ValidOdds;
 // import org.apache.log4j.Logger;
 
 @Stateless
+
+
 @Local( { BaseService.class })
 public class BaseServiceBean implements BaseService, TimedObject {
 

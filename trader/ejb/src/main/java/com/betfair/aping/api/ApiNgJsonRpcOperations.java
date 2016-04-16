@@ -62,10 +62,11 @@ public class ApiNgJsonRpcOperations extends ApiNgOperations {
 
 		EventTypeResultContainer container = JsonConverter.convertFromJson(
 				result, EventTypeResultContainer.class);
-		if (container.getError() != null)
+
+		if (container != null && container.getError() != null)
 			throw container.getError().getData().getAPINGException();
 
-		return container.getResult();
+		return (container != null ? container.getResult() : null);
 
 	}
 
@@ -89,10 +90,11 @@ public class ApiNgJsonRpcOperations extends ApiNgOperations {
 		CompetitionResultContainer container = JsonConverter.convertFromJson(result,
 				CompetitionResultContainer.class);
 
-		if (container.getError() != null)
+		if (container != null && container.getError() != null)
 			throw container.getError().getData().getAPINGException();
 
-		return container.getResult();
+		return (container != null ? container.getResult() : null);
+
 	}
 
 	public List<EventResult> listEvents(MarketFilter filter, MarketSort sort,
@@ -114,10 +116,10 @@ public class ApiNgJsonRpcOperations extends ApiNgOperations {
 		EventResultContainer container = JsonConverter.convertFromJson(result,
 				EventResultContainer.class);
 
-		if (container.getError() != null)
+		if (container != null && container.getError() != null)
 			throw container.getError().getData().getAPINGException();
 
-		return container.getResult();
+		return (container != null ? container.getResult() : null);
 
 	}
 
@@ -126,6 +128,8 @@ public class ApiNgJsonRpcOperations extends ApiNgOperations {
 			MatchProjection matchProjection, String currencyCode,
 			String appKey, String ssoId) throws APINGException {
 
+		String result = null;
+		ListMarketBooksContainer container = null;
 		Map<String, Object> params = new HashMap<String, Object>();
 		params.put(LOCALE, locale);
 		params.put(MARKET_IDS, marketIds);
@@ -135,12 +139,13 @@ public class ApiNgJsonRpcOperations extends ApiNgOperations {
 		params.put(MATCH_PROJECTION, matchProjection);
 		params.put("currencyCode", currencyCode);
 
-		String result = getInstance().makeRequest(ApiNgOperation.LISTMARKETBOOK.getOperationName(), params, appKey, ssoId);
+		result = getInstance().makeRequest(ApiNgOperation.LISTMARKETBOOK.getOperationName(), params, appKey, ssoId);
 
 		if (ApiNGDemo.isDebug())
 			printLog("'listMarketBook' Response: " + result);
 
-		ListMarketBooksContainer container = JsonConverter.convertFromJson(result, ListMarketBooksContainer.class);
+		if (result != null)
+		 container = JsonConverter.convertFromJson(result, ListMarketBooksContainer.class);
 
 		if (container != null && container.getError() != null)
 			throw container.getError().getData().getAPINGException();
@@ -169,10 +174,10 @@ public class ApiNgJsonRpcOperations extends ApiNgOperations {
 		ListMarketCatalogueContainer container = JsonConverter.convertFromJson(
 				result, ListMarketCatalogueContainer.class);
 
-		if (container.getError() != null)
+		if (container != null && container.getError() != null)
 			throw container.getError().getData().getAPINGException();
 
-		return container.getResult();
+		return (container != null ? container.getResult() : null);
 
 	}
 
@@ -217,13 +222,12 @@ public class ApiNgJsonRpcOperations extends ApiNgOperations {
 		if (ApiNGDemo.isDebug())
 			printLog("'listCurrentOrders' Response: " + result);
 
-		ListOrdersContainer container = JsonConverter.convertFromJson(
-				result, ListOrdersContainer.class);
+		ListOrdersContainer container = JsonConverter.convertFromJson(result, ListOrdersContainer.class);
 
-		if (container.getError() != null)
+		if (container != null && container.getError() != null)
 			throw container.getError().getData().getAPINGException();
 
-		return container.getResult();
+		return (container != null ? container.getResult() : null);
 
 	}
 
@@ -246,10 +250,10 @@ public class ApiNgJsonRpcOperations extends ApiNgOperations {
 		MarketProfitAndLossContainer container = JsonConverter.convertFromJson(result,
 				MarketProfitAndLossContainer.class);
 
-		if (container.getError() != null)
+		if (container != null && container.getError() != null)
 			throw container.getError().getData().getAPINGException();
 
-		return container.getResult();
+		return (container != null ? container.getResult() : null);
 
 	}
 
@@ -272,10 +276,10 @@ public class ApiNgJsonRpcOperations extends ApiNgOperations {
 		CancelOrdersContainer container = JsonConverter.convertFromJson(result,
 				CancelOrdersContainer.class);
 
-		if (container.getError() != null)
+		if (container != null && container.getError() != null)
 			throw container.getError().getData().getAPINGException();
 
-		return container.getResult();
+		return (container != null ? container.getResult() : null);
 
 	}
 
@@ -298,10 +302,10 @@ public class ApiNgJsonRpcOperations extends ApiNgOperations {
 		ReplaceOrdersContainer container = JsonConverter.convertFromJson(result,
 				ReplaceOrdersContainer.class);
 
-		if (container.getError() != null)
+		if (container != null && container.getError() != null)
 			throw container.getError().getData().getAPINGException();
 
-		return container.getResult();
+		return (container != null ? container.getResult() : null);
 
 	}
 
@@ -325,10 +329,10 @@ public class ApiNgJsonRpcOperations extends ApiNgOperations {
 		PlaceOrdersContainer container = JsonConverter.convertFromJson(result,
 				PlaceOrdersContainer.class);
 
-		if (container.getError() != null)
+		if (container != null && container.getError() != null)
 			throw container.getError().getData().getAPINGException();
 
-		return container.getResult();
+		return (container != null ? container.getResult() : null);
 
 	}
 

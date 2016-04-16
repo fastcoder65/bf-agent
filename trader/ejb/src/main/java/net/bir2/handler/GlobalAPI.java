@@ -277,7 +277,7 @@ public class GlobalAPI {
         try {
 
             CurrentOrderSummaryReport res = jsonOperations.listCurrentOrders(betIds, marketIds, orderProjection, 1000, context.getProduct(), context.getToken());
-            result = res.getCurrentOrders();
+            result = (res != null ? res.getCurrentOrders(): null);
 
         } catch (APINGException e) {
             log.log(Level.SEVERE, "error getting marketBook ", e);

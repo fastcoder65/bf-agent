@@ -295,7 +295,7 @@ public class SheduleRequestMessageListener implements MessageListener {
 
         try {
             currentBets = GlobalAPI.listCurrentOrders(currentUser.getApiContext(), null, marketIds);
-            printLog(Level.FINE, "??? on market " + currentMarket + ", found currentBets count: " + (currentBets == null ? "0" : "" + currentBets.size()));
+            printLog(Level.INFO, "??? on market " + currentMarket + ", found currentBets count: " + (currentBets == null ? "0" : "" + currentBets.size()));
 
         } catch (Exception e) {
             logError(" 'Get Current Bets' error, message: ", e);
@@ -482,6 +482,7 @@ public class SheduleRequestMessageListener implements MessageListener {
 
         boolean existMatchedBets = false;
 
+        if (currentBets != null)
         for (CurrentOrderSummary mbet : currentBets) {
             if (OrderStatus.EXECUTION_COMPLETE.equals(mbet.getStatus()) // if (BetStatusEnum.U.equals
                     && Side.LAY.equals(mbet.getSide())) { // BetTypeEnum.L
@@ -543,12 +544,13 @@ public class SheduleRequestMessageListener implements MessageListener {
             try {
 
                 marketBooks = GlobalAPI.getMarketPrices(currentUser.getApiContext(), currentMarket.getMarketId(), "USD");
+                if (marketBooks != null ) {
+                    marketBook0 = marketBooks.get(0);
 
-                marketBook0 = marketBooks.get(0);
+                    inPlayDelay = marketBook0.getBetDelay();
 
-                inPlayDelay = marketBook0.getBetDelay();
-
-                printLog("inPlayDelay =" + inPlayDelay);
+                    printLog("inPlayDelay =" + inPlayDelay);
+                }
 
             } catch (Exception e) {
                 logError("getPrices() error: ", e);
