@@ -295,7 +295,7 @@ public class SheduleRequestMessageListener implements MessageListener {
 
         try {
             currentBets = GlobalAPI.listCurrentOrders(currentUser.getApiContext(), null, marketIds);
-            printLog(Level.INFO, "??? on market " + currentMarket + ", found currentBets count: " + (currentBets == null ? "0" : "" + currentBets.size()));
+            printLog(Level.FINE, "??? on market " + currentMarket + ", found currentBets count: " + (currentBets == null ? "0" : "" + currentBets.size()));
 
         } catch (Exception e) {
             logError(" 'Get Current Bets' error, message: ", e);
@@ -303,7 +303,7 @@ public class SheduleRequestMessageListener implements MessageListener {
 
         long endTime = System.currentTimeMillis();
 
-        printLog(Level.INFO, "action 'Get Current Bets' COMPLETED, login="
+        printLog(Level.FINE, "action 'Get Current Bets' COMPLETED, login="
                 + currentUser.getLogin() + ", marketId="
                 + currentMarket.getMarketId() + ", time consumed: "
                 + ((endTime - startTime) / 1000.0) + " second(s)");
@@ -330,7 +330,7 @@ public class SheduleRequestMessageListener implements MessageListener {
 
             endTime = System.currentTimeMillis();
 
-            printLog(Level.INFO, "action 'listMarketProfitAndLoss' COMPLETED, login="
+            printLog(Level.FINE, "action 'listMarketProfitAndLoss' COMPLETED, login="
                     + currentUser.getLogin() + ", marketId="
                     + currentMarket.getMarketId() + ", time consumed: "
                     + ((endTime - startTime) / 1000.0) + " second(s)");
@@ -558,7 +558,7 @@ public class SheduleRequestMessageListener implements MessageListener {
 
             endTime = System.currentTimeMillis();
 
-            printLog(Level.INFO, "action UpdateMarketPrices COMPLETED, login=" + login
+            printLog(Level.FINE, "action UpdateMarketPrices COMPLETED, login=" + login
                     + ", marketId=" + marketId + ", time consumed: "
                     + ((endTime - startTime) / 1000.0) + " second(s)");
 
@@ -1116,7 +1116,7 @@ public class SheduleRequestMessageListener implements MessageListener {
             }
         }
 
-        logInfo(new StringBuilder(100).append("cUpdates.size()=")
+        printLog(new StringBuilder(100).append("cUpdates.size()=")
                 .append(cUpdates.size()).append(", cDeletes.size()=")
                 .append(cDeletes.size()).append(", cInserts.size()=")
                 .append(cInserts.size()).toString());

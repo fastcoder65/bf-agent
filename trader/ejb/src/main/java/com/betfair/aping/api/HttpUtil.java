@@ -187,7 +187,7 @@ public class HttpUtil {
             log.fine("web request " + aURL + " executed in " + (endTime - startTime) /
                     1000.0 + " second(s).");
         } catch (org.apache.http.conn.HttpHostConnectException e1) {
-            log.severe("method 'sendPostRequest' error: " + e1.getMessage());
+            log.severe("!!! method 'sendPostRequest': request on: "+ aURL + ", operation: " + operation + ", error: " + e1.getMessage());
         } catch (UnsupportedEncodingException e1) {
             // Do something
             //e1.printStackTrace();
