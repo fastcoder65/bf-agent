@@ -1,33 +1,24 @@
 package com.betfair.aping.api;
 
-import java.io.IOException;
-import java.io.UnsupportedEncodingException;
-import java.util.logging.Logger;
-
+import com.betfair.aping.ApiNGDemo;
+import com.betfair.aping.exceptions.APINGException;
+import com.betfair.aping.util.JsonResponseHandler;
+import com.betfair.aping.util.RescriptResponseHandler;
 import org.apache.http.auth.AuthScope;
 import org.apache.http.auth.UsernamePasswordCredentials;
-import org.apache.http.client.AuthCache;
-import org.apache.http.client.ClientProtocolException;
-import org.apache.http.client.CredentialsProvider;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.ResponseHandler;
+import org.apache.http.client.*;
 import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.protocol.HttpClientContext;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.auth.DigestScheme;
-import org.apache.http.impl.client.BasicAuthCache;
-import org.apache.http.impl.client.BasicCredentialsProvider;
-import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.impl.client.HttpClientBuilder;
-import org.apache.http.impl.client.HttpClients;
+import org.apache.http.impl.client.*;
 import org.apache.http.impl.conn.DefaultProxyRoutePlanner;
-
-import com.betfair.aping.ApiNGDemo;
-import com.betfair.aping.exceptions.APINGException;
-import com.betfair.aping.util.JsonResponseHandler;
-import com.betfair.aping.util.RescriptResponseHandler;
 import org.apache.http.protocol.HTTP;
+
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.util.logging.Logger;
 
 public class HttpUtil {
 
@@ -196,6 +187,7 @@ public class HttpUtil {
             for (org.apache.http.Header hdr : post.getAllHeaders()) {
                 log.fine("found header: " + hdr.getName() + " = " + hdr.getValue());
             }
+
 
             log.info("web request " + aURL + " executed in " + (endTime - startTime) /
                     1000.0 + " second(s).");
