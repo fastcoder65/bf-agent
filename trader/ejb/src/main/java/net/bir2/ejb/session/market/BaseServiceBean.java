@@ -13,11 +13,7 @@ import net.bir2.ejb.action.Action;
 import net.bir2.ejb.action.ShedulerActivity;
 import net.bir2.multitrade.ejb.entity.ValidOdds;
 
-// import org.apache.log4j.Logger;
-
 @Stateless
-
-
 @Local( { BaseService.class })
 public class BaseServiceBean implements BaseService, TimedObject {
 
@@ -345,15 +341,31 @@ End Function
 
 	public void sendDelayedRequest(Action action, String userLogin,
 			String sMarketId, int index) {
+
 		String eventId = new StringBuffer(25).append(action.toString()).append(
 				'=').append(userLogin).append(ITEM_SEPARATOR).append(sMarketId)
 				.toString();
 
-		long delayByIndex = index * 100L;
+		//long delayByIndex = index * 100L;
+		log.info("sendDelayedRequest for: " + eventId);
+
+		serviceBean.sendRequest(action, userLogin, sMarketId);
 
 		// LOG.info("delayByIndex: " + delayByIndex/1000.0);
-		createTimer(context, eventId, delayByIndex);
+		//createTimer(context, eventId, delayByIndex);
+/*
+		if (timerInfo.startsWith(Action.UPDATE_MARKET.toString())) {
+			String[] procInfo = timerInfo.split("=");
+			String[] procArgs = procInfo[1].split(ITEM_SEPARATOR);
+			serviceBean.sendRequest(Action.UPDATE_MARKET, procArgs[0], procArgs[1]);
 
+		} else if (timerInfo.startsWith(Action.UPDATE_MARKET_PRICES.toString())) {
+			String[] procInfo = timerInfo.split("=");
+			String[] procArgs = procInfo[1].split(ITEM_SEPARATOR);
+			serviceBean.sendRequest(Action.UPDATE_MARKET_PRICES, procArgs[0],
+					procArgs[1]);
+		}
+*/
 	}
 
 	public static final String ITEM_SEPARATOR = "~";

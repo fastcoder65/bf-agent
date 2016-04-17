@@ -29,6 +29,7 @@ import net.bir2.multitrade.util.APIContext;
 import java.util.logging.*;
 
 @Singleton
+
 public class ShedulerActivityBean implements ShedulerActivity {
 
     @EJB

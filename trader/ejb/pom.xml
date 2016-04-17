@@ -110,7 +110,7 @@
 			<artifactId>jibx-run</artifactId>
 			<version>1.2.5</version>
 		</dependency>
- 
+<!--
 		<dependency>
 			<groupId>org.apache.axis2</groupId>
 			<artifactId>axis2-kernel</artifactId>
@@ -141,7 +141,7 @@
 			<artifactId>betfair-soap-api</artifactId>
 			<version>1.0.2</version>
 		</dependency>
- 
+ -->
 		<dependency>
 			<groupId>com.fasterxml.jackson.core</groupId>
 			<artifactId>jackson-annotations</artifactId>

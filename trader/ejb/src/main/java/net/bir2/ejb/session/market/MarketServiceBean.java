@@ -212,7 +212,7 @@ public class MarketServiceBean implements MarketService {
     }
 
     public MarketRunner getRunnerBySelectionId(long marketId, long selectionId) {
-        return (MarketRunner) em.createNamedQuery("RunnerBySelectionId")
+        return (MarketRunner) em.createQuery("select r FROM MarketRunner r where r.market.id = :marketId and r.selectionId = :selectionId")
                 .setParameter("marketId", marketId).setParameter("selectionId",
                         selectionId).getSingleResult();
     }
@@ -224,24 +224,12 @@ public class MarketServiceBean implements MarketService {
 
     public void remove(Market market, Uzer currentUser) {
 
-        Market marketRef = em.getReference(Market.class, market.getId());
+        Market marketRef = em.find(Market.class, market.getId());
         String marketRefName = String.valueOf(marketRef);
         System.out.println("start removing market " + marketRefName);
 
         Set<Feed4Market4User> feed4Market4Users = marketRef.getFeed4Market4Users();
 
-        for (Feed4Market4User m4u : feed4Market4Users) {
-            if (m4u.getUserId() == currentUser.getId()) {
-                em.remove(m4u);
-            }
-        }
-
-        Set<Market4User> market4users = marketRef.getMarket4Users();
-        for (Market4User m4u : market4users) {
-            if (m4u.getUserId() == currentUser.getId()) {
-                em.remove(m4u);
-            }
-        }
         Set<MarketRunner> runners = marketRef.getRunners();
         for (MarketRunner runner : runners) {
 
@@ -264,11 +252,26 @@ public class MarketServiceBean implements MarketService {
                 em.remove(runner);
         }
 
+        for (Feed4Market4User m4u : feed4Market4Users) {
+            if (m4u.getUserId() == currentUser.getId()) {
+                em.remove(m4u);
+            }
+        }
+
+        Set<Market4User> market4users = marketRef.getMarket4Users();
+
+        for (Market4User m4u : market4users) {
+            if (m4u.getUserId() == currentUser.getId()) {
+                em.remove(m4u);
+            }
+        }
+
         if (market4users.size() == 1) {
             //		ShedulerActivity serviceBean = ShedulerActivityBean.getInstance();
             serviceBean.getActiveMarkets().remove(marketRef.getMarketId());
             em.remove(marketRef);
         }
+
         System.out.println("market " + marketRefName + " removed.");
     }
 

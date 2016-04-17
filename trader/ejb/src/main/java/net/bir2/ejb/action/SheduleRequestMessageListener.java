@@ -6,7 +6,7 @@ import com.betfair.aping.enums.OrderType;
 import com.betfair.aping.enums.PersistenceType;
 import com.betfair.aping.enums.Side;
 import com.unitab.race.Race;
-import generated.exchange.BFExchangeServiceStub.MarketLite;
+
 import net.bir2.ejb.session.market.BaseService;
 import net.bir2.ejb.session.market.BaseServiceBean;
 import net.bir2.ejb.session.market.DataFeedService;
@@ -213,9 +213,16 @@ public class SheduleRequestMessageListener implements MessageListener {
 
         String marketStatus;
         long startTime = System.currentTimeMillis();
+
+        List<MarketBook> marketBooks = null;
+        MarketBook marketBook0 = null;
+
         try {
 
-            MarketLite marketLite = null; // ExchangeAPI.getMarketInfo(selected_exchange, currentUser.getApiContext(), Long.valueOf(currentMarket.getMarketId()).intValue());
+            marketBooks = GlobalAPI.getMarketStatus(currentUser.getApiContext(), currentMarket.getMarketId());
+            if (marketBooks != null ) {
+                marketBook0 = marketBooks.get(0);
+            }
 
             long endTime = System.currentTimeMillis();
 
@@ -224,7 +231,7 @@ public class SheduleRequestMessageListener implements MessageListener {
                     + refreshInt + " second(s), time consumed: "
                     + ((endTime - startTime) / 1000.0) + " second(s)");
 
-            marketStatus = marketLite.getMarketStatus().toString();
+            marketStatus = marketBook0.getStatus();
 
             if (!UNKNOWN.equals(marketStatus)) {
                 currentMarket.setMarketStatus(marketStatus);
@@ -235,7 +242,6 @@ public class SheduleRequestMessageListener implements MessageListener {
             if (e.getMessage() != null && !e.getMessage().contains("EXCEEDED_THROTTLE"))
                 logError("UpdateMarketStatus error, message: ", e);
         }
-
 
         if (!"CLOSED".equals(currentMarket.getMarketStatus())) {
             baseService.sendDelayedRequest(Action.UPDATE_MARKET_PRICES, login,

@@ -4,8 +4,6 @@ import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.util.logging.Logger;
 
-import org.apache.commons.httpclient.Header;
-import org.apache.http.auth.AuthScheme;
 import org.apache.http.auth.AuthScope;
 import org.apache.http.auth.UsernamePasswordCredentials;
 import org.apache.http.client.AuthCache;
@@ -54,15 +52,6 @@ public class HttpUtil {
 
         HttpClientBuilder hcBuilder = HttpClients.custom();
 
-        RequestConfig requestConfig = RequestConfig
-                .custom()
-                .setSocketTimeout(
-                        new Integer(ApiNGDemo.getProp().getProperty("TIMEOUT"))
-                                .intValue())
-                .setConnectTimeout(
-                        new Integer(ApiNGDemo.getProp().getProperty("TIMEOUT"))
-                                .intValue()).build();
-
         // Set HTTP proxy, if specified in system properties
         if (isSet(System.getProperty("http.proxyHost"))) {
             int port = 80;
@@ -82,9 +71,19 @@ public class HttpUtil {
                     proxy);
 
             hcBuilder.setRoutePlanner(routePlanner);
-            hcBuilder.setDefaultRequestConfig(requestConfig)
-                    .setDefaultCredentialsProvider(credsProvider);
+            hcBuilder.setDefaultCredentialsProvider(credsProvider);
         }
+
+        RequestConfig requestConfig = RequestConfig
+                .custom()
+                .setSocketTimeout(
+                        new Integer(ApiNGDemo.getProp().getProperty("TIMEOUT"))
+                                .intValue())
+                .setConnectTimeout(
+                        new Integer(ApiNGDemo.getProp().getProperty("TIMEOUT"))
+                                .intValue()).build();
+
+        hcBuilder.setDefaultRequestConfig(requestConfig);
 
         CloseableHttpClient httpClient = hcBuilder.build();
 
@@ -118,14 +117,6 @@ public class HttpUtil {
 
             HttpClientBuilder hcBuilder = HttpClients.custom();
 
-            RequestConfig requestConfig = RequestConfig
-                    .custom()
-                    .setSocketTimeout(
-                            new Integer(ApiNGDemo.getProp().getProperty(
-                                    "TIMEOUT")).intValue())
-                    .setConnectTimeout(
-                            new Integer(ApiNGDemo.getProp().getProperty(
-                                    "TIMEOUT")).intValue()).build();
 
             // Set HTTP proxy, if specified in system properties
 
@@ -169,11 +160,33 @@ public class HttpUtil {
                         proxy);
 
                 hcBuilder.setRoutePlanner(routePlanner);
-                hcBuilder.setDefaultRequestConfig(requestConfig)
-                        .setDefaultCredentialsProvider(credsProvider);
+                hcBuilder.setDefaultCredentialsProvider(credsProvider);
             }
+/*
+            RequestConfig requestConfig = RequestConfig
+                    .custom()
+                    .setSocketTimeout(
+                            new Integer(ApiNGDemo.getProp().getProperty(
+                                    "TIMEOUT")).intValue())
+                    .setConnectTimeout(
+                            new Integer(ApiNGDemo.getProp().getProperty(
+                                    "TIMEOUT")).intValue()).build();
+*/
+            RequestConfig  requestConfig = RequestConfig.custom()
+/*
+                    .setSocketTimeout(
+                            new Integer(ApiNGDemo.getProp().getProperty(
+                                    "TIMEOUT")).intValue())
+*/
+                    .setConnectTimeout(
+                            new Integer(ApiNGDemo.getProp().getProperty(
+                                    "TIMEOUT")).intValue()).build();
 
-            CloseableHttpClient httpClient = hcBuilder.build();
+            hcBuilder.setDefaultRequestConfig(requestConfig);
+
+            // CloseableHttpClient httpClient = hcBuilder.build();
+
+            HttpClient httpClient = hcBuilder.build();
             long startTime = System.currentTimeMillis();
 
             resp = httpClient.execute(post, reqHandler, context);
@@ -184,7 +197,7 @@ public class HttpUtil {
                 log.fine("found header: " + hdr.getName() + " = " + hdr.getValue());
             }
 
-            log.fine("web request " + aURL + " executed in " + (endTime - startTime) /
+            log.info("web request " + aURL + " executed in " + (endTime - startTime) /
                     1000.0 + " second(s).");
         } catch (org.apache.http.conn.HttpHostConnectException e1) {
             log.severe("!!! method 'sendPostRequest': request on: "+ aURL + ", operation: " + operation + ", error: " + e1.getMessage());

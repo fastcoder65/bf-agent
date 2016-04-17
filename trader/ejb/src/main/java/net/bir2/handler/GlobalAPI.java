@@ -241,6 +241,14 @@ public class GlobalAPI {
 
     }
 
+    public static List<MarketBook> getMarketStatus(APIContext context, String marketId) {
+
+        List<String> marketIds = new ArrayList<String>();
+        marketIds.add(marketId);
+
+        return listMarketBook(context, marketIds, null, null, null, null);
+    }
+
 
     public static List<MarketBook> listMarketBook(APIContext context, List<String> marketIds,
                                                   PriceProjection priceProjection, OrderProjection orderProjection,

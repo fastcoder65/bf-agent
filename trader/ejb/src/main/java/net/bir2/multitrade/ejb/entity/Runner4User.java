@@ -5,6 +5,7 @@ import javax.persistence.*;
 
 import net.bir2.ejb.session.market.BaseServiceBean;
 
+import java.util.Map;
 import java.util.logging.*;
 
 import org.hibernate.annotations.Formula;
@@ -229,10 +230,12 @@ public class Runner4User implements java.io.Serializable {
 
     @Transient
     public Double getPercWinSglajivWithNR() {
-        Double _x = linkedRunner.getMarket().getUserData4Market().get(
-                this.userId).getSummOfPsRealStPinkStakeHoldWithNR();
+        Double _x;
+        Map<Integer, Market4User> udm =  linkedRunner.getMarket().getUserData4Market();
+        Market4User m4u = udm.get(this.userId);
+        _x = (m4u != null ? m4u.getSummOfPsRealStPinkStakeHoldWithNR():null);
 
-        Double result = (_x > 0) ? getSumPseudoRealPseudoPinkStakesHoldWithNR() / _x : 0.0;
+        Double result = (_x!= null && _x > 0) ? getSumPseudoRealPseudoPinkStakesHoldWithNR() / _x : 0.0;
         printLog("getPercWinSglajivWithNR=" + result);
         return result;
     }
