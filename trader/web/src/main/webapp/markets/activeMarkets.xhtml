@@ -24,7 +24,7 @@
 
             <h:form>
                 <a4j:push id="pushTopics" address="pushTopicsContext">
-                    <a4j:ajax event="dataavailable" render="uuid,marketServerTime,serverTime" />
+                    <a4j:ajax event="dataavailable" render="uuid" />
                 </a4j:push>
 
                 <h:panelGrid columns="2">
@@ -39,7 +39,7 @@
                 <a4j:region id="pollRegion">
 
                         <a4j:poll id="pollMarkets" interval="10000" enabled="#{marketBean.pollEnabled}"
-                                  render="pollMarkets,marketTable,runnerTable"/>
+                                  render="pollMarkets,marketTable,runnerTable,:marketServerTime,:serverTime"/>
 
 
                 </a4j:region>

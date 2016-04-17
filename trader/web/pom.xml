@@ -56,10 +56,6 @@
 			<scope>provided</scope>
 		</dependency>
 
-		<!-- <dependency> <groupId>javax.el</groupId> <artifactId>el-api</artifactId> 
-			<version>1.0</version> <scope>provided</scope> </dependency> <dependency> 
-			<groupId>el-impl</groupId> <artifactId>el-impl</artifactId> <version>1.0</version> 
-			<scope>provided</scope> </dependency> -->
 
 		<dependency>
 			<groupId>org.jboss.spec.javax.el</groupId>
@@ -73,23 +69,6 @@
 			<scope>provided</scope>
 		</dependency>
 
-		<!-- <dependency> <groupId>javax.faces</groupId> <artifactId>jsf-api</artifactId> 
-			<version>1.2_15</version> <scope>provided</scope> </dependency> <dependency> 
-			<groupId>javax.faces</groupId> <artifactId>jsf-impl</artifactId> <version>1.2_15</version> 
-			<scope>provided</scope> </dependency> -->
-
-		<!-- <dependency> <groupId>javax.servlet</groupId> <artifactId>servlet-api</artifactId> 
-			<version>2.5</version> <scope>provided</scope> </dependency> -->
-
-		<!-- Import the Servlet API, we use provided scope as the API is included 
-			in JBoss EAP -->
-<!-- 			
-		<dependency>
-			<groupId>org.apache.httpcomponents</groupId>
-			<artifactId>httpclient</artifactId>
-			<version>4.4</version>
-		</dependency>
- -->
 		<dependency>
 			<groupId>commons-digester</groupId>
 			<artifactId>commons-digester</artifactId>
@@ -110,19 +89,6 @@
 			<artifactId>commons-logging</artifactId>
 			<version>1.1.2</version>
 		</dependency>
-
-		<!-- <dependency> <groupId>org.richfaces</groupId> <artifactId>richfaces-api</artifactId> 
-			<version>${version.richfaces}</version> </dependency> -->
-
-		<!-- <dependency> <groupId>org.richfaces.framework</groupId> <artifactId>richfaces-impl</artifactId> 
-			<version>${version.richfaces}</version> </dependency> -->
-		<!-- <dependency> <groupId>org.richfaces.framework</groupId> <artifactId>richfaces-impl-jsf2</artifactId> 
-			<version>${version.richfaces}</version> </dependency> <dependency> <groupId>org.richfaces</groupId> 
-			<artifactId>richfaces-ui</artifactId> <version>${version.richfaces}</version> 
-			</dependency> -->
-		<!-- <dependency> <groupId>com.uwyn</groupId> <artifactId>jhighlight</artifactId> 
-			<version>1.0</version> </dependency> <dependency> <groupId>com.sun.facelets</groupId> 
-			<artifactId>jsf-facelets</artifactId> <version>1.1.15</version> </dependency> -->
 
 		<dependency>
 			<groupId>org.richfaces</groupId>
@@ -164,17 +130,18 @@
 
 		<dependency>
 			<groupId>org.richfaces</groupId>
-			<artifactId>richfaces-push-depchain</artifactId>
+			<artifactId>richfaces-push-native-depchain</artifactId>
+			<version>${version.richfaces}</version>
 			<type>pom</type>
 		</dependency>
 
-
+<!--
 		<dependency>
 			<groupId>org.atmosphere</groupId>
 			<artifactId>atmosphere-runtime-native</artifactId>
-			<version>2.4.2</version>
+			<version>2.4.3</version>
 		</dependency>
-
+-->
 
 		<dependency>
 			<groupId>org.atmosphere.jboss.as</groupId>
