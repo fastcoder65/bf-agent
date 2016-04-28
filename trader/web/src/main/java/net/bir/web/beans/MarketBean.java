@@ -11,13 +11,12 @@ import net.bir.web.beans.treeModel.EventNode;
 import net.bir.web.beans.treeModel.MarketNode;
 import net.bir.web.beans.treeModel.SportNode;
 import net.bir2.ejb.session.market.BaseServiceBean;
-import net.bir2.handler.GlobalAPI;
 import net.bir2.multitrade.ejb.entity.*;
 import net.bir2.multitrade.ejb.entity.Market;
 import net.bir2.multitrade.util.APIContext;
-
 import org.richfaces.component.AbstractExtendedDataTable;
 import org.richfaces.component.AbstractTree;
+import org.richfaces.component.UIAutocomplete;
 import org.richfaces.component.UITree;
 import org.richfaces.event.TreeSelectionChangeEvent;
 import org.richfaces.event.TreeToggleEvent;
@@ -28,10 +27,8 @@ import javax.ejb.EJB;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.SessionScoped;
 import javax.faces.component.UIForm;
-import javax.faces.component.html.HtmlInputText;
 import javax.faces.context.FacesContext;
 import javax.faces.event.AjaxBehaviorEvent;
-import javax.faces.event.ValueChangeEvent;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -43,7 +40,6 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import org.richfaces.component.*;
 
 
 @ManagedBean
@@ -51,11 +47,12 @@ import org.richfaces.component.*;
 public class MarketBean extends BaseBean implements Serializable {
 
     private static final long serialVersionUID = 1L;
+
     private Market currentMarket = null;
+
     private Market4User market4User = null;
 
     private APIContext apiContext = null;
-
 
     private UIForm runnerForm;
 
@@ -124,7 +121,7 @@ public class MarketBean extends BaseBean implements Serializable {
         if (apiContext != null)
             try {
                 String exLogin = currentUser.getExLoginDec();
-                GlobalAPI.logout(apiContext);
+                getMarketService().logout(apiContext);
                 apiContext = null;
                 getLog().info("Uzer " + exLogin + " log out.");
             } catch (Exception e) {
@@ -144,7 +141,7 @@ public class MarketBean extends BaseBean implements Serializable {
                 getLog().info("get ApiContext for user: " + currentUser);
                 String exLogin = currentUser.getExLoginDec();
 
-                GlobalAPI.login(apiContext, exLogin,
+                getMarketService().login(apiContext, exLogin,
                         currentUser.getExPasswordDec());
 
                 scheduler.scheduleAtFixedRate(new KeepAliveJob(apiContext), 1,
@@ -314,17 +311,13 @@ public class MarketBean extends BaseBean implements Serializable {
 
             List<EventResult> listEvents = null;
             List<CompetitionResult> listCompetitions = null;
-            try {
 
-                listCompetitions = GlobalAPI.getCompetitions(apiContext, eventTypeIds, eventIds);
+
+                listCompetitions = getMarketService().getCompetitions(apiContext, eventTypeIds, eventIds);
 
                 if (listCompetitions == null || listCompetitions.size() == 0)
-                    listEvents = GlobalAPI.getEvents(apiContext, eventTypeIds, competitionIds, eventIds);
+                    listEvents = getMarketService().getEvents(apiContext, eventTypeIds, competitionIds, eventIds);
 
-            } catch (APINGException e1) {
-                // TODO Auto-generated catch block
-                e1.printStackTrace();
-            }
 
             if (listCompetitions != null) {
                 getLog().info("#listCompetitions.size()= " + listCompetitions.size());
@@ -390,12 +383,8 @@ public class MarketBean extends BaseBean implements Serializable {
 
             if (eventTypeIds.size() > 0 || competitionIds.size() > 0 || eventIds.size() > 0)
 
-                try {
-                    listEvents = GlobalAPI.getEvents(apiContext, eventTypeIds, competitionIds, eventIds);
-                } catch (APINGException e1) {
-                    // TODO Auto-generated catch block
-                    e1.printStackTrace();
-                }
+
+                    listEvents = getMarketService().getEvents(apiContext, eventTypeIds, competitionIds, eventIds);
 
             if (listEvents != null) {
              //   getLog().info("## listEvents.size()= " + listEvents.size());
@@ -427,12 +416,8 @@ public class MarketBean extends BaseBean implements Serializable {
 
                 }
 
-                try {
-                    listMarkets = GlobalAPI.getMarkets(apiContext, eventIds, null);
-                } catch (APINGException e) {
-                    // TODO Auto-generated catch block
-                    getLog().log(Level.SEVERE, "error getting markets: ", e);
-                }
+
+                listMarkets = getMarketService().getMarkets(apiContext, eventIds, null);
 
                 if (listMarkets != null)
                     for (MarketCatalogue mc : listMarkets) {
@@ -473,7 +458,7 @@ public class MarketBean extends BaseBean implements Serializable {
             allSports = new SportNode("0", "All sports");
             try {
                 int i = 0;
-                for (EventTypeResult et : GlobalAPI.getActiveEventTypes(getApiContext())) {
+                for (EventTypeResult et : getMarketService().getActiveEventTypes(getApiContext())) {
                     i++;
                     SportNode sport = new SportNode(et.getEventType());
                     allSports.addEntry(sport);
@@ -663,7 +648,7 @@ public class MarketBean extends BaseBean implements Serializable {
         Set<String> marketIds = new HashSet<String>();
         marketIds.add(selectedMarketId);
 
-        List<MarketCatalogue> _listMarkets = GlobalAPI.getMarkets(apiContext,
+        List<MarketCatalogue> _listMarkets = getMarketService().getMarkets(apiContext,
                 null, marketIds);
         Iterator<MarketCatalogue> mi = _listMarkets.iterator();
 
@@ -680,7 +665,7 @@ public class MarketBean extends BaseBean implements Serializable {
         PriceProjection pp = new PriceProjection();
         pp.setVirtualise(false);
 
-        List<MarketBook> listMarketBook = GlobalAPI.listMarketBook(apiContext,
+        List<MarketBook> listMarketBook = getMarketService().listMarketBook(apiContext,
                 listMarketIds, pp, OrderProjection.ALL,
                 MatchProjection.NO_ROLLUP, "USD");
 
@@ -718,6 +703,7 @@ public class MarketBean extends BaseBean implements Serializable {
                             getSettings().getSystemSettings().getMaxLossPerSelection()));
 
             getMarketService().merge(market2add);
+
             for (MarketRunner runner : market2add.getRunners()) {
                 Runner4User r4u = new Runner4User(currentUser, runner);
                 r4u = getMarketService().merge(r4u);
@@ -1069,8 +1055,8 @@ public class MarketBean extends BaseBean implements Serializable {
         public void run() {
             try {
                 Thread.sleep(1000);
-                log.fine("call GlobalAPI.keepAlive(" + apiContext + ")");
-                GlobalAPI.keepAlive(apiContext);
+                log.fine("call getMarketService().keepAlive(" + apiContext + ")");
+                getMarketService().keepAlive(apiContext);
             } catch (Exception e) {
                 log.log(Level.SEVERE, "error on keep-alive request", e);
             }
