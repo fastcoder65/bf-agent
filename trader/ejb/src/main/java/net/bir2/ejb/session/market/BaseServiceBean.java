@@ -1,21 +1,23 @@
 package net.bir2.ejb.session.market;
 
-import java.math.BigDecimal;
-import java.util.logging.Logger;
-
-import javax.annotation.Resource;
-import javax.ejb.*;
-import javax.inject.Inject;
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-
 import net.bir2.ejb.action.Action;
 import net.bir2.ejb.action.ShedulerActivity;
 import net.bir2.multitrade.ejb.entity.ValidOdds;
 
+import javax.annotation.Resource;
+import javax.ejb.EJB;
+import javax.ejb.EJBContext;
+import javax.ejb.Local;
+import javax.ejb.Stateless;
+import javax.inject.Inject;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import java.math.BigDecimal;
+import java.util.logging.Logger;
+
 @Stateless
-@Local( { BaseService.class })
-public class BaseServiceBean implements BaseService, TimedObject {
+@Local({ BaseService.class })
+public class BaseServiceBean implements BaseService {
 
 	@Inject
     private Logger log;
@@ -28,8 +30,6 @@ public class BaseServiceBean implements BaseService, TimedObject {
 
 	@EJB
 	ShedulerActivity serviceBean;
-	
-//	protected final Logger LOG = Logger.getLogger(this.getClass());
 
 	public static final double MIN_ODDS = 1.01;
 	public static final double MAX_ODDS = 1000.0;
@@ -296,6 +296,7 @@ End Function
 		}
 		return result;
 	}
+
 /*	
 Public Function GetSelectionAmount(ByVal finalOdds As Variant, ByVal sourceOdds As Variant, ByVal Volume_Stake As Variant, ByVal B_Status As Variant) As Double
 On Error GoTo Err
@@ -313,88 +314,11 @@ Err:
  MsgBox "Invalid amount, " & Err.Description
  GetSelectionAmount = 1#
 End Function
- 
- 
- 
+
  */
-	
-	
-	
-	public void createTimer(EJBContext context, String eventId, long duration) {
-		TimerService timerService;
-		try {
-			TimerConfig tconfig = new TimerConfig();
-			tconfig.setPersistent(false);
-			tconfig.setInfo(eventId);
-			timerService = context.getTimerService();
 
-			timerService.createSingleActionTimer(duration, tconfig);
-
-			log.fine(this.getClass().getName() + ": createTimer (" + context
-					+ ") timer initialized for event  [eventId=" + eventId
-					+ "] - hashcode: " + this.hashCode());
-		} catch (Exception e) {
-			String msg = e.getMessage();
-			log.severe("error creating timer: " + ((msg != null) ? msg : ""));
-		}
-	}
-
-	public void sendDelayedRequest(Action action, String userLogin,
-			String sMarketId, int index) {
-
-		String eventId = new StringBuffer(25).append(action.toString()).append(
-				'=').append(userLogin).append(ITEM_SEPARATOR).append(sMarketId)
-				.toString();
-
-		//long delayByIndex = index * 100L;
-		log.info("sendDelayedRequest for: " + eventId);
-
+	public void sendDelayedRequest(Action action, String userLogin, String sMarketId, int index) {
 		serviceBean.sendRequest(action, userLogin, sMarketId);
-
-		// LOG.info("delayByIndex: " + delayByIndex/1000.0);
-		//createTimer(context, eventId, delayByIndex);
-/*
-		if (timerInfo.startsWith(Action.UPDATE_MARKET.toString())) {
-			String[] procInfo = timerInfo.split("=");
-			String[] procArgs = procInfo[1].split(ITEM_SEPARATOR);
-			serviceBean.sendRequest(Action.UPDATE_MARKET, procArgs[0], procArgs[1]);
-
-		} else if (timerInfo.startsWith(Action.UPDATE_MARKET_PRICES.toString())) {
-			String[] procInfo = timerInfo.split("=");
-			String[] procArgs = procInfo[1].split(ITEM_SEPARATOR);
-			serviceBean.sendRequest(Action.UPDATE_MARKET_PRICES, procArgs[0],
-					procArgs[1]);
-		}
-*/
-	}
-
-	public static final String ITEM_SEPARATOR = "~";
-
-
-	public void ejbTimeout(Timer timer) {
-		// TODO Auto-generated method stub
-		String timerInfo = (String) timer.getInfo();
-		try {
-			timer.cancel();
-		} catch (Exception e) {
-			log.severe("error while timer \"" + timerInfo + "\" cancellation, "
-					+ e.getMessage());
-		}
-
-		log.fine("ejbTimeout() - timerInfo: " + timerInfo);
-	//	ShedulerActivity serviceBean = ShedulerActivityBean.getInstance();
-		if (timerInfo.startsWith(Action.UPDATE_MARKET.toString())) {
-			String[] procInfo = timerInfo.split("=");
-			String[] procArgs = procInfo[1].split(ITEM_SEPARATOR);
-			serviceBean.sendRequest(Action.UPDATE_MARKET, procArgs[0],
-					procArgs[1]);
-
-		} else if (timerInfo.startsWith(Action.UPDATE_MARKET_PRICES.toString())) {
-			String[] procInfo = timerInfo.split("=");
-			String[] procArgs = procInfo[1].split(ITEM_SEPARATOR);
-			serviceBean.sendRequest(Action.UPDATE_MARKET_PRICES, procArgs[0],
-					procArgs[1]);
-		}
 	}
 
 	public String getCurrencySymbol(String currencyAlias) {

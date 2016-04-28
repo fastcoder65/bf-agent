@@ -2,7 +2,6 @@ package com.betfair.aping.api;
 
 import com.betfair.aping.ApiNGDemo;
 import com.betfair.aping.containers.MarketProfitAndLossContainer;
-import com.betfair.aping.containers.ReplaceOrdersContainer;
 import com.betfair.aping.entities.*;
 import com.betfair.aping.enums.*;
 import com.betfair.aping.exceptions.APINGException;
@@ -10,27 +9,36 @@ import com.betfair.aping.util.JsonConverter;
 import com.google.gson.reflect.TypeToken;
 import net.bir2.util.DTAction;
 
+import javax.ejb.AccessTimeout;
+import javax.ejb.Lock;
+import javax.ejb.LockType;
+import javax.ejb.Singleton;
 import java.util.*;
+import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 
-
+@Singleton
+@Lock(LockType.WRITE)
+@AccessTimeout(value=60, unit = TimeUnit.SECONDS )
 public class ApiNgRescriptOperations extends ApiNgOperations {
 
-    private static ApiNgRescriptOperations instance = null;
+    // private static ApiNgRescriptOperations instance = null;
 
-    private ApiNgRescriptOperations(){}
+    public ApiNgRescriptOperations(){}
 
+    /*
     public static ApiNgRescriptOperations getInstance(){
         if (instance == null){
             instance = new ApiNgRescriptOperations();
         }
         return instance;
     }
-    
+*/
+
 	public String keepAlive(String appKey, String ssoId) {
 		
-		String result = getInstance().makeKeepAliveRequest(
-				appKey, ssoId);
+		String result = makeKeepAliveRequest(
+                appKey, ssoId);
 		if (ApiNGDemo.isDebug())
             printLog("Response: " + result);
 		return result;
@@ -38,8 +46,8 @@ public class ApiNgRescriptOperations extends ApiNgOperations {
 
 	public String logout (String appKey, String ssoId) {
 		
-		String result = getInstance().makeLogoutRequest(
-				appKey, ssoId);
+		String result = makeLogoutRequest(
+                appKey, ssoId);
 		if (ApiNGDemo.isDebug())
             printLog("Response: " + result);
 		return result;
@@ -51,7 +59,7 @@ public class ApiNgRescriptOperations extends ApiNgOperations {
         params.put(FILTER, filter);
         params.put(LOCALE, locale);
         params.put(SORT, sort);
-        String result = getInstance().makeRequest(ApiNgOperation.LISTEVENTTYPES.getOperationName(), params, appKey, ssoId);
+        String result = makeRequest(ApiNgOperation.LISTEVENTTYPES.getOperationName(), params, appKey, ssoId);
         if(ApiNGDemo.isDebug())
             printLog("Response: " + result);
 
@@ -68,7 +76,7 @@ public class ApiNgRescriptOperations extends ApiNgOperations {
         Map<String, Object> params = new HashMap<String, Object>();
         params.put(FILTER, filter);
         params.put(LOCALE, locale);
-        String result = getInstance().makeRequest(ApiNgOperation.LISTCOMPETITIONS.getOperationName(), params, appKey, ssoId);
+        String result = makeRequest(ApiNgOperation.LISTCOMPETITIONS.getOperationName(), params, appKey, ssoId);
         if(ApiNGDemo.isDebug())
             printLog("Response: " + result);
 
@@ -86,7 +94,7 @@ public class ApiNgRescriptOperations extends ApiNgOperations {
         Map<String, Object> params = new HashMap<String, Object>();
         params.put(FILTER, filter);
         params.put(LOCALE, locale);
-        String result = getInstance().makeRequest(ApiNgOperation.LISTEVENTS.getOperationName(), params, appKey, ssoId);
+        String result = makeRequest(ApiNgOperation.LISTEVENTS.getOperationName(), params, appKey, ssoId);
         if(ApiNGDemo.isDebug())
             printLog("Response: "+result);
 
@@ -101,7 +109,7 @@ public class ApiNgRescriptOperations extends ApiNgOperations {
         Map<String, Object> params = new HashMap<String, Object>();
         params.put(LOCALE, locale);
         params.put(MARKET_IDS, marketIds);
-        String result = getInstance().makeRequest(ApiNgOperation.LISTMARKETBOOK.getOperationName(), params, appKey, ssoId);
+        String result = makeRequest(ApiNgOperation.LISTMARKETBOOK.getOperationName(), params, appKey, ssoId);
         if(ApiNGDemo.isDebug())
             printLog("Response: " + result);
 
@@ -119,7 +127,7 @@ public class ApiNgRescriptOperations extends ApiNgOperations {
         params.put(FILTER, filter);
         params.put(SORT, sort);
         params.put(MAX_RESULT, maxResult);
-        String result = getInstance().makeRequest(ApiNgOperation.LISTMARKETCATALOGUE.getOperationName(), params, appKey, ssoId);
+        String result = makeRequest(ApiNgOperation.LISTMARKETCATALOGUE.getOperationName(), params, appKey, ssoId);
         if(ApiNGDemo.isDebug())
             printLog("Response: " + result);
 
@@ -157,7 +165,7 @@ public class ApiNgRescriptOperations extends ApiNgOperations {
 
         params.put("orderBy", OrderBy.BY_PLACE_TIME);
 
-        String result = getInstance().makeRequest(ApiNgOperation.LISTCURRENTORDERS.getOperationName(), params, appKey, ssoId);
+        String result = makeRequest(ApiNgOperation.LISTCURRENTORDERS.getOperationName(), params, appKey, ssoId);
 
         if(ApiNGDemo.isDebug())
             printLog("Response: " + result);
@@ -174,7 +182,7 @@ public class ApiNgRescriptOperations extends ApiNgOperations {
         params.put(MARKET_ID, marketId);
         params.put(INSTRUCTIONS, instructions);
         params.put(CUSTOMER_REF, customerRef);
-        String result = getInstance().makeRequest(ApiNgOperation.PLACE_ORDERS.getOperationName(), params, appKey, ssoId);
+        String result = makeRequest(ApiNgOperation.PLACE_ORDERS.getOperationName(), params, appKey, ssoId);
 
         if(ApiNGDemo.isDebug())
             printLog("Response: " + result);
@@ -192,7 +200,7 @@ public class ApiNgRescriptOperations extends ApiNgOperations {
         params.put(MARKET_ID, marketId);
         params.put(INSTRUCTIONS, instructions);
         params.put(CUSTOMER_REF, customerRef);
-        String result = getInstance().makeRequest(ApiNgOperation.REPLACE_ORDERS.getOperationName(), params, appKey, ssoId);
+        String result = makeRequest(ApiNgOperation.REPLACE_ORDERS.getOperationName(), params, appKey, ssoId);
         if(ApiNGDemo.isDebug())
             printLog("Response: " + result);
 
@@ -208,7 +216,7 @@ public class ApiNgRescriptOperations extends ApiNgOperations {
         params.put(MARKET_ID, marketId);
         params.put(INSTRUCTIONS, instructions);
         params.put(CUSTOMER_REF, customerRef);
-        String result = getInstance().makeRequest(ApiNgOperation.CANCEL_ORDERS.getOperationName(), params, appKey, ssoId);
+        String result = makeRequest(ApiNgOperation.CANCEL_ORDERS.getOperationName(), params, appKey, ssoId);
         if(ApiNGDemo.isDebug())
             printLog("Response: " + result);
 
@@ -227,7 +235,7 @@ public class ApiNgRescriptOperations extends ApiNgOperations {
         params.put ( param_includeBspBets, includeBspBets);
         params.put ( param_netOfCommission, netOfCommission);
 
-        String result = getInstance().makeRequest(ApiNgOperation.LIST_MARKET_PROFIT_AND_LOSS.getOperationName(), params, appKey, ssoId);
+        String result = makeRequest(ApiNgOperation.LIST_MARKET_PROFIT_AND_LOSS.getOperationName(), params, appKey, ssoId);
 
         if (ApiNGDemo.isDebug())
             printLog("'cancelOrders' Response: " + result);

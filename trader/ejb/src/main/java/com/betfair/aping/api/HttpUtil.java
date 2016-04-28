@@ -4,23 +4,43 @@ import com.betfair.aping.ApiNGDemo;
 import com.betfair.aping.exceptions.APINGException;
 import com.betfair.aping.util.JsonResponseHandler;
 import com.betfair.aping.util.RescriptResponseHandler;
+import my.pack.util.AccountConstants;
 import org.apache.http.auth.AuthScope;
 import org.apache.http.auth.UsernamePasswordCredentials;
-import org.apache.http.client.*;
+import org.apache.http.client.ClientProtocolException;
+import org.apache.http.client.ResponseHandler;
 import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.protocol.HttpClientContext;
+import org.apache.http.conn.ssl.NoopHostnameVerifier;
+import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
 import org.apache.http.entity.StringEntity;
-import org.apache.http.impl.auth.DigestScheme;
-import org.apache.http.impl.client.*;
+import org.apache.http.impl.client.BasicCredentialsProvider;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClientBuilder;
+import org.apache.http.impl.client.HttpClients;
 import org.apache.http.impl.conn.DefaultProxyRoutePlanner;
+import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
 import org.apache.http.protocol.HTTP;
 
-import java.io.IOException;
-import java.io.UnsupportedEncodingException;
+import javax.annotation.PostConstruct;
+import javax.annotation.PreDestroy;
+import javax.annotation.Resource;
+import javax.ejb.*;
+import javax.net.ssl.KeyManager;
+import javax.net.ssl.KeyManagerFactory;
+import javax.net.ssl.SSLContext;
+import java.io.*;
+import java.security.KeyStore;
+import java.security.SecureRandom;
+import java.util.concurrent.TimeUnit;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
-public class HttpUtil {
+@Singleton
+@Lock(LockType.WRITE)
+@AccessTimeout(value=60, unit = TimeUnit.SECONDS )
+public class HttpUtil implements TimedObject {
 
     private final String HTTP_HEADER_X_APPLICATION = "X-Application";
     private final String HTTP_HEADER_X_AUTHENTICATION = "X-Authentication";
@@ -30,36 +50,77 @@ public class HttpUtil {
 
     protected final Logger log = Logger.getLogger(this.getClass().getName());
 
+    @Resource
+    private EJBContext context;
+
     public HttpUtil() {
-        super();
+        log.info("HttpUtil constructor..");
     }
+
+    @PostConstruct
+    public void create() {
+        log.info("HttpUtil @PostConstruct..");
+        httpClient = createHttpClientOrProxy();
+        createTimer(context,  300 * 1000);
+    }
+
+    public void createTimer(EJBContext context, long duration) {
+        TimerService timerService;
+        try {
+            timerService = context.getTimerService();
+
+            String timerInfo = "closeIdleConTimer on "+ duration;
+
+            timerService.createIntervalTimer(1000, duration, new TimerConfig(timerInfo, false));
+
+        } catch (Exception e) {
+            String msg = e.getMessage();
+            log.severe("error creating timer: " + ((msg != null) ? msg : ""));
+        }
+    }
+
+    public void ejbTimeout(javax.ejb.Timer timer) {
+
+        //timer.cancel();
+        String timerInfo = (String) timer.getInfo();
+
+        log.info(timerInfo + ", close Idle http Connections..");
+
+        clientConnectionMaanager.closeIdleConnections(600, TimeUnit.MILLISECONDS);
+        clientConnectionMaanager.closeExpiredConnections();
+
+    }
+
+    private CloseableHttpClient httpClient = null; // createHttpClientOrProxy();
+    private PoolingHttpClientConnectionManager clientConnectionMaanager = null;
 
     private boolean isSet(Object sysProperty) {
         return sysProperty != null
                 && sysProperty.toString().trim().length() > 0;
     }
 
-    private HttpClient createHttpClientOrProxy() {
+    private CloseableHttpClient createHttpClientOrProxy() {
+
+        CloseableHttpClient httpClient = null;
 
         HttpClientBuilder hcBuilder = HttpClients.custom();
 
         // Set HTTP proxy, if specified in system properties
+
         if (isSet(System.getProperty("http.proxyHost"))) {
             int port = 80;
             if (isSet(System.getProperty("http.proxyPort"))) {
                 port = Integer.parseInt(System.getProperty("http.proxyPort"));
             }
-            org.apache.http.HttpHost proxy = new org.apache.http.HttpHost(
-                    System.getProperty("http.proxyHost"), port);
+
+            org.apache.http.HttpHost proxy = new org.apache.http.HttpHost(System.getProperty("http.proxyHost"), port);
 
             org.apache.http.client.CredentialsProvider credsProvider = new BasicCredentialsProvider();
 
             credsProvider.setCredentials(new AuthScope(proxy.getHostName(),
-                    proxy.getPort()), new UsernamePasswordCredentials(
-                    "fastcoder65", "imxDr5OZimxDr5OZ"));
+                    proxy.getPort()), new UsernamePasswordCredentials("fastcoder65", "imxDr5OZimxDr5OZ"));
 
-            DefaultProxyRoutePlanner routePlanner = new DefaultProxyRoutePlanner(
-                    proxy);
+            DefaultProxyRoutePlanner routePlanner = new DefaultProxyRoutePlanner(proxy);
 
             hcBuilder.setRoutePlanner(routePlanner);
             hcBuilder.setDefaultCredentialsProvider(credsProvider);
@@ -76,9 +137,43 @@ public class HttpUtil {
 
         hcBuilder.setDefaultRequestConfig(requestConfig);
 
-        CloseableHttpClient httpClient = hcBuilder.build();
+        try {
+            SSLContext ctx = SSLContext.getInstance("TLS");
+
+            KeyManager[] keyManagers = getKeyManagers("pkcs12", new FileInputStream(new File(AccountConstants.PATH_TO_PRIVATE_KEY)), "1q2w3e4r5t");
+
+            ctx.init(keyManagers, null, new SecureRandom());
+
+            SSLConnectionSocketFactory sslsf = new SSLConnectionSocketFactory(ctx, NoopHostnameVerifier.INSTANCE);
+
+            hcBuilder.setSSLSocketFactory(sslsf);
+
+            if (clientConnectionMaanager == null) {
+                clientConnectionMaanager = new PoolingHttpClientConnectionManager();
+                clientConnectionMaanager.setMaxTotal(100);
+                clientConnectionMaanager.setDefaultMaxPerRoute(20);
+            }
+            //PoolingHttpClientConnectionManager cm = new PoolingHttpClientConnectionManager();
+            if (clientConnectionMaanager != null)
+            hcBuilder.setConnectionManager(clientConnectionMaanager);
+
+            httpClient = hcBuilder.build();
+
+        } catch (Exception e) {
+            log.log(Level.SEVERE, "error initializing httpClient, ", e);
+        }
 
         return httpClient;
+    }
+
+    private KeyManager[] getKeyManagers(String keyStoreType,
+                                               InputStream keyStoreFile, String keyStorePassword) throws Exception {
+        KeyStore keyStore = KeyStore.getInstance(keyStoreType);
+        keyStore.load(keyStoreFile, keyStorePassword.toCharArray());
+        KeyManagerFactory kmf = KeyManagerFactory.getInstance(KeyManagerFactory
+                .getDefaultAlgorithm());
+        kmf.init(keyStore, keyStorePassword.toCharArray());
+        return kmf.getKeyManagers();
     }
 
     private String sendPostRequest(String param, String operation,
@@ -89,6 +184,8 @@ public class HttpUtil {
         HttpPost post = new HttpPost(aURL);
 
         String resp = null;
+       // CloseableHttpResponse response = null;
+
         try {
             post.setHeader(HTTP_HEADER_CONTENT_TYPE, ApiNGDemo.getProp()
                     .getProperty("APPLICATION_JSON"));
@@ -101,22 +198,24 @@ public class HttpUtil {
 
             post.setHeader("Accept-Encoding", "gzip, deflate");
             post.setHeader(HTTP.CONN_DIRECTIVE, HTTP.CONN_KEEP_ALIVE);
+            post.setHeader(HTTP.CONN_KEEP_ALIVE, "timeout=60000");
 
             if (jsonRequest != null)
                 post.setEntity(new StringEntity(jsonRequest, ApiNGDemo
                         .getProp().getProperty("ENCODING_UTF8")));
 
-            HttpClientBuilder hcBuilder = HttpClients.custom();
+//            HttpClientBuilder hcBuilder = HttpClients.custom();
 
 
             // Set HTTP proxy, if specified in system properties
 
-            org.apache.http.HttpHost proxy = null;
+            //org.apache.http.HttpHost proxy = null;
+
             HttpClientContext context = HttpClientContext.create();
 
 // http.proxyHost = 54.75.241.179
 // http.proxyPort = 3128
-
+            /*
             if (isSet(System.getProperty("http.proxyHost"))) {
                 int port = 80;
                 if (isSet(System.getProperty("http.proxyPort"))) {
@@ -124,8 +223,7 @@ public class HttpUtil {
                             .getProperty("http.proxyPort"));
                 }
 
-                proxy = new org.apache.http.HttpHost(
-                        System.getProperty("http.proxyHost"), port);
+                proxy = new org.apache.http.HttpHost(System.getProperty("http.proxyHost"), port);
 
                 CredentialsProvider credsProvider = new BasicCredentialsProvider();
 
@@ -150,9 +248,11 @@ public class HttpUtil {
                 DefaultProxyRoutePlanner routePlanner = new DefaultProxyRoutePlanner(
                         proxy);
 
-                hcBuilder.setRoutePlanner(routePlanner);
-                hcBuilder.setDefaultCredentialsProvider(credsProvider);
+//                hcBuilder.setRoutePlanner(routePlanner);
+//                hcBuilder.setDefaultCredentialsProvider(credsProvider);
             }
+*/
+
 /*
             RequestConfig requestConfig = RequestConfig
                     .custom()
@@ -163,12 +263,12 @@ public class HttpUtil {
                             new Integer(ApiNGDemo.getProp().getProperty(
                                     "TIMEOUT")).intValue()).build();
 */
-            RequestConfig  requestConfig = RequestConfig.custom()
+//            RequestConfig  requestConfig = RequestConfig.custom()
 /*
                     .setSocketTimeout(
                             new Integer(ApiNGDemo.getProp().getProperty(
                                     "TIMEOUT")).intValue())
-*/
+
                     .setConnectTimeout(
                             new Integer(ApiNGDemo.getProp().getProperty(
                                     "TIMEOUT")).intValue()).build();
@@ -176,8 +276,10 @@ public class HttpUtil {
             hcBuilder.setDefaultRequestConfig(requestConfig);
 
             // CloseableHttpClient httpClient = hcBuilder.build();
-
             HttpClient httpClient = hcBuilder.build();
+*/
+
+
             long startTime = System.currentTimeMillis();
 
             resp = httpClient.execute(post, reqHandler, context);
@@ -207,11 +309,37 @@ public class HttpUtil {
             // Do something
             log.severe("method 'sendPostRequest' error: " + ioE.getMessage());
         }
+        /*
+        finally {
+        // Test if response Closeable
+        if (response instanceof Closeable) {
+            try {
+                ((Closeable) response).close();
+            } catch (IOException ioe) {
+                // Ignore
+            }
+            }
+        }
+        */
 
         return resp;
-
     }
 
+    @PreDestroy
+    public void destroy () {
+        log.info("HttpUtil destroy, httpClient: " + httpClient);
+      if (httpClient != null) {
+          try {
+
+              httpClient.close();
+              log.info("HttpUtil destroy, httpClient closed.");
+          } catch (IOException ioe) {
+            log.severe(ioe.getMessage());
+          }
+
+
+      }
+    }
     public String sendPostRequestRescript(String param, String operation,
                                           String appKey, String ssoToken) throws APINGException {
         String apiNgURL = ApiNGDemo.getProp().getProperty("APING_URL")

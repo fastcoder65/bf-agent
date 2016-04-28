@@ -1,7 +1,6 @@
 package com.betfair.aping;
 
 import com.betfair.aping.api.ApiNgOperations;
-import com.betfair.aping.api.ApiNgRescriptOperations;
 import com.betfair.aping.entities.*;
 import com.betfair.aping.enums.*;
 import com.betfair.aping.exceptions.APINGException;
@@ -17,7 +16,7 @@ import java.util.*;
  */
 public class ApiNGJRescriptDemo {
 
-	private ApiNgOperations rescriptOperations = ApiNgRescriptOperations.getInstance();
+	private ApiNgOperations rescriptOperations = null; // ApiNgRescriptOperations.getInstance();
 	private String applicationKey;
 	private String sessionToken;
 

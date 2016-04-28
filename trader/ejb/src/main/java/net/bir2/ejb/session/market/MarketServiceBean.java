@@ -1,9 +1,13 @@
 package net.bir2.ejb.session.market;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
-import java.util.logging.Logger;
+import com.betfair.aping.entities.*;
+import com.betfair.aping.enums.MatchProjection;
+import com.betfair.aping.enums.OrderProjection;
+import net.bir2.ejb.action.ShedulerActivity;
+import net.bir2.multitrade.ejb.entity.*;
+import net.bir2.multitrade.ejb.entity.Market;
+import net.bir2.multitrade.util.APIContext;
+import org.hibernate.Hibernate;
 
 import javax.annotation.Resource;
 import javax.ejb.EJB;
@@ -13,11 +17,10 @@ import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-
-import net.bir2.ejb.action.ShedulerActivity;
-import net.bir2.multitrade.ejb.entity.*;
-import net.bir2.multitrade.ejb.entity.MarketRunner;
-import org.hibernate.Hibernate;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
+import java.util.logging.Logger;
 
 // import org.apache.log4j.Logger;
 
@@ -74,22 +77,6 @@ public class MarketServiceBean implements MarketService {
         return context.getCallerPrincipal().getName();
     }
 
-	/*
-     * @SuppressWarnings("unchecked") private boolean credEncoded(String _login)
-	 * { org.hibernate.Session session = (org.hibernate.Session)
-	 * em.getDelegate(); // String _login = getLoginName(); //System.out.println
-	 * ("_login: " + _login); List<Object[]> _list =
-	 * session.createSQLQuery(CHECK_ENCODED_QRY) .addScalar("encl",
-	 * Hibernate.STRING) .addScalar("encp", Hibernate.STRING)
-	 * .setParameter("hexNum", hexNumbersAntiPattern)
-	 * 
-	 * .setParameter("login", _login) .list(); Object[] flags = (_list != null
-	 * && _list.size() > 0)? (Object[]) _list.get(0): null; boolean result =
-	 * (flags != null && "0".equals(flags[0]) && "0".equals(flags[1])); if
-	 * (flags != null){ //System.out.println ("flags[0]='" +flags[0]+
-	 * "', flags[1]='" +flags[1]+ "', credEncoded()=" + result); } else { //
-	 * System.out.println ("flags=" + flags); } return result ; }
-	 */
 
     public Uzer getCurrentUser() {
         return getUserByLogin(getLoginName());
@@ -103,16 +90,6 @@ public class MarketServiceBean implements MarketService {
                 .getSingleResult();
 		
 
-		/*
-		 * org.hibernate.Session session = (org.hibernate.Session)
-		 * em.getDelegate(); Object[] decodedLoginPass = (Object[])
-		 * session.createSQLQuery(DEC_QRY) .addScalar("decl", Hibernate.STRING)
-		 * .addScalar("decp", Hibernate.STRING) .setParameter("login",
-		 * userLogin).uniqueResult();
-		 * 
-		 * // result.setExLoginDec(decodedLoginPass[0].toString());
-		 * result.setExPasswordDec(decodedLoginPass[1].toString());
-		 */
 
         if (result != null) {
             result.setExLoginDec(result.getExLogin());
@@ -122,6 +99,7 @@ public class MarketServiceBean implements MarketService {
         // log.info("getUserByLogin - result: " + result);
         return result;
     }
+
 
     @SuppressWarnings("unchecked")
     public List<Market> listMarkets() {
@@ -325,4 +303,77 @@ public class MarketServiceBean implements MarketService {
        // return getUserByLogin(uzer.getLogin());
         return  em.merge(uzer);
     }
+
+    // GlobalAPI
+
+    public List<EventTypeResult> getActiveEventTypes(APIContext context) {
+        return serviceBean.getActiveEventTypes(context);
+    }
+
+    public List<CompetitionResult> getCompetitions(APIContext context,  Set<String> eventTypeIds, Set<String> eventIds) {
+        return serviceBean.getCompetitions( context, eventTypeIds, eventIds);
+    }
+
+    public List<EventResult> getEvents(APIContext context,
+                                Set<String> eventTypeIds,
+                                Set<String> competitionIds,
+                                Set<String> eventIds) {
+
+        return serviceBean.getEvents( context,  eventTypeIds,  competitionIds,  eventIds);
+
+    }
+
+    public List<MarketCatalogue> getMarkets(APIContext context, Set<String> eventIds, Set<String> marketIds) {
+        return serviceBean.getMarkets( context, eventIds, marketIds);
+    }
+
+
+    public List<MarketBook> getMarketPrices(APIContext context, String marketId, String currencyCode) {
+        return serviceBean.getMarketPrices(context,  marketId, currencyCode);
+    }
+
+    public List<MarketBook> getMarketStatus(APIContext context, String marketId) {
+        return serviceBean.getMarketStatus ( context, marketId);
+    }
+
+    public List<MarketBook> listMarketBook(APIContext context, List<String> marketIds,
+                                    PriceProjection priceProjection, OrderProjection orderProjection,
+                                    MatchProjection matchProjection, String currencyCode) {
+
+        return serviceBean.listMarketBook( context,  marketIds, priceProjection, orderProjection, matchProjection, currencyCode);
+    }
+
+    public List<MarketProfitAndLoss> listMarketProfitAndLoss (APIContext context, Set<String> marketIds) {
+        return serviceBean.listMarketProfitAndLoss ( context,  marketIds);
+    }
+
+
+    public List<CurrentOrderSummary> listCurrentOrders(APIContext context, Set<String> betIds, Set<String> marketIds) {
+        return serviceBean.listCurrentOrders( context,  betIds,  marketIds);
+    }
+
+    public PlaceExecutionReport placeOrders(APIContext context, String marketId, List<PlaceInstruction> instructions) {
+        return serviceBean.placeOrders ( context, marketId, instructions);
+    }
+
+    public ReplaceExecutionReport replaceOrders(APIContext context, String marketId,  List<ReplaceInstruction> instructions ) {
+        return serviceBean.replaceOrders(context, marketId, instructions );
+    }
+
+    public CancelExecutionReport cancelOrders(APIContext context, String marketId, List<CancelInstruction> instructions) {
+        return serviceBean.cancelOrders(context, marketId, instructions);
+    }
+
+    public void keepAlive(APIContext context) throws Exception {
+        serviceBean.keepAlive(context);
+    }
+
+    public void login(APIContext context, String userName,	String password) throws Exception {
+        serviceBean.login( context, userName, password );
+    }
+
+    public void logout(APIContext context) throws Exception {
+        serviceBean.logout(context);
+    }
+
 }

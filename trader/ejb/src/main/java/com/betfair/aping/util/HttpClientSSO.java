@@ -4,22 +4,7 @@ package com.betfair.aping.util;
  * Returns session token 
  */
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.security.KeyStore;
-import java.security.SecureRandom;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.logging.Level;
-
-import javax.net.ssl.KeyManager;
-import javax.net.ssl.KeyManagerFactory;
-import javax.net.ssl.SSLContext;
-
 import my.pack.util.AccountConstants;
-
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
@@ -37,18 +22,26 @@ import org.apache.http.conn.socket.ConnectionSocketFactory;
 import org.apache.http.conn.ssl.NoopHostnameVerifier;
 import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
 import org.apache.http.impl.auth.DigestScheme;
-import org.apache.http.impl.client.BasicAuthCache;
-import org.apache.http.impl.client.BasicCredentialsProvider;
-import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.impl.client.HttpClientBuilder;
-import org.apache.http.impl.client.HttpClients;
+import org.apache.http.impl.client.*;
 import org.apache.http.impl.conn.DefaultProxyRoutePlanner;
 import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
 import org.apache.http.message.BasicNameValuePair;
-import org.apache.http.params.CoreConnectionPNames;
 import org.apache.http.protocol.HTTP;
 import org.apache.http.util.EntityUtils;
-import java.util.logging.*;
+
+import javax.net.ssl.KeyManager;
+import javax.net.ssl.KeyManagerFactory;
+import javax.net.ssl.SSLContext;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.security.KeyStore;
+import java.security.SecureRandom;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 
 // import org.apache.http.impl.client.DefaultHttpClient;
@@ -129,7 +122,6 @@ public class HttpClientSSO {
 			requestBuilder = requestBuilder.setConnectTimeout(15 * 1000);
 			requestBuilder = requestBuilder.setConnectionRequestTimeout(15 * 1000);
 
-			//HttpClientBuilder builder = HttpClientBuilder.create();
 			hcBuilder.setDefaultRequestConfig(requestBuilder.build());
 
 			httpClient = hcBuilder.setSSLSocketFactory(sslsf).build();
@@ -213,9 +205,7 @@ public class HttpClientSSO {
 			if (isSet(System.getProperty("http.proxyPort"))) {
 				port = Integer.parseInt(System.getProperty("http.proxyPort"));
 			}
-			proxy = new org.apache.http.HttpHost(
-					System.getProperty("http.proxyHost"), port);
-
+			proxy = new org.apache.http.HttpHost(System.getProperty("http.proxyHost"), port);
 			org.apache.http.client.CredentialsProvider credsProvider = new BasicCredentialsProvider();
 
 			credsProvider.setCredentials(
@@ -236,14 +226,9 @@ public class HttpClientSSO {
 
 		try {
 			SSLContext ctx = SSLContext.getInstance("TLS");
-			KeyManager[] keyManagers = getKeyManagers("pkcs12",
-					new FileInputStream(new File(
-							AccountConstants.PATH_TO_PRIVATE_KEY)),
-					"1q2w3e4r5t");
+			KeyManager[] keyManagers = getKeyManagers("pkcs12", new FileInputStream ( new File ( AccountConstants.PATH_TO_PRIVATE_KEY )), "1q2w3e4r5t");
 			ctx.init(keyManagers, null, new SecureRandom());
-
-			SSLConnectionSocketFactory sslsf = new SSLConnectionSocketFactory(
-					ctx, NoopHostnameVerifier.INSTANCE);
+			SSLConnectionSocketFactory sslsf = new SSLConnectionSocketFactory(ctx, NoopHostnameVerifier.INSTANCE);
 
 			// SSLSocketFactory factory = new SSLSocketFactory(ctx, new
 			// StrictHostnameVerifier());
@@ -253,13 +238,12 @@ public class HttpClientSSO {
 			// HttpClientConnectionManager manager =
 			// httpClient.getConnectionManager();
 			
-			Registry<ConnectionSocketFactory> r = RegistryBuilder
-					.<ConnectionSocketFactory> create()
-					.register("https", sslsf).build();
+			Registry<ConnectionSocketFactory> r = RegistryBuilder.<ConnectionSocketFactory> create()
+					.register("https", sslsf)
+					.build();
 			
 
-			HttpClientConnectionManager cm = new PoolingHttpClientConnectionManager(
-					r);
+			HttpClientConnectionManager cm = new PoolingHttpClientConnectionManager(r);
 			
 			HttpClients.custom().setConnectionManager(cm).build();
 

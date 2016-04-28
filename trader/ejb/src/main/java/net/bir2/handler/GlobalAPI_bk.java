@@ -1,26 +1,23 @@
 package net.bir2.handler;
 
-import java.util.*;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-
+import com.betfair.aping.api.ApiNgOperations;
 import com.betfair.aping.entities.*;
 import com.betfair.aping.enums.*;
-import my.pack.util.AccountConstants;
-import net.bir2.multitrade.util.APIContext;
-import net.bir2.util.DTAction;
-
-import com.betfair.aping.api.ApiNgJsonRpcOperations;
-import com.betfair.aping.api.ApiNgOperations;
 import com.betfair.aping.exceptions.APINGException;
 import com.betfair.aping.util.HttpClientSSO;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import my.pack.util.AccountConstants;
+import net.bir2.multitrade.util.APIContext;
+import net.bir2.util.DTAction;
 
-public class GlobalAPI {
+import java.util.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
-    private static final Logger log = Logger.getLogger(GlobalAPI.class
-            .getName());
+public class GlobalAPI_bk {
+
+    private static final Logger log = Logger.getLogger(GlobalAPI_bk.class.getName());
 
     private static final String SESSION_TOKEN = "sessionToken";
     private static final String LOGIN_STATUS = "loginStatus";
@@ -65,21 +62,17 @@ public class GlobalAPI {
         return sessionToken;
     }
 
-    private static ApiNgOperations jsonOperations = ApiNgJsonRpcOperations
-            .getInstance();
+    private static ApiNgOperations jsonOperations = null; // ApiNgJsonRpcOperations.getInstance();
 
     // Get the active event types within the system (on both exchanges)
-    public static List<EventTypeResult> getActiveEventTypes(APIContext context)
-            throws APINGException {
+    public static List<EventTypeResult> getActiveEventTypes(APIContext context) throws APINGException {
         MarketFilter marketFilter = new MarketFilter();
-        List<EventTypeResult> r = jsonOperations.listEventTypes(marketFilter, MarketSort.FIRST_TO_START,
-                context.getProduct(), context.getToken());
+        List<EventTypeResult> r = jsonOperations.listEventTypes(marketFilter, MarketSort.FIRST_TO_START, context.getProduct(), context.getToken());
         return r;
     }
 
-    public static List<CompetitionResult> getCompetitions(APIContext context,
-                                                          Set<String> eventTypeIds, Set<String> eventIds)
-            throws APINGException {
+    public static List<CompetitionResult> getCompetitions(APIContext context,  Set<String> eventTypeIds, Set<String> eventIds) throws APINGException {
+
         MarketFilter marketFilter = new MarketFilter();
         Set<String> _eventTypeIds = new HashSet<String>();
 
@@ -110,7 +103,9 @@ public class GlobalAPI {
 
 
     public static List<EventResult> getEvents(APIContext context,
-                                              Set<String> eventTypeIds, Set<String> competitionIds, Set<String> eventIds)
+                                              Set<String> eventTypeIds,
+                                              Set<String> competitionIds,
+                                              Set<String> eventIds)
             throws APINGException {
         MarketFilter marketFilter = new MarketFilter();
         Set<String> _eventTypeIds = new HashSet<String>();
@@ -224,16 +219,14 @@ public class GlobalAPI {
         Set<PriceData> priceData = new HashSet<PriceData>();
 
         priceData.add(PriceData.EX_BEST_OFFERS);
- //       priceData.add(PriceData.EX_ALL_OFFERS);
+
         priceData.add(PriceData.EX_TRADED);
-/*
-        priceData.add(PriceData.SP_AVAILABLE);
-        priceData.add(PriceData.SP_TRADED);
-*/
+
         priceProjection.setPriceData(priceData);
-        // EX_BEST_OFFERS EX_TRADED
+
         Set<OrderProjection> orderProjection = new HashSet<OrderProjection>();
         orderProjection.add(OrderProjection.EXECUTABLE);
+
         Set<MatchProjection> matchProjection = new HashSet<MatchProjection>();
         matchProjection.add(MatchProjection.NO_ROLLUP);
 

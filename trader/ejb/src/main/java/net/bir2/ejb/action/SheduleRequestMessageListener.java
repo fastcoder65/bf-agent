@@ -6,12 +6,10 @@ import com.betfair.aping.enums.OrderType;
 import com.betfair.aping.enums.PersistenceType;
 import com.betfair.aping.enums.Side;
 import com.unitab.race.Race;
-
 import net.bir2.ejb.session.market.BaseService;
 import net.bir2.ejb.session.market.BaseServiceBean;
 import net.bir2.ejb.session.market.DataFeedService;
 import net.bir2.ejb.session.market.MarketService;
-import net.bir2.handler.GlobalAPI;
 import net.bir2.multitrade.ejb.entity.*;
 import net.bir2.multitrade.ejb.entity.Market;
 
@@ -219,7 +217,7 @@ public class SheduleRequestMessageListener implements MessageListener {
 
         try {
 
-            marketBooks = GlobalAPI.getMarketStatus(currentUser.getApiContext(), currentMarket.getMarketId());
+            marketBooks = serviceBean.getMarketStatus(currentUser.getApiContext(), currentMarket.getMarketId());
             if (marketBooks != null ) {
                 marketBook0 = marketBooks.get(0);
             }
@@ -300,7 +298,7 @@ public class SheduleRequestMessageListener implements MessageListener {
         marketIds.add(currentMarket.getMarketId());
 
         try {
-            currentBets = GlobalAPI.listCurrentOrders(currentUser.getApiContext(), null, marketIds);
+            currentBets = serviceBean.listCurrentOrders(currentUser.getApiContext(), null, marketIds);
             printLog(Level.FINE, "??? on market " + currentMarket + ", found currentBets count: " + (currentBets == null ? "0" : "" + currentBets.size()));
 
         } catch (Exception e) {
@@ -322,7 +320,7 @@ public class SheduleRequestMessageListener implements MessageListener {
 
             try {
 
-                mProfitAndLosses = GlobalAPI.listMarketProfitAndLoss(currentUser.getApiContext(), marketIds);
+                mProfitAndLosses = serviceBean.listMarketProfitAndLoss(currentUser.getApiContext(), marketIds);
                 Iterator i = mProfitAndLosses.iterator();
                 MarketProfitAndLoss mpl = i.hasNext() ? (MarketProfitAndLoss) i.next() : null;
                 if (mpl != null) {
@@ -549,7 +547,7 @@ public class SheduleRequestMessageListener implements MessageListener {
 
             try {
 
-                marketBooks = GlobalAPI.getMarketPrices(currentUser.getApiContext(), currentMarket.getMarketId(), "USD");
+                marketBooks = serviceBean.getMarketPrices(currentUser.getApiContext(), currentMarket.getMarketId(), "USD");
                 if (marketBooks != null ) {
                     marketBook0 = marketBooks.get(0);
 
@@ -1218,7 +1216,7 @@ public class SheduleRequestMessageListener implements MessageListener {
                 if (!cDeletes.isEmpty()) {
                     try {
                         logInfo("*** On Air is OFF for market " + currentMarket.getName() + ", CANCEL ALL BETS for market " + currentMarket.getMarketId());
-                        cancelExecutionReport = GlobalAPI.cancelOrders(currentUser.getApiContext(), currentMarket.getMarketId(), cDeletes);
+                        cancelExecutionReport = serviceBean.cancelOrders(currentUser.getApiContext(), currentMarket.getMarketId(), cDeletes);
 
 
                     } catch (Exception e) {
@@ -1311,7 +1309,7 @@ public class SheduleRequestMessageListener implements MessageListener {
             }
             try {
 
-                replaceExecutionReport = GlobalAPI.replaceOrders(currentUser.getApiContext(), currentMarket.getMarketId(), cUpdates);
+                replaceExecutionReport = serviceBean.replaceOrders(currentUser.getApiContext(), currentMarket.getMarketId(), cUpdates);
 
             } catch (Exception e) {
                 logError(new StringBuilder(100)
@@ -1338,7 +1336,7 @@ public class SheduleRequestMessageListener implements MessageListener {
         if (!cDeletes.isEmpty()) {
             try {
 
-                cancelExecutionReport = GlobalAPI.cancelOrders(currentUser.getApiContext(), currentMarket.getMarketId(), cDeletes);
+                cancelExecutionReport = serviceBean.cancelOrders(currentUser.getApiContext(), currentMarket.getMarketId(), cDeletes);
             } catch (Exception e) {
                 logError(new StringBuilder(100)
                         .append("GlobalAPI.cancelOrders error: ")
@@ -1395,7 +1393,7 @@ public class SheduleRequestMessageListener implements MessageListener {
             if (!oBets.isEmpty()) {
                 try {
 
-                    placeExecutionReport = GlobalAPI.placeOrders(currentUser.getApiContext(), currentMarket.getMarketId(), oBets);
+                    placeExecutionReport = serviceBean.placeOrders(currentUser.getApiContext(), currentMarket.getMarketId(), oBets);
 
                     if (placeExecutionReport.getInstructionReports() != null)
 					for (PlaceInstructionReport pir : placeExecutionReport.getInstructionReports()) {

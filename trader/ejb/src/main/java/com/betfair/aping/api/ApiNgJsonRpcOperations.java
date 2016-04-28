@@ -9,26 +9,36 @@ import com.betfair.aping.util.JsonConverter;
 import com.betfair.aping.util.JsonrpcRequest;
 import net.bir2.util.DTAction;
 
+import javax.ejb.*;
 import java.util.*;
+import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
+
+@Singleton
+@Lock(LockType.WRITE)
+@AccessTimeout(value=60, unit = TimeUnit.SECONDS )
 
 public class ApiNgJsonRpcOperations extends ApiNgOperations {
 
-	private static ApiNgJsonRpcOperations instance = null;
+//	private static ApiNgJsonRpcOperations instance = null;
 
-	private ApiNgJsonRpcOperations() {
+	@EJB
+	HttpUtil requester;
+
+	public ApiNgJsonRpcOperations() {
 	}
-
+/*
 	public static ApiNgJsonRpcOperations getInstance() {
 		if (instance == null) {
 			instance = new ApiNgJsonRpcOperations();
 		}
 		return instance;
 	}
+*/
 
 	public String keepAlive(String appKey, String ssoId) {
 
-		String result = getInstance().makeKeepAliveRequest(appKey, ssoId);
+		String result = makeKeepAliveRequest(appKey, ssoId);
 		if (ApiNGDemo.isDebug())
 			printLog("'keepAlive' Response: " + result);
 		return result;
@@ -36,7 +46,7 @@ public class ApiNgJsonRpcOperations extends ApiNgOperations {
 
 	public String logout(String appKey, String ssoId) {
 
-		String result = getInstance().makeLogoutRequest(appKey, ssoId);
+		String result = makeLogoutRequest(appKey, ssoId);
 		if (ApiNGDemo.isDebug())
 			printLog("'logout' Response: " + result);
 
@@ -54,7 +64,7 @@ public class ApiNgJsonRpcOperations extends ApiNgOperations {
 		params.put(LOCALE, locale);
 		params.put(SORT, sort);
 
-		String result = getInstance().makeRequest(
+		String result = makeRequest(
 				ApiNgOperation.LISTEVENTTYPES.getOperationName(), params,
 				appKey, ssoId);
 		if (ApiNGDemo.isDebug())
@@ -80,7 +90,7 @@ public class ApiNgJsonRpcOperations extends ApiNgOperations {
 		params.put(SORT, sort);
 		params.put(MAX_RESULT, maxResult);
 
-		String result = getInstance().makeRequest(
+		String result = makeRequest(
 				ApiNgOperation.LISTCOMPETITIONS.getOperationName(), params, appKey,
 				ssoId);
 
@@ -106,7 +116,7 @@ public class ApiNgJsonRpcOperations extends ApiNgOperations {
 		params.put(SORT, sort);
 		params.put(MAX_RESULT, maxResult);
 
-		String result = getInstance().makeRequest(
+		String result = makeRequest(
 				ApiNgOperation.LISTEVENTS.getOperationName(), params, appKey,
 				ssoId);
 
@@ -139,7 +149,7 @@ public class ApiNgJsonRpcOperations extends ApiNgOperations {
 		params.put(MATCH_PROJECTION, matchProjection);
 		params.put("currencyCode", currencyCode);
 
-		result = getInstance().makeRequest(ApiNgOperation.LISTMARKETBOOK.getOperationName(), params, appKey, ssoId);
+		result = makeRequest(ApiNgOperation.LISTMARKETBOOK.getOperationName(), params, appKey, ssoId);
 
 		if (ApiNGDemo.isDebug())
 			printLog("'listMarketBook' Response: " + result);
@@ -165,7 +175,7 @@ public class ApiNgJsonRpcOperations extends ApiNgOperations {
 		params.put(MAX_RESULT, maxResult);
 		params.put(MARKET_PROJECTION, marketProjection);
 
-		String result = getInstance().makeRequest(
+		String result = makeRequest(
 				ApiNgOperation.LISTMARKETCATALOGUE.getOperationName(), params,
 				appKey, ssoId);
 		if (ApiNGDemo.isDebug())
@@ -216,7 +226,7 @@ public class ApiNgJsonRpcOperations extends ApiNgOperations {
 
 		params.put("orderBy", OrderBy.BY_PLACE_TIME);
 
-		String result = getInstance().makeRequest(
+		String result = makeRequest(
 				ApiNgOperation.LISTCURRENTORDERS.getOperationName(), params,
 				appKey, ssoId);
 		if (ApiNGDemo.isDebug())
@@ -242,7 +252,7 @@ public class ApiNgJsonRpcOperations extends ApiNgOperations {
 		params.put ( param_includeBspBets, includeBspBets);
 		params.put ( param_netOfCommission, netOfCommission);
 
-		String result = getInstance().makeRequest(ApiNgOperation.LIST_MARKET_PROFIT_AND_LOSS.getOperationName(), params, appKey, ssoId);
+		String result = makeRequest(ApiNgOperation.LIST_MARKET_PROFIT_AND_LOSS.getOperationName(), params, appKey, ssoId);
 
 		if (ApiNGDemo.isDebug())
 			printLog("'cancelOrders' Response: " + result);
@@ -268,7 +278,7 @@ public class ApiNgJsonRpcOperations extends ApiNgOperations {
 		params.put(INSTRUCTIONS, instructions);
 		params.put(CUSTOMER_REF, customerRef);
 
-		String result = getInstance().makeRequest(ApiNgOperation.CANCEL_ORDERS.getOperationName(), params, appKey, ssoId);
+		String result = makeRequest(ApiNgOperation.CANCEL_ORDERS.getOperationName(), params, appKey, ssoId);
 
 		if (ApiNGDemo.isDebug())
 			printLog("'cancelOrders' Response: " + result);
@@ -292,7 +302,7 @@ public class ApiNgJsonRpcOperations extends ApiNgOperations {
 		params.put(INSTRUCTIONS, instructions);
 		params.put(CUSTOMER_REF, customerRef);
 
-		String result = getInstance().makeRequest(
+		String result = makeRequest(
 				ApiNgOperation.REPLACE_ORDERS.getOperationName(), params, appKey,
 				ssoId);
 
@@ -320,7 +330,7 @@ public class ApiNgJsonRpcOperations extends ApiNgOperations {
 		params.put(INSTRUCTIONS, instructions);
 		params.put(CUSTOMER_REF, customerRef);
 
-		String result = getInstance().makeRequest(
+		String result = makeRequest(
 				ApiNgOperation.PLACE_ORDERS.getOperationName(), params, appKey,
 				ssoId);
 		if (ApiNGDemo.isDebug())
@@ -356,19 +366,19 @@ public class ApiNgJsonRpcOperations extends ApiNgOperations {
 
 		// We need to pass the "sendPostRequest" method a string in util format:
 		// requestString
-		HttpUtil requester = new HttpUtil();
+//		HttpUtil requester = new HttpUtil();
 
 		return requester.sendPostRequestJsonRpc(requestString, operation,
 				appKey, ssoToken);
 	}
 
 	protected String makeKeepAliveRequest(String appKey, String ssoToken) {
-		HttpUtil requester = new HttpUtil();
+//		HttpUtil requester = new HttpUtil();
 		return requester.sendKeepAlivePostRequest(appKey, ssoToken);
 	}
 
 	protected String makeLogoutRequest(String appKey, String ssoToken) {
-		HttpUtil requester = new HttpUtil();
+//		HttpUtil requester = new HttpUtil();
 		return requester.sendLogoutRequest(appKey, ssoToken);
 	}
 

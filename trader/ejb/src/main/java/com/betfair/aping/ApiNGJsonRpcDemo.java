@@ -1,6 +1,5 @@
 package com.betfair.aping;
 
-import com.betfair.aping.api.ApiNgJsonRpcOperations;
 import com.betfair.aping.api.ApiNgOperations;
 import com.betfair.aping.entities.*;
 import com.betfair.aping.enums.*;
@@ -17,7 +16,7 @@ import java.util.*;
  */
 public class ApiNGJsonRpcDemo {
 
-    private ApiNgOperations jsonOperations = ApiNgJsonRpcOperations.getInstance();
+    private ApiNgOperations jsonOperations = null; // ApiNgJsonRpcOperations.getInstance();
     private String applicationKey;
     private String sessionToken;
 
