@@ -1,10 +1,7 @@
 package net.bir2.ejb.action;
 
 import com.betfair.aping.entities.*;
-import com.betfair.aping.enums.OrderStatus;
-import com.betfair.aping.enums.OrderType;
-import com.betfair.aping.enums.PersistenceType;
-import com.betfair.aping.enums.Side;
+import com.betfair.aping.enums.*;
 import com.unitab.race.Race;
 import net.bir2.ejb.session.market.BaseService;
 import net.bir2.ejb.session.market.BaseServiceBean;
@@ -753,7 +750,7 @@ public class SheduleRequestMessageListener implements MessageListener {
                     r4u.setTotalAmountMatched(marketBook0.getTotalMatched()); //  .getTotalAmountMatched()
 
                     r4u.setLastPriceMatched(0.0); // .getLastPriceMatched()
-
+                    r4u.setIsNonRunner(RunnerStatus.REMOVED.equals(r.getStatus()));
                 } else {
                     printLog(new StringBuilder(100)
                             .append("!!! !!! !!! MarketRunner with selectionId=")

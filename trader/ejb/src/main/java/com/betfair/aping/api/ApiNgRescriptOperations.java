@@ -22,20 +22,27 @@ import java.util.logging.Level;
 @AccessTimeout(value=60, unit = TimeUnit.SECONDS )
 public class ApiNgRescriptOperations extends ApiNgOperations {
 
-    // private static ApiNgRescriptOperations instance = null;
 
     public ApiNgRescriptOperations(){}
 
-    /*
-    public static ApiNgRescriptOperations getInstance(){
-        if (instance == null){
-            instance = new ApiNgRescriptOperations();
-        }
-        return instance;
-    }
-*/
+    public AccountFundsResponse  getAccountFunds  (Wallet wallet, String appKey, String ssoId )  throws APINGException {
 
-	public String keepAlive(String appKey, String ssoId) {
+        Map<String, Object> params = new HashMap<String, Object>();
+        params.put("wallet", wallet);
+
+        String result = makeRequest(
+                ApiNgOperation.getAccountFunds.getOperationName(), params,
+                appKey, ssoId);
+        if (ApiNGDemo.isDebug())
+            printLog("'getAccountFunds' Response: " + result);
+
+        AccountFundsResponse container = JsonConverter.convertFromJson(result, new TypeToken<AccountFundsResponse>() {}.getType());
+
+        return container;
+    }
+
+
+    public String keepAlive(String appKey, String ssoId) {
 		
 		String result = makeKeepAliveRequest(
                 appKey, ssoId);
@@ -271,6 +278,8 @@ public class ApiNgRescriptOperations extends ApiNgOperations {
         else
             throw new APINGException();
     }
+
+
 
 	protected String makeKeepAliveRequest(String appKey, String ssoToken) {
 		HttpUtil requester = new HttpUtil();

@@ -3,6 +3,7 @@ package net.bir2.ejb.session.market;
 import com.betfair.aping.entities.*;
 import com.betfair.aping.enums.MatchProjection;
 import com.betfair.aping.enums.OrderProjection;
+import com.betfair.aping.enums.Wallet;
 import net.bir2.ejb.action.ShedulerActivity;
 import net.bir2.multitrade.ejb.entity.*;
 import net.bir2.multitrade.ejb.entity.Market;
@@ -94,6 +95,6 @@ public interface MarketService {
 
 	void logout(APIContext context) throws Exception;
 
-
+	AccountFundsResponse  getAccountFunds  (Wallet wallet, String appKey, String ssoId );
 
 }

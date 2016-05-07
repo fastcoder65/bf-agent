@@ -19,8 +19,26 @@
 					<h:outputText value="#{labels['menu.profile']}"/>
 				</h:commandLink>
             </rich:toolbarGroup>
-     
-            <rich:toolbarGroup location="right">                       
+
+			<rich:toolbarGroup  rendered="#{rich:isUserInRole('user')}" location="right">
+
+				<a4j:outputPanel id="balances" layout="block">
+				<h:panelGrid columns="2" cellpadding="2">
+					<h:outputLabel value="Main:" />
+					<h:outputLabel value="#{marketBean.mainBalance}" />
+					<h:outputLabel value="Australian:" />
+					<h:outputLabel value="#{marketBean.ausBalance}" />
+				</h:panelGrid>
+				</a4j:outputPanel>
+
+				<a4j:commandLink render="balances" action="#{marketBean.setOnAirOn}"
+								 title="OnAir On" style="margin-right:20px">
+					<h:graphicImage style="border-width:0" value="/images/buttons/ev.play.jpg"/>
+				</a4j:commandLink>
+
+			</rich:toolbarGroup>
+
+			<rich:toolbarGroup location="right">
 				<h:commandLink immediate="true" action="#{menucontrolBean.exit}"> 
 					<h:outputText value="#{labels['menu.exit']}"/>
 				</h:commandLink> 

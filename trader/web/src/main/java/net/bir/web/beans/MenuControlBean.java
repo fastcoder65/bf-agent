@@ -5,9 +5,10 @@ import javax.servlet.http.HttpSession;
 
 public class MenuControlBean extends BaseBean {
 
-	public static final String MAIN = "main";
-	public static final String PROFILE = "profile";
-	
+	public static final String MAIN 	= "main";
+	public static final String PROFILE 	= "profile";
+	public static final String BALANCE 	= "balance";
+
 	public String main() {
 		return MAIN; 	
 	}
@@ -15,8 +16,11 @@ public class MenuControlBean extends BaseBean {
 	public String profile () {
 		return PROFILE;	
 	}
-	
+
+	public String refreshAccountFunds() { return BALANCE;}
+
 	public String exit() {
+
 		HttpSession session = (HttpSession) FacesContext.getCurrentInstance()
 				.getExternalContext().getSession(false);
 		

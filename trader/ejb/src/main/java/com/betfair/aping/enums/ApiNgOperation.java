@@ -16,6 +16,7 @@ public enum ApiNgOperation {
 	LISTCURRENTORDERS("listCurrentOrders"),
 
 	KEEPALIVE("keepAlive"),
+	getAccountFunds("getAccountFunds"),
 
 	CANCEL_ORDERS("cancelOrders"),
 	REPLACE_ORDERS("replaceOrders"),

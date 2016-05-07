@@ -1,12 +1,14 @@
 package com.betfair.aping.entities;
 
+import com.betfair.aping.enums.RunnerStatus;
+
 import java.util.Date;
 import java.util.List;
 
 public class Runner {
 	private Long selectionId;
 	private Double handicap;
-	private String status;
+	private RunnerStatus status;
 	private Double adjustmentFactor;
 	private Double lastPriceTraded;
 	private Double totalMatched;
@@ -32,11 +34,11 @@ public class Runner {
 		this.handicap = handicap;
 	}
 
-	public String getStatus() {
+	public RunnerStatus getStatus() {
 		return status;
 	}
 
-	public void setStatus(String status) {
+	public void setStatus(RunnerStatus status) {
 		this.status = status;
 	}
 

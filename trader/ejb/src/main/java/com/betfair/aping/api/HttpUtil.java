@@ -61,7 +61,7 @@ public class HttpUtil implements TimedObject {
     public void create() {
         log.info("HttpUtil @PostConstruct..");
         httpClient = createHttpClientOrProxy();
-        createTimer(context,  300 * 1000);
+        createTimer(context,  3600 * 1000);
     }
 
     public void createTimer(EJBContext context, long duration) {
@@ -176,7 +176,7 @@ public class HttpUtil implements TimedObject {
         return kmf.getKeyManagers();
     }
 
-    private String sendPostRequest(String param, String operation,
+    public String sendPostRequest(String param, String operation,
                                    String appKey, String ssoToken, String aURL,
                                    ResponseHandler<String> reqHandler) {
         String jsonRequest = param;
@@ -340,6 +340,7 @@ public class HttpUtil implements TimedObject {
 
       }
     }
+
     public String sendPostRequestRescript(String param, String operation,
                                           String appKey, String ssoToken) throws APINGException {
         String apiNgURL = ApiNGDemo.getProp().getProperty("APING_URL")
@@ -350,16 +351,14 @@ public class HttpUtil implements TimedObject {
                 new RescriptResponseHandler());
 
     }
-
-    public String sendPostRequestJsonRpc(String param, String operation,
-                                         String appKey, String ssoToken) {
+/*
+    public String sendPostRequestJsonRpc(String param, String operation, String appKey, String ssoToken) {
         String apiNgURL = ApiNGDemo.getProp().getProperty("APING_URL")
                 + ApiNGDemo.getProp().getProperty("JSON_RPC_SUFFIX");
 
-        return sendPostRequest(param, operation, appKey, ssoToken, apiNgURL,
-                new JsonResponseHandler());
-
+        return sendPostRequest(param, operation, appKey, ssoToken, apiNgURL, new JsonResponseHandler());
     }
+*/
 
     public String sendKeepAlivePostRequest(String appKey, String ssoToken) {
         String apiNgURL = "https://identitysso.betfair.com/api/keepAlive"; // ApiNGDemo.getProp().getProperty("INTER_KA_URL");

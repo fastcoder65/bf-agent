@@ -40,7 +40,11 @@
     </licenses>
 
 	<properties>
-		<jboss.deploy.dir>C:/Java/jboss-eap-6.4/standalone/deployments</jboss.deploy.dir>
+
+		<jboss.deploy.dir.64>C:/Java/jboss-eap-6.4/standalone/deployments</jboss.deploy.dir.64>
+
+        <jboss.deploy.dir>C:\Java\wildfly-10.0.0.Final\wildfly-10.0.0.Final\standalone\deployments</jboss.deploy.dir>
+
 	</properties>
 
     <dependencies>

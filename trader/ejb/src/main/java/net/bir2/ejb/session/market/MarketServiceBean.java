@@ -1,8 +1,11 @@
 package net.bir2.ejb.session.market;
 
+import com.betfair.aping.api.ApiNgJsonRpcOperations;
 import com.betfair.aping.entities.*;
 import com.betfair.aping.enums.MatchProjection;
 import com.betfair.aping.enums.OrderProjection;
+import com.betfair.aping.enums.Wallet;
+import com.betfair.aping.exceptions.AccountAPINGException;
 import net.bir2.ejb.action.ShedulerActivity;
 import net.bir2.multitrade.ejb.entity.*;
 import net.bir2.multitrade.ejb.entity.Market;
@@ -60,6 +63,9 @@ public class MarketServiceBean implements MarketService {
     @EJB
     ShedulerActivity serviceBean;
 
+    @EJB
+    private ApiNgJsonRpcOperations jsonOperations;
+
     public ShedulerActivity getServiceBean() {
         return serviceBean;
     }
@@ -75,6 +81,19 @@ public class MarketServiceBean implements MarketService {
 
     public String getLoginName() {
         return context.getCallerPrincipal().getName();
+    }
+
+
+    public AccountFundsResponse  getAccountFunds  (Wallet wallet, String appKey, String ssoId ) {
+        AccountFundsResponse result = null;
+
+        try {
+            result = jsonOperations.getAccountFunds( wallet, appKey, ssoId );
+        } catch (AccountAPINGException e) {
+            e.printStackTrace();
+        }
+
+        return result;
     }
 
 

@@ -3,6 +3,7 @@ package net.bir.web.beans;
 import com.betfair.aping.entities.*;
 import com.betfair.aping.enums.MatchProjection;
 import com.betfair.aping.enums.OrderProjection;
+import com.betfair.aping.enums.Wallet;
 import com.betfair.aping.exceptions.APINGException;
 import net.bir.ejb.session.settings.SettingsService;
 import net.bir.util.WebUtils;
@@ -34,6 +35,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.swing.tree.TreeNode;
 import java.io.Serializable;
+import java.text.NumberFormat;
 import java.util.*;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -127,6 +129,40 @@ public class MarketBean extends BaseBean implements Serializable {
             } catch (Exception e) {
                 getLog().log(Level.SEVERE, "Logout failed ", e);
             }
+    }
+/*
+
+UK
+
+ The UK Exchange wallet
+
+
+AUSTRALIAN
+
+
+ */
+    public String getMainBalance() {
+     String result = "N/A";
+        AccountFundsResponse resp = null;
+        if (getApiContext() != null && getApiContext().getToken()!= null)
+         resp = getMarketService().getAccountFunds(Wallet.UK, apiContext.getProduct(), apiContext.getToken());
+
+        if (resp != null)
+            result = NumberFormat.getInstance().format(resp.getAvailableToBetBalance());
+
+        return result;
+    }
+
+    public String getAusBalance() {
+        String result = "N/A";
+        AccountFundsResponse resp = null;
+        if (getApiContext() != null && getApiContext().getToken()!= null)
+        resp = getMarketService().getAccountFunds(Wallet.AUSTRALIAN, apiContext.getProduct(), apiContext.getToken());
+
+        if (resp != null)
+            result = NumberFormat.getInstance().format(resp.getAvailableToBetBalance());
+
+        return result;
     }
 
     public APIContext getApiContext() {

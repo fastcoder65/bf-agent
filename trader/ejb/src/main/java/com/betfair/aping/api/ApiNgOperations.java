@@ -1,15 +1,12 @@
 package com.betfair.aping.api;
 
+import com.betfair.aping.entities.*;
+import com.betfair.aping.enums.*;
+import com.betfair.aping.exceptions.APINGException;
+
 import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-
-import com.betfair.aping.entities.*;
-import com.betfair.aping.enums.MarketProjection;
-import com.betfair.aping.enums.MarketSort;
-import com.betfair.aping.enums.MatchProjection;
-import com.betfair.aping.enums.OrderProjection;
-import com.betfair.aping.exceptions.APINGException;
 
 public abstract class ApiNgOperations {
     protected final String FILTER = "filter";
@@ -124,5 +121,8 @@ public abstract class ApiNgOperations {
 
     public abstract List<MarketProfitAndLoss> listMarketProfitAndLoss ( Set<String> marketIds, boolean includeSettledBets, boolean includeBspBets, boolean netOfCommission,
                                                                   String appKey, String ssoId) throws APINGException;
+
+
+    public abstract AccountFundsResponse  getAccountFunds  ( Wallet wallet, String appKey, String ssoId )  throws APINGException;
 
 }

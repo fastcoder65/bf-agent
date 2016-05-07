@@ -5,7 +5,9 @@ import com.betfair.aping.containers.*;
 import com.betfair.aping.entities.*;
 import com.betfair.aping.enums.*;
 import com.betfair.aping.exceptions.APINGException;
+import com.betfair.aping.exceptions.AccountAPINGException;
 import com.betfair.aping.util.JsonConverter;
+import com.betfair.aping.util.JsonResponseHandler;
 import com.betfair.aping.util.JsonrpcRequest;
 import net.bir2.util.DTAction;
 
@@ -20,21 +22,34 @@ import java.util.logging.Level;
 
 public class ApiNgJsonRpcOperations extends ApiNgOperations {
 
-//	private static ApiNgJsonRpcOperations instance = null;
-
 	@EJB
 	HttpUtil requester;
 
 	public ApiNgJsonRpcOperations() {
 	}
-/*
-	public static ApiNgJsonRpcOperations getInstance() {
-		if (instance == null) {
-			instance = new ApiNgJsonRpcOperations();
+
+	public AccountFundsResponse  getAccountFunds  (Wallet wallet, String appKey, String ssoId )  throws AccountAPINGException {
+		AccountFundsContainer container = null;
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("wallet", wallet);
+
+		String result = makeAccountRequest(ApiNgOperation.getAccountFunds.getOperationName(), params, appKey, ssoId);
+
+
+//		if (ApiNGDemo.isDebug())
+			printLog(Level.INFO, "'getAccountFunds' Response: " + result);
+
+		if (result != null)
+		container = JsonConverter.convertFromJson(result, AccountFundsContainer.class);
+
+		if (container != null && container.getError() != null) {
+			log.severe("getAccountFunds error mesage: " + container.getError().toString()); // container.getError().getData().getAPINGException().getMessage());
+		//	throw (AccountAPINGException) container.getError().getData().getAPINGException();
 		}
-		return instance;
+
+		return (container != null ? container.getResult() : null);
+
 	}
-*/
 
 	public String keepAlive(String appKey, String ssoId) {
 
@@ -361,15 +376,55 @@ public class ApiNgJsonRpcOperations extends ApiNgOperations {
 		request.setParams(params);
 
 		requestString = JsonConverter.convertToJson(request);
-		if (ApiNGDemo.isDebug())
-			printLog("'makeRequest' Request: " + requestString);
+	//	if (ApiNGDemo.isDebug())
+			printLog(Level.INFO, "'makeRequest' Request: " + requestString);
 
 		// We need to pass the "sendPostRequest" method a string in util format:
 		// requestString
 //		HttpUtil requester = new HttpUtil();
 
+		String apiNgURL = ApiNGDemo.getProp().getProperty("APING_URL")
+				+ ApiNGDemo.getProp().getProperty("JSON_RPC_SUFFIX");
+
+		return requester.sendPostRequest(requestString, operation, appKey, ssoToken, apiNgURL, new JsonResponseHandler());
+
+		/*
 		return requester.sendPostRequestJsonRpc(requestString, operation,
 				appKey, ssoToken);
+		*/
+	}
+
+	protected String makeAccountRequest(String operation, Map<String, Object> params, String appKey,
+										String ssoToken) {
+		String requestString;
+		// Handling the JSON-RPC request
+		JsonrpcRequest request = new JsonrpcRequest();
+		String _requestId = String.valueOf(customerRandom.nextLong());
+		log.log(Level.FINE, "_requestId: "+ _requestId);
+
+		request.setId(_requestId);
+
+		request.setMethod(ApiNGDemo.getProp().getProperty("AccountAPING_V1_0") + operation);
+
+		//request.setMethod(operation);
+
+		request.setParams(params);
+
+		requestString = JsonConverter.convertToJson(request);
+		//	if (ApiNGDemo.isDebug())
+		printLog(Level.INFO, "'makeAccountRequest' Request: " + requestString);
+
+		// We need to pass the "sendPostRequest" method a string in util format:
+		// requestString
+//		HttpUtil requester = new HttpUtil();
+		String apiNgURL = ApiNGDemo.getProp().getProperty("APING_URL_ACCOUNT")
+				+ ApiNGDemo.getProp().getProperty("JSON_RPC_SUFFIX");
+
+		return requester.sendPostRequest(requestString, operation, appKey, ssoToken, apiNgURL, new JsonResponseHandler());
+/*
+		return requester.sendPostRequestJsonRpc(requestString, operation,
+				appKey, ssoToken);
+*/
 	}
 
 	protected String makeKeepAliveRequest(String appKey, String ssoToken) {

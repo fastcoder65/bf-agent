@@ -14,4 +14,10 @@ public class Data {
 		APINGException = aPINGException;
 	}
 
+	@Override
+	public String toString() {
+		return "Data{" +
+				"APINGException=" + APINGException +
+				'}';
+	}
 }

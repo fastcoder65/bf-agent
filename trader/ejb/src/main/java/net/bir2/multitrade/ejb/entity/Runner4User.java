@@ -1,14 +1,12 @@
 package net.bir2.multitrade.ejb.entity;
 
-import javax.inject.Inject;
-import javax.persistence.*;
-
 import net.bir2.ejb.session.market.BaseServiceBean;
-
-import java.util.Map;
-import java.util.logging.*;
-
 import org.hibernate.annotations.Formula;
+
+import javax.persistence.*;
+import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 @Entity
 @IdClass(Runner4UserId.class)
@@ -199,8 +197,24 @@ public class Runner4User implements java.io.Serializable {
                 + getPseudoPinkStake();
     }
 
+
+    @Transient
+    private boolean isNonRunner;
+
     @Transient
     public boolean getIsNonRunner() {
+        return isNonRunner;
+    }
+
+    @Transient
+    public void setIsNonRunner(boolean isNonRunner) {
+        this.isNonRunner = isNonRunner;
+    }
+
+
+
+    @Transient
+    public boolean getIsNonRunner0() {
         boolean result;
         result = (this.getBackPrice1() == 0 && this.getBackPrice2() == 0
                 && this.getBackPrice3() == 0 && this.getLayPrice1() == 0

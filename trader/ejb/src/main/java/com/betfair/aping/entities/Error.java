@@ -12,4 +12,10 @@ public class Error {
 		this.data = data;
 	}
 
+	@Override
+	public String toString() {
+		return "Error{" +
+				"data=" + data +
+				'}';
+	}
 }
