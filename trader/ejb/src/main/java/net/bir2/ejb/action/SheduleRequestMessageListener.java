@@ -600,7 +600,7 @@ public class SheduleRequestMessageListener implements MessageListener {
                 } /*else
                     printLog("baseService is NULL!!!"); */
 
-
+/*
                 r4u.setBackPrice1(0.0);
                 r4u.setBackAmount1(0.0);
 
@@ -628,6 +628,7 @@ public class SheduleRequestMessageListener implements MessageListener {
                 r4u.setLastPriceMatched(0.0);
 
                 r4u = marketService.merge(r4u);
+*/
 
                 if (r != null) {
 
