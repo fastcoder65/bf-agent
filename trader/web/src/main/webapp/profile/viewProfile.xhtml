@@ -2,11 +2,10 @@
           "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
 <html xmlns="http://www.w3.org/1999/xhtml"
-	xmlns:ui="http://java.sun.com/jsf/facelets"
-	xmlns:h="http://java.sun.com/jsf/html"
-	xmlns:a4j="http://richfaces.org/a4j"
-	xmlns:rich="http://richfaces.org/rich"
-	xmlns:f="http://java.sun.com/jsf/core">
+	  xmlns:h="http://java.sun.com/jsf/html"
+	  xmlns:a4j="http://richfaces.org/a4j"
+	  xmlns:rich="http://richfaces.org/rich"
+	  xmlns:f="http://java.sun.com/jsf/core">
 
 <h:head>
 <title><h:outputText value="#{labels['profile.title']}" /></title>
@@ -14,9 +13,6 @@
 </h:head>
 <h:body>
 <f:view>
-		<a4j:outputPanel id="messagesPanel" >
-				 <rich:messages id="messages" ajaxRendered="true" globalOnly="true" infoStyle="color:green"	warnStyle="color:#FF9900" errorStyle="color:red" showSummary="true"	 showDetail="true" />
-		</a4j:outputPanel>
 
 	<rich:panel>
 		<f:facet name="header">
@@ -24,6 +20,13 @@
 		</f:facet>
 		
 		<h:form method="post">
+
+
+			<a4j:outputPanel id="messagesPanel" >
+				<rich:messages id="messages" ajaxRendered="true" globalOnly="true" infoStyle="color:green"	warnStyle="color:#FF9900" errorStyle="color:red" showSummary="true"	 showDetail="true" />
+			</a4j:outputPanel>
+
+
 			<h:panelGrid columns="2">
 	
 				<h:outputText value="#{labels['profile.fio']}"
