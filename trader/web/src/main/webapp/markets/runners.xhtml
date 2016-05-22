@@ -49,7 +49,13 @@
 
     <h:form>
 
-        <rich:panel styleClass="runnerPanel">
+        <a4j:jsFunction name="setSelectionId">
+            <a4j:param name="selectionId" assignTo="#{marketBean.selectionId}"></a4j:param>
+        </a4j:jsFunction>
+
+        <rich:panel     id="runnerPanel"
+                        styleClass="runnerPanel">
+
             <f:facet name="header">
                 <h:outputText value="Runners"/>
             </f:facet>
@@ -68,9 +74,49 @@
 
             <rich:panel styleClass="runnerPanelBody">
 
-                <a4j:jsFunction name="setSelectionId">
-                    <a4j:param name="selectionId" assignTo="#{marketBean.selectionId}"></a4j:param>
-                </a4j:jsFunction>
+                <a4j:outputPanel id="runnerControls">
+
+                <h:panelGrid cellpadding="2" cellspacing="2" columns="2">
+
+                <a4j:commandLink id="currentOddsLink" render="runnerControls" action="#{marketBean.prepareDownloadBO}" title="#{request.contextPath}/downloadDoc/currentOdds.csv">
+
+                    <h:graphicImage style="border-width:0" value="/images/buttons/down.gif"/>
+
+                    <a title="#{request.contextPath}/downloadDoc/currentOdds.csv" href="#{request.contextPath}/downloadDoc/currentOdds.csv">
+                        <h:outputText  rendered="#{marketBean.odds2downloadPrepared}" value="#{labels['runners.odds2download']}"/>
+                    </a>
+
+                </a4j:commandLink>
+
+                    <rich:fileUpload fileUploadListener="#{marketBean.listener}"
+                                     id="uploadCsvOddsFile"
+
+                                     acceptedTypes=".txt, .csv, .xls, .xlsx"
+                                     ontyperejected="alert(file_type_is_bad);"
+
+                                     autoclear="true"
+                                     transferErrorLabel="#{labels['uploadOdds.transferErrorLabel']}"
+                                     addControlLabel="#{labels['uploadOdds.addControlLabel']}"
+                                     listHeight="20px"
+                                     onsizerejected="alert(file_size_too_much);"
+
+                                     cancelEntryControlLabel="#{labels['uploadOdds.cancelEntryControlLabel']}"
+                                     clearControlLabel="#{labels['uploadOdds.clearControlLabel']}"
+                                     clearAllControlLabel="#{labels['uploadOdds.clearAllControlLabel']}"
+                                     uploadControlLabel="#{labels['uploadOdds.uploadControlLabel']}"
+                                     progressLabel="#{labels['uploadOdds.progressLabel']}"
+                                     stopControlLabel="#{labels['uploadOdds.stopControlLabel']}"
+                                     doneLabel="#{labels['uploadOdds.doneLabel']}"
+
+                                     maxFilesQuantity="5">
+
+                        <a4j:ajax event="uploadcomplete" execute="@none" render="runnerPanel" />
+
+                    </rich:fileUpload>
+
+                </h:panelGrid>
+                </a4j:outputPanel>
+
 
                 <rich:dataTable value="#{marketBean.runners}" var="rnr"
                                 selectionMode="single"

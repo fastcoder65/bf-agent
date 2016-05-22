@@ -182,5 +182,6 @@
     <orderEntry type="library" name="Maven: org.atmosphere:atmosphere-compat-tomcat:2.0.1" level="project" />
     <orderEntry type="library" name="Maven: org.atmosphere:atmosphere-compat-tomcat7:2.0.1" level="project" />
     <orderEntry type="library" name="Maven: org.atmosphere.jboss.as:jboss-as-websockets:0.5" level="project" />
+    <orderEntry type="library" name="Maven: net.sf.opencsv:opencsv:1.8" level="project" />
   </component>
 </module>
