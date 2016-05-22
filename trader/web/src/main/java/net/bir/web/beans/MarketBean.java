@@ -1,11 +1,14 @@
 package net.bir.web.beans;
 
+import au.com.bytecode.opencsv.CSVReader;
+import au.com.bytecode.opencsv.CSVWriter;
 import com.betfair.aping.entities.*;
 import com.betfair.aping.enums.MatchProjection;
 import com.betfair.aping.enums.OrderProjection;
 import com.betfair.aping.enums.Wallet;
 import com.betfair.aping.exceptions.APINGException;
 import net.bir.ejb.session.settings.SettingsService;
+import net.bir.util.UploadedCsvFile;
 import net.bir.util.WebUtils;
 import net.bir.web.beans.treeModel.Entry;
 import net.bir.web.beans.treeModel.EventNode;
@@ -19,8 +22,10 @@ import org.richfaces.component.AbstractExtendedDataTable;
 import org.richfaces.component.AbstractTree;
 import org.richfaces.component.UIAutocomplete;
 import org.richfaces.component.UITree;
+import org.richfaces.event.FileUploadEvent;
 import org.richfaces.event.TreeSelectionChangeEvent;
 import org.richfaces.event.TreeToggleEvent;
+import org.richfaces.model.UploadedFile;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
@@ -33,8 +38,9 @@ import javax.faces.event.AjaxBehaviorEvent;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 import javax.swing.tree.TreeNode;
-import java.io.Serializable;
+import java.io.*;
 import java.text.NumberFormat;
 import java.util.*;
 import java.util.concurrent.Executors;
@@ -1149,4 +1155,151 @@ AUSTRALIAN
         return serverTimeZoneOffset;
     }
 
+    private void writeEmailListAsCsv(List<String[]> output, File file)
+            throws IOException {
+        CSVWriter writer = null;
+        OutputStreamWriter out = null;
+        try {
+            OutputStream fout = new FileOutputStream(file);
+            OutputStream bout = new BufferedOutputStream(fout);
+
+            out = new OutputStreamWriter(bout, "utf-8");
+
+            writer = new CSVWriter(out, ';', CSVWriter.NO_QUOTE_CHARACTER);
+
+            for (String[] strInfo : output) {
+                writer.writeNext(strInfo);
+                writer.flush();
+            }
+
+            log.info(" output stream writing completed.");
+        } catch (IOException e) {
+            log.severe("error writing output stream : " + e.getMessage());
+            throw new IOException(e);
+        } finally {
+
+            try {
+                if (writer != null)
+                    writer.close();
+            } catch (Exception e) {
+            }
+
+            try {
+                if (out != null)
+                    out.close();
+            } catch (Exception e) {
+            }
+        }
+    }
+
+    private Boolean odds2downloadPrepared = false;
+
+    public Boolean getOdds2downloadPrepared() {
+        return odds2downloadPrepared;
+    }
+
+    public void setOdds2downloadPrepared(Boolean odds2downloadPrepared) {
+        this.odds2downloadPrepared = odds2downloadPrepared;
+    }
+
+    public String prepareDownloadBO() {
+
+        getLog().info("prepareDownload() called..");
+        odds2downloadPrepared = false;
+
+        if ( currentMarket != null )
+        try {
+             List<String[]> bukmOddsInfoList = new ArrayList<String[]>();
+
+             for (MarketRunner mr: currentMarket.getRunners()) {
+                String[] bukmOddsInfo = new String[3];
+                bukmOddsInfo[0] = mr.getName();
+                bukmOddsInfo[1] = "" + mr.getSelectionId();
+                Runner4User r4u = mr.getUserData4Runner().get(currentUser.getId());
+                bukmOddsInfo[2] = (r4u.getOdds()!= null? "" + r4u.getOdds(): "");
+                bukmOddsInfoList.add(bukmOddsInfo);
+            }
+
+            log.info("bukmOddsInfoList.size()= " + bukmOddsInfoList.size());
+
+            FacesContext facesContext = FacesContext.getCurrentInstance();
+            HttpSession session = (HttpSession) facesContext
+                    .getExternalContext().getSession(false);
+
+            if (session != null) {
+                session.removeAttribute("fileName");
+                session.removeAttribute("docName");
+                session.removeAttribute("ContentType");
+                session.removeAttribute("ContentLength");
+            }
+
+            if (bukmOddsInfoList.size() > 0) {
+                File temp = null;
+                try {
+                    temp = File.createTempFile("emails_", ".csv");
+                    temp.deleteOnExit();
+                } catch (IOException ioe) {
+                    log.severe(ioe.getMessage());
+                }
+
+                writeEmailListAsCsv(bukmOddsInfoList, temp);
+                String tempFileName = temp.getAbsolutePath();
+
+                if (session != null) {
+                    session.setAttribute("fileName", tempFileName);
+                    session.setAttribute("docName", "currentOdds");
+                    session.setAttribute("ContentType", "application/csv");
+                    session.setAttribute("ContentLength", Long.valueOf(
+                            temp.length()).intValue());
+
+                    odds2downloadPrepared = true;
+
+                }
+            }
+        } catch (IOException e) {
+            log.severe("prepareDownload() error: " + e.getMessage());
+        }
+        return null;
+    }
+
+    private ArrayList<UploadedCsvFile> files = new ArrayList<UploadedCsvFile>();
+
+
+    public void listener(FileUploadEvent event) throws Exception {
+        UploadedFile item = event.getUploadedFile();
+        UploadedCsvFile file = new UploadedCsvFile();
+        file.setLength(item.getData().length);
+        file.setName(item.getName());
+        file.setData(item.getData());
+        CSVReader reader = null;
+        InputStreamReader isr = null;
+
+        try {
+            isr = new InputStreamReader(new ByteArrayInputStream(item.getData()), "utf-8");
+            reader = new CSVReader(isr, ',');
+            String[] nextLine = null;
+
+            while ((nextLine = reader.readNext()) != null) {
+              StringBuffer sb = new StringBuffer();
+              for (String si : nextLine) {
+                  sb.append(si).append('\t');
+              }
+                log.info(sb.toString());
+            }
+        } finally {
+            try {
+                if (reader != null)
+                    reader.close();
+            } catch (Exception e) {
+            }
+            try {
+                if (isr != null)
+                    isr.close();
+            } catch (Exception e) {
+            }
+
+            files.add(file);
+
+        }
+    }
 }
