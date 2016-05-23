@@ -1,6 +1,5 @@
 package net.bir.web.beans;
 
-import au.com.bytecode.opencsv.CSVReader;
 import au.com.bytecode.opencsv.CSVWriter;
 import com.betfair.aping.entities.*;
 import com.betfair.aping.enums.MatchProjection;
@@ -1247,10 +1246,9 @@ AUSTRALIAN
 
                 if (session != null) {
                     session.setAttribute("fileName", tempFileName);
-                    session.setAttribute("docName", "currentOdds");
+                    session.setAttribute("docName", "currentOdds_"+ currentMarket.getMarketId()+"_"+currentMarket.getName());
                     session.setAttribute("ContentType", "application/csv");
-                    session.setAttribute("ContentLength", Long.valueOf(
-                            temp.length()).intValue());
+                    session.setAttribute("ContentLength", Long.valueOf(temp.length()).intValue());
 
                     odds2downloadPrepared = true;
 
@@ -1262,8 +1260,9 @@ AUSTRALIAN
         return null;
     }
 
-    private ArrayList<UploadedCsvFile> files = new ArrayList<UploadedCsvFile>();
+    //private ArrayList<UploadedCsvFile> csvOddsFiles = new ArrayList<UploadedCsvFile>();
 
+    private Map<String, UploadedCsvFile> csvOddsFiles = new HashMap<String, UploadedCsvFile>();
 
     public void listener(FileUploadEvent event) throws Exception {
         UploadedFile item = event.getUploadedFile();
@@ -1271,6 +1270,7 @@ AUSTRALIAN
         file.setLength(item.getData().length);
         file.setName(item.getName());
         file.setData(item.getData());
+/*
         CSVReader reader = null;
         InputStreamReader isr = null;
 
@@ -1297,9 +1297,7 @@ AUSTRALIAN
                     isr.close();
             } catch (Exception e) {
             }
-
-            files.add(file);
-
-        }
+*/
+            csvOddsFiles.put(currentMarket.getMarketId(), file);
     }
 }
