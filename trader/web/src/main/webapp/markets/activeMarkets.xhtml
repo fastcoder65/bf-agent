@@ -111,11 +111,14 @@
                         <h:outputText value="AutoRefresh Off" rendered="#{!marketBean.pollEnabled}"></h:outputText>
                     </a4j:region>
 
+
                 </h:panelGroup>
 
             </a4j:outputPanel>
 
                 <a4j:outputPanel id="marketRegion">
+
+                   <h:panelGrid columns="2" cellspacing="2" cellpadding="2">
 
                     <rich:extendedDataTable
                             id="marketTable"
@@ -184,6 +187,34 @@
                         </rich:column>
 
                     </rich:extendedDataTable>
+
+                    <rich:fileUpload fileUploadListener="#{marketBean.listener}"
+                                     id="uploadCsvOddsFile"
+
+                                     acceptedTypes=".txt, .csv, .xls, .xlsx"
+                                     ontyperejected="alert(file_type_is_bad);"
+
+                                     autoclear="true"
+                                     transferErrorLabel="#{labels['uploadOdds.transferErrorLabel']}"
+                                     addControlLabel="#{labels['uploadOdds.addControlLabel']}"
+                                     listHeight="40px"
+                                     onsizerejected="alert(file_size_too_much);"
+
+                                     cancelEntryControlLabel="#{labels['uploadOdds.cancelEntryControlLabel']}"
+                                     clearControlLabel="#{labels['uploadOdds.clearControlLabel']}"
+                                     clearAllControlLabel="#{labels['uploadOdds.clearAllControlLabel']}"
+                                     uploadControlLabel="#{labels['uploadOdds.uploadControlLabel']}"
+                                     progressLabel="#{labels['uploadOdds.progressLabel']}"
+                                     stopControlLabel="#{labels['uploadOdds.stopControlLabel']}"
+                                     doneLabel="#{labels['uploadOdds.doneLabel']}"
+
+                                     maxFilesQuantity="5">
+
+                        <a4j:ajax event="uploadcomplete" execute="@none" render="runnerPanel" />
+
+                    </rich:fileUpload>
+
+                   </h:panelGrid>
 
                 </a4j:outputPanel>
 
