@@ -1,16 +1,10 @@
 package net.bir2.multitrade.ejb.entity;
 
-import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
-import java.util.logging.Logger;
-
-import javax.inject.Inject;
-import javax.persistence.*;
-
 import org.hibernate.Hibernate;
+
+import javax.persistence.*;
+import java.util.*;
+import java.util.logging.Logger;
 
 /**
  * Entity implementation class for Entity: Market
@@ -125,12 +119,15 @@ public class Market implements java.io.Serializable {
 		return runners;
 	}
 
+
 	@Transient
-	private Map<Long, MarketRunner> runnersMap = null;
+	private SortedMap<Long, MarketRunner> runnersMap = null;
 
 	public Map<Long, MarketRunner> getRunnersMap() {
 		if (runnersMap == null) {
-			runnersMap = new HashMap<Long, MarketRunner>(20);
+
+			runnersMap = new TreeMap<Long, MarketRunner>();
+
 			for (MarketRunner runner : runners) {
 				Long key = Long.valueOf(runner.getSelectionId());
 				runnersMap.put(key, runner);
@@ -140,6 +137,25 @@ public class Market implements java.io.Serializable {
 		}
 		return runnersMap;
 	}
+
+	@Transient
+	private SortedMap<Integer, MarketRunner> orderedRunners = null;
+
+	public SortedMap<Integer, MarketRunner> getOrderedRunners() {
+		if (orderedRunners == null) {
+
+			orderedRunners = new TreeMap<Integer, MarketRunner>();
+
+			for (MarketRunner runner : runners) {
+				Integer key = Integer.valueOf(runner.getAsianLineId());
+				orderedRunners.put(key, runner);
+			}
+
+			// log.info("runnersMap.size(): "+ runnersMap.size());
+		}
+		return orderedRunners;
+	}
+
 
 	public long getId() {
 		return this.id;

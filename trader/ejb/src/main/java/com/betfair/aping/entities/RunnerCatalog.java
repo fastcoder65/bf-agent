@@ -2,38 +2,47 @@ package com.betfair.aping.entities;
 
 public class RunnerCatalog {
 
-	private Long selectionId;
-	private String runnerName;
-	private Double handicap;
+    private Long selectionId;
+    private String runnerName;
+    private Double handicap;
+    private int sortPriority;
 
-	public Long getSelectionId() {
-		return selectionId;
-	}
+    public int getSortPriority() {
+        return sortPriority;
+    }
 
-	public void setSelectionId(Long selectionId) {
-		this.selectionId = selectionId;
-	}
+    public void setSortPriority(int sortPriority) {
+        this.sortPriority = sortPriority;
+    }
 
-	public String getRunnerName() {
-		return runnerName;
-	}
+    public Long getSelectionId() {
+        return selectionId;
+    }
 
-	public void setRunnerName(String runnerName) {
-		this.runnerName = runnerName;
-	}
+    public void setSelectionId(Long selectionId) {
+        this.selectionId = selectionId;
+    }
 
-	public Double getHandicap() {
-		return handicap;
-	}
+    public String getRunnerName() {
+        return runnerName;
+    }
 
-	public void setHandicap(Double handicap) {
-		this.handicap = handicap;
-	}
+    public void setRunnerName(String runnerName) {
+        this.runnerName = runnerName;
+    }
 
-	public String toString() {
-		return "{" + "" + "selectionId=" + getSelectionId() + ","
-				+ "runnerName=" + getRunnerName() + "," + "handicap="
-				+ getHandicap() + "," + "}";
-	}
+    public Double getHandicap() {
+        return handicap;
+    }
+
+    public void setHandicap(Double handicap) {
+        this.handicap = handicap;
+    }
+
+    public String toString() {
+        return "{" + "" + "selectionId=" + getSelectionId() + ","
+                + "runnerName=" + getRunnerName() + "," + "handicap="
+                + getHandicap() + "," + "}";
+    }
 
 }

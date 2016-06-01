@@ -2,17 +2,11 @@ package net.bir2.multitrade.ejb.entity;
 
 import org.hibernate.Hibernate;
 
-import java.io.Serializable;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
-
 import javax.inject.Inject;
 import javax.persistence.*;
-
-import java.util.logging.*;
+import java.io.Serializable;
+import java.util.*;
+import java.util.logging.Logger;
 
 @Entity
 @NamedQueries( { 
@@ -167,7 +161,16 @@ public class MarketRunner implements Serializable {
 			return Long.valueOf(o1.getId()).compareTo(o2.getId());
 		}
 	}
-	
+
+	public static class RunnerComparator2 implements Comparator<MarketRunner>, Serializable {
+		private static final long serialVersionUID = -4683692958234206933L;
+
+		public int compare(MarketRunner o1, MarketRunner o2) {
+			//	return o1.getSelectionId().compareTo(o2.getSelectionId());
+			return Integer.valueOf(o1.getAsianLineId()).compareTo(o2.getAsianLineId());
+		}
+	}
+
   //  @TransactionAttribute(TransactionAttributeType.REQUIRED)
     public MarketRunner prefetchAll() {
 		Hibernate.initialize(this.runner4Users);
