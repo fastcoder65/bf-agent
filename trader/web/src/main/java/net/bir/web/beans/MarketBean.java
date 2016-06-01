@@ -1,5 +1,6 @@
 package net.bir.web.beans;
 
+import au.com.bytecode.opencsv.CSVReader;
 import au.com.bytecode.opencsv.CSVWriter;
 import com.betfair.aping.entities.*;
 import com.betfair.aping.enums.MatchProjection;
@@ -829,11 +830,12 @@ AUSTRALIAN
                 for (RunnerCatalog rc : runners) {
                     MarketRunner runner = new MarketRunner();
 
-                    runner.setSelectionId((long) rc.getSelectionId());
+                    runner.setSelectionId(rc.getSelectionId());
                     runner.setMarket(market);
                     runner.setName(rc.getRunnerName());
                     runner.setHandicap(rc.getHandicap()); // bfRunner.getHandicap());
-                    // runner.setAsianLineId(rc. bfRunner.getAsianLineId());
+                    log.info("rc.getRunnerName(): " + rc.getRunnerName() + ", rc.getSortPriority():" + rc.getSortPriority());
+                    runner.setAsianLineId(rc.getSortPriority());
                     runner = getMarketService().merge(runner);
                     // System.out.println("==runner " + runner + " merged!");
                     Runner4User r4u = new Runner4User(currentUser, runner);
@@ -1210,7 +1212,8 @@ AUSTRALIAN
         try {
              List<String[]> bukmOddsInfoList = new ArrayList<String[]>();
 
-             for (MarketRunner mr: currentMarket.getRunners()) {
+             for (Integer priority : currentMarket.getOrderedRunners().keySet()) {
+                MarketRunner mr = currentMarket.getOrderedRunners().get(priority);
                 String[] bukmOddsInfo = new String[3];
                 bukmOddsInfo[0] = mr.getName();
                 bukmOddsInfo[1] = "" + mr.getSelectionId();
@@ -1262,7 +1265,7 @@ AUSTRALIAN
 
     //private ArrayList<UploadedCsvFile> csvOddsFiles = new ArrayList<UploadedCsvFile>();
 
-    private Map<String, UploadedCsvFile> csvOddsFiles = new HashMap<String, UploadedCsvFile>();
+    //private Map<String, UploadedCsvFile> csvOddsFiles = new HashMap<String, UploadedCsvFile>();
 
     public void listener(FileUploadEvent event) throws Exception {
         UploadedFile item = event.getUploadedFile();
@@ -1270,21 +1273,31 @@ AUSTRALIAN
         file.setLength(item.getData().length);
         file.setName(item.getName());
         file.setData(item.getData());
-/*
+
         CSVReader reader = null;
         InputStreamReader isr = null;
 
+        if (currentMarket != null)
         try {
             isr = new InputStreamReader(new ByteArrayInputStream(item.getData()), "utf-8");
-            reader = new CSVReader(isr, ',');
+            reader = new CSVReader(isr, ';');
             String[] nextLine = null;
 
             while ((nextLine = reader.readNext()) != null) {
-              StringBuffer sb = new StringBuffer();
-              for (String si : nextLine) {
-                  sb.append(si).append('\t');
-              }
-                log.info(sb.toString());
+                log.info("" + nextLine.length);
+                for (int i = 1; i < nextLine.length; i++ ) {
+                   log.info("nextLine[" + i + "]=" + nextLine[i]);
+                }
+
+                String sselectionId = nextLine[1];
+
+                log.info(" sselectionId: " + sselectionId);
+                MarketRunner mr = currentMarket.getRunnersMap().get(Long.valueOf(sselectionId));
+                Runner4User r4u = mr.getUserData4Runner().get(currentUser.getId());
+                if (nextLine[2] != null && !("".equals(nextLine[2]))) {
+                    r4u.setOdds(Double.valueOf(nextLine[2]));
+                    getMarketService().merge(r4u);
+                }
             }
         } finally {
             try {
@@ -1297,7 +1310,7 @@ AUSTRALIAN
                     isr.close();
             } catch (Exception e) {
             }
-*/
-            csvOddsFiles.put(currentMarket.getMarketId(), file);
+        }
+  //          csvOddsFiles.put(currentMarket.getMarketId(), file);
     }
 }
