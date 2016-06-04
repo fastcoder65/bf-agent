@@ -204,81 +204,8 @@ public class HttpUtil implements TimedObject {
                 post.setEntity(new StringEntity(jsonRequest, ApiNGDemo
                         .getProp().getProperty("ENCODING_UTF8")));
 
-//            HttpClientBuilder hcBuilder = HttpClients.custom();
-
-
-            // Set HTTP proxy, if specified in system properties
-
-            //org.apache.http.HttpHost proxy = null;
 
             HttpClientContext context = HttpClientContext.create();
-
-// http.proxyHost = 54.75.241.179
-// http.proxyPort = 3128
-            /*
-            if (isSet(System.getProperty("http.proxyHost"))) {
-                int port = 80;
-                if (isSet(System.getProperty("http.proxyPort"))) {
-                    port = Integer.parseInt(System
-                            .getProperty("http.proxyPort"));
-                }
-
-                proxy = new org.apache.http.HttpHost(System.getProperty("http.proxyHost"), port);
-
-                CredentialsProvider credsProvider = new BasicCredentialsProvider();
-
-                credsProvider.setCredentials(new AuthScope(proxy.getHostName(),
-                        proxy.getPort()), new UsernamePasswordCredentials(
-                        "fastcoder65", "imxDr5OZimxDr5OZ"));
-
-                AuthCache authCache = new BasicAuthCache();
-
-                DigestScheme asAuth = new DigestScheme();
-                // Suppose we already know the realm name
-
-                asAuth.overrideParamter("realm", "MyPrivateEc2Proxy");
-                // Suppose we already know the expected nonce value
-                asAuth.overrideParamter("nonce", "XPFezyhHcEWult89wHfh31Kei6O");
-
-                authCache.put(proxy, asAuth);
-
-                context.setCredentialsProvider(credsProvider);
-                context.setAuthCache(authCache);
-
-                DefaultProxyRoutePlanner routePlanner = new DefaultProxyRoutePlanner(
-                        proxy);
-
-//                hcBuilder.setRoutePlanner(routePlanner);
-//                hcBuilder.setDefaultCredentialsProvider(credsProvider);
-            }
-*/
-
-/*
-            RequestConfig requestConfig = RequestConfig
-                    .custom()
-                    .setSocketTimeout(
-                            new Integer(ApiNGDemo.getProp().getProperty(
-                                    "TIMEOUT")).intValue())
-                    .setConnectTimeout(
-                            new Integer(ApiNGDemo.getProp().getProperty(
-                                    "TIMEOUT")).intValue()).build();
-*/
-//            RequestConfig  requestConfig = RequestConfig.custom()
-/*
-                    .setSocketTimeout(
-                            new Integer(ApiNGDemo.getProp().getProperty(
-                                    "TIMEOUT")).intValue())
-
-                    .setConnectTimeout(
-                            new Integer(ApiNGDemo.getProp().getProperty(
-                                    "TIMEOUT")).intValue()).build();
-
-            hcBuilder.setDefaultRequestConfig(requestConfig);
-
-            // CloseableHttpClient httpClient = hcBuilder.build();
-            HttpClient httpClient = hcBuilder.build();
-*/
-
 
             long startTime = System.currentTimeMillis();
 
@@ -291,37 +218,19 @@ public class HttpUtil implements TimedObject {
             }
 
 
-            log.info("web request " + aURL + " executed in " + (endTime - startTime) /
-                    1000.0 + " second(s).");
+            log.fine("web request " + aURL + " executed in " + (endTime - startTime) / 1000.0 + " second(s).");
+
         } catch (org.apache.http.conn.HttpHostConnectException e1) {
             log.severe("!!! method 'sendPostRequest': request on: "+ aURL + ", operation: " + operation + ", error: " + e1.getMessage());
         } catch (UnsupportedEncodingException e1) {
-            // Do something
-            //e1.printStackTrace();
             log.severe("method 'sendPostRequest' error: " + e1.getMessage());
 
         } catch (ClientProtocolException e) {
-            // Do something
-            // e.printStackTrace();
             log.severe("method 'sendPostRequest' error: " + e.getMessage());
 
         } catch (IOException ioE) {
-            // Do something
             log.severe("method 'sendPostRequest' error: " + ioE.getMessage());
         }
-        /*
-        finally {
-        // Test if response Closeable
-        if (response instanceof Closeable) {
-            try {
-                ((Closeable) response).close();
-            } catch (IOException ioe) {
-                // Ignore
-            }
-            }
-        }
-        */
-
         return resp;
     }
 
@@ -351,14 +260,6 @@ public class HttpUtil implements TimedObject {
                 new RescriptResponseHandler());
 
     }
-/*
-    public String sendPostRequestJsonRpc(String param, String operation, String appKey, String ssoToken) {
-        String apiNgURL = ApiNGDemo.getProp().getProperty("APING_URL")
-                + ApiNGDemo.getProp().getProperty("JSON_RPC_SUFFIX");
-
-        return sendPostRequest(param, operation, appKey, ssoToken, apiNgURL, new JsonResponseHandler());
-    }
-*/
 
     public String sendKeepAlivePostRequest(String appKey, String ssoToken) {
         String apiNgURL = "https://identitysso.betfair.com/api/keepAlive"; // ApiNGDemo.getProp().getProperty("INTER_KA_URL");
