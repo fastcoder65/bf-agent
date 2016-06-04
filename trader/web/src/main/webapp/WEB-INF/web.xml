@@ -113,7 +113,7 @@
 
     <servlet>
         <servlet-name>DownloadDocServlet</servlet-name>
-        <servlet-class>net.bir.web.beans.servlet.DownloadDocServlet</servlet-class>
+        <servlet-class>net.bir.web.beans.download.DownloadDocServlet</servlet-class>
         <load-on-startup>2</load-on-startup>
     </servlet>
     <servlet-mapping>
