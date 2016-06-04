@@ -536,7 +536,7 @@ AUSTRALIAN
 
     public void setCurrentMarket(Market currentMarket) {
         this.currentMarket = currentMarket;
-        getLog().info("this.currentMarket=" + this.currentMarket);
+        getLog().fine("this.currentMarket=" + this.currentMarket);
         if (this.currentMarket != null) {
             Market4User m4u = this.currentMarket.getUserData4Market().get(
                     getCurrentUser().getId());
@@ -1101,7 +1101,7 @@ AUSTRALIAN
                 log.fine("call getMarketService().keepAlive(" + apiContext + ")");
                 getMarketService().keepAlive(apiContext);
             } catch (Exception e) {
-                log.log(Level.SEVERE, "error on keep-alive request", e);
+                log.log(Level.SEVERE, "error on keep-alive request: " + e.getMessage());
             }
             log.fine("run finished");
         }
@@ -1214,11 +1214,12 @@ AUSTRALIAN
 
              for (Integer priority : currentMarket.getOrderedRunners().keySet()) {
                 MarketRunner mr = currentMarket.getOrderedRunners().get(priority);
-                String[] bukmOddsInfo = new String[3];
-                bukmOddsInfo[0] = mr.getName();
+                String[] bukmOddsInfo = new String[4];
+                bukmOddsInfo[2] = mr.getName();
                 bukmOddsInfo[1] = "" + mr.getSelectionId();
+                 bukmOddsInfo[0] = "" + mr.getAsianLineId();
                 Runner4User r4u = mr.getUserData4Runner().get(currentUser.getId());
-                bukmOddsInfo[2] = (r4u.getOdds()!= null? "" + r4u.getOdds(): "");
+                bukmOddsInfo[3] = (r4u.getOdds()!= null? "" + r4u.getOdds(): "");
                 bukmOddsInfoList.add(bukmOddsInfo);
             }
 
@@ -1285,7 +1286,7 @@ AUSTRALIAN
 
             while ((nextLine = reader.readNext()) != null) {
                 log.info("" + nextLine.length);
-                for (int i = 1; i < nextLine.length; i++ ) {
+                for (int i = 0; i < nextLine.length; i++ ) {
                    log.info("nextLine[" + i + "]=" + nextLine[i]);
                 }
 
@@ -1293,10 +1294,14 @@ AUSTRALIAN
 
                 log.info(" sselectionId: " + sselectionId);
                 MarketRunner mr = currentMarket.getRunnersMap().get(Long.valueOf(sselectionId));
-                Runner4User r4u = mr.getUserData4Runner().get(currentUser.getId());
-                if (nextLine[2] != null && !("".equals(nextLine[2]))) {
-                    r4u.setOdds(Double.valueOf(nextLine[2]));
-                    getMarketService().merge(r4u);
+                if (mr != null) {
+                    Runner4User r4u = mr.getUserData4Runner().get(currentUser.getId());
+                    if (nextLine[3] != null && !("".equals(nextLine[3]))) {
+                        String sNumber = nextLine[3].replaceAll(",", ".");
+                        log.info("sNumber: " + sNumber);
+                        r4u.setOdds(Double.valueOf(sNumber));
+                        getMarketService().merge(r4u);
+                    }
                 }
             }
         } finally {
