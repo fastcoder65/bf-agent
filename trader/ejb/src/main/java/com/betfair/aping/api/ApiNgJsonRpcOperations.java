@@ -377,7 +377,7 @@ public class ApiNgJsonRpcOperations extends ApiNgOperations {
 
 		requestString = JsonConverter.convertToJson(request);
 	//	if (ApiNGDemo.isDebug())
-			printLog(Level.INFO, "'makeRequest' Request: " + requestString);
+			printLog(Level.FINE, "'makeRequest' Request: " + requestString);
 
 		// We need to pass the "sendPostRequest" method a string in util format:
 		// requestString
@@ -412,7 +412,7 @@ public class ApiNgJsonRpcOperations extends ApiNgOperations {
 
 		requestString = JsonConverter.convertToJson(request);
 		//	if (ApiNGDemo.isDebug())
-		printLog(Level.INFO, "'makeAccountRequest' Request: " + requestString);
+		printLog(Level.FINE, "'makeAccountRequest' Request: " + requestString);
 
 		// We need to pass the "sendPostRequest" method a string in util format:
 		// requestString
