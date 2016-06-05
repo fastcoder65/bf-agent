@@ -1009,7 +1009,7 @@ AUSTRALIAN
             return;
         this.market4User = _currentMarket4User;
         // copyMarketProperties();
-        getLog().info("this.market4User set to: " + this.market4User);
+        getLog().fine("this.market4User set to: " + this.market4User);
     }
 
     public String customMyMarketProperties() {
