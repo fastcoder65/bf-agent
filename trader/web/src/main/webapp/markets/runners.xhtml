@@ -72,8 +72,6 @@
 
             </h:panelGrid>
 
-            <rich:panel styleClass="runnerPanelBody">
-
                 <a4j:outputPanel id="runnerControls">
 
                 <h:panelGrid cellpadding="2" cellspacing="2">
@@ -91,6 +89,7 @@
                 </h:panelGrid>
                 </a4j:outputPanel>
 
+            <rich:panel styleClass="runnerPanelBody">
 
                 <rich:dataTable value="#{marketBean.runners}" var="rnr"
                                 selectionMode="single"
@@ -354,9 +353,9 @@
                         </h:outputFormat>
 
                     </rich:column>
-
-                    <ui:remove>
-
+<!--
+                    <ui:remove2>
+-->
                         <rich:column label="%% win Pink stake" styleClass="numCol">
                             <f:facet name="header">
 
@@ -436,9 +435,9 @@
                                         value="#{rnr.userData4Runner[marketBean.currentUser.id].percWinSglajivWithNR}"/>
                             </h:outputFormat>
                         </rich:column>
-
-                    </ui:remove>
-
+<!--
+                    </ui:remove2>
+-->
                     <rich:column label="M.Price&amp;Size" styleClass="oddsCol">
                         <f:facet name="header">
                             <h:outputText value="M.Price&amp;Size"/>
