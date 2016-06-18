@@ -1,15 +1,12 @@
 package net.bir2.multitrade.ejb.entity;
 
-import java.math.BigDecimal;
-
-import javax.inject.Inject;
-import javax.persistence.*;
-
-import java.util.logging.*;
-
-import net.bir2.ejb.session.market.BaseService;
 import net.bir2.ejb.session.market.BaseServiceBean;
 import org.hibernate.annotations.Formula;
+
+import javax.persistence.*;
+import java.math.BigDecimal;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 @Entity
 @Access(AccessType.FIELD)
@@ -137,10 +134,15 @@ public class Market4User implements java.io.Serializable {
 		return linkedMarket;
 	}
 
-	@Formula("(select coalesce(1/sum(1/r4u.odds), 0) from Runner4User r4u, Runner r where r4u.user_id = user_id  and r.id=r4u.runner_id and r.market_id= market_id )")
-	private Double _sumReturnPercent;
+//	@Formula("(select coalesce(1/sum(1/r4u.odds), 0) from Runner4User r4u, Runner r where r4u.user_id = user_id  and r.id=r4u.runner_id and r.market_id= market_id )")
+
+	@Formula("(select coalesce(1/sum(1/r4u.odds), 0.0) from Runner4User r4u, Runner r where r4u.user_id = user_id  and r.id=r4u.runner_id and r.market_id= market_id )")
+	private Double _sumReturnPercent=0.0;
+
+//	@Formula("(select coalesce(1/sum(1/r4u.odds), -20.0) from Runner4User r4u, Runner r where r4u.user_id = user_id  and r.id=r4u.runner_id and r.market_id= market_id )")
 
 	public Double getSumReturnPercent() {
+		//log.info("getSumReturnPercent() - _sumReturnPercent: " + _sumReturnPercent);
 		return _sumReturnPercent;
 	}
 
