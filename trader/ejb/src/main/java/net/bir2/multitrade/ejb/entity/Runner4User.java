@@ -198,19 +198,21 @@ public class Runner4User implements java.io.Serializable {
     }
 
 
-    @Transient
+//    @Transient
     private boolean isNonRunner;
 
-    @Transient
+
     public boolean getIsNonRunner() {
         return isNonRunner;
     }
 
-    @Transient
     public void setIsNonRunner(boolean isNonRunner) {
+        if (this.isNonRunner != isNonRunner) {
+          if (isNonRunner)
+            System.out.println("isNonRunner is set for " + this.getLinkedRunner().getName()+ "!");
+        }
         this.isNonRunner = isNonRunner;
     }
-
 
 
     @Transient
