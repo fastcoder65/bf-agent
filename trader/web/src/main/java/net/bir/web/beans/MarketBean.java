@@ -1219,7 +1219,7 @@ AUSTRALIAN
                 bukmOddsInfo[1] = "" + mr.getSelectionId();
                  bukmOddsInfo[0] = "" + mr.getAsianLineId();
                 Runner4User r4u = mr.getUserData4Runner().get(currentUser.getId());
-                bukmOddsInfo[3] = (r4u.getOdds()!= null? "" + r4u.getOdds(): "");
+                bukmOddsInfo[3] = (r4u.getOdds()!= null? "" + r4u.getOdds(): "'"+ NumberFormat.getInstance().format(r4u.getBackPrice1()));
                 bukmOddsInfoList.add(bukmOddsInfo);
             }
 
