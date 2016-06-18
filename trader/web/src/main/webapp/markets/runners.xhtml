@@ -60,43 +60,15 @@
                 <h:outputText value="Runners"/>
             </f:facet>
 
-            <h:panelGrid columns="2">
-
-                <h:outputText id="serverTime" value="#{marketBean.serverTime}"/>
-
-
-                <rich:messages id="runnersMessages" ajaxRendered="true"
-                               globalOnly="true" infoStyle="color:green" warnStyle="color:#FF9900"
-                               errorStyle="color:red" showSummary="true" showDetail="true"/>
-
-
-            </h:panelGrid>
-
-                <a4j:outputPanel id="runnerControls">
-
-                <h:panelGrid cellpadding="2" cellspacing="2">
-
-                <a4j:commandLink id="currentOddsLink" render="runnerControls" action="#{marketBean.prepareDownloadBO}" title="#{request.contextPath}/downloadDoc/currentOdds.csv">
-
-                    <h:graphicImage style="border-width:0" value="/images/buttons/down.gif"/>
-
-                    <a title="#{request.contextPath}/downloadDoc/currentOdds.csv" href="#{request.contextPath}/downloadDoc/#{request.session.getAttribute('docName')}.csv">
-                        <h:outputText  rendered="#{marketBean.odds2downloadPrepared}" value="#{labels['runners.odds2download']}"/>
-                    </a>
-
-                </a4j:commandLink>
-
-                </h:panelGrid>
-                </a4j:outputPanel>
-
-            <rich:panel styleClass="runnerPanelBody">
-
-                <rich:dataTable value="#{marketBean.runners}" var="rnr"
+                <rich:extendedDataTable value="#{marketBean.runners}" var="rnr"
+                                        styleClass="autoSizeRows"
                                 selectionMode="single"
-                                style="height:300px;width:100%"
+                                style="width:1422px;height:335px"
                                 rowClasses="rvgRowOne,rvgRowTwo"
-                                id="runnerTable" rowKeyVar="rkv" sortMode="single"
-                        >
+                                        rowKeyVar="rkv" sortMode="single"
+
+                                id="runnerTable">
+
 
 
                     <rich:column sortable="true" sortBy="#{rnr.name}"
@@ -107,8 +79,12 @@
                             <h:outputText value="Runner" id="Runner"/>
                         </f:facet>
 
-                        <h:outputText value="#{rnr.name}"/>
+                        <h:panelGrid columns="2" cellpadding="2">
+                            <h:outputText value="#{rnr.asianLineId}. "/><h:outputText value="#{rnr.name}"/>
+                        </h:panelGrid>
+
                         <br/>
+
                         <h:outputFormat value="#{marketBean.currencyFormatValue}"
                                         rendered="#{rnr.userData4Runner[marketBean.currentUser.id].profitLoss != null}"
                                         style="color: #{rnr.userData4Runner[marketBean.currentUser.id].profitColor}">
@@ -117,9 +93,10 @@
                             <f:param
                                     value="#{rnr.userData4Runner[marketBean.currentUser.id].profitLoss}"/>
                         </h:outputFormat>
+
                     </rich:column>
 
-                    <rich:column label="Bukm.odds" styleClass="oddsCol">
+                    <rich:column label="Bukm.odds" >
                         <f:facet name="header">
                             <h:outputText value="Bukm.Odds" id="BukmOdds"/>
                         </f:facet>
@@ -130,7 +107,6 @@
 
                             <rich:autocomplete
                                     disabled="#{rnr.userData4Runner[marketBean.currentUser.id].isNonRunner}"
-                                    styleClass="oddsCol"
                                     onchange="setSelectionId(#{rnr.selectionId})"
                                     autocompleteMethod="#{marketBean.oddsAutoComplete}" mode="cachedAjax" minChars="1"
                                     autofill="false" selectFirst="false"
@@ -533,11 +509,13 @@
                         </h:outputFormat>
                     </rich:column>
 
-                </rich:dataTable>
+                    <rich:column label=".">
+                        <h:outputText value="."/>
+                    </rich:column>
+
+                </rich:extendedDataTable>
 
             </rich:panel>
-
-        </rich:panel>
 
     </h:form>
 

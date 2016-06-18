@@ -33,14 +33,13 @@
 		var file_size_too_much = "#{labels['uploadOdds.file_size_too_much']}";
 		var file_type_is_bad = "#{labels['uploadOdds.file_type_is_bad']}";
 	</script>
-
 	<f:view>
-
-		<ui:include src="/layout/modalMarketPanel.xhtml" />
-		<ui:include src="/layout/marketPanel.xhtml" />
-
 		<div style="width:100%">
 			<ui:include src="/layout/toolbar.xhtml" />
+		</div>
+		<div  style="position: absolute;left:10em;top:5em">
+			<ui:include src="/layout/modalMarketPanel.xhtml" />
+			<ui:include src="/layout/marketPanel.xhtml" />
 		</div>
 
 		<ui:remove>

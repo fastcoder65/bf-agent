@@ -111,6 +111,15 @@
                         <h:outputText value="AutoRefresh Off" rendered="#{!marketBean.pollEnabled}"></h:outputText>
                     </a4j:region>
 
+                        <a4j:commandLink id="currentOddsLink" render="runnerControls" action="#{marketBean.prepareDownloadBO}" title="#{request.contextPath}/downloadDoc/currentOdds.csv">
+
+                            <h:graphicImage style="border-width:0" value="/images/buttons/down.gif"/>
+
+                            <a title="#{request.contextPath}/downloadDoc/currentOdds.csv" href="#{request.contextPath}/downloadDoc/#{request.session.getAttribute('docName')}.csv">
+                                <h:outputText  rendered="#{marketBean.odds2downloadPrepared}" value="#{labels['runners.odds2download']}"/>
+                            </a>
+
+                        </a4j:commandLink>
 
                 </h:panelGroup>
 
