@@ -128,6 +128,7 @@
 
                             <rich:autocomplete
                                     disabled="#{rnr.userData4Runner[marketBean.currentUser.id].isNonRunner}"
+
                                     onchange="setSelectionId(#{rnr.selectionId})"
                                     autocompleteMethod="#{marketBean.oddsAutoComplete}" mode="cachedAjax" minChars="1"
                                     autofill="false" selectFirst="false"
