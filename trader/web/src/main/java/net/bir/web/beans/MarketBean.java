@@ -1168,6 +1168,8 @@ AUSTRALIAN
 
             writer = new CSVWriter(out, ';', CSVWriter.NO_QUOTE_CHARACTER);
 
+            writer.writeNext(new String[]{" "});
+
             for (String[] strInfo : output) {
                 writer.writeNext(strInfo);
                 writer.flush();
@@ -1286,22 +1288,30 @@ AUSTRALIAN
 
             while ((nextLine = reader.readNext()) != null) {
                 log.info("" + nextLine.length);
-                for (int i = 0; i < nextLine.length; i++ ) {
-                   log.info("nextLine[" + i + "]=" + nextLine[i]);
-                }
 
-                String sselectionId = nextLine[1];
+                if (nextLine.length < 4)
+                    continue;
 
-                log.info(" sselectionId: " + sselectionId);
-                MarketRunner mr = currentMarket.getRunnersMap().get(Long.valueOf(sselectionId));
-                if (mr != null) {
-                    Runner4User r4u = mr.getUserData4Runner().get(currentUser.getId());
-                    if (nextLine[3] != null && !("".equals(nextLine[3]))) {
-                        String sNumber = nextLine[3].replaceAll(",", ".");
-                        log.info("sNumber: " + sNumber);
-                        r4u.setOdds(Double.valueOf(sNumber));
-                        getMarketService().merge(r4u);
+                    for (int i = 0; i < nextLine.length; i++) {
+                        log.info("nextLine[" + i + "]=" + nextLine[i]);
                     }
+
+                    String sselectionId = nextLine[1];
+
+                    log.info(" sselectionId: " + sselectionId);
+                    if ( sselectionId != null && sselectionId.trim().length()> 0 ) {
+                        MarketRunner mr = currentMarket.getRunnersMap().get(Long.valueOf(sselectionId));
+                        if (mr != null) {
+                            Runner4User r4u = mr.getUserData4Runner().get(currentUser.getId());
+
+                            if (nextLine[3] != null && !("".equals(nextLine[3]))) {
+                                String sNumber = nextLine[3].replaceAll(",", ".");
+                                log.info("sNumber: " + sNumber);
+                                r4u.setOdds(Double.valueOf(sNumber));
+                                getMarketService().merge(r4u);
+                            }
+                        }
+
                 }
             }
         } finally {
