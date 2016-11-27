@@ -1,5 +1,6 @@
 package net.bir2.multitrade.ejb.entity;
 
+import com.betfair.aping.enums.MarketStatus;
 import org.hibernate.Hibernate;
 
 import javax.persistence.*;
@@ -216,9 +217,9 @@ public class Market implements java.io.Serializable {
 	@Transient
 	public String getStatusClass() {
 		String statusClass;
-		if ("OPEN".equals(marketStatus))
+		if (MarketStatus.OPEN.name().equals(marketStatus))
 			statusClass = "statusGreen";
-		else if ("CLOSED".equals(marketStatus))
+		else if (MarketStatus.CLOSED.name().equals(marketStatus))
 			statusClass = "statusBlack";
 		else
 			statusClass = "statusRed";

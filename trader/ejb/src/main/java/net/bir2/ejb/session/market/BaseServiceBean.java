@@ -1,5 +1,6 @@
 package net.bir2.ejb.session.market;
 
+import com.betfair.aping.enums.MarketStatus;
 import net.bir2.ejb.action.Action;
 import net.bir2.ejb.action.ShedulerActivity;
 import net.bir2.multitrade.ejb.entity.ValidOdds;
@@ -253,7 +254,7 @@ public class BaseServiceBean implements BaseService {
 		Double profitLoss = (_profitLoss==null? 0.0: _profitLoss);
 
 		Double result = FAKE_ODDS;
-		if ("OPEN".equals(marketStatus) && finalOdds > 0 && finalOdds >= MIN_ODDS && volumeStake > 0 && sourceOdds != null && sourceOdds >= MIN_ODDS ) {
+		if (MarketStatus.OPEN.name().equals(marketStatus) && finalOdds > 0 && finalOdds >= MIN_ODDS && volumeStake > 0 && sourceOdds != null && sourceOdds >= MIN_ODDS ) {
 		  if (!isNonRunner && (volumeStake / finalOdds > MIN_STAKE_AMOUNT) && (!(maxLoss + profitLoss < 0)) && inplayDelay == 0 ) {
 			  result = finalOdds;
 			  log.fine("$$ getSelectionPrice(): finalOdds=" + finalOdds + ", result="+result);
@@ -288,7 +289,7 @@ End Function
 		log.fine("** getSelectionAmount(): finalOdds: "+ finalOdds + ", sourceOdds: "+ sourceOdds + ", volumeStake: " + volumeStake + ", marketStatus: " + marketStatus);
 
 		Double result = FAKE_STAKE;
-		if ( marketStatus != null && "OPEN".equals(marketStatus) && finalOdds != null && finalOdds >= MIN_ODDS && volumeStake != null && volumeStake > 0 && sourceOdds != null && sourceOdds >= MIN_ODDS ) {
+		if (MarketStatus.OPEN.name().equals(marketStatus) && finalOdds != null && finalOdds >= MIN_ODDS && volumeStake != null && volumeStake > 0 && sourceOdds != null && sourceOdds >= MIN_ODDS ) {
 			if (volumeStake / finalOdds > MIN_STAKE_AMOUNT) {
 			  result = Math.floor(volumeStake/finalOdds); 
 			  log.fine("getSelectionAmount(): finalOdds=" + finalOdds + ", result="+result);		  	

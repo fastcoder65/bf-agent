@@ -15,7 +15,11 @@ public class Runner4User implements java.io.Serializable {
     @Transient
     private static final Logger log = Logger.getLogger(Runner4User.class.getName());
 
-    private static final long serialVersionUID = 7193921041479085729L;
+    private static final long serialVersionUID;
+
+    static {
+        serialVersionUID = 1L;
+    }
 
     @Id
     @Column(name = "user_id", insertable = false, updatable = false)
@@ -92,9 +96,6 @@ public class Runner4User implements java.io.Serializable {
     private Double profitLoss;
 
     public Double getProfitLoss() {
-/*		if (profitLoss == null)
-            profitLoss = 0.0;
-*/
         return profitLoss;
     }
 
@@ -124,9 +125,7 @@ public class Runner4User implements java.io.Serializable {
         Double _sumReturnPercent = linkedRunner.getMarket()
                 .getUserData4Market().get(this.userId).getSumReturnPercent();
         printLog("*** _sumReturnPercent= " + _sumReturnPercent);
-        Double result = (this.odds != null && this.odds > 0 ? _sumReturnPercent
-                / this.odds
-                : 0.0);
+        Double result = ((this.odds != null && this.odds > 0) ? _sumReturnPercent / this.odds : 0.0);
 
         printLog("* getPrcWin()= " + result);
         return result;
@@ -134,8 +133,7 @@ public class Runner4User implements java.io.Serializable {
 
     @Transient
     public Double getPseudoStake() {
-        Double _psv = linkedRunner.getMarket().getUserData4Market().get(
-                this.userId).getPseudoStakeVolume();
+        Double _psv = linkedRunner.getMarket().getUserData4Market().get( this.userId ).getPseudoStakeVolume();
         printLog("* Pseudo Stake Volume= " + _psv);
         Double result = _psv * getPrcWin();
         printLog("* getPseudoStake()= " + result);
@@ -197,10 +195,7 @@ public class Runner4User implements java.io.Serializable {
                 + getPseudoPinkStake();
     }
 
-
-//    @Transient
     private boolean isNonRunner;
-
 
     public boolean getIsNonRunner() {
         return isNonRunner;
@@ -209,7 +204,7 @@ public class Runner4User implements java.io.Serializable {
     public void setIsNonRunner(boolean isNonRunner) {
         if (this.isNonRunner != isNonRunner) {
           if (isNonRunner)
-            System.out.println("isNonRunner is set for " + this.getLinkedRunner().getName()+ "!");
+            log.fine("isNonRunner is set for " + this.getLinkedRunner().getName()+ "!");
         }
         this.isNonRunner = isNonRunner;
     }
@@ -229,10 +224,8 @@ public class Runner4User implements java.io.Serializable {
                 String s = new StringBuilder().append(" getIsNonRunner(): ").append(_sName).append(" is 'NonRunner' now!").toString();
                 printLog(Level.FINE, s);
                 //log.info(new StringBuilder().append(" getIsNonRunner(): ").append(_sName).append(" is 'NonRunner' now!").toString());
-
             }
         }
-
         return result;
     }
 
