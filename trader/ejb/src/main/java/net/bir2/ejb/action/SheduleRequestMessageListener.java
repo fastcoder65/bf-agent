@@ -347,10 +347,11 @@ public class SheduleRequestMessageListener implements MessageListener {
                 MarketRunner runner = currentMarket.getRunnersMap().get(bet.getSelectionId());
 
                 if (runner == null) {
-                    logWarn(new StringBuilder(100)
+                    logInfo(new StringBuilder(100)
                             .append("runner is null for selectionId=")
                             .append(bet.getSelectionId())
-                            .append(", bet.getSide()=".append(bet.getSide())
+                            .append(", bet.getSide()=")
+                            .append(bet.getSide())
                             .toString());
                 }
 
