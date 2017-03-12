@@ -141,6 +141,28 @@
 
                     </rich:column>
 
+                <rich:column label="Odds precosmt" styleClass="oddsCol">
+                    <f:facet name="header">
+                        <h:outputText value="Precosm"/>
+                    </f:facet>
+                    <h:outputFormat styleClass="oddsCol" value="{0, number}"
+                                    rendered="#{rnr.userData4Runner[marketBean.currentUser.id].oddsPrecosmetic > 0}">
+                        <f:param
+                                value="#{rnr.userData4Runner[marketBean.currentUser.id].oddsPrecosmetic}"/>
+                    </h:outputFormat>
+                </rich:column>
+
+                <rich:column label="Odds cosmt" styleClass="oddsCol">
+                    <f:facet name="header">
+                        <h:outputText value="Cosm"/>
+                    </f:facet>
+                    <h:outputFormat styleClass="oddsCol" value="{0, number}"
+                                    rendered="#{rnr.userData4Runner[marketBean.currentUser.id].oddsCosmetic > 0}">
+                        <f:param
+                                value="#{rnr.userData4Runner[marketBean.currentUser.id].oddsCosmetic}"/>
+                    </h:outputFormat>
+                </rich:column>
+
 
                     <rich:column width="45px" label="Return %" styleClass="numCol">
                         <f:facet name="header">
@@ -509,27 +531,6 @@
 
                     </rich:column>
 
-                    <rich:column label="Odds precosmt" styleClass="oddsCol">
-                        <f:facet name="header">
-                            <h:outputText value="Precosm"/>
-                        </f:facet>
-                        <h:outputFormat styleClass="oddsCol" value="{0, number}"
-                                        rendered="#{rnr.userData4Runner[marketBean.currentUser.id].oddsPrecosmetic > 0}">
-                            <f:param
-                                    value="#{rnr.userData4Runner[marketBean.currentUser.id].oddsPrecosmetic}"/>
-                        </h:outputFormat>
-                    </rich:column>
-
-                    <rich:column label="Odds cosmt" styleClass="oddsCol">
-                        <f:facet name="header">
-                            <h:outputText value="Cosm"/>
-                        </f:facet>
-                        <h:outputFormat styleClass="oddsCol" value="{0, number}"
-                                        rendered="#{rnr.userData4Runner[marketBean.currentUser.id].oddsCosmetic > 0}">
-                            <f:param
-                                    value="#{rnr.userData4Runner[marketBean.currentUser.id].oddsCosmetic}"/>
-                        </h:outputFormat>
-                    </rich:column>
 
                     <rich:column label=" " style="width:2px">
                         <h:outputText value=" " style="width:2px"/>

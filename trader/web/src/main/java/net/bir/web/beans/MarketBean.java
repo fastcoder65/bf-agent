@@ -488,12 +488,14 @@ AUSTRALIAN
         }
     }
 
+    /*
     public static final String NT_SPORT = "S-";
     public static final String NT_EVENT = "E-";
     public static final String NT_MARKET = "M-";
     public static final String NT_GROUP = "G-";
     public static final String NT_COMPETITION = "C-";
     public static final String NT_RACE = "R-";
+*/
 
     public synchronized List<TreeNode> getRootNodes() throws APINGException {
         if (allSports == null) {
@@ -1109,7 +1111,7 @@ AUSTRALIAN
 
     private String runnerTableState = null;
 
-    private final String CN_RUNNER_TABLE_STATE = "runnerTabelState";
+    private final String CN_RUNNER_TABLE_STATE = "runnerTableState";
 
     public String getRunnerTableState() {
         if ( runnerTableState == null) {
@@ -1216,13 +1218,14 @@ AUSTRALIAN
 
              for (Integer priority : currentMarket.getOrderedRunners().keySet()) {
                 MarketRunner mr = currentMarket.getOrderedRunners().get(priority);
-                String[] bukmOddsInfo = new String[4];
-                bukmOddsInfo[2] = mr.getName();
-                bukmOddsInfo[1] = "" + mr.getSelectionId();
+                String[] bukmOddsInfo = new String[5];
+                 bukmOddsInfo[2] = mr.getName();
+                 bukmOddsInfo[1] = "" + mr.getSelectionId();
                  bukmOddsInfo[0] = "" + mr.getAsianLineId();
-                Runner4User r4u = mr.getUserData4Runner().get(currentUser.getId());
-                bukmOddsInfo[3] = (r4u.getOdds()!= null? "" + r4u.getOdds(): "'"+ NumberFormat.getInstance().format(r4u.getBackPrice1()));
-                bukmOddsInfoList.add(bukmOddsInfo);
+                 Runner4User r4u = mr.getUserData4Runner().get(currentUser.getId());
+                 bukmOddsInfo[3] = (r4u.getOdds()!= null? "" + r4u.getOdds(): ""+ NumberFormat.getInstance().format(r4u.getBackPrice1()));
+                 bukmOddsInfo[4] = "=$E$1 * $D" + (priority+1);
+                 bukmOddsInfoList.add(bukmOddsInfo);
             }
 
             log.info("bukmOddsInfoList.size()= " + bukmOddsInfoList.size());
@@ -1289,7 +1292,7 @@ AUSTRALIAN
             while ((nextLine = reader.readNext()) != null) {
                 log.info("" + nextLine.length);
 
-                if (nextLine.length < 4)
+                if (nextLine.length < 5)
                     continue;
 
                     for (int i = 0; i < nextLine.length; i++) {
@@ -1304,8 +1307,8 @@ AUSTRALIAN
                         if (mr != null) {
                             Runner4User r4u = mr.getUserData4Runner().get(currentUser.getId());
 
-                            if (nextLine[3] != null && !("".equals(nextLine[3]))) {
-                                String sNumber = nextLine[3].replaceAll(",", ".");
+                            if (nextLine[4] != null && !("".equals(nextLine[4]))) {
+                                String sNumber = nextLine[4].replaceAll(",", ".");
                                 log.info("sNumber: " + sNumber);
                                 r4u.setOdds(Double.valueOf(sNumber));
                                 getMarketService().merge(r4u);

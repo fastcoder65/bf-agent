@@ -46,7 +46,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
         <!-- JBoss dependency versions -->
-        
+
         <version.jboss.maven.plugin>7.4.Final</version.jboss.maven.plugin>
 
         <!-- Define the version of the JBoss BOMs we want to import to specify tested stacks. -->
@@ -63,12 +63,12 @@
             to work with JBoss EAP 6. It requires you have access to the JBoss EAP 6 
             maven repository. -->
         <!-- <version.jboss.as>7.2.0.Final-redhat-8</version.jboss.as> -->
-   
- 		<version.richfaces>4.5.15.Final</version.richfaces>
-  		
-<!-- 
-		<version.richfaces>3.3.3.Final</version.richfaces>
- -->		
+
+        <version.richfaces>4.5.15.Final</version.richfaces>
+
+        <!--
+                <version.richfaces>3.3.3.Final</version.richfaces>
+         -->
         <!-- other plugin versions -->
         <version.ear.plugin>2.6</version.ear.plugin>
         <version.ejb.plugin>2.3</version.ejb.plugin>
@@ -91,7 +91,7 @@
                 <version>${project.version}</version>
                 <type>ejb</type>
             </dependency>
-            
+
             <!-- Define the version of the WAR so that we don't need to repeat 
                 ourselves in every module -->
             <dependency>
@@ -111,7 +111,7 @@
                 stack you can read this as the JBoss stack of the Java EE 6 APIs, with extras 
                 from the Hibernate family of projects) -->
 
-                
+
             <dependency>
                 <groupId>org.jboss.bom</groupId>
                 <artifactId>jboss-javaee-6.0-with-tools</artifactId>
@@ -119,8 +119,8 @@
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
- 			
- 			
+
+
             <dependency>
                 <groupId>org.jboss.bom</groupId>
                 <artifactId>jboss-javaee-6.0-with-hibernate</artifactId>
