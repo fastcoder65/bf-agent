@@ -250,17 +250,18 @@ public class BaseServiceBean implements BaseService {
 	
 	public Double getSelectionPrice ( Double finalOdds, Double sourceOdds, Double volumeStake, Double maxLoss, Double _profitLoss, Integer inplayDelay, String marketStatus, Boolean isNonRunner) {
 
-		log.fine("getSelectionPrice(): finalOdds: " + finalOdds+", sourceOdds: "+ sourceOdds+", volumeStake: "+volumeStake+", maxLoss: " + maxLoss+", profitLoss: "+ _profitLoss+", inplayDelay: " + inplayDelay+ ", marketStatus: "+marketStatus+ ", isNonRunner: " + isNonRunner);
+		log.info("getSelectionPrice(): finalOdds: " + finalOdds+", sourceOdds: "+ sourceOdds+", volumeStake: "+volumeStake
+				+", maxLoss: " + maxLoss+", profitLoss: "+ _profitLoss+", inplayDelay: " + inplayDelay+ ", marketStatus: "+marketStatus+ ", isNonRunner: " + isNonRunner);
 		Double profitLoss = (_profitLoss==null? 0.0: _profitLoss);
 
 		Double result = FAKE_ODDS;
 		if (MarketStatus.OPEN.name().equals(marketStatus) && finalOdds > 0 && finalOdds >= MIN_ODDS && volumeStake > 0 && sourceOdds != null && sourceOdds >= MIN_ODDS ) {
-		  if (!isNonRunner && (volumeStake / finalOdds > MIN_STAKE_AMOUNT) && (!(maxLoss + profitLoss < 0)) && inplayDelay == 0 ) {
+		  if (!isNonRunner && (volumeStake / finalOdds > MIN_STAKE_AMOUNT) && (!(maxLoss/2 + profitLoss < 0)) && inplayDelay == 0 ) {
 			  result = finalOdds;
-			  log.fine("$$ getSelectionPrice(): finalOdds=" + finalOdds + ", result="+result);
+			  log.info("$$ getSelectionPrice(): finalOdds=" + finalOdds + ", result= "+result);
 		  }
-		} 
-	   return result;	
+		}
+	   return result;
 	}
 	
 	

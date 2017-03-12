@@ -296,7 +296,7 @@ public class SheduleRequestMessageListener implements MessageListener {
 
         try {
             currentBets = serviceBean.listCurrentOrders(currentUser.getApiContext(), null, marketIds);
-            printLog(Level.FINE, "??? on market " + currentMarket + ", found currentBets count: " + (currentBets == null ? "0" : "" + currentBets.size()));
+            printLog(Level.INFO, "??? on market " + currentMarket + ", found currentBets count: " + (currentBets == null ? "0" : "" + currentBets.size()));
 
         } catch (Exception e) {
             logError(" 'Get Current Bets' error, message: ", e);
@@ -304,12 +304,12 @@ public class SheduleRequestMessageListener implements MessageListener {
 
         long endTime = System.currentTimeMillis();
 
-        printLog(Level.FINE, "action 'Get Current Bets' COMPLETED, login="
+        printLog(Level.INFO, "action 'Get Current Bets' COMPLETED, login="
                 + currentUser.getLogin() + ", marketId="
                 + currentMarket.getMarketId() + ", time consumed: "
                 + ((endTime - startTime) / 1000.0) + " second(s)");
 
-        if (currentBets != null && currentBets.size() > 0) {
+//      if (currentBets != null && currentBets.size() > 0) {
 
             marketIds = new HashSet<String>();
             startTime = System.currentTimeMillis();
@@ -322,6 +322,9 @@ public class SheduleRequestMessageListener implements MessageListener {
                 MarketProfitAndLoss mpl = i.hasNext() ? (MarketProfitAndLoss) i.next() : null;
                 if (mpl != null) {
                     for (RunnerProfitAndLoss rpl : mpl.getProfitAndLosses()) {
+
+                        log.info("rpl.getSelectionId(): " + rpl.getSelectionId()+ ", rpl.getIfLose()="+ rpl.getIfLose() + ", rpl.getIfWin()="+ rpl.getIfWin()+ ", rpl.getIfPlace()="+ rpl.getIfPlace());
+
                         rProfitAndLosses.put(rpl.getSelectionId(), rpl);
                     }
                 }
@@ -331,11 +334,11 @@ public class SheduleRequestMessageListener implements MessageListener {
 
             endTime = System.currentTimeMillis();
 
-            printLog(Level.FINE, "action 'listMarketProfitAndLoss' COMPLETED, login="
+            printLog(Level.INFO, "action 'listMarketProfitAndLoss' COMPLETED, login="
                     + currentUser.getLogin() + ", marketId="
                     + currentMarket.getMarketId() + ", time consumed: "
                     + ((endTime - startTime) / 1000.0) + " second(s)");
-        }
+  //      }
 
         if (currentBets != null) {
 
@@ -346,13 +349,14 @@ public class SheduleRequestMessageListener implements MessageListener {
                 if (runner == null) {
                     logWarn(new StringBuilder(100)
                             .append("runner is null for selectionId=")
-                            .append(bet.getSelectionId()).toString());
+                            .append(bet.getSelectionId())
+                            .append(", bet.getSide()=".append(bet.getSide())
+                            .toString());
                 }
 
                 if (runner != null) {
 
-                    Runner4User r4u = runner.getUserData4Runner().get(
-                            currentUser.getId());
+                    Runner4User r4u = runner.getUserData4Runner().get(currentUser.getId());
 
                     if (r4u == null) {
                         logWarn(new StringBuilder(100)
@@ -485,9 +489,12 @@ public class SheduleRequestMessageListener implements MessageListener {
 
         if (currentBets != null)
         for (CurrentOrderSummary mbet : currentBets) {
+
             if (OrderStatus.EXECUTION_COMPLETE.equals(mbet.getStatus()) // if (BetStatusEnum.U.equals
-                    && Side.LAY.equals(mbet.getSide())) { // BetTypeEnum.L
+                    && (Side.BACK.equals(mbet.getSide()) || Side.LAY.equals(mbet.getSide()))) { // BetTypeEnum.L
+
                 existMatchedBets = true;
+
                 break;
             }
         }
@@ -508,12 +515,12 @@ public class SheduleRequestMessageListener implements MessageListener {
                 _profit =  Double.valueOf(rpl.getIfWin() + rpl.getIfLose());
             }
 
-   //         logInfo(new StringBuilder(100).append("_profit=").append(_profit).toString());
+            log.fine(new StringBuilder(100).append("_profit=").append(_profit).toString());
+
             r4u.setProfitLoss(_profit);
             marketService.merge(r4u);
 
-
-/*
+            /*
 				Double _profit = profitMap.get(_key);
 
 				if (sum != null) {
