@@ -179,6 +179,7 @@
     <orderEntry type="library" scope="PROVIDED" name="Maven: org.jboss.spec.javax.xml.soap:jboss-saaj-api_1.3_spec:1.0.2.Final" level="project" />
     <orderEntry type="library" scope="PROVIDED" name="Maven: org.jboss.spec.javax.xml.ws:jboss-jaxws-api_2.2_spec:2.0.1.Final" level="project" />
     <orderEntry type="library" name="Maven: org.atmosphere:atmosphere-runtime-native:2.4.3" level="project" />
+    <orderEntry type="library" name="Maven: org.atmosphere:atmosphere-compat-jbossweb:2.0.1" level="project" />
     <orderEntry type="library" name="Maven: org.atmosphere:atmosphere-compat-tomcat:2.0.1" level="project" />
     <orderEntry type="library" name="Maven: org.atmosphere:atmosphere-compat-tomcat7:2.0.1" level="project" />
     <orderEntry type="library" name="Maven: org.atmosphere.jboss.as:jboss-as-websockets:0.5" level="project" />
