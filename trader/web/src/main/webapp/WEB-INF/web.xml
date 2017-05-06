@@ -4,13 +4,13 @@
          xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd"
          id="richfaces-trader"
          version="3.0">
-<!--
+
+    <display-name>Betfair Trader Application (Rich Faces 4.5.x)</display-name>
+
     <context-param>
-        <param-name>javax.faces.PROJECT_STAGE</param-name>
-        <param-value>Development</param-value>
+        <param-name>org.atmosphere.useNative</param-name>
+        <param-value>false</param-value>
     </context-param>
--->
-    <display-name>BIR Application (Rich Faces 4.5.x)</display-name>
 
     <context-param>
         <param-name>javax.faces.STATE_SAVING_METHOD</param-name>
