@@ -9,10 +9,7 @@ import com.betfair.aping.util.JsonConverter;
 import com.google.gson.reflect.TypeToken;
 import net.bir2.util.DTAction;
 
-import javax.ejb.AccessTimeout;
-import javax.ejb.Lock;
-import javax.ejb.LockType;
-import javax.ejb.Singleton;
+import javax.ejb.*;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
@@ -23,7 +20,9 @@ import java.util.logging.Level;
 public class ApiNgRescriptOperations extends ApiNgOperations {
 
 
-    public ApiNgRescriptOperations(){}
+    public ApiNgRescriptOperations(){
+        log.info("ApiNgRescriptOperations constructor, hashcode=" + this.hashCode());
+    }
 
     public AccountFundsResponse  getAccountFunds  (Wallet wallet, String appKey, String ssoId )  throws APINGException {
 
@@ -271,7 +270,7 @@ public class ApiNgRescriptOperations extends ApiNgOperations {
             log.info("Request: "+requestString);
 
         //We need to pass the "sendPostRequest" method a string in util format:  requestString
-        HttpUtil requester = new HttpUtil();
+      //  HttpUtil requester = new HttpUtil();
         String response = requester.sendPostRequestRescript(requestString, operation, appKey, ssoToken);
         if(response != null)
             return response;
@@ -279,15 +278,16 @@ public class ApiNgRescriptOperations extends ApiNgOperations {
             throw new APINGException();
     }
 
-
+    @EJB
+    private HttpUtil requester;
 
 	protected String makeKeepAliveRequest(String appKey, String ssoToken) {
-		HttpUtil requester = new HttpUtil();
+		//HttpUtil requester = new HttpUtil();
 		return requester.sendKeepAlivePostRequest( appKey, ssoToken);
 	}
 
 	protected String makeLogoutRequest(String appKey, String ssoToken) {
-		HttpUtil requester = new HttpUtil();
+		//HttpUtil requester = new HttpUtil();
 		return requester.sendLogoutRequest( appKey, ssoToken);
 	}
 

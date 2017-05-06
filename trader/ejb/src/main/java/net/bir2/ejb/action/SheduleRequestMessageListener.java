@@ -403,7 +403,8 @@ public class SheduleRequestMessageListener implements MessageListener {
 
                     if (r4u != null) {
 
-
+                        r4u.setUnmatchedLayPrice(0.0);
+                                r4u.setUnmatchedLayAmount(0.0);
                         if (OrderStatus.EXECUTABLE.equals(bet.getStatus()) // if (BetStatusEnum.U.equals
                                 && Side.LAY.equals(bet.getSide())) { // BetTypeEnum.L
 

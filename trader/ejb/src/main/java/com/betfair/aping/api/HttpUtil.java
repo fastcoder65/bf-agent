@@ -54,22 +54,22 @@ public class HttpUtil implements TimedObject {
     private EJBContext context;
 
     public HttpUtil() {
-        log.info("HttpUtil constructor..");
+        log.info("HttpUtil constructor, hashcode=" + this.hashCode());
     }
 
     @PostConstruct
-    public void create() {
-        log.info("HttpUtil @PostConstruct..");
+    private void create() {
+        log.info("HttpUtil @PostConstruct , hashcode=" + this.hashCode());
         httpClient = createHttpClientOrProxy();
         createTimer(context,  3600 * 1000);
     }
 
-    public void createTimer(EJBContext context, long duration) {
+    private void createTimer(EJBContext context, long duration) {
         TimerService timerService;
         try {
             timerService = context.getTimerService();
 
-            String timerInfo = "closeIdleConTimer on "+ duration;
+            String timerInfo = "closeIdleConTimer on "+ duration +" , hashcode=" + this.hashCode();
 
             timerService.createIntervalTimer(1000, duration, new TimerConfig(timerInfo, false));
 

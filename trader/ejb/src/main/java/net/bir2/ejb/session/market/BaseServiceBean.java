@@ -256,9 +256,9 @@ public class BaseServiceBean implements BaseService {
 
 		Double result = FAKE_ODDS;
 		if (MarketStatus.OPEN.name().equals(marketStatus) && finalOdds > 0 && finalOdds >= MIN_ODDS && volumeStake > 0 && sourceOdds != null && sourceOdds >= MIN_ODDS ) {
-		  if (!isNonRunner && ((volumeStake / finalOdds) > MIN_STAKE_AMOUNT) && ((maxLoss - volumeStake + profitLoss) > 0) && inplayDelay == 0 ) {
+		  if (!isNonRunner && ((volumeStake / finalOdds) > MIN_STAKE_AMOUNT) && ((maxLoss - volumeStake * (finalOdds-1) + profitLoss) > 0) && inplayDelay == 0 ) {
 			  result = finalOdds;
-			  log.info( "getSelectionPrice(): real finalOdds enabled: " + finalOdds );
+			  log.info( "getSelectionPrice(): real finalOdds enabled: " + finalOdds + " volumeStake * (finalOdds-1)=" + volumeStake * (finalOdds-1) );
 		  }
 		}
 	   return result;

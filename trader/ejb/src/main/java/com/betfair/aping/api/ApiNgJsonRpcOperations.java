@@ -26,6 +26,7 @@ public class ApiNgJsonRpcOperations extends ApiNgOperations {
 	HttpUtil requester;
 
 	public ApiNgJsonRpcOperations() {
+		log.info("ApiNgJsonRpcOperations constructor, hashcode=" + this.hashCode());
 	}
 
 	public AccountFundsResponse  getAccountFunds  (Wallet wallet, String appKey, String ssoId )  throws AccountAPINGException {
