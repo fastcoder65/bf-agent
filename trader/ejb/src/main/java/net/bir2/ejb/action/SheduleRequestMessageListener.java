@@ -325,7 +325,7 @@ public class SheduleRequestMessageListener implements MessageListener {
                 if (mpl != null) {
                     for (RunnerProfitAndLoss rpl : mpl.getProfitAndLosses()) {
 
-                        if (!( rpl.getIfLose()== 0 && rpl.getIfWin() == 0 && rpl.getIfPlace() == 0 )) {
+                        if (rpl != null && !( rpl.getIfLose()== 0 && rpl.getIfWin() == 0 && rpl.getIfPlace() == 0 )) {
                             log.info("rpl.getSelectionId(): " + rpl.getSelectionId() + ", rpl.getIfLose()=" + rpl.getIfLose() + ", rpl.getIfWin()=" + rpl.getIfWin() + ", rpl.getIfPlace()=" + rpl.getIfPlace());
                         }
 
