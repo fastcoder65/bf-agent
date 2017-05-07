@@ -9,14 +9,18 @@ import com.betfair.aping.util.JsonConverter;
 import com.google.gson.reflect.TypeToken;
 import net.bir2.util.DTAction;
 
-import javax.ejb.*;
+import javax.ejb.EJB;
+import javax.ejb.Lock;
+import javax.ejb.LockType;
+import javax.ejb.Singleton;
 import java.util.*;
-import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 
+//@Lock(LockType.WRITE)
+//@AccessTimeout(value=60, unit = TimeUnit.SECONDS )
+
+@Lock(LockType.READ)
 @Singleton
-@Lock(LockType.WRITE)
-@AccessTimeout(value=60, unit = TimeUnit.SECONDS )
 public class ApiNgRescriptOperations extends ApiNgOperations {
 
 

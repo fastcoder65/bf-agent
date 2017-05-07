@@ -1,13 +1,12 @@
 package net.bir2.multitrade.ejb.entity;
 
-import java.io.InputStream;
-import java.io.StringWriter;
-
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
 import javax.xml.bind.annotation.XmlRootElement;
+import java.io.InputStream;
+import java.io.StringWriter;
 
 @XmlRootElement(name="SystemSettings")
 public class SystemSettings {
@@ -23,9 +22,9 @@ public class SystemSettings {
 	private Integer turnOffTimeOffsetMinutes;
 
 	public Double getMaxLossPerSelection() {
-/*		if (maxLossPerSelection == null) 
+		if (maxLossPerSelection == null)
 			maxLossPerSelection = 10.0;
-*/		
+
 		return maxLossPerSelection;
 	}
 

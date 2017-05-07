@@ -37,9 +37,10 @@ import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+//@Lock(LockType.WRITE)
+//@AccessTimeout(value=60, unit = TimeUnit.SECONDS )
+
 @Singleton
-@Lock(LockType.WRITE)
-@AccessTimeout(value=60, unit = TimeUnit.SECONDS )
 public class HttpUtil implements TimedObject {
 
     private final String HTTP_HEADER_X_APPLICATION = "X-Application";

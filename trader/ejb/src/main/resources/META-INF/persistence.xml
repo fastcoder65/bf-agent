@@ -31,18 +31,20 @@
       <!--
       <jta-data-source>java:/jboss/datasources/birPgDS</jta-data-source>
       -->
+
+       <!--
        <jta-data-source>java:/jboss/datasources/birMySqlDS_App</jta-data-source>
-      <properties>
+       -->
+
+       <jta-data-source>java:/jboss/datasources/birPgDSApp</jta-data-source>
+       <properties>
          <!-- Properties for Hibernate -->
           <property name="hibernate.hbm2ddl.auto" value="update" />
           <property name="hibernate.show_sql" value="false" />
-          <property name="hibernate.dialect" value="org.hibernate.dialect.MySQL5InnoDBDialect"/>
-
           <!--
-         <property name="hibernate.dialect" value="org.hibernate.dialect.PostgreSQL82Dialect"/>
+          <property name="hibernate.dialect" value="org.hibernate.dialect.MySQL5InnoDBDialect"/>
           -->
-
+         <property name="hibernate.dialect" value="org.hibernate.dialect.PostgreSQL82Dialect"/>
       </properties>
-      
    </persistence-unit>
 </persistence>
