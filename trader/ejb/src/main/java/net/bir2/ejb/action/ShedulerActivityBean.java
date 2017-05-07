@@ -21,9 +21,8 @@ import net.bir2.util.DTAction;
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import javax.ejb.EJB;
-import javax.ejb.Lock;
-import javax.ejb.LockType;
 import javax.ejb.Singleton;
+import javax.ejb.Startup;
 import javax.inject.Inject;
 import javax.jms.*;
 import javax.jms.Queue;
@@ -38,7 +37,8 @@ import java.util.logging.Logger;
 //@Lock(LockType.WRITE)
 //@AccessTimeout(value=60, unit = TimeUnit.SECONDS )
 
-@Lock(LockType.READ)
+//@Lock(LockType.READ)
+@Startup
 @Singleton
 public class ShedulerActivityBean implements ShedulerActivity {
 
@@ -61,6 +61,7 @@ public class ShedulerActivityBean implements ShedulerActivity {
 
     @Inject
     private Logger log;
+
 
     private Map<String, Uzer> activeUsers = new ConcurrentHashMap<String, Uzer>();
 
@@ -323,7 +324,7 @@ public class ShedulerActivityBean implements ShedulerActivity {
     // Lifecycle methods
     @PostConstruct
     public void create() {
-        log.info("ShedulerActivity() - Creating");
+        log.info("** ShedulerActivityBean  ** constructor, hashcode=" + this.hashCode());
         activeMarkets.clear();
         // sendRequest(Action.LOAD_ACTIVE_USERS);
         // sendRequest(Action.LOAD_ACTIVE_MARKETS);

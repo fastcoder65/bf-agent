@@ -250,15 +250,18 @@ public class BaseServiceBean implements BaseService {
 	
 	public Double getSelectionPrice ( Double finalOdds, Double sourceOdds, Double volumeStake, Double maxLoss, Double _profitLoss, Integer inplayDelay, String marketStatus, Boolean isNonRunner) {
 
-		log.info("getSelectionPrice(): finalOdds: " + finalOdds+", sourceOdds: "+ sourceOdds+", volumeStake: "+volumeStake
-				+", maxLoss: " + maxLoss+", profitLoss: "+ _profitLoss+", inplayDelay: " + inplayDelay+ ", marketStatus: "+marketStatus+ ", isNonRunner: " + isNonRunner);
+		if (finalOdds > MIN_ODDS) {
+			log.info("** getSelectionPrice(): finalOdds: " + finalOdds + ", sourceOdds: " + sourceOdds + ", volumeStake: " + volumeStake
+					+ ", maxLoss: " + maxLoss + ", profitLoss: " + _profitLoss + ", inplayDelay: " + inplayDelay + ", marketStatus: " + marketStatus + ", isNonRunner: " + isNonRunner);
+		}
+
 		Double profitLoss = (_profitLoss==null? 0.0: _profitLoss);
 
 		Double result = FAKE_ODDS;
 		if (MarketStatus.OPEN.name().equals(marketStatus) && finalOdds > 0 && finalOdds >= MIN_ODDS && volumeStake > 0 && sourceOdds != null && sourceOdds >= MIN_ODDS ) {
 		  if (!isNonRunner && ((volumeStake / finalOdds) > MIN_STAKE_AMOUNT) && ((maxLoss - volumeStake * (finalOdds-1) + profitLoss) > 0) && inplayDelay == 0 ) {
 			  result = finalOdds;
-			  log.info( "getSelectionPrice(): real finalOdds enabled: " + finalOdds + " volumeStake * (finalOdds-1)=" + volumeStake * (finalOdds-1) );
+			  log.info( "$$ getSelectionPrice(): real finalOdds enabled: " + finalOdds + " volumeStake * (finalOdds-1)=" + volumeStake * (finalOdds-1) );
 		  }
 		}
 	   return result;
@@ -286,14 +289,14 @@ End Function
 */
 
 	public Double getSelectionAmount (Double finalOdds, Double sourceOdds, Double volumeStake, String marketStatus) {
-		
-		log.fine("** getSelectionAmount(): finalOdds: "+ finalOdds + ", sourceOdds: "+ sourceOdds + ", volumeStake: " + volumeStake + ", marketStatus: " + marketStatus);
-
+		if (finalOdds > MIN_ODDS) {
+			log.info("** getSelectionAmount(): finalOdds: " + finalOdds + ", sourceOdds: " + sourceOdds + ", volumeStake: " + volumeStake + ", marketStatus: " + marketStatus);
+		}
 		Double result = FAKE_STAKE;
 		if (MarketStatus.OPEN.name().equals(marketStatus) && finalOdds != null && finalOdds >= MIN_ODDS && volumeStake != null && volumeStake > 0 && sourceOdds != null && sourceOdds >= MIN_ODDS ) {
 			if ((volumeStake / finalOdds) > MIN_STAKE_AMOUNT) {
 			  result = Math.floor(volumeStake/finalOdds); 
-			  log.fine("getSelectionAmount(): finalOdds=" + finalOdds + ", result="+result);		  	
+			  log.info("$$ getSelectionAmount() result : finalOdds=" + finalOdds + ", result="+result);
 			}
 		}
 		return result;

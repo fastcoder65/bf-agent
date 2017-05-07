@@ -296,7 +296,9 @@ public class SheduleRequestMessageListener implements MessageListener {
 
         try {
             currentBets = serviceBean.listCurrentOrders(currentUser.getApiContext(), null, marketIds);
-            printLog(Level.INFO, "??? on market " + currentMarket + ", found currentBets count: " + (currentBets == null ? "0" : "" + currentBets.size()));
+            if (currentBets != null && currentBets.size() > 0) {
+                printLog(Level.INFO, "** on market " + currentMarket + ", found currentBets count: " + (currentBets == null ? "0" : "" + currentBets.size()));
+            }
 
         } catch (Exception e) {
             logError(" 'Get Current Bets' error, message: ", e);
@@ -304,7 +306,7 @@ public class SheduleRequestMessageListener implements MessageListener {
 
         long endTime = System.currentTimeMillis();
 
-        printLog(Level.INFO, "action 'Get Current Bets' COMPLETED, login="
+        printLog(Level.FINE, "action 'Get Current Bets' COMPLETED, login="
                 + currentUser.getLogin() + ", marketId="
                 + currentMarket.getMarketId() + ", time consumed: "
                 + ((endTime - startTime) / 1000.0) + " second(s)");
@@ -323,7 +325,9 @@ public class SheduleRequestMessageListener implements MessageListener {
                 if (mpl != null) {
                     for (RunnerProfitAndLoss rpl : mpl.getProfitAndLosses()) {
 
-                        log.info("rpl.getSelectionId(): " + rpl.getSelectionId()+ ", rpl.getIfLose()="+ rpl.getIfLose() + ", rpl.getIfWin()="+ rpl.getIfWin()+ ", rpl.getIfPlace()="+ rpl.getIfPlace());
+                        if (!( rpl.getIfLose()== 0 && rpl.getIfWin() == 0 && rpl.getIfPlace() == 0 )) {
+                            log.info("rpl.getSelectionId(): " + rpl.getSelectionId() + ", rpl.getIfLose()=" + rpl.getIfLose() + ", rpl.getIfWin()=" + rpl.getIfWin() + ", rpl.getIfPlace()=" + rpl.getIfPlace());
+                        }
 
                         rProfitAndLosses.put(rpl.getSelectionId(), rpl);
                     }
@@ -334,7 +338,7 @@ public class SheduleRequestMessageListener implements MessageListener {
 
             endTime = System.currentTimeMillis();
 
-            printLog(Level.INFO, "action 'listMarketProfitAndLoss' COMPLETED, login="
+            printLog(Level.FINE, "action 'listMarketProfitAndLoss' COMPLETED, login="
                     + currentUser.getLogin() + ", marketId="
                     + currentMarket.getMarketId() + ", time consumed: "
                     + ((endTime - startTime) / 1000.0) + " second(s)");

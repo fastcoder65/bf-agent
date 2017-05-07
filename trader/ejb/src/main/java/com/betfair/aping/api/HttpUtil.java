@@ -39,7 +39,7 @@ import java.util.logging.Logger;
 
 //@Lock(LockType.WRITE)
 //@AccessTimeout(value=60, unit = TimeUnit.SECONDS )
-
+@Startup
 @Singleton
 public class HttpUtil implements TimedObject {
 
@@ -54,13 +54,9 @@ public class HttpUtil implements TimedObject {
     @Resource
     private EJBContext context;
 
-    public HttpUtil() {
-        log.info("HttpUtil constructor, hashcode=" + this.hashCode());
-    }
-
     @PostConstruct
     private void create() {
-        log.info("HttpUtil @PostConstruct , hashcode=" + this.hashCode());
+        log.info("** HttpUtil @PostConstruct , hashcode=" + this.hashCode());
         httpClient = createHttpClientOrProxy();
         createTimer(context,  3600 * 1000);
     }

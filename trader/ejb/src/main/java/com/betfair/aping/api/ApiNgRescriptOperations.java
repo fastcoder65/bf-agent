@@ -9,23 +9,25 @@ import com.betfair.aping.util.JsonConverter;
 import com.google.gson.reflect.TypeToken;
 import net.bir2.util.DTAction;
 
+import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
-import javax.ejb.Lock;
-import javax.ejb.LockType;
 import javax.ejb.Singleton;
+import javax.ejb.Startup;
 import java.util.*;
 import java.util.logging.Level;
 
 //@Lock(LockType.WRITE)
 //@AccessTimeout(value=60, unit = TimeUnit.SECONDS )
 
-@Lock(LockType.READ)
+//@Lock(LockType.READ)
+@Startup
 @Singleton
 public class ApiNgRescriptOperations extends ApiNgOperations {
 
 
-    public ApiNgRescriptOperations(){
-        log.info("ApiNgRescriptOperations constructor, hashcode=" + this.hashCode());
+    @PostConstruct
+    public void create() {
+        System.out.println("** ApiNgRescriptOperations @PostConstruct create() , hashcode=" + this.hashCode());
     }
 
     public AccountFundsResponse  getAccountFunds  (Wallet wallet, String appKey, String ssoId )  throws APINGException {
