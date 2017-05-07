@@ -56,7 +56,8 @@
         </statement>
     </datasource>
 -->
-<!--
+
+    <!--
     <datasource jndi-name="java:/jboss/datasources/birPgDSApp" pool-name="birPgPoolDsApp" enabled="true">
         <connection-url>jdbc:postgresql://localhost:5432/postgres</connection-url>
         <driver>PostgresSQLDriver</driver>
@@ -76,6 +77,8 @@
         </statement>
     </datasource>
 -->
+
+<!--
     <datasource jta="true" jndi-name="java:/jboss/datasources/birMySqlDS_App" pool-name="MySqlDSApp" enabled="true" use-java-context="true" use-ccm="true">
         <connection-url>jdbc:mysql://localhost:3306/bir</connection-url>
         <driver>mysql</driver>
@@ -90,6 +93,6 @@
             <password>bir-123123</password>
         </security>
     </datasource>
-
+-->
 </datasources>
  
