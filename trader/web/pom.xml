@@ -68,7 +68,7 @@
 			<artifactId>jboss-jsf-api_2.1_spec</artifactId>
 			<scope>provided</scope>
 		</dependency>
-
+<!--
 		<dependency>
 			<groupId>commons-digester</groupId>
 			<artifactId>commons-digester</artifactId>
@@ -89,7 +89,7 @@
 			<artifactId>commons-logging</artifactId>
 			<version>1.1.2</version>
 		</dependency>
-
+-->
 		<dependency>
 			<groupId>org.richfaces</groupId>
 			<artifactId>richfaces</artifactId>
@@ -127,7 +127,7 @@
 				</exclusion>
 			</exclusions>
 		</dependency>
-
+<!--
 		<dependency>
 			<groupId>org.richfaces</groupId>
 			<artifactId>richfaces-push-native-depchain</artifactId>
@@ -146,16 +146,12 @@
 			<artifactId>jboss-as-websockets</artifactId>
 			<version>0.5</version>
 		</dependency>
-
+-->
 		<dependency>
 			<groupId>net.sf.opencsv</groupId>
 			<artifactId>opencsv</artifactId>
 			<version>1.8</version>
 		</dependency>
-
-
-
-
 	</dependencies>
 
 	<build>

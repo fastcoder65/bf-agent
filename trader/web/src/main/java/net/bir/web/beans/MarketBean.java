@@ -556,7 +556,7 @@ AUSTRALIAN
         if (settings == null) {
             settings = settingsService.getJPASettings();
             if (settings == null) {
-                getLog().fine("initialize system settings..");
+                getLog().info("initialize system settings..");
                 settings = new JPASettings();
                 SystemSettings systemSettings = new SystemSettings();
                 getLog().info(systemSettings.toString());
@@ -805,24 +805,33 @@ AUSTRALIAN
 
             } else {
 
-                market4User = new Market4User(currentUser, market,
-                        getSettings().getSystemSettings()
-                                .getTurnOnTimeOffsetHours(), getSettings()
-                        .getSystemSettings()
-                        .getTurnOnTimeOffsetMinutes(), getSettings()
-                        .getSystemSettings()
-                        .getTurnOffTimeOffsetHours(), getSettings()
-                        .getSystemSettings()
-                        .getTurnOffTimeOffsetMinutes(), getSettings()
-                        .getSystemSettings().getMaxLossPerSelection());
+                if (getSettings() != null  && getSettings().getSystemSettings() != null ) {
 
-                market4User = merge(market4User);
+                  SystemSettings sets =  getSettings().getSystemSettings();
 
-                market4users.add(market4User);
+                  Integer tOn_Hrs = sets.getTurnOnTimeOffsetHours();
+                  Integer tOn_Mins = sets.getTurnOnTimeOffsetMinutes();
 
-                market.setMarket4Users(market4users);
+                  Integer tOff_Hrs = sets.getTurnOffTimeOffsetHours();
+                  Integer tOff_Mins = sets.getTurnOffTimeOffsetMinutes();
 
-                market = merge(market);
+                  Double _maxLoss = sets.getMaxLossPerSelection();
+
+                  market4User = new Market4User(currentUser, market,
+                          tOn_Hrs,
+                          tOn_Mins,
+                          tOff_Hrs,
+                          tOff_Mins,
+                          _maxLoss);
+
+                  market4User = merge(market4User);
+
+                  market4users.add(market4User);
+
+                  market.setMarket4Users(market4users);
+
+                  market = merge(market);
+              }
             }
 
             List<RunnerCatalog> runners = mc.getRunners();
