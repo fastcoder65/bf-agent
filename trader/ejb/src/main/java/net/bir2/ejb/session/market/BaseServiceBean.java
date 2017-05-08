@@ -296,7 +296,7 @@ End Function
 		if (MarketStatus.OPEN.name().equals(marketStatus) && finalOdds != null && finalOdds >= MIN_ODDS && volumeStake != null && volumeStake > 0 && sourceOdds != null && sourceOdds >= MIN_ODDS ) {
 			if ((volumeStake / finalOdds) > MIN_STAKE_AMOUNT) {
 			  result = Math.floor(volumeStake/finalOdds); 
-			  log.info("$$ getSelectionAmount() result : finalOdds=" + finalOdds + ", result="+result);
+			  log.info("$$ getSelectionAmount() - finalOdds: " + finalOdds + ", stake amount: "+result);
 			}
 		}
 		return result;
