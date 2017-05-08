@@ -75,35 +75,36 @@
         <param-value>false</param-value>
     </context-param>
 
+    <!-- interval in miliseconds; default value: 5 minutes -->
 
     <context-param>
         <param-name>org.richfaces.push.session.maxInactiveInterval</param-name>
-        <!-- interval in miliseconds; default value: 5 minutes -->
         <param-value>300000</param-value>
     </context-param>
+
     <context-param>
         <param-name>org.atmosphere.cpr.CometSupport.maxInactiveActivity</param-name>
         <param-value>35000</param-value>
     </context-param>
-
+<!--
     <context-param>
         <param-name>org.atmosphere.useBlocking</param-name>
         <param-value>true</param-value>
     </context-param>
-
+-->
 
     <listener>
         <listener-class>net.bir.util.BIRApplicationContextListener</listener-class>
     </listener>
-
+<!--
     <servlet>
         <servlet-name>Faces_Servlet</servlet-name>
         <servlet-class>javax.faces.webapp.FacesServlet</servlet-class>
         <load-on-startup>1</load-on-startup>
     </servlet>
-
+-->
     <!-- Faces_Servlet Mapping -->
-
+<!--
     <servlet-mapping>
         <servlet-name>Faces_Servlet</servlet-name>
         <url-pattern>*.jsf</url-pattern>
@@ -116,7 +117,7 @@
         <servlet-name>Faces_Servlet</servlet-name>
         <url-pattern>/faces/*</url-pattern>
     </servlet-mapping>
-
+-->
 
     <servlet>
         <servlet-name>DownloadDocServlet</servlet-name>
