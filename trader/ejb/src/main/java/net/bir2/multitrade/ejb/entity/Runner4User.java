@@ -107,10 +107,15 @@ public class Runner4User implements java.io.Serializable {
         return (this.profitLoss < 0 ? "red" : "green");
     }
 
-    @Formula("(select coalesce(1/r4u.odds, 0) from Runner4User r4u  where r4u.user_id = user_id  and r4u.runner_Id = runner_id)")
+    //@Formula(" select case when r4u.odds > 0 then (1/r4u.odds) else 1 end from Runner4User r4u  where r4u.user_id = user_id  and r4u.runner_Id = runner_id)")
+
+// (1/r4u.odds)
+
+    @Formula("( select case when r4u.odds > 0 then 1/r4u.odds else 1 end from Runner4User r4u where r4u.user_id = user_id  and r4u.runner_Id = runner_id )")
     private Double _returnPercent;
 
     public Double getReturnPercent() {
+        log.fine("getReturnPercent() - _returnPercent: " + _returnPercent);
         return _returnPercent;
     }
 
