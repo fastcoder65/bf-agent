@@ -693,6 +693,7 @@ public class ShedulerActivityBean implements ShedulerActivity {
         } catch (APINGException e) {
             log.log(Level.SEVERE, "error on cancel orders ", e);
         }
+
         return result;
     }
 

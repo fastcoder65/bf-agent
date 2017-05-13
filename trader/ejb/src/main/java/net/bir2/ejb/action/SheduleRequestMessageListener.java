@@ -828,7 +828,7 @@ public class SheduleRequestMessageListener implements MessageListener {
                         .getUserData4Market().get(currentUser.getId())
                         .getMaxLossPerSelection();
 
-                r4u.setSelectionPrice(1.0);
+                r4u.setSelectionPrice(BaseServiceBean.FAKE_ODDS);
 
                 Double _selectionPrice = baseService.getSelectionPrice(
                         r4u.getOddsCosmetic(), r4u.getOdds(), _volumeStake,
@@ -837,7 +837,8 @@ public class SheduleRequestMessageListener implements MessageListener {
 
                 r4u.setSelectionPrice(_selectionPrice);
 
-                r4u.setSelectionAmount(1.0);
+                r4u.setSelectionAmount(BaseServiceBean.FAKE_STAKE);
+
                 Double _selectionAmount = baseService.getSelectionAmount(
                         _selectionPrice, r4u.getOdds(), _volumeStake,
                         currentMarket.getMarketStatus());

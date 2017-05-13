@@ -134,7 +134,10 @@ public class Market4User implements java.io.Serializable {
 		return linkedMarket;
 	}
 
-	@Formula(" ( select  coalesce(1/sum(1/r4u.odds), 1) from Runner4User r4u, Runner r where r4u.user_id = user_id  and r.id=r4u.runner_id and r.market_id = market_id )")
+	//@Formula(" ( select  coalesce(1/sum(1/r4u.odds), 1) from Runner4User r4u, Runner r where r4u.user_id = user_id  and r.id=r4u.runner_id and r.market_id = market_id )")
+// ( 1.0 / sum ( 1/r4u.odds ) )
+// 	@Formula(" ( select case when r4u.odds > 0 then 1.1 else 1.0 end from Runner4User r4u, Runner r where r4u.user_id = user_id and r.id=r4u.runner_id and r.market_id = market_id )")
+	@Formula(" ( select  coalesce(1/sum(1/r4u.odds), 1) from Runner4User r4u, Runner r where case when r4u.odds <> 0 then true else false end and r4u.user_id = user_id  and r.id=r4u.runner_id and r.market_id = market_id  )")
 	private Double _sumReturnPercent;
 
 //	@Formula("(select coalesce(1/sum(1/r4u.odds), -20.0) from Runner4User r4u, Runner r where r4u.user_id = user_id  and r.id=r4u.runner_id and r.market_id= market_id )")
