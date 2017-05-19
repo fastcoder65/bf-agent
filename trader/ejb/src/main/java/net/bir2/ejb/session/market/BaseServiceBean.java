@@ -250,19 +250,23 @@ public class BaseServiceBean implements BaseService {
 	
 	public Double getSelectionPrice ( Double finalOdds, Double sourceOdds, Double volumeStake, Double maxLoss, Double _profitLoss, Integer inplayDelay, String marketStatus, Boolean isNonRunner) {
 		Double result = FAKE_ODDS;
-		if (finalOdds > FAKE_ODDS) {
-			log.fine("** getSelectionPrice(): finalOdds: " + finalOdds + ", sourceOdds: " + sourceOdds + ", volumeStake: " + volumeStake
-					+ ", maxLoss: " + maxLoss + ", profitLoss: " + _profitLoss + ", inplayDelay: " + inplayDelay + ", marketStatus: " + marketStatus + ", isNonRunner: " + isNonRunner);
 
-			Double profitLoss = (_profitLoss == null ? 0.0 : _profitLoss);
+		Double profitLoss = (_profitLoss == null ? 0.0 : _profitLoss);
 
-			if (MarketStatus.OPEN.name().equals(marketStatus) && finalOdds > 0 && finalOdds >= MIN_ODDS && volumeStake > 0 && sourceOdds != null && sourceOdds >= MIN_ODDS) {
-				if (!isNonRunner && ((volumeStake / finalOdds) > MIN_STAKE_AMOUNT) && ((maxLoss - volumeStake * (finalOdds - 1) + profitLoss) > 0) && inplayDelay == 0) {
+		log.fine("** INPUT finalOdds: " + finalOdds + ", sourceOdds: " + sourceOdds + ", volumeStake: " + volumeStake
+				+ ", maxLoss: " + maxLoss + ", profitLoss: " + _profitLoss + ", inplayDelay: " + inplayDelay + ", marketStatus: " + marketStatus + ", isNonRunner: " + isNonRunner);
+
+		if (MarketStatus.OPEN.name().equals(marketStatus) && finalOdds > MIN_ODDS && volumeStake > FAKE_STAKE && sourceOdds != null && sourceOdds >= MIN_ODDS) {
+				if (!isNonRunner
+						&& ( (volumeStake / finalOdds) > MIN_STAKE_AMOUNT)
+						&& ( (maxLoss + profitLoss - volumeStake * (finalOdds - 1)) > 0)
+						&& ( inplayDelay == 0)
+						) {
 					result = finalOdds;
-					log.info("$$ getSelectionPrice(): real finalOdds enabled: " + finalOdds + " volumeStake * (finalOdds-1)=" + volumeStake * (finalOdds - 1));
+					log.info("$$ real finalOdds ENABLED: " + finalOdds + " volumeStake * (finalOdds-1)=" + volumeStake * (finalOdds - 1));
 				}
 			}
-		}
+
 	   return result;
 	}
 	
