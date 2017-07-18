@@ -15,7 +15,7 @@ import java.util.logging.Logger;
 @NamedQueries({
 		@NamedQuery(name = "MarketCountByMarketId", query = "select count(m) FROM Market m where m.marketId = :marketId"),
 		@NamedQuery(name = "MarketByMarketId", query = "select m  FROM Market m where m.marketId = :marketId"),
-		@NamedQuery(name = "MyActiveMarkets", query = "select m FROM Market m join fetch m.market4Users m4u join fetch m4u.linkedUser u  where m.marketStatus <> :marketStatus and u.login = :login") })
+		@NamedQuery(name = "MyActiveMarkets", query = "select m FROM Market m join fetch m.market4Users m4u join fetch m4u.linkedUser u  where m.marketStatus <> :marketStatus and u.login = :login order by m.marketDisplayTime, m.marketTime ") })
 
 // @NamedNativeQuery(name = "MyActiveMarkets", query =
 // "select m.* from market4user m4u join user u on m4u.user_id=u.id join market m on m4u.market_id=m.id where u.login=:login",

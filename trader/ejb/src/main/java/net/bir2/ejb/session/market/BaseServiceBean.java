@@ -5,9 +5,7 @@ import net.bir2.ejb.action.Action;
 import net.bir2.ejb.action.ShedulerActivity;
 import net.bir2.multitrade.ejb.entity.ValidOdds;
 
-import javax.annotation.Resource;
 import javax.ejb.EJB;
-import javax.ejb.EJBContext;
 import javax.ejb.Local;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
@@ -22,10 +20,10 @@ public class BaseServiceBean implements BaseService {
 
 	@Inject
     private Logger log;
-
+/*
 	@Resource
 	private EJBContext context;
-
+*/
 	@PersistenceContext
 	protected EntityManager em;
 
@@ -86,7 +84,6 @@ public class BaseServiceBean implements BaseService {
 				}
 			}
 		}
-	
 		log.fine("getUpOdds(): cOdds=" + cOdds + ", result=" + result);
 		return result;
 	}
@@ -259,11 +256,11 @@ public class BaseServiceBean implements BaseService {
 		if (MarketStatus.OPEN.name().equals(marketStatus) && finalOdds > MIN_ODDS && volumeStake > FAKE_STAKE && sourceOdds != null && sourceOdds >= MIN_ODDS) {
 				if (!isNonRunner
 						&& ( (volumeStake / finalOdds) > MIN_STAKE_AMOUNT)
-						&& ( (maxLoss + profitLoss - volumeStake * (finalOdds - 1)) > 0)
+						&& ( (maxLoss + profitLoss - volumeStake * (finalOdds - 1)/finalOdds) > 0)
 						&& ( inplayDelay == 0)
 						) {
 					result = finalOdds;
-					log.info("$$ real finalOdds ENABLED: " + finalOdds + " volumeStake * (finalOdds-1)=" + volumeStake * (finalOdds - 1));
+					log.fine("$$ real finalOdds ENABLED: " + finalOdds + " stake risk Volume (volumeStake * (finalOdds - 1)/finalOdds) : " + volumeStake * (finalOdds - 1)/finalOdds );
 				}
 			}
 
@@ -300,7 +297,7 @@ End Function
 		if (MarketStatus.OPEN.name().equals(marketStatus) && finalOdds != null && finalOdds >= MIN_ODDS && volumeStake != null && volumeStake > 0 && sourceOdds != null && sourceOdds >= MIN_ODDS ) {
 			if ((volumeStake / finalOdds) > MIN_STAKE_AMOUNT) {
 			  result = Math.floor(volumeStake/finalOdds); 
-			  log.info("$$ getSelectionAmount() - finalOdds: " + finalOdds + ", stake amount: "+result);
+			  log.fine("$$ getSelectionAmount() - finalOdds: " + finalOdds + ", stake amount: "+result);
 			}
 		}
 		}

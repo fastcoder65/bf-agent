@@ -25,13 +25,11 @@
 				<a4j:outputPanel id="balances" layout="block">
 				<h:panelGrid columns="2" cellpadding="2">
 					<h:outputLabel value="Main:" />
-					<h:outputLabel value="#{marketBean.mainBalance}" />
-					<h:outputLabel value="Australian:" />
-					<h:outputLabel value="#{marketBean.ausBalance}" />
+					<h:outputLabel value="#{marketBean.accountBalance}" />
 				</h:panelGrid>
 				</a4j:outputPanel>
 
-				<a4j:commandLink render="balances" action="#{marketBean.setOnAirOn}"
+				<a4j:commandLink render="balances" action="#{marketBean.updateBalance}"
 								 title="OnAir On" style="margin-right:20px">
 					<h:graphicImage style="border-width:0" value="/images/buttons/ev.play.jpg"/>
 				</a4j:commandLink>

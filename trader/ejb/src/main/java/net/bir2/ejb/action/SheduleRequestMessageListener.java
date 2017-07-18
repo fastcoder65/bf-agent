@@ -297,7 +297,7 @@ public class SheduleRequestMessageListener implements MessageListener {
         try {
             currentBets = serviceBean.listCurrentOrders(currentUser.getApiContext(), null, marketIds);
             if (currentBets != null && currentBets.size() > 0) {
-                printLog(Level.INFO, "** on market " + currentMarket + ", found currentBets count: " + (currentBets == null ? "0" : "" + currentBets.size()));
+                printLog(Level.FINE, "** on market " + currentMarket + ", found currentBets count: " + (currentBets == null ? "0" : "" + currentBets.size()));
             }
 
         } catch (Exception e) {
@@ -326,7 +326,7 @@ public class SheduleRequestMessageListener implements MessageListener {
                     for (RunnerProfitAndLoss rpl : mpl.getProfitAndLosses()) {
 
                         if (rpl != null && !( rpl.getIfLose()== 0 && rpl.getIfWin() == 0 && rpl.getIfPlace() == 0 )) {
-                            log.info("rpl.getSelectionId(): " + rpl.getSelectionId() + ", rpl.getIfLose()=" + rpl.getIfLose() + ", rpl.getIfWin()=" + rpl.getIfWin() + ", rpl.getIfPlace()=" + rpl.getIfPlace());
+                            log.fine("rpl.getSelectionId(): " + rpl.getSelectionId() + ", rpl.getIfLose()=" + rpl.getIfLose() + ", rpl.getIfWin()=" + rpl.getIfWin() + ", rpl.getIfPlace()=" + rpl.getIfPlace());
                         }
 
                         rProfitAndLosses.put(rpl.getSelectionId(), rpl);

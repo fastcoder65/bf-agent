@@ -147,16 +147,11 @@ AUSTRALIAN
 
 
  */
-    public String getMainBalance() {
-     String result = "N/A";
-        AccountFundsResponse resp = null;
-        if (getApiContext() != null && getApiContext().getToken()!= null)
-         resp = getMarketService().getAccountFunds(Wallet.UK, apiContext.getProduct(), apiContext.getToken());
-
-        if (resp != null)
-            result = NumberFormat.getInstance().format(resp.getAvailableToBetBalance());
-
-        return result;
+    public String getAccountBalance() {
+        if (NA.equals(accountBalance)) {
+            updateBalance();
+        }
+        return accountBalance;
     }
 
     public String getAusBalance() {
@@ -577,6 +572,7 @@ AUSTRALIAN
 
         if (currentMarket != null) {
             long startTime = System.currentTimeMillis();
+            runners.clear();
             runners.addAll(getMarketService().listRunners(currentMarket.getMarketId()));
             long endTime = System.currentTimeMillis();
 
@@ -692,15 +688,15 @@ AUSTRALIAN
         Set<String> marketIds = new HashSet<String>();
         marketIds.add(selectedMarketId);
 
-        List<MarketCatalogue> _listMarkets = getMarketService().getMarkets(apiContext,
-                null, marketIds);
+        List<MarketCatalogue> _listMarkets = getMarketService().getMarkets(apiContext, null, marketIds);
+
         Iterator<MarketCatalogue> mi = _listMarkets.iterator();
 
         MarketCatalogue mc = (mi.hasNext() ? mi.next() : null);
-        getLog().info(" MarketCatalogue: " + mc.getMarketId());
+//        getLog().info(" MarketCatalogue: " + mc.getMarketId());
 
-        MarketDescription md = mc.getDescription();
-        getLog().info("MarketDescription.rules: " + md.getRules());
+        MarketDescription md = (mc!= null ? mc.getDescription() : null);
+ //       getLog().info("MarketDescription.rules: " + md.getRules());
 
         // get marketbook there
         List<String> listMarketIds = new ArrayList<String>();
@@ -954,6 +950,20 @@ AUSTRALIAN
         boolean b = this.pollEnabled;
         setPollEnabled(!b);
     }
+
+    private static final String NA = "N/A";
+
+    private String accountBalance = NA;
+
+    public void updateBalance() {
+        AccountFundsResponse resp = null;
+        if (getApiContext() != null && getApiContext().getToken()!= null)
+            resp = getMarketService().getAccountFunds(Wallet.UK, apiContext.getProduct(), apiContext.getToken());
+
+        if (resp != null)
+            accountBalance = NumberFormat.getInstance().format(resp.getAvailableToBetBalance());
+    }
+
 
     public void setOnAirOn() {
         setOnAir(true);

@@ -155,7 +155,7 @@ public class MarketServiceBean implements MarketService {
                 em.createQuery("select r FROM MarketRunner r where r.market.marketId = :marketId ")
                         .setParameter("marketId", marketId)
                         .getResultList();
-
+        log.fine(result.size() + " MarketRunner(s) loaded.");
         for (MarketRunner runner : result) {
             runner.prefetchAll();
         }

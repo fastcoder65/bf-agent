@@ -16,7 +16,8 @@
     limitations under the License.
 -->
 
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
@@ -39,13 +40,11 @@
         </license>
     </licenses>
 
-	<properties>
-
-		<jboss.deploy.dir.64>C:/Java/jboss-eap-6.4/standalone/deployments</jboss.deploy.dir.64>
-
+    <properties>
+        <jboss.deploy.dir.64>C:/Java/jboss-eap-6.4/standalone/deployments</jboss.deploy.dir.64>
         <jboss.deploy.dir>C:/Java/wildfly-10.1.0.Final/standalone/deployments</jboss.deploy.dir>
-
-	</properties>
+        <jboss.deploy.dir.nocamel>C:/Java/wildfly-10.0.0.Final/standalone/deployments</jboss.deploy.dir.nocamel>
+    </properties>
 
     <dependencies>
 
@@ -55,69 +54,69 @@
             <artifactId>trader-web</artifactId>
             <type>war</type>
         </dependency>
-        
+
         <dependency>
             <groupId>net.bir2</groupId>
             <artifactId>trader-ejb</artifactId>
             <type>ejb</type>
         </dependency>
-        
+
         <dependency>
-			<groupId>com.fasterxml.jackson.core</groupId>
-			<artifactId>jackson-annotations</artifactId>
-			<version>2.2.3</version>
-		</dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-annotations</artifactId>
+            <version>2.2.3</version>
+        </dependency>
 
-		<dependency>
-			<groupId>com.fasterxml.jackson.core</groupId>
-			<artifactId>jackson-core</artifactId>
-			<version>2.2.3</version>
-		</dependency>
-		
-		<dependency>
-			<groupId>com.fasterxml.jackson.core</groupId>
-			<artifactId>jackson-databind</artifactId>
-			<version>2.2.3</version>
-		</dependency>
-		
-		<!-- To redirect output of slf4j logger to console -->
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-core</artifactId>
+            <version>2.2.3</version>
+        </dependency>
 
-		<dependency>
-			<groupId>org.slf4j</groupId>
-			<artifactId>slf4j-simple</artifactId>
-			<version>1.7.5</version>
-		</dependency>
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-databind</artifactId>
+            <version>2.2.3</version>
+        </dependency>
 
-		<dependency>
-			<groupId>org.slf4j</groupId>
-			<artifactId>slf4j-api</artifactId>
-			<version>1.7.5</version>
-		</dependency>
+        <!-- To redirect output of slf4j logger to console -->
 
-		<dependency>
-			<groupId>com.google.code.gson</groupId>
-			<artifactId>gson</artifactId>
-			<version>2.2.2</version>
-		</dependency>
-<!-- 
-		<dependency>
-			<groupId>org.apache.httpcomponents</groupId>
-			<artifactId>httpclient</artifactId>
-			<version>4.4</version>
-		</dependency>
- -->        
- 		<dependency>
-			<groupId>org.apache.httpcomponents</groupId>
-			<artifactId>httpclient</artifactId>
-			 <version>4.4</version>
-		</dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-simple</artifactId>
+            <version>1.7.5</version>
+        </dependency>
 
-		<dependency>
-			<groupId>org.apache.httpcomponents</groupId>
-			<artifactId>httpcore</artifactId>
-			<version>4.4</version>
-		</dependency>
- 
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+            <version>1.7.5</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.google.code.gson</groupId>
+            <artifactId>gson</artifactId>
+            <version>2.2.2</version>
+        </dependency>
+        <!--
+                <dependency>
+                    <groupId>org.apache.httpcomponents</groupId>
+                    <artifactId>httpclient</artifactId>
+                    <version>4.4</version>
+                </dependency>
+         -->
+        <dependency>
+            <groupId>org.apache.httpcomponents</groupId>
+            <artifactId>httpclient</artifactId>
+            <version>4.4</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.httpcomponents</groupId>
+            <artifactId>httpcore</artifactId>
+            <version>4.4</version>
+        </dependency>
+
     </dependencies>
 
     <build>
@@ -136,54 +135,41 @@
                     <defaultLibBundleDir>lib</defaultLibBundleDir>
 
                     <modules>
-                    	<ejbModule>
-							<groupId>net.bir2</groupId>
-							<artifactId>trader-ejb</artifactId>
-						</ejbModule>
-						<webModule>
-							<groupId>net.bir2</groupId>
-							<artifactId>trader-web</artifactId>
-							<contextRoot>/trader</contextRoot>
-						</webModule>
+                        <ejbModule>
+                            <groupId>net.bir2</groupId>
+                            <artifactId>trader-ejb</artifactId>
+                        </ejbModule>
+                        <webModule>
+                            <groupId>net.bir2</groupId>
+                            <artifactId>trader-web</artifactId>
+                            <contextRoot>/trader</contextRoot>
+                        </webModule>
                     </modules>
-                <!--     
-                    <fileNameMapping>no-version</fileNameMapping>
-                  -->   
+                    <!--
+                        <fileNameMapping>no-version</fileNameMapping>
+                      -->
                 </configuration>
             </plugin>
-			<plugin>
-				<artifactId>maven-antrun-plugin</artifactId>
-				<executions>
-					<execution>
-						<phase>pre-integration-test</phase>
-						<configuration>
-							<tasks>
-								<copy file="${project.build.directory}/${project.build.finalName}.ear"
-									  todir="${jboss.deploy.dir}"/>
-							</tasks>
-						</configuration>
-						<goals>
-							<goal>run</goal>
-						</goals>
-					</execution>
-				</executions>
-			</plugin>
-
-            <!-- The JBoss AS plugin deploys your ear to a local JBoss AS container -->
-            <!-- Due to Maven's lack of intelligence with EARs we need to configure 
-                the jboss-as maven plugin to skip deployment for all modules. We then enable 
-                it specifically in the ear module. -->
             <plugin>
-                <groupId>org.jboss.as.plugins</groupId>
-                <artifactId>jboss-as-maven-plugin</artifactId>
-                <configuration>
-                    <filename>${project.artifactId}.ear</filename>
-                    <skip>false</skip>
-                </configuration>
+                <artifactId>maven-antrun-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <phase>pre-integration-test</phase>
+                        <configuration>
+                            <tasks>
+                                <copy file="${project.build.directory}/${project.build.finalName}.ear"
+                                      todir="${jboss.deploy.dir}"/>
+                            </tasks>
+                        </configuration>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                    </execution>
+                </executions>
             </plugin>
         </plugins>
     </build>
-   
+
     <profiles>
         <profile>
             <!-- When built in OpenShift the 'openshift' profile will be used when invoking mvn. -->
@@ -201,24 +187,23 @@
                         </configuration>
                     </plugin>
 
-			<plugin>
-				<artifactId>maven-antrun-plugin</artifactId>
-				<executions>
-					<execution>
-						<phase>pre-integration-test</phase>
-						<configuration>
-							<tasks>
-								<copy file="${project.build.directory}/${project.build.finalName}.ear"
-									  todir="${jboss.deploy.dir}"/>
-							</tasks>
-						</configuration>
-						<goals>
-							<goal>run</goal>
-						</goals>
-					</execution>
-				</executions>
-			</plugin>
-                    
+                    <plugin>
+                        <artifactId>maven-antrun-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <phase>pre-integration-test</phase>
+                                <configuration>
+                                    <tasks>
+                                        <copy file="${project.build.directory}/${project.build.finalName}.ear"
+                                              todir="${jboss.deploy.dir}"/>
+                                    </tasks>
+                                </configuration>
+                                <goals>
+                                    <goal>run</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
                 </plugins>
             </build>
         </profile>
