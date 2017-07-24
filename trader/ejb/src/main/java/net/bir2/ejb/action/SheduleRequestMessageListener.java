@@ -297,7 +297,7 @@ public class SheduleRequestMessageListener implements MessageListener {
         try {
             currentBets = serviceBean.listCurrentOrders(currentUser.getApiContext(), null, marketIds);
             if (currentBets != null && currentBets.size() > 0) {
-                printLog(Level.FINE, "** on market " + currentMarket + ", found currentBets count: " + (currentBets == null ? "0" : "" + currentBets.size()));
+                printLog(Level.INFO, "** on market " + currentMarket + ", found currentBets count: " + (currentBets == null ? "0" : "" + currentBets.size()));
             }
 
         } catch (Exception e) {
@@ -306,7 +306,7 @@ public class SheduleRequestMessageListener implements MessageListener {
 
         long endTime = System.currentTimeMillis();
 
-        printLog(Level.FINE, "action 'Get Current Bets' COMPLETED, login="
+        printLog(Level.INFO, "action 'Get Current Bets' COMPLETED, login="
                 + currentUser.getLogin() + ", marketId="
                 + currentMarket.getMarketId() + ", time consumed: "
                 + ((endTime - startTime) / 1000.0) + " second(s)");
@@ -338,7 +338,7 @@ public class SheduleRequestMessageListener implements MessageListener {
 
             endTime = System.currentTimeMillis();
 
-            printLog(Level.FINE, "action 'listMarketProfitAndLoss' COMPLETED, login="
+            printLog(Level.INFO, "action 'listMarketProfitAndLoss' COMPLETED, login="
                     + currentUser.getLogin() + ", marketId="
                     + currentMarket.getMarketId() + ", time consumed: "
                     + ((endTime - startTime) / 1000.0) + " second(s)");
@@ -547,7 +547,7 @@ public class SheduleRequestMessageListener implements MessageListener {
 
     //    if (true) {
 
-            printLog(Level.FINE, "*** Update market prices for login: " + login + ", market: " + marketId);
+            printLog(Level.INFO, "*** Update market prices for login: " + login + ", market: " + marketId);
 
             List<MarketBook> marketBooks = null;
             int inPlayDelay = 0;
@@ -572,7 +572,7 @@ public class SheduleRequestMessageListener implements MessageListener {
 
             endTime = System.currentTimeMillis();
 
-            printLog(Level.FINE, "action UpdateMarketPrices COMPLETED, login=" + login
+            printLog(Level.INFO, "action UpdateMarketPrices COMPLETED, login=" + login
                     + ", marketId=" + marketId + ", time consumed: "
                     + ((endTime - startTime) / 1000.0) + " second(s)");
 
@@ -606,12 +606,14 @@ public class SheduleRequestMessageListener implements MessageListener {
 
                 Runner r = inflatedRunners.get(_key);
 
-                if (baseService != null) {
-                    printLog("baseService: " + baseService + ", currency: " + currency);
+           //     if (baseService != null) {
+           //         printLog("baseService: " + baseService + ", currency: " + currency);
                     r4u.setCurrency(baseService.getCurrencySymbol(currency));
 
-                } /*else
-                    printLog("baseService is NULL!!!"); */
+          //      }
+        /*else
+                    printLog("baseService is NULL!!!");
+
 
 /*
                 r4u.setBackPrice1(0.0);
