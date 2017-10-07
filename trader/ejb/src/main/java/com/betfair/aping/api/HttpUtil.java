@@ -40,6 +40,7 @@ import java.util.logging.Logger;
 //@Lock(LockType.WRITE)
 //@AccessTimeout(value=60, unit = TimeUnit.SECONDS )
 //@Startup
+@ConcurrencyManagement( ConcurrencyManagementType.BEAN)
 @Singleton
 public class HttpUtil implements TimedObject {
 
