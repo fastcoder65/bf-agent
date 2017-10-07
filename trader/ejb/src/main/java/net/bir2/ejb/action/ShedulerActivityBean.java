@@ -20,8 +20,7 @@ import net.bir2.util.DTAction;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
-import javax.ejb.EJB;
-import javax.ejb.Singleton;
+import javax.ejb.*;
 import javax.inject.Inject;
 import javax.jms.*;
 import javax.jms.Queue;
@@ -30,14 +29,17 @@ import javax.naming.NameNotFoundException;
 import javax.naming.NamingException;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-//@Lock(LockType.WRITE)
-//@AccessTimeout(value=60, unit = TimeUnit.SECONDS )
+import static javax.ejb.LockType.READ;
+import static javax.ejb.LockType.WRITE;
 
-//@Lock(LockType.READ)
-//@Startup
+
+@ConcurrencyManagement( ConcurrencyManagementType.CONTAINER)
+@AccessTimeout(value=60, unit = TimeUnit.SECONDS )
+@Lock(READ)
 @Singleton
 public class ShedulerActivityBean implements ShedulerActivity {
 
@@ -79,6 +81,7 @@ public class ShedulerActivityBean implements ShedulerActivity {
         return activeMarkets;
     }
 
+    @Lock(WRITE)
     public void setActiveMarkets(Map<String, Market> activeMarkets) {
         this.activeMarkets = activeMarkets;
     }
@@ -120,6 +123,7 @@ public class ShedulerActivityBean implements ShedulerActivity {
         return allValidOdds;
     }
 
+    @Lock(WRITE)
     public void setActiveMarket(String marketId, Market market) {
         activeMarkets.put(marketId, market);
     }
@@ -145,9 +149,9 @@ public class ShedulerActivityBean implements ShedulerActivity {
         } catch (Exception e) {
             log.log(Level.SEVERE, " sendKeepAlive error: ", e);
         }
-
     }
 
+    @Lock(WRITE)
     public boolean add2ActiveUsers(String login, Uzer uzer) {
         APIContext apiContext = new APIContext();
         boolean result = false;
