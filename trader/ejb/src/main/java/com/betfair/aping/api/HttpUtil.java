@@ -58,7 +58,7 @@ public class HttpUtil implements TimedObject {
     private void create() {
         log.info("** HttpUtil @PostConstruct , hashcode=" + this.hashCode());
         httpClient = createHttpClientOrProxy();
-        createTimer(context,  3600 * 1000);
+        createTimer(context, 18 * 3600 * 1000);
     }
 
     private void createTimer(EJBContext context, long duration) {
@@ -68,7 +68,7 @@ public class HttpUtil implements TimedObject {
 
             String timerInfo = "closeIdleConTimer on "+ duration +" , hashcode=" + this.hashCode();
 
-            timerService.createIntervalTimer(1000, duration, new TimerConfig(timerInfo, false));
+            timerService.createIntervalTimer( duration, duration, new TimerConfig(timerInfo, false));
 
         } catch (Exception e) {
             String msg = e.getMessage();
