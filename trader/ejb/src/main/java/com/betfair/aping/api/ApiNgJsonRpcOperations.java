@@ -14,7 +14,6 @@ import net.bir2.util.DTAction;
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
 import javax.ejb.Singleton;
-import javax.ejb.Startup;
 import java.util.*;
 import java.util.logging.Level;
 
@@ -23,7 +22,7 @@ import java.util.logging.Level;
 
 //@Lock(LockType.READ)
 
-@Startup
+//@Startup
 @Singleton
 public class ApiNgJsonRpcOperations extends ApiNgOperations {
 

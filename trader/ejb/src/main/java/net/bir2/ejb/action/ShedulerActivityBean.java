@@ -22,7 +22,6 @@ import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import javax.ejb.EJB;
 import javax.ejb.Singleton;
-import javax.ejb.Startup;
 import javax.inject.Inject;
 import javax.jms.*;
 import javax.jms.Queue;
@@ -38,7 +37,7 @@ import java.util.logging.Logger;
 //@AccessTimeout(value=60, unit = TimeUnit.SECONDS )
 
 //@Lock(LockType.READ)
-@Startup
+//@Startup
 @Singleton
 public class ShedulerActivityBean implements ShedulerActivity {
 
