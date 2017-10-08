@@ -26,7 +26,6 @@ import java.util.logging.Logger;
 @TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
 public class SheduleRequestMessageListener implements MessageListener {
 
-    private static final char BS = '\\';
     /*
         protected static final Logger LOG = Logger
                 .getLogger(SheduleRequestMessageListener.class);
@@ -34,10 +33,21 @@ public class SheduleRequestMessageListener implements MessageListener {
     public static final String ACTION_PROPERTY = "action";
     public static final String MARKET_ID_PROPERTY = "market_id";
     public static final String LOGIN_PROPERTY = "login";
+    public static final String UNKNOWN = "UNKNOWN";
+    private static final char BS = '\\';
     private static final long MIN_REFRESH_INT = 2;
-
+    private static final int K_MAX_BETS_GET = 100;
+    private static final int K_MAX_BETS_SUBMIT = 60;
+    @EJB
+    protected MarketService marketService;
+    @EJB
+    ShedulerActivity serviceBean;
     @Inject
     private Logger log;
+    @EJB
+    private BaseService baseService;
+    @EJB
+    private DataFeedService dataFeedService;
 
     private void printLog(String logMessage) {
         if (log.isLoggable(Level.FINE)) {
@@ -73,27 +83,24 @@ public class SheduleRequestMessageListener implements MessageListener {
         printLog(Level.INFO, logMessage);
     }
 
-
-    @EJB
-    private BaseService baseService;
-
-    @EJB
-    ShedulerActivity serviceBean;
-
     public BaseService getBaseService() {
         return baseService;
     }
 
-    @EJB
-    private DataFeedService dataFeedService;
+	/*
+     * private void doUpdateMarketStatus(String login, Long marketId) { String
+	 * eventId = new StringBuffer().append(
+	 * Action.UPDATE_MARKET.toString()).append("=").append(login)
+	 * .append(ITEM_SEPARATOR).append(marketId).toString(); long duration =
+	 * 100L; log.info("duration: " + duration / 1000.0); createTimer(context,
+	 * eventId, duration);
+	 * 
+	 * }
+	 */
 
     public DataFeedService getDataFeedService() {
         return dataFeedService;
     }
-
-    @EJB
-    protected MarketService marketService;
-
 
     public void onMessage(Message msg) {
 
@@ -115,17 +122,6 @@ public class SheduleRequestMessageListener implements MessageListener {
         serviceBean.updateUserMarkets();
     }
 
-	/*
-     * private void doUpdateMarketStatus(String login, Long marketId) { String
-	 * eventId = new StringBuffer().append(
-	 * Action.UPDATE_MARKET.toString()).append("=").append(login)
-	 * .append(ITEM_SEPARATOR).append(marketId).toString(); long duration =
-	 * 100L; log.info("duration: " + duration / 1000.0); createTimer(context,
-	 * eventId, duration);
-	 * 
-	 * }
-	 */
-
     private void doKeepAliveRequests() {
 
         printLog("* send keep-alive request to all active users..");
@@ -144,8 +140,6 @@ public class SheduleRequestMessageListener implements MessageListener {
         }
 
     }
-
-    public static final String UNKNOWN = "UNKNOWN";
 
     private void actionUpdateMarketStatus(String login, String marketId) {
 
@@ -215,7 +209,7 @@ public class SheduleRequestMessageListener implements MessageListener {
         try {
 
             marketBooks = serviceBean.getMarketStatus(currentUser.getApiContext(), currentMarket.getMarketId());
-            if (marketBooks != null ) {
+            if (marketBooks != null) {
                 marketBook0 = marketBooks.get(0);
             }
 
@@ -313,36 +307,38 @@ public class SheduleRequestMessageListener implements MessageListener {
 
 //      if (currentBets != null && currentBets.size() > 0) {
 
-            marketIds = new HashSet<String>();
-            startTime = System.currentTimeMillis();
-            marketIds.add(currentMarket.getMarketId());
+        marketIds = new HashSet<String>();
+        startTime = System.currentTimeMillis();
+        marketIds.add(currentMarket.getMarketId());
 
-            try {
+        try {
 
-                mProfitAndLosses = serviceBean.listMarketProfitAndLoss(currentUser.getApiContext(), marketIds);
+            mProfitAndLosses = serviceBean.listMarketProfitAndLoss(currentUser.getApiContext(), marketIds);
+            if (mProfitAndLosses != null) {
                 Iterator i = mProfitAndLosses.iterator();
                 MarketProfitAndLoss mpl = i.hasNext() ? (MarketProfitAndLoss) i.next() : null;
                 if (mpl != null) {
                     for (RunnerProfitAndLoss rpl : mpl.getProfitAndLosses()) {
 
-                        if (rpl != null && !( rpl.getIfLose()== 0 && rpl.getIfWin() == 0 && rpl.getIfPlace() == 0 )) {
+                        if (rpl != null && !(rpl.getIfLose() == 0 && rpl.getIfWin() == 0 && rpl.getIfPlace() == 0)) {
                             log.fine("rpl.getSelectionId(): " + rpl.getSelectionId() + ", rpl.getIfLose()=" + rpl.getIfLose() + ", rpl.getIfWin()=" + rpl.getIfWin() + ", rpl.getIfPlace()=" + rpl.getIfPlace());
                         }
 
                         rProfitAndLosses.put(rpl.getSelectionId(), rpl);
                     }
                 }
-            } catch (Exception e) {
-                logError(" 'listMarketProfitAndLoss' error, message: ", e);
             }
+        } catch (Exception e) {
+            logError(" 'listMarketProfitAndLoss' error, message: ", e);
+        }
 
-            endTime = System.currentTimeMillis();
+        endTime = System.currentTimeMillis();
 
-            printLog(Level.INFO, "action 'listMarketProfitAndLoss' COMPLETED, login="
-                    + currentUser.getLogin() + ", marketId="
-                    + currentMarket.getMarketId() + ", time consumed: "
-                    + ((endTime - startTime) / 1000.0) + " second(s)");
-  //      }
+        printLog(Level.INFO, "action 'listMarketProfitAndLoss' COMPLETED, login="
+                + currentUser.getLogin() + ", marketId="
+                + currentMarket.getMarketId() + ", time consumed: "
+                + ((endTime - startTime) / 1000.0) + " second(s)");
+        //      }
 
         if (currentBets != null) {
 
@@ -408,7 +404,7 @@ public class SheduleRequestMessageListener implements MessageListener {
                     if (r4u != null) {
 
                         r4u.setUnmatchedLayPrice(0.0);
-                                r4u.setUnmatchedLayAmount(0.0);
+                        r4u.setUnmatchedLayAmount(0.0);
                         if (OrderStatus.EXECUTABLE.equals(bet.getStatus()) // if (BetStatusEnum.U.equals
                                 && Side.LAY.equals(bet.getSide())) { // BetTypeEnum.L
 
@@ -425,7 +421,7 @@ public class SheduleRequestMessageListener implements MessageListener {
 
         }
 /*
-			Double sum = null;
+            Double sum = null;
 
 			if (currentBets != null)
 			for (CurrentOrderSummary currentBet : currentBets) {
@@ -494,16 +490,16 @@ public class SheduleRequestMessageListener implements MessageListener {
         boolean existMatchedBets = false;
 
         if (currentBets != null)
-        for (CurrentOrderSummary mbet : currentBets) {
+            for (CurrentOrderSummary mbet : currentBets) {
 
-            if (OrderStatus.EXECUTION_COMPLETE.equals(mbet.getStatus()) // if (BetStatusEnum.U.equals
-                    && (Side.BACK.equals(mbet.getSide()) || Side.LAY.equals(mbet.getSide()))) { // BetTypeEnum.L
+                if (OrderStatus.EXECUTION_COMPLETE.equals(mbet.getStatus()) // if (BetStatusEnum.U.equals
+                        && (Side.BACK.equals(mbet.getSide()) || Side.LAY.equals(mbet.getSide()))) { // BetTypeEnum.L
 
-                existMatchedBets = true;
+                    existMatchedBets = true;
 
-                break;
+                    break;
+                }
             }
-        }
 
         for (MarketRunner runner : currentMarket.getRunners()) {
 
@@ -511,14 +507,14 @@ public class SheduleRequestMessageListener implements MessageListener {
 
 //				Long _key = runner.getSelectionId();
 
-  //          logInfo("reading 'profit and loss' - runner.getSelectionId()= "+ runner.getSelectionId());
+            //          logInfo("reading 'profit and loss' - runner.getSelectionId()= "+ runner.getSelectionId());
 
             RunnerProfitAndLoss rpl = rProfitAndLosses.get(runner.getSelectionId());
 
             Double _profit = null;
 
             if (rpl != null && existMatchedBets) {
-                _profit =  Double.valueOf(rpl.getIfWin() + rpl.getIfLose());
+                _profit = Double.valueOf(rpl.getIfWin() + rpl.getIfLose());
             }
 
             log.fine(new StringBuilder(100).append("_profit=").append(_profit).toString());
@@ -545,72 +541,72 @@ public class SheduleRequestMessageListener implements MessageListener {
 */
         }
 
-    //    if (true) {
+        //    if (true) {
 
-            printLog(Level.INFO, "*** Update market prices for login: " + login + ", market: " + marketId);
+        printLog(Level.INFO, "*** Update market prices for login: " + login + ", market: " + marketId);
 
-            List<MarketBook> marketBooks = null;
-            int inPlayDelay = 0;
-            startTime = System.currentTimeMillis();
-            String currency = "USD";
-            MarketBook marketBook0 = null;
+        List<MarketBook> marketBooks = null;
+        int inPlayDelay = 0;
+        startTime = System.currentTimeMillis();
+        String currency = "USD";
+        MarketBook marketBook0 = null;
 
-            try {
+        try {
 
-                marketBooks = serviceBean.getMarketPrices(currentUser.getApiContext(), currentMarket.getMarketId(), "USD");
-                if (marketBooks != null ) {
-                    marketBook0 = marketBooks.get(0);
+            marketBooks = serviceBean.getMarketPrices(currentUser.getApiContext(), currentMarket.getMarketId(), "USD");
+            if (marketBooks != null) {
+                marketBook0 = marketBooks.get(0);
 
-                    inPlayDelay = marketBook0.getBetDelay();
+                inPlayDelay = marketBook0.getBetDelay();
 
-                    printLog("inPlayDelay =" + inPlayDelay);
-                }
-
-            } catch (Exception e) {
-                logError("getPrices() error: ", e);
+                printLog("inPlayDelay =" + inPlayDelay);
             }
 
-            endTime = System.currentTimeMillis();
+        } catch (Exception e) {
+            logError("getPrices() error: ", e);
+        }
 
-            printLog(Level.INFO, "action UpdateMarketPrices COMPLETED, login=" + login
-                    + ", marketId=" + marketId + ", time consumed: "
-                    + ((endTime - startTime) / 1000.0) + " second(s)");
+        endTime = System.currentTimeMillis();
 
-            printLog(Level.FINE, "currentMarket: name=" + currentMarket.getName()
-                    + ", runners count="
-                    + currentMarket.getRunners().size()
-                    + ", runnersMap size="
-                    + currentMarket.getRunnersMap().size());
+        printLog(Level.INFO, "action UpdateMarketPrices COMPLETED, login=" + login
+                + ", marketId=" + marketId + ", time consumed: "
+                + ((endTime - startTime) / 1000.0) + " second(s)");
 
-            Map<Long, Runner> inflatedRunners = new HashMap<Long, Runner>();
+        printLog(Level.FINE, "currentMarket: name=" + currentMarket.getName()
+                + ", runners count="
+                + currentMarket.getRunners().size()
+                + ", runnersMap size="
+                + currentMarket.getRunnersMap().size());
 
-            if (marketBook0 != null) {
-                for (Runner r : marketBook0.getRunners()) {
-                    inflatedRunners.put(r.getSelectionId(), r);
-                }
+        Map<Long, Runner> inflatedRunners = new HashMap<Long, Runner>();
+
+        if (marketBook0 != null) {
+            for (Runner r : marketBook0.getRunners()) {
+                inflatedRunners.put(r.getSelectionId(), r);
             }
+        }
 
-            printLog("currentUser: " + currentUser);
+        printLog("currentUser: " + currentUser);
 
-            for (MarketRunner runner : currentMarket.getRunners()) {
+        for (MarketRunner runner : currentMarket.getRunners()) {
 
-                printLog("iterate next runner: " + runner);
+            printLog("iterate next runner: " + runner);
 
-                Runner4User r4u = runner.getUserData4Runner().get(currentUser.getId());
+            Runner4User r4u = runner.getUserData4Runner().get(currentUser.getId());
 
-                printLog("r4u: " + r4u);
+            printLog("r4u: " + r4u);
 
-                if (r4u == null) continue;
+            if (r4u == null) continue;
 
-                Long _key = runner.getSelectionId();
+            Long _key = runner.getSelectionId();
 
-                Runner r = inflatedRunners.get(_key);
+            Runner r = inflatedRunners.get(_key);
 
-           //     if (baseService != null) {
-           //         printLog("baseService: " + baseService + ", currency: " + currency);
-                    r4u.setCurrency(baseService.getCurrencySymbol(currency));
+            //     if (baseService != null) {
+            //         printLog("baseService: " + baseService + ", currency: " + currency);
+            r4u.setCurrency(baseService.getCurrencySymbol(currency));
 
-          //      }
+            //      }
         /*else
                     printLog("baseService is NULL!!!");
 
@@ -645,232 +641,232 @@ public class SheduleRequestMessageListener implements MessageListener {
                 r4u = marketService.merge(r4u);
 */
 
-                if (r != null) {
+            if (r != null) {
 
-                    if (r.getEx().getAvailableToLay() != null && !(r.getEx().getAvailableToLay().size() < 3)) {
+                if (r.getEx().getAvailableToLay() != null && !(r.getEx().getAvailableToLay().size() < 3)) {
 
-                        printLog(new StringBuilder(100)
-                                .append("r.getEx().getAvailableToLay().size()= ")
-                                .append(r.getEx().getAvailableToLay().size()).toString());
-
-                        int priceDepth = 0;
-
-                        for (PriceSize _priceSize : r.getEx().getAvailableToLay()) {
-
-                            priceDepth++;
-
-                            switch (priceDepth) {
-                                case 1:
-
-                                    r4u.setLayAmount1(_priceSize.getSize());
-                                    r4u.setLayPrice1(_priceSize.getPrice());
-
-                                    printLog(new StringBuilder(100)
-                                            .append("r4u.getLayPrice1()= ")
-                                            .append(r4u.getLayPrice1())
-                                            .append(",\t r4u.getLayAmount1()= ")
-                                            .append(r4u.getLayAmount1())
-                                            .toString());
-                                    break;
-                                case 2:
-
-                                    r4u.setLayAmount2(_priceSize.getSize());
-                                    r4u.setLayPrice2(_priceSize.getPrice());
-
-                                    printLog(new StringBuilder(100)
-                                            .append("r4u.getLayPrice2()= ")
-                                            .append(r4u.getLayPrice2())
-                                            .append(",\t r4u.getLayAmount2()= ")
-                                            .append(r4u.getLayAmount2())
-                                            .toString());
-                                    break;
-                                case 3:
-
-                                    r4u.setLayAmount3(_priceSize.getSize());
-                                    r4u.setLayPrice3(_priceSize.getPrice());
-
-                                    printLog(new StringBuilder(100)
-                                            .append("r4u.getLayPrice3()= ")
-                                            .append(r4u.getBackPrice3())
-                                            .append(",\t r4u.getLayAmount3()= ")
-                                            .append(r4u.getBackAmount3())
-                                            .toString());
-                                    break;
-                                default:
-                                    logWarn("!!! enter to case: 'Lay' default ");
-                            }
-                        }
-//						}
-                    }
-
-                    if (r.getEx().getAvailableToBack() != null && !(r.getEx().getAvailableToBack().size() < 3)) {
-
-                        printLog(new StringBuilder(100)
-                                .append("r.getEx().getAvailableToBack().size()= ")
-                                .append(r.getEx().getAvailableToBack().size())
-                                .toString());
-
-                        int priceDepth = 0;
-                        for (PriceSize _priceSize : r.getEx().getAvailableToBack()) {
-                            priceDepth++;
-
-                            // if ("L".equals(p.getType())) {
-
-                            switch (priceDepth) {
-
-                                case 1:
-
-                                    r4u.setBackAmount1(_priceSize.getSize());
-                                    r4u.setBackPrice1(_priceSize.getPrice());
-
-                                    printLog(new StringBuilder(100)
-                                            .append("r4u.getBackPrice1()= ")
-                                            .append(r4u.getBackPrice1())
-                                            .append(",\t r4u.getBackAmount1()= ")
-                                            .append(r4u.getBackAmount1())
-                                            .toString());
-                                    break;
-                                case 2:
-
-                                    r4u.setBackAmount2(_priceSize.getSize());
-                                    r4u.setBackPrice2(_priceSize.getPrice());
-
-                                    printLog(new StringBuilder(100)
-                                            .append("r4u.getBackPrice2()= ")
-                                            .append(r4u.getBackPrice2())
-                                            .append(",\t r4u.getBackAmount2()= ")
-                                            .append(r4u.getBackAmount2())
-                                            .toString());
-                                    break;
-
-                                case 3:
-
-                                    r4u.setBackAmount3(_priceSize.getSize());
-                                    r4u.setBackPrice3(_priceSize.getPrice());
-
-                                    printLog(new StringBuilder(100)
-                                            .append("r4u.getBackPrice3()= ")
-                                            .append(r4u.getBackPrice3())
-                                            .append(",\t r4u.getBackAmount3()= ")
-                                            .append(r4u.getBackAmount3())
-                                            .toString());
-                                    break;
-
-                                default:
-                                    logWarn("enter to case: 'Back' default ");
-                            }
-                        }
-//						}
-                    }
-
-                    r4u.setTotalAmountMatched(marketBook0.getTotalMatched()); //  .getTotalAmountMatched()
-
-                    r4u.setLastPriceMatched(0.0); // .getLastPriceMatched()
-                    r4u.setIsNonRunner(RunnerStatus.REMOVED.equals(r.getStatus()));
-                } else {
                     printLog(new StringBuilder(100)
-                            .append("!!! !!! !!! MarketRunner with selectionId=")
-                            .append(_key)
-                            .append(" not found in 'inflatedRunners' map!")
+                            .append("r.getEx().getAvailableToLay().size()= ")
+                            .append(r.getEx().getAvailableToLay().size()).toString());
+
+                    int priceDepth = 0;
+
+                    for (PriceSize _priceSize : r.getEx().getAvailableToLay()) {
+
+                        priceDepth++;
+
+                        switch (priceDepth) {
+                            case 1:
+
+                                r4u.setLayAmount1(_priceSize.getSize());
+                                r4u.setLayPrice1(_priceSize.getPrice());
+
+                                printLog(new StringBuilder(100)
+                                        .append("r4u.getLayPrice1()= ")
+                                        .append(r4u.getLayPrice1())
+                                        .append(",\t r4u.getLayAmount1()= ")
+                                        .append(r4u.getLayAmount1())
+                                        .toString());
+                                break;
+                            case 2:
+
+                                r4u.setLayAmount2(_priceSize.getSize());
+                                r4u.setLayPrice2(_priceSize.getPrice());
+
+                                printLog(new StringBuilder(100)
+                                        .append("r4u.getLayPrice2()= ")
+                                        .append(r4u.getLayPrice2())
+                                        .append(",\t r4u.getLayAmount2()= ")
+                                        .append(r4u.getLayAmount2())
+                                        .toString());
+                                break;
+                            case 3:
+
+                                r4u.setLayAmount3(_priceSize.getSize());
+                                r4u.setLayPrice3(_priceSize.getPrice());
+
+                                printLog(new StringBuilder(100)
+                                        .append("r4u.getLayPrice3()= ")
+                                        .append(r4u.getBackPrice3())
+                                        .append(",\t r4u.getLayAmount3()= ")
+                                        .append(r4u.getBackAmount3())
+                                        .toString());
+                                break;
+                            default:
+                                logWarn("!!! enter to case: 'Lay' default ");
+                        }
+                    }
+//						}
+                }
+
+                if (r.getEx().getAvailableToBack() != null && !(r.getEx().getAvailableToBack().size() < 3)) {
+
+                    printLog(new StringBuilder(100)
+                            .append("r.getEx().getAvailableToBack().size()= ")
+                            .append(r.getEx().getAvailableToBack().size())
                             .toString());
+
+                    int priceDepth = 0;
+                    for (PriceSize _priceSize : r.getEx().getAvailableToBack()) {
+                        priceDepth++;
+
+                        // if ("L".equals(p.getType())) {
+
+                        switch (priceDepth) {
+
+                            case 1:
+
+                                r4u.setBackAmount1(_priceSize.getSize());
+                                r4u.setBackPrice1(_priceSize.getPrice());
+
+                                printLog(new StringBuilder(100)
+                                        .append("r4u.getBackPrice1()= ")
+                                        .append(r4u.getBackPrice1())
+                                        .append(",\t r4u.getBackAmount1()= ")
+                                        .append(r4u.getBackAmount1())
+                                        .toString());
+                                break;
+                            case 2:
+
+                                r4u.setBackAmount2(_priceSize.getSize());
+                                r4u.setBackPrice2(_priceSize.getPrice());
+
+                                printLog(new StringBuilder(100)
+                                        .append("r4u.getBackPrice2()= ")
+                                        .append(r4u.getBackPrice2())
+                                        .append(",\t r4u.getBackAmount2()= ")
+                                        .append(r4u.getBackAmount2())
+                                        .toString());
+                                break;
+
+                            case 3:
+
+                                r4u.setBackAmount3(_priceSize.getSize());
+                                r4u.setBackPrice3(_priceSize.getPrice());
+
+                                printLog(new StringBuilder(100)
+                                        .append("r4u.getBackPrice3()= ")
+                                        .append(r4u.getBackPrice3())
+                                        .append(",\t r4u.getBackAmount3()= ")
+                                        .append(r4u.getBackAmount3())
+                                        .toString());
+                                break;
+
+                            default:
+                                logWarn("enter to case: 'Back' default ");
+                        }
+                    }
+//						}
                 }
 
-                // System.out.println
-                // ("***----------------------------- after prices..");
-                // @@@@
-                Double _ak = r4u.getPercWinSglajivWithNR();
+                r4u.setTotalAmountMatched(marketBook0.getTotalMatched()); //  .getTotalAmountMatched()
 
-                printLog(new StringBuilder(100).append("_ak[")
-                        .append(runner.getSelectionId()).append("]=")
-                        .append(_ak).toString());
-
-                Double oddsPrecosmeticVal = r4u.getLinkedRunner().getMarket()
-                        .getUserData4Market().get(currentUser.getId())
-                        .getPreCosmeticValue();
-                Double _oddsPrecosmetic = (_ak > 0) ? oddsPrecosmeticVal / _ak
-                        : 1.01;
-
+                r4u.setLastPriceMatched(0.0); // .getLastPriceMatched()
+                r4u.setIsNonRunner(RunnerStatus.REMOVED.equals(r.getStatus()));
+            } else {
                 printLog(new StringBuilder(100)
-                        .append("** raw  oddsPrecosmetic =")
-                        .append(_oddsPrecosmetic).toString());
+                        .append("!!! !!! !!! MarketRunner with selectionId=")
+                        .append(_key)
+                        .append(" not found in 'inflatedRunners' map!")
+                        .toString());
+            }
 
-                Double _precosmOdds = baseService.getNearestOdds(_oddsPrecosmetic);
+            // System.out.println
+            // ("***----------------------------- after prices..");
+            // @@@@
+            Double _ak = r4u.getPercWinSglajivWithNR();
 
-                printLog(new StringBuilder(100).append("_precosmOdds: ").append(_precosmOdds).toString());
+            printLog(new StringBuilder(100).append("_ak[")
+                    .append(runner.getSelectionId()).append("]=")
+                    .append(_ak).toString());
 
-                r4u.setOddsPrecosmetic(_precosmOdds);
+            Double oddsPrecosmeticVal = r4u.getLinkedRunner().getMarket()
+                    .getUserData4Market().get(currentUser.getId())
+                    .getPreCosmeticValue();
+            Double _oddsPrecosmetic = (_ak > 0) ? oddsPrecosmeticVal / _ak
+                    : 1.01;
 
-                Double blueOdds1 = r4u.getBackPrice1();
-                Double blueAmount1 = (r4u.getBackAmount1() == null ? 0.0 : r4u.getBackAmount1());
-                Double blueOdds2 = r4u.getBackPrice2();
-                Double pinkOdds = r4u.getLayPrice1();
+            printLog(new StringBuilder(100)
+                    .append("** raw  oddsPrecosmetic =")
+                    .append(_oddsPrecosmetic).toString());
 
-                Double myOdds = r4u.getUnmatchedLayPrice();
-                Double myAmount = (r4u.getUnmatchedLayAmount() == null ? 0.0 : r4u.getUnmatchedLayAmount());
+            Double _precosmOdds = baseService.getNearestOdds(_oddsPrecosmetic);
 
-                Double _cosmeticOdds;
-                _cosmeticOdds = baseService.getCosmeticOdds(blueOdds1,
-                        blueAmount1, blueOdds2, pinkOdds, _precosmOdds, myOdds,
-                        myAmount);
+            printLog(new StringBuilder(100).append("_precosmOdds: ").append(_precosmOdds).toString());
 
-                if (_cosmeticOdds == null) {
-                    _cosmeticOdds = BaseServiceBean.FAKE_ODDS;
-                    logWarn(new StringBuilder(100)
-                            .append("!!!calculate  _cosmeticOdds is null, set to:  ")
-                            .append(_cosmeticOdds).toString());
-                }
+            r4u.setOddsPrecosmetic(_precosmOdds);
 
-                r4u.setOddsCosmetic(_cosmeticOdds);
+            Double blueOdds1 = r4u.getBackPrice1();
+            Double blueAmount1 = (r4u.getBackAmount1() == null ? 0.0 : r4u.getBackAmount1());
+            Double blueOdds2 = r4u.getBackPrice2();
+            Double pinkOdds = r4u.getLayPrice1();
 
-                Double _volumeStake = r4u.getLinkedRunner().getMarket()
-                        .getUserData4Market().get(currentUser.getId())
-                        .getVolumeStake();
+            Double myOdds = r4u.getUnmatchedLayPrice();
+            Double myAmount = (r4u.getUnmatchedLayAmount() == null ? 0.0 : r4u.getUnmatchedLayAmount());
 
-                Double _maxLoss = r4u.getLinkedRunner().getMarket()
-                        .getUserData4Market().get(currentUser.getId())
-                        .getMaxLossPerSelection();
+            Double _cosmeticOdds;
+            _cosmeticOdds = baseService.getCosmeticOdds(blueOdds1,
+                    blueAmount1, blueOdds2, pinkOdds, _precosmOdds, myOdds,
+                    myAmount);
+
+            if (_cosmeticOdds == null) {
+                _cosmeticOdds = BaseServiceBean.FAKE_ODDS;
+                logWarn(new StringBuilder(100)
+                        .append("!!!calculate  _cosmeticOdds is null, set to:  ")
+                        .append(_cosmeticOdds).toString());
+            }
+
+            r4u.setOddsCosmetic(_cosmeticOdds);
+
+            Double _volumeStake = r4u.getLinkedRunner().getMarket()
+                    .getUserData4Market().get(currentUser.getId())
+                    .getVolumeStake();
+
+            Double _maxLoss = r4u.getLinkedRunner().getMarket()
+                    .getUserData4Market().get(currentUser.getId())
+                    .getMaxLossPerSelection();
 
             //    r4u.setSelectionPrice(BaseServiceBean.FAKE_ODDS);
 
-                Double _selectionPrice = baseService.getSelectionPrice(
-                        r4u.getOddsCosmetic(), r4u.getOdds(), _volumeStake,
-                        _maxLoss, r4u.getProfitLoss(), inPlayDelay,
-                        currentMarket.getMarketStatus(), r4u.getIsNonRunner());
+            Double _selectionPrice = baseService.getSelectionPrice(
+                    r4u.getOddsCosmetic(), r4u.getOdds(), _volumeStake,
+                    _maxLoss, r4u.getProfitLoss(), inPlayDelay,
+                    currentMarket.getMarketStatus(), r4u.getIsNonRunner());
 
-                r4u.setSelectionPrice(_selectionPrice);
+            r4u.setSelectionPrice(_selectionPrice);
 
-                r4u.setSelectionAmount(BaseServiceBean.FAKE_STAKE);
+            r4u.setSelectionAmount(BaseServiceBean.FAKE_STAKE);
 
-                Double _selectionAmount = baseService.getSelectionAmount(
-                        _selectionPrice, r4u.getOdds(), _volumeStake,
-                        currentMarket.getMarketStatus());
+            Double _selectionAmount = baseService.getSelectionAmount(
+                    _selectionPrice, r4u.getOdds(), _volumeStake,
+                    currentMarket.getMarketStatus());
 
-                r4u.setSelectionAmount(_selectionAmount);
+            r4u.setSelectionAmount(_selectionAmount);
 
-                printLog("+++ saved: r4u.getSelectionPrice(): " + r4u.getSelectionPrice() + ", r4u.getSelectionAmount(): " + r4u.getSelectionAmount());
+            printLog("+++ saved: r4u.getSelectionPrice(): " + r4u.getSelectionPrice() + ", r4u.getSelectionAmount(): " + r4u.getSelectionAmount());
 
-                r4u = marketService.merge(r4u);
+            r4u = marketService.merge(r4u);
 
-                printLog(new StringBuilder(100).append("** runner=")
-                        .append(r4u.getLinkedRunner().getName())
-                        .append(" result profitLoss=")
-                        .append(r4u.getProfitLoss()).toString());
+            printLog(new StringBuilder(100).append("** runner=")
+                    .append(r4u.getLinkedRunner().getName())
+                    .append(" result profitLoss=")
+                    .append(r4u.getProfitLoss()).toString());
 
-                printLog(new StringBuilder(100)
-                        .append("r4u.getOddsPrecosmetic()=")
-                        .append(r4u.getOddsPrecosmetic())
-                        .append(",\t r4u.getOddsCosmetic()=")
-                        .append(r4u.getOddsCosmetic())
-                        .append(",\t _selectionPrice=")
-                        .append(_selectionPrice)
-                        .append(",\t _selectionAmount=")
-                        .append(_selectionAmount).toString());
+            printLog(new StringBuilder(100)
+                    .append("r4u.getOddsPrecosmetic()=")
+                    .append(r4u.getOddsPrecosmetic())
+                    .append(",\t r4u.getOddsCosmetic()=")
+                    .append(r4u.getOddsCosmetic())
+                    .append(",\t _selectionPrice=")
+                    .append(_selectionPrice)
+                    .append(",\t _selectionAmount=")
+                    .append(_selectionAmount).toString());
 
-                printLog("" + r4u);
-            }
+            printLog("" + r4u);
+        }
 
-         //   getFeedData(market4User);
-       // }
+        //   getFeedData(market4User);
+        // }
         updateBets(currentUser, currentMarket, market4User, curBets);
     }
 
@@ -1410,14 +1406,14 @@ public class SheduleRequestMessageListener implements MessageListener {
                     placeExecutionReport = serviceBean.placeOrders(currentUser.getApiContext(), currentMarket.getMarketId(), oBets);
 
                     if (placeExecutionReport.getInstructionReports() != null)
-					for (PlaceInstructionReport pir : placeExecutionReport.getInstructionReports()) {
+                        for (PlaceInstructionReport pir : placeExecutionReport.getInstructionReports()) {
 
-						logInfo(new StringBuilder(100).append("bet ").append(pir.getBetId())
-                                .append(" placed, status: ").append(placeExecutionReport.getStatus())
-                                .append(", errorCode: ").append(placeExecutionReport.getErrorCode())
-                                .append(", market: ").append(currentMarket.getMenuPath())
-                                .append(BS).append(currentMarket.getName()).toString());
-					}
+                            logInfo(new StringBuilder(100).append("bet ").append(pir.getBetId())
+                                    .append(" placed, status: ").append(placeExecutionReport.getStatus())
+                                    .append(", errorCode: ").append(placeExecutionReport.getErrorCode())
+                                    .append(", market: ").append(currentMarket.getMenuPath())
+                                    .append(BS).append(currentMarket.getName()).toString());
+                        }
 
                 } catch (Exception e) {
                     logError(new StringBuilder(100)
@@ -1440,9 +1436,6 @@ public class SheduleRequestMessageListener implements MessageListener {
             oBets.add(newBets.get(i));
         }
     }
-
-    private static final int K_MAX_BETS_GET = 100;
-    private static final int K_MAX_BETS_SUBMIT = 60;
 
     private void loadAllActiveMarkets() {
 
