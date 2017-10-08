@@ -23,6 +23,9 @@
         </f:facet>
 
             <h:form>
+
+                <a4j:queue requestDelay="100" ignoreDupResponce="true"/>
+
                 <a4j:push id="pushTopics" address="pushTopicsContext">
                     <a4j:ajax event="dataavailable" render="uuid" />
                 </a4j:push>
@@ -37,7 +40,7 @@
 
             <h:form>
                 <a4j:region id="pollRegion">
-
+                    <a4j:queue requestDelay="100" ignoreDupResponce="true"/>
                         <a4j:poll id="pollMarkets" interval="10000" enabled="#{marketBean.pollEnabled}"
                                   render="pollMarkets,marketTable,runnerTable,:marketServerTime,:serverTime"/>
 
@@ -46,6 +49,7 @@
             </h:form>
 
             <h:form>
+                <a4j:queue requestDelay="100" ignoreDupResponce="true"/>
             <h:panelGrid>
 
                 <a4j:outputPanel>
@@ -66,7 +70,7 @@
 
                 <h:panelGroup>
 
-                    <a4j:queue requestDelay="100" ignoreDupResponce="true"/>
+
 
                     <a4j:commandLink onclick="#{rich:component('popupMarkets')}.show()">
 
