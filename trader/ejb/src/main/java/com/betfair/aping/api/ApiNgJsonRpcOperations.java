@@ -12,17 +12,14 @@ import com.betfair.aping.util.JsonrpcRequest;
 import net.bir2.util.DTAction;
 
 import javax.annotation.PostConstruct;
+import javax.ejb.ConcurrencyManagement;
+import javax.ejb.ConcurrencyManagementType;
 import javax.ejb.EJB;
 import javax.ejb.Singleton;
 import java.util.*;
 import java.util.logging.Level;
 
-
-//@AccessTimeout(value=60, unit = TimeUnit.SECONDS )
-
-//@Lock(LockType.READ)
-
-//@Startup
+@ConcurrencyManagement( ConcurrencyManagementType.BEAN)
 @Singleton
 public class ApiNgJsonRpcOperations extends ApiNgOperations {
 

@@ -37,9 +37,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-//@Lock(LockType.WRITE)
-//@AccessTimeout(value=60, unit = TimeUnit.SECONDS )
-//@Startup
+
 @ConcurrencyManagement( ConcurrencyManagementType.BEAN)
 @Singleton
 public class HttpUtil implements TimedObject {
@@ -59,7 +57,7 @@ public class HttpUtil implements TimedObject {
     private void create() {
         log.info("** HttpUtil @PostConstruct , hashcode=" + this.hashCode());
         httpClient = createHttpClientOrProxy();
-        createTimer(context, 18 * 3600 * 1000);
+        createTimer(context, 3 * 3600 * 1000);// 3 hours
     }
 
     private void createTimer(EJBContext context, long duration) {
