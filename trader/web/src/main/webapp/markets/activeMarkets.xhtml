@@ -7,6 +7,7 @@
 
     <div  style="position: absolute;left:10em;top:5em">
         <a4j:status>
+
             <f:facet name="start">
                 <h:graphicImage style="border-width:0" value="/images/ai.gif" alt="tree is loading.." />
             </f:facet>
@@ -25,11 +26,11 @@
             <h:form>
 
                 <a4j:queue requestDelay="100" ignoreDupResponce="true"/>
-
+<ui:remove>
                 <a4j:push id="pushTopics" address="pushTopicsContext">
                     <a4j:ajax event="dataavailable" render="uuid" />
                 </a4j:push>
-
+</ui:remove>
                 <h:panelGrid columns="2">
                     <h:outputLabel value="New UUID:" />
                     <a4j:outputPanel id="uuid" layout="block">
@@ -39,8 +40,9 @@
             </h:form>
 
             <h:form>
+                <a4j:queue requestDelay="100" ignoreDupResponce="true"/>
                 <a4j:region id="pollRegion">
-                    <a4j:queue requestDelay="100" ignoreDupResponce="true"/>
+
                         <a4j:poll id="pollMarkets" interval="10000" enabled="#{marketBean.pollEnabled}"
                                   render="pollMarkets,marketTable,runnerTable,:marketServerTime,:serverTime"/>
 
@@ -141,6 +143,8 @@
                         <a4j:ajax event="selectionchange"
                                   listener="#{marketBean.masterSelectionListener}"
                                   render=":runnerTable,:marketControls"/>
+
+
 
                         <rich:column title="onAir" label="On Air">
                             <f:facet name="header">

@@ -64,7 +64,7 @@
             maven repository. -->
         <!-- <version.jboss.as>7.2.0.Final-redhat-8</version.jboss.as> -->
 
-        <version.richfaces>4.5.15.Final</version.richfaces>
+        <version.richfaces>4.5.17.Final</version.richfaces>
 
         <!--
                 <version.richfaces>3.3.3.Final</version.richfaces>
