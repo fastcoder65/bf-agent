@@ -236,6 +236,7 @@ public class SheduleRequestMessageListener implements MessageListener {
             baseService.sendDelayedRequest(Action.UPDATE_MARKET_PRICES, login,
                     marketId.toString(), 1);
         } else {
+            if ("CLOSED".equals(currentMarket.getMarketStatus()))
             marketService.remove(currentMarket, currentUser);
         }
 
@@ -278,6 +279,7 @@ public class SheduleRequestMessageListener implements MessageListener {
 
         boolean isOnAir = market4User.isOnAir();
 
+        if (!isOnAir) return;
 
         List<CurrentOrderSummary> curBets = new ArrayList<CurrentOrderSummary>();
         List<CurrentOrderSummary> currentBets = null;
@@ -300,10 +302,11 @@ public class SheduleRequestMessageListener implements MessageListener {
 
         long endTime = System.currentTimeMillis();
 
-        printLog(Level.FINE, "action 'Get Current Bets' COMPLETED, login="
+        printLog(Level.INFO, "action 'Get Current Bets' COMPLETED, login="
                 + currentUser.getLogin() + ", marketId="
                 + currentMarket.getMarketId() + ", time consumed: "
                 + ((endTime - startTime) / 1000.0) + " second(s)");
+
 
 //      if (currentBets != null && currentBets.size() > 0) {
 
@@ -334,7 +337,7 @@ public class SheduleRequestMessageListener implements MessageListener {
 
         endTime = System.currentTimeMillis();
 
-        printLog(Level.FINE, "action 'listMarketProfitAndLoss' COMPLETED, login="
+        printLog(Level.INFO, "action 'listMarketProfitAndLoss' COMPLETED, login="
                 + currentUser.getLogin() + ", marketId="
                 + currentMarket.getMarketId() + ", time consumed: "
                 + ((endTime - startTime) / 1000.0) + " second(s)");
@@ -568,7 +571,7 @@ public class SheduleRequestMessageListener implements MessageListener {
 
         endTime = System.currentTimeMillis();
 
-        printLog(Level.FINE, "action UpdateMarketPrices COMPLETED, login=" + login
+        printLog(Level.INFO, "action UpdateMarketPrices COMPLETED, login=" + login
                 + ", marketId=" + marketId + ", time consumed: "
                 + ((endTime - startTime) / 1000.0) + " second(s)");
 
@@ -1257,7 +1260,7 @@ public class SheduleRequestMessageListener implements MessageListener {
             return;
         }
 
-        printLog("*** updateBets: On Air is ON for market " + currentMarket + ",\n DOING BETS!!");
+        printLog(Level.INFO, "*** 'On Air'='ON' for market " + currentMarket);
 
         //	List<UpdateBets> cUpdates = new ArrayList<UpdateBets>();
 
