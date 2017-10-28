@@ -83,22 +83,6 @@
 			<scope>test</scope>
 		</dependency>
 
-		<!-- Optional, but highly recommended -->
-		<!-- Arquillian allows you to test enterprise code such as EJBs and Transactional(JTA) 
-			JPA from JUnit/TestNG -->
-
-		<dependency>
-			<groupId>org.jboss.arquillian.junit</groupId>
-			<artifactId>arquillian-junit-container</artifactId>
-			<scope>test</scope>
-		</dependency>
-
-		<dependency>
-			<groupId>org.jboss.arquillian.protocol</groupId>
-			<artifactId>arquillian-protocol-servlet</artifactId>
-			<scope>test</scope>
-		</dependency>
-
 		<dependency>
 			<groupId>javax.jms</groupId>
 			<artifactId>javax.jms-api</artifactId>
@@ -110,38 +94,7 @@
 			<artifactId>jibx-run</artifactId>
 			<version>1.2.5</version>
 		</dependency>
-<!--
-		<dependency>
-			<groupId>org.apache.axis2</groupId>
-			<artifactId>axis2-kernel</artifactId>
-			<version>1.5.4</version>
-		</dependency>
 
-		<dependency>
-			<groupId>org.apache.axis2</groupId>
-			<artifactId>axis2-adb</artifactId>
-			<version>1.5.4</version>
-		</dependency>
-
-		<dependency>
-			<groupId>org.apache.axis2</groupId>
-			<artifactId>axis2-transport-http</artifactId>
-			<version>1.5.4</version>
-		</dependency>
-		
-		<dependency>
-			<groupId>org.apache.axis2</groupId>
-			<artifactId>axis2-transport-local</artifactId>
-			<version>1.5.4</version>
-		</dependency>
- 
-  
-		<dependency>
-			<groupId>net.bir2</groupId>
-			<artifactId>betfair-soap-api</artifactId>
-			<version>1.0.2</version>
-		</dependency>
- -->
 		<dependency>
 			<groupId>com.fasterxml.jackson.core</groupId>
 			<artifactId>jackson-annotations</artifactId>
@@ -179,7 +132,6 @@
 			<artifactId>gson</artifactId>
 			<version>2.2.2</version>
 		</dependency>
-
 
 		<dependency>
 			<groupId>org.apache.httpcomponents</groupId>

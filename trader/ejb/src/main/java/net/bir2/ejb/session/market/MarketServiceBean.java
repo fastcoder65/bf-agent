@@ -17,15 +17,12 @@ import javax.ejb.EJB;
 import javax.ejb.EJBContext;
 import javax.ejb.Local;
 import javax.ejb.Stateless;
-import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 import java.util.logging.Logger;
-
-// import org.apache.log4j.Logger;
 
 /**
  * Session Bean implementation class MarketServiceBean
@@ -34,10 +31,7 @@ import java.util.logging.Logger;
 @Local({MarketService.class})
 public class MarketServiceBean implements MarketService {
 
-    @Inject
-    private Logger log;
-
-//	protected final Logger log = Logger.getLogger(this.getClass());
+    private static final Logger log = Logger.getLogger(MarketServiceBean.class.getName());
 
     /*
      * private final String DEC_QRY =
@@ -70,8 +64,6 @@ public class MarketServiceBean implements MarketService {
         return serviceBean;
     }
 
-
-
     public EJBContext getContext() {
         return context;
     }
@@ -86,13 +78,11 @@ public class MarketServiceBean implements MarketService {
 
     public AccountFundsResponse  getAccountFunds  (Wallet wallet, String appKey, String ssoId ) {
         AccountFundsResponse result = null;
-
         try {
             result = jsonOperations.getAccountFunds( wallet, appKey, ssoId );
         } catch (AccountAPINGException e) {
             e.printStackTrace();
         }
-
         return result;
     }
 
@@ -107,15 +97,11 @@ public class MarketServiceBean implements MarketService {
         result = (Uzer) em.createNamedQuery("UserByLogin")
                 .setParameter("login", userLogin)
                 .getSingleResult();
-		
-
 
         if (result != null) {
             result.setExLoginDec(result.getExLogin());
             result.setExPasswordDec(result.getExPassword());
         }
-
-        // log.info("getUserByLogin - result: " + result);
         return result;
     }
 
@@ -145,7 +131,6 @@ public class MarketServiceBean implements MarketService {
         for (Uzer uzer : _list) {
             result.add(getUserByLogin(uzer.getLogin()));
         }
-
         return result;
     }
 
@@ -192,7 +177,8 @@ public class MarketServiceBean implements MarketService {
     }
 
     public boolean isMarketAlreadyExistsByMarketId(String marketId) {
-        long count = (Long) em.createNamedQuery("MarketCountByMarketId")
+        Long count = 0L;
+        count = (Long) em.createNamedQuery("MarketCountByMarketId")
                 .setParameter("marketId", marketId).getSingleResult();
         //	log.info("isMarketAlreadyExistsByMarketId - count:" + count);
         return (count > 0);
@@ -202,6 +188,10 @@ public class MarketServiceBean implements MarketService {
 
     public MarketRunner merge(MarketRunner runner) {
         return em.merge(runner);
+    }
+
+    public void persist(MarketRunner runner) {
+         em.persist(runner);
     }
 
     public MarketRunner getRunner(long id) {
@@ -223,53 +213,65 @@ public class MarketServiceBean implements MarketService {
 
         Market marketRef = em.find(Market.class, market.getId());
         String marketRefName = String.valueOf(marketRef);
-        System.out.println("start removing market " + marketRefName);
-
+        Set<MarketRunner> runners = marketRef.getRunners();
+        Set<Market4User> market4users = marketRef.getMarket4Users();
         Set<Feed4Market4User> feed4Market4Users = marketRef.getFeed4Market4Users();
 
-        Set<MarketRunner> runners = marketRef.getRunners();
-        for (MarketRunner runner : runners) {
+        log.info("start removing market " + marketRefName + "runners found: " + marketRef.getRunners().size());
 
+        int i_r =0;
+/*
+        for (MarketRunner runner : runners) {
+            i_r++;
+            log.info(i_r + ") delete runner: " + runner.toString());
+*/
+/*
             Set<Runner4User> runner4users = runner.getRunner4Users();
+            int i_r4u = 0;
+
             for (Runner4User r4u : runner4users) {
+                i_r4u++;
                 if (r4u.getUserId() == currentUser.getId()) {
+                    log.info(i_r4u+ ")) delete Runner4User: " + r4u.toString());
                     em.remove(r4u);
                 }
             }
+*/
+       //     em.flush();
 
-            Set<Feed4Runner4User> feed4Runner4Users = runner
-                    .getFeed4Runner4Users();
+/*
+            Set<Feed4Runner4User> feed4Runner4Users = runner.getFeed4Runner4Users();
             for (Feed4Runner4User r4u : feed4Runner4Users) {
                 if (r4u.getUserId() == currentUser.getId()) {
                     em.remove(r4u);
                 }
             }
+*/
 
-            if (runner4users.size() == 1)
-                em.remove(runner);
-        }
-
-        for (Feed4Market4User m4u : feed4Market4Users) {
-            if (m4u.getUserId() == currentUser.getId()) {
-                em.remove(m4u);
-            }
-        }
-
-        Set<Market4User> market4users = marketRef.getMarket4Users();
+//         if (runner4users.size() == 1) {
+//              em.remove(runner);
+//              log.info("runner: " + runner + " removed.");
+//         }
+//        }
+/*
+        int i_m4u = 0;
 
         for (Market4User m4u : market4users) {
+            i_m4u++;
             if (m4u.getUserId() == currentUser.getId()) {
+                log.info(i_m4u+ ")) delete Runner4User: " + m4u.toString());
                 em.remove(m4u);
             }
         }
-
-        if (market4users.size() == 1) {
+*/
+//        if (market4users.size() == 1) {
             //		ShedulerActivity serviceBean = ShedulerActivityBean.getInstance();
             serviceBean.getActiveMarkets().remove(marketRef.getMarketId());
             em.remove(marketRef);
-        }
+            log.info("market " + marketRefName + " removed.");
+//        }
 
-        System.out.println("market " + marketRefName + " removed.");
+        em.flush();
     }
 
     public void remove(MarketRunner runner) {
@@ -282,25 +284,21 @@ public class MarketServiceBean implements MarketService {
         }
     }
 
-    /*
-     * public RunnerPrice merge(RunnerPrice price) { return em.merge(price); }
-     */
     public Runner4User merge(Runner4User u4r) {
         return em.merge(u4r);
+    }
+
+    public void persist(Market4User market4User) {
+        em.persist(market4User);
     }
 
     public Market4User merge(Market4User market4User) {
         return em.merge(market4User);
     }
 
-    private String getPassKey() {
-        return "passKey";
-    }
-
     public Uzer merge(Uzer uzer) {
 
-        org.hibernate.Session session = (org.hibernate.Session) em
-                .getDelegate();
+        org.hibernate.Session session = (org.hibernate.Session) em.getDelegate();
         org.hibernate.Query query = session
                 .createSQLQuery("update uzer set exLogin = :login," +
                         " exPassword=:pass where id=:id")

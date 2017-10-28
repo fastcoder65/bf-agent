@@ -118,7 +118,7 @@ public class Market4User implements java.io.Serializable {
 	}
 */
 
-	@ManyToOne ( fetch = FetchType.EAGER )
+	@ManyToOne ( fetch = FetchType.EAGER) // , cascade = CascadeType.REFRESH
 	@PrimaryKeyJoinColumn(name = "user_id")
 	private Uzer linkedUser;
 	
@@ -126,7 +126,7 @@ public class Market4User implements java.io.Serializable {
 		return linkedUser;
 	}
 
-	@ManyToOne ( fetch = FetchType.EAGER)
+	@ManyToOne ( fetch = FetchType.EAGER) // cascade = CascadeType.REFRESH
 	@PrimaryKeyJoinColumn(name = "market_id")
 	private Market linkedMarket;
 	

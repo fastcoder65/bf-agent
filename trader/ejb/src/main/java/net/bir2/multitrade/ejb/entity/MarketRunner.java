@@ -9,23 +9,41 @@ import java.util.*;
 import java.util.logging.Logger;
 
 @Entity
-@NamedQueries( { 
-	@NamedQuery(name = "RunnerBySelectionId", query = "select r FROM MarketRunner r where r.market.id = :marketId and r.selectionId = :selectionId")
-	})
-@Table(name="runner")
+@NamedQueries({
+        @NamedQuery(name = "RunnerBySelectionId", query = "select r FROM MarketRunner r where r.market.id = :marketId and r.selectionId = :selectionId")
+})
+@Table(name = "runner")
 public class MarketRunner implements Serializable {
-	
-	private static final long serialVersionUID = 3898851916983929758L;
 
-	// private static  final Logger log = Logger.getLogger( MarketRunner.class );
-	@Transient
-	@Inject
+    private static final long serialVersionUID = 3898851916983929758L;
+
+    // private static  final Logger log = Logger.getLogger( MarketRunner.class );
+    @Transient
+    @Inject
     private Logger log;
 
-	
-	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
-	private long id;
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    private long id;
+    private String name;
+    private Double handicap;
+    private Integer asianLineId;
+    private Long selectionId;
+    @Transient
+    private boolean nonRunner = false;
+
+    @OneToMany(mappedBy = "linkedRunner", fetch = FetchType.EAGER, cascade = CascadeType.REMOVE) // , cascade = CascadeType.ALL
+    private Set<Runner4User> runner4Users;
+
+    @OneToMany(mappedBy = "linkedRunner", fetch = FetchType.LAZY)
+    private Set<Feed4Runner4User> feed4Runner4Users;
+
+    @Transient
+    private Map<Integer, Runner4User> userData4Runner = null;
+
+    @ManyToOne
+    private Market market;
 
     public MarketRunner() {
         runner4Users = new HashSet<Runner4User>(10);
@@ -33,153 +51,131 @@ public class MarketRunner implements Serializable {
     }
 
     public long getId() {
-		return id;
-	}
+        return id;
+    }
 
-	public void setId(long id) {
-		this.id = id;
-	}
+    public void setId(long id) {
+        this.id = id;
+    }
 
-	private String name;
-	private Double handicap;
-	private Integer asianLineId;
-	private Long selectionId;
+    public boolean isNonRunner() {
+        return nonRunner;
+    }
 
-	@Transient 
-	private boolean nonRunner = false;
-	
+    public void setNonRunner(boolean nonRunner) {
+        this.nonRunner = nonRunner;
+    }
 
-	public boolean isNonRunner() {
-		return nonRunner;
-	}
+    public Long getSelectionId() {
+        return selectionId;
+    }
 
-	public void setNonRunner(boolean nonRunner) {
-		this.nonRunner = nonRunner;
-	}
+    public void setSelectionId(Long selectionId) {
+        this.selectionId = selectionId;
+    }
 
-	public Long getSelectionId() {
-		return selectionId;
-	}
+    public Set<Runner4User> getRunner4Users() {
+        return runner4Users;
+    }
 
-	public void setSelectionId(Long selectionId) {
-		this.selectionId = selectionId;
-	}
+    public void setRunner4Users(Set<Runner4User> runner4Users) {
+        this.runner4Users = runner4Users;
+    }
 
-	@OneToMany(mappedBy = "linkedRunner", fetch = FetchType.EAGER)
-	private   Set<Runner4User> runner4Users;
+    public Set<Feed4Runner4User> getFeed4Runner4Users() {
+        return feed4Runner4Users;
+    }
 
-	public Set<Runner4User> getRunner4Users() {
-		return runner4Users;
-	}
+    public void setFeed4Runner4Users(Set<Feed4Runner4User> feed4Runner4Users) {
+        this.feed4Runner4Users = feed4Runner4Users;
+    }
 
-	public void setRunner4Users(Set<Runner4User> runner4Users) {
-		this.runner4Users = runner4Users;
-	}
+    public Map<Integer, Runner4User> getUserData4Runner() {
 
-	@OneToMany(mappedBy = "linkedRunner") 
-	private   Set<Feed4Runner4User> feed4Runner4Users;
+        if (userData4Runner == null) {
+            prefetchAll();
 
-	public Set<Feed4Runner4User> getFeed4Runner4Users() {
-		return feed4Runner4Users;
-	}
+            //	log.info("getUserData4Runner(): runner4Users.size()=" + runner4Users);
 
-	public void setFeed4Runner4Users(Set<Feed4Runner4User> feed4Runner4Users) {
-		this.feed4Runner4Users = feed4Runner4Users;
-	}
-	
-	@Transient
-	private   Map<Integer, Runner4User> userData4Runner = null;
+            if (runner4Users != null) {
+                userData4Runner = new HashMap<Integer, Runner4User>();
 
-	public Map<Integer, Runner4User> getUserData4Runner() {
+                for (Runner4User u4r : runner4Users) {
+                    userData4Runner.put(u4r.getUserId(), u4r);
+                }
+            }
 
-		if (userData4Runner == null) {
-			prefetchAll();
+            //	log.info("userData4Runner.size()= " + userData4Runner);
+        }
+        return userData4Runner;
+    }
 
-		//	log.info("getUserData4Runner(): runner4Users.size()=" + runner4Users);
+    public Market getMarket() {
+        return market;
+    }
 
-			if (runner4Users != null) {
-				userData4Runner = new HashMap<Integer, Runner4User>();
+    public void setMarket(Market market) {
+        this.market = market;
+    }
 
-				for (Runner4User u4r : runner4Users) {
-					userData4Runner.put(u4r.getUserId(), u4r);
-				}
-			}
+    public String getName() {
+        return name;
+    }
 
-		//	log.info("userData4Runner.size()= " + userData4Runner);
-		}
-		return userData4Runner;
-	}
+    public void setName(String name) {
+        this.name = name;
+    }
 
-	
-	@ManyToOne
-	private Market market;
+    public Double getHandicap() {
+        return handicap;
+    }
 
-	public Market getMarket() {
-		return market;
-	}
+    public void setHandicap(Double handicap) {
+        this.handicap = handicap;
+    }
 
-	public void setMarket(Market market) {
-		this.market = market;
-	}
+    public Integer getAsianLineId() {
+        return asianLineId;
+    }
 
-	public String getName() {
-		return name;
-	}
+    public void setAsianLineId(Integer asianLineId) {
+        this.asianLineId = asianLineId;
+    }
 
-	public void setName(String name) {
-		this.name = name;
-	}
 
-	public Double getHandicap() {
-		return handicap;
-	}
+    @Override
+    public String toString() {
+        return "MarketRunner [id=" + id + ", name=" + name + ", selectionId="
+                + selectionId + ']';
+    }
 
-	public void setHandicap(Double handicap) {
-		this.handicap = handicap;
-	}
+    //  @TransactionAttribute(TransactionAttributeType.REQUIRED)
+    public MarketRunner prefetchAll() {
+        Hibernate.initialize(this.runner4Users);
 
-	public Integer getAsianLineId() {
-		return asianLineId;
-	}
+        if (this.runner4Users == null)
+            log.info("this.runner4Users is NULL!");
 
-	public void setAsianLineId(Integer asianLineId) {
-		this.asianLineId = asianLineId;
-	}
+        return this;
+    }
 
-	
-	@Override
-	public String toString() {
-		return "MarketRunner [id=" + id + ", name=" + name + ", selectionId="
-				+ selectionId + ']';
-	}
-
-	public static class RunnerComparator implements Comparator<MarketRunner>, Serializable {
+    public static class RunnerComparator implements Comparator<MarketRunner>, Serializable {
         private static final long serialVersionUID = -4683692958234206933L;
 
         public int compare(MarketRunner o1, MarketRunner o2) {
-		//	return o1.getSelectionId().compareTo(o2.getSelectionId());
-			return Long.valueOf(o1.getId()).compareTo(o2.getId());
-		}
-	}
-
-	public static class RunnerComparator2 implements Comparator<MarketRunner>, Serializable {
-		private static final long serialVersionUID = -4683692958234206933L;
-
-		public int compare(MarketRunner o1, MarketRunner o2) {
-			//	return o1.getSelectionId().compareTo(o2.getSelectionId());
-			return Integer.valueOf(o1.getAsianLineId()).compareTo(o2.getAsianLineId());
-		}
-	}
-
-  //  @TransactionAttribute(TransactionAttributeType.REQUIRED)
-    public MarketRunner prefetchAll() {
-		Hibernate.initialize(this.runner4Users);
-
-		if (this.runner4Users == null)
-			log.info("this.runner4Users is NULL!");
-
-	return this;
+            //	return o1.getSelectionId().compareTo(o2.getSelectionId());
+            return Long.valueOf(o1.getId()).compareTo(o2.getId());
+        }
     }
 
-	
+    public static class RunnerComparator2 implements Comparator<MarketRunner>, Serializable {
+        private static final long serialVersionUID = -4683692958234206933L;
+
+        public int compare(MarketRunner o1, MarketRunner o2) {
+            //	return o1.getSelectionId().compareTo(o2.getSelectionId());
+            return Integer.valueOf(o1.getAsianLineId()).compareTo(o2.getAsianLineId());
+        }
+    }
+
+
 }

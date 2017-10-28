@@ -1,22 +1,11 @@
 package net.bir2.multitrade.ejb.entity;
 
+import net.bir2.multitrade.util.APIContext;
+
+import javax.persistence.*;
 import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Set;
-
-import javax.persistence.CascadeType;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.ManyToMany;
-import javax.persistence.NamedQueries;
-import javax.persistence.NamedQuery;
-import javax.persistence.OneToMany;
-import javax.persistence.Transient;
-
-import net.bir2.multitrade.util.APIContext;
 
 @Entity
 @NamedQueries({ 
@@ -85,7 +74,7 @@ public class Uzer implements Serializable {
 	}
 	
 	
-	@OneToMany(mappedBy="linkedUser", fetch=FetchType.EAGER)
+	@OneToMany(mappedBy="linkedUser", fetch=FetchType.EAGER) // , cascade = CascadeType.ALL
     private Set<Market4User> market4Users = new HashSet<Market4User>(10);
 
 	public Set<Market4User> getMarket4Users() {
@@ -96,21 +85,7 @@ public class Uzer implements Serializable {
 		this.market4Users = market4Users;
 	}
 
-	
-/*	// Feed4Market4User
-	@OneToMany(mappedBy = "linkedUser",  cascade = CascadeType.MERGE) // fetch = FetchType.EAGER,
-	private Set<Feed4Market4User> feed4Market4Users = new HashSet<Feed4Market4User>();
-
-	public Set<Feed4Market4User> getFeed4Market4Users() {
-		return feed4Market4Users;
-	}
-
-	public void setFeed4Market4User(Set<Feed4Market4User> feed4Market4Users) {
-		this.feed4Market4Users = feed4Market4Users;
-	}
-*/
-	
-	@ManyToMany( cascade=CascadeType.MERGE) // fetch = FetchType.EAGER,
+	@ManyToMany // ( cascade = CascadeType.REFRESH) // fetch = FetchType.EAGER,
 	private Set<UserRole> userRoles = new HashSet<UserRole>(10);
 	
 	public Set<UserRole> getRoles() {
@@ -121,7 +96,7 @@ public class Uzer implements Serializable {
 		this.userRoles = userRoles;
 	}
 
-	@OneToMany(mappedBy="linkedUser", fetch=FetchType.EAGER)
+	@OneToMany(mappedBy="linkedUser", fetch=FetchType.EAGER) // , cascade = CascadeType.ALL
     private Set<Runner4User> runner4Users = new HashSet<Runner4User>(10);
 	
 	

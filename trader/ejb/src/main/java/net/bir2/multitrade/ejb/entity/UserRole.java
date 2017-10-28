@@ -1,15 +1,9 @@
 package net.bir2.multitrade.ejb.entity;
 
+import javax.persistence.*;
 import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Set;
-
-import javax.persistence.CascadeType;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.ManyToMany;
 
 @Entity
 public class UserRole implements Serializable {
@@ -38,7 +32,7 @@ public class UserRole implements Serializable {
 		this.name = name;
 	}
 	
-	@ManyToMany(mappedBy="userRoles", cascade=CascadeType.MERGE) // fetch = FetchType.EAGER,
+	@ManyToMany(mappedBy="userRoles", fetch = FetchType.EAGER) // fetch = FetchType.EAGER, , cascade=CascadeType.ALL
 	private Set<Uzer> uzers = new HashSet<Uzer>(10);
 
 	public Set<Uzer> getUsers() {

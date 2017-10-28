@@ -232,7 +232,7 @@ public class SheduleRequestMessageListener implements MessageListener {
                 logError("UpdateMarketStatus error, message: ", e);
         }
 
-        if (!"CLOSED".equals(currentMarket.getMarketStatus())) {
+        if ("OPEN".equals(currentMarket.getMarketStatus())) {
             baseService.sendDelayedRequest(Action.UPDATE_MARKET_PRICES, login,
                     marketId.toString(), 1);
         } else {
@@ -300,7 +300,7 @@ public class SheduleRequestMessageListener implements MessageListener {
 
         long endTime = System.currentTimeMillis();
 
-        printLog(Level.INFO, "action 'Get Current Bets' COMPLETED, login="
+        printLog(Level.FINE, "action 'Get Current Bets' COMPLETED, login="
                 + currentUser.getLogin() + ", marketId="
                 + currentMarket.getMarketId() + ", time consumed: "
                 + ((endTime - startTime) / 1000.0) + " second(s)");
@@ -334,7 +334,7 @@ public class SheduleRequestMessageListener implements MessageListener {
 
         endTime = System.currentTimeMillis();
 
-        printLog(Level.INFO, "action 'listMarketProfitAndLoss' COMPLETED, login="
+        printLog(Level.FINE, "action 'listMarketProfitAndLoss' COMPLETED, login="
                 + currentUser.getLogin() + ", marketId="
                 + currentMarket.getMarketId() + ", time consumed: "
                 + ((endTime - startTime) / 1000.0) + " second(s)");
@@ -543,7 +543,7 @@ public class SheduleRequestMessageListener implements MessageListener {
 
         //    if (true) {
 
-        printLog(Level.INFO, "*** Update market prices for login: " + login + ", market: " + marketId);
+        printLog(Level.FINE, "*** Update market prices for login: " + login + ", market: " + marketId);
 
         List<MarketBook> marketBooks = null;
         int inPlayDelay = 0;
@@ -568,7 +568,7 @@ public class SheduleRequestMessageListener implements MessageListener {
 
         endTime = System.currentTimeMillis();
 
-        printLog(Level.INFO, "action UpdateMarketPrices COMPLETED, login=" + login
+        printLog(Level.FINE, "action UpdateMarketPrices COMPLETED, login=" + login
                 + ", marketId=" + marketId + ", time consumed: "
                 + ((endTime - startTime) / 1000.0) + " second(s)");
 

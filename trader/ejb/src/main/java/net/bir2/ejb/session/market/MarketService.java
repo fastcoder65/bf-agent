@@ -32,6 +32,8 @@ public interface MarketService {
 
 	MarketRunner merge(MarketRunner runner);
 
+	void persist ( MarketRunner runner );
+
 	MarketRunner getRunner(long id);
 	
     MarketRunner getRunnerBySelectionId(long marketId, long selectionId);
@@ -47,6 +49,8 @@ public interface MarketService {
 	
 	Runner4User merge (Runner4User u4r);
 	Market4User merge (Market4User market4User);
+
+	void persist(Market4User market4User);
 
     Uzer merge (Uzer uzer);
     Feed4Market4User merge (Feed4Market4User arg);

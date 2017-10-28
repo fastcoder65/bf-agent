@@ -47,7 +47,7 @@ public class Runner4User implements java.io.Serializable {
         this.linkedRunner = runner;
     }
 
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.EAGER) // , cascade = CascadeType.REFRESH
     @PrimaryKeyJoinColumn(name = "user_id")
     private Uzer linkedUser;
 
@@ -55,7 +55,7 @@ public class Runner4User implements java.io.Serializable {
         return linkedUser;
     }
 
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.EAGER) // , cascade = CascadeType.ALL
     @PrimaryKeyJoinColumn(name = "runner_id")
     private MarketRunner linkedRunner;
 

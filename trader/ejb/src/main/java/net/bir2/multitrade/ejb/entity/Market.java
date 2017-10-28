@@ -75,7 +75,7 @@ public class Market implements java.io.Serializable {
 
 	private static final long serialVersionUID = 1L;
 
-	@OneToMany(mappedBy = "linkedMarket", fetch = FetchType.EAGER)
+	@OneToMany(mappedBy = "linkedMarket", fetch = FetchType.EAGER, cascade = CascadeType.REMOVE ) //, cascade=CascadeType.ALL
 	private Set<Market4User> market4Users = new HashSet<Market4User>(10);
 
 	public Set<Market4User> getMarket4Users() {
@@ -87,7 +87,7 @@ public class Market implements java.io.Serializable {
 	}
 
 	// Feed4Market4User
-	@OneToMany(mappedBy = "linkedMarket" , fetch = FetchType.EAGER )
+	@OneToMany(mappedBy = "linkedMarket" , fetch = FetchType.LAZY) // , cascade=CascadeType.ALL
 	private Set<Feed4Market4User> feed4Market4Users = new HashSet<Feed4Market4User>(
 			10);
 
@@ -113,7 +113,7 @@ public class Market implements java.io.Serializable {
 		return userData4Market;
 	}
 
-	@OneToMany(mappedBy = "market",  fetch = FetchType.EAGER)
+	@OneToMany(mappedBy = "market", fetch = FetchType.EAGER, cascade = CascadeType.ALL )
 	private Set<MarketRunner> runners = new HashSet<MarketRunner>();
 
 	public Set<MarketRunner> getRunners() {
