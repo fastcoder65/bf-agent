@@ -5,55 +5,56 @@
                 xmlns:a4j="http://richfaces.org/a4j"
                 xmlns:rich="http://richfaces.org/rich">
 
-    <div  style="position: absolute;left:10em;top:5em">
-        <a4j:status>
+    <div style="position: absolute;left:10em;top:5em">
+        <a4j:status id="marketStatus_1">
 
             <f:facet name="start">
-                <h:graphicImage style="border-width:0" title="loading.. " value="/images/ai.gif" alt="tree is loading.." />
+                <h:graphicImage style="border-width:0" title="loading.. " value="/images/ai.gif"
+                                alt="tree is loading.."/>
             </f:facet>
             <f:facet name="stop">
-                <h:graphicImage style="border-width:0" title="loaded." value="/images/spacer.gif" alt="tree loaded" />
+                <h:graphicImage style="border-width:0" title="loaded." value="/images/spacer.gif" alt="tree loaded"/>
             </f:facet>
 
         </a4j:status>
     </div>
 
-        <rich:panel styleClass="marketPanelBody">
+    <rich:panel styleClass="marketPanelBody">
         <f:facet name="header">
             <h:outputText value="My markets"/>
         </f:facet>
 
-            <ui:remove>
+        <ui:remove>
+
             <h:form>
 
-                <a4j:queue requestDelay="100" ignoreDupResponce="true"/>
 
                 <a4j:push id="pushTopics" address="pushTopicsContext">
-                    <a4j:ajax event="dataavailable" render="uuid" />
+                    <a4j:ajax event="dataavailable" render="uuid"/>
                 </a4j:push>
 
                 <h:panelGrid columns="2">
-                    <h:outputLabel value="New UUID:" />
+                    <h:outputLabel value="New UUID:"/>
                     <a4j:outputPanel id="uuid" layout="block">
                         #{pushBean.UUID}
                     </a4j:outputPanel>
                 </h:panelGrid>
             </h:form>
+
         </ui:remove>
 
-            <h:form>
-                <a4j:queue requestDelay="100" ignoreDupResponce="true"/>
-                <a4j:region id="pollRegion">
+        <h:form>
+            <a4j:region id="pollRegion">
 
-                        <a4j:poll id="pollMarkets" interval="10000" enabled="#{marketBean.pollEnabled}"
-                                  render="pollMarkets,marketTable,runnerTable,:marketServerTime,:serverTime"/>
+                <a4j:poll id="pollMarkets" interval="10000" enabled="#{marketBean.pollEnabled}"
+                          render="pollMarkets,marketTable,runnerTable,:marketServerTime,:serverTime"/>
 
 
-                </a4j:region>
-            </h:form>
+            </a4j:region>
+        </h:form>
 
-            <h:form>
-                <a4j:queue requestDelay="100" ignoreDupResponce="true"/>
+        <h:form>
+            <a4j:queue requestDelay="100" ignoreDupResponce="true"/>
             <h:panelGrid>
 
                 <a4j:outputPanel>
@@ -72,164 +73,165 @@
 
                 <a4j:outputPanel id="marketControls">
 
-                <h:panelGroup>
+                    <h:panelGroup>
 
 
+                        <a4j:commandLink onclick="#{rich:component('popupMarkets')}.show()">
 
-                    <a4j:commandLink onclick="#{rich:component('popupMarkets')}.show()">
+                            <h:graphicImage style="border-width:0" value="/images/tree/ftv2folderopen.gif"
+                                            id="showMarketslink"/>
 
-                        <h:graphicImage style="border-width:0" value="/images/tree/ftv2folderopen.gif" id="showMarketslink"/>
+                        </a4j:commandLink>
 
-                    </a4j:commandLink>
+                        <a4j:commandLink render="marketRegion,marketMessages,runnerTable"
+                                         action="#{marketBean.deleteMarket}"
+                                         title="Remove market" style="margin-right:20px">
+                            <h:graphicImage style="border-width:0" value="/images/buttons/ev.delete.jpg"/>
+                        </a4j:commandLink>
 
-                    <a4j:commandLink render="marketRegion,marketMessages,runnerTable"
-                                     action="#{marketBean.deleteMarket}"
-                                     title="Remove market" style="margin-right:20px">
-                        <h:graphicImage style="border-width:0" value="/images/buttons/ev.delete.jpg"/>
-                    </a4j:commandLink>
+                        <a4j:commandLink render="marketRegion,marketMessages" action="#{marketBean.setOnAirOn}"
+                                         title="OnAir On" style="margin-right:20px">
+                            <h:graphicImage style="border-width:0" value="/images/buttons/ev.play.jpg"/>
+                        </a4j:commandLink>
 
-                    <a4j:commandLink render="marketRegion,marketMessages" action="#{marketBean.setOnAirOn}"
-                                     title="OnAir On" style="margin-right:20px">
-                        <h:graphicImage style="border-width:0" value="/images/buttons/ev.play.jpg"/>
-                    </a4j:commandLink>
+                        <a4j:commandLink render="marketRegion,marketMessages" action="#{marketBean.setOnAirOff}"
+                                         title="OnAir Off" style="margin-right:20px">
+                            <h:graphicImage style="border-width:0" value="/images/buttons/ev.pause.jpg"/>
+                        </a4j:commandLink>
 
-                    <a4j:commandLink render="marketRegion,marketMessages" action="#{marketBean.setOnAirOff}"
-                                     title="OnAir Off" style="margin-right:20px">
-                        <h:graphicImage style="border-width:0" value="/images/buttons/ev.pause.jpg"/>
-                    </a4j:commandLink>
-
-                    <a4j:commandLink render="marketRegion,pollMarkets,marketMessages, marketControls"
-                                     action="#{marketBean.toggleRefresh}"
-                                     title="Refresh On/Off" style="margin-right:20px">
-                        <h:graphicImage style="border-width:0" value="/images/buttons/ev.rec.jpg"/>
-                    </a4j:commandLink>
+                        <a4j:commandLink render="marketRegion,pollMarkets,marketMessages, marketControls"
+                                         action="#{marketBean.toggleRefresh}"
+                                         title="Refresh On/Off" style="margin-right:20px">
+                            <h:graphicImage style="border-width:0" value="/images/buttons/ev.rec.jpg"/>
+                        </a4j:commandLink>
 
 
-                    <a4j:commandLink rendered="#{marketBean.currentMarket4User != null}"
-                                     render="modPanelMarket4User"
-                                     onclick="#{rich:component('mp')}.show()"
-                                     style="margin-right:10px"
-                                     action="#{marketBean.customMyMarketProperties}">
+                        <a4j:commandLink rendered="#{marketBean.currentMarket4User != null}"
+                                         render="modPanelMarket4User"
+                                         onclick="#{rich:component('mp')}.show()"
+                                         style="margin-right:10px"
+                                         action="#{marketBean.customMyMarketProperties}">
 
-                        <h:graphicImage style="border-width:0" value="/images/eventer/dir-edit.gif" id="showlink"/>
+                            <h:graphicImage style="border-width:0" value="/images/eventer/dir-edit.gif" id="showlink"/>
 
-                    </a4j:commandLink>
+                        </a4j:commandLink>
 
-                    <a4j:region id="autoRefreshStatus" >
-                        <h:outputText value="AutoRefresh On" style="margin-right:10px" rendered="#{marketBean.pollEnabled}"></h:outputText>
-                        <h:outputText value="AutoRefresh Off" style="margin-right:10px" rendered="#{!marketBean.pollEnabled}"></h:outputText>
-                    </a4j:region>
+                        <a4j:region id="autoRefreshStatus">
+                            <h:outputText value="AutoRefresh On" style="margin-right:10px"
+                                          rendered="#{marketBean.pollEnabled}"></h:outputText>
+                            <h:outputText value="AutoRefresh Off" style="margin-right:10px"
+                                          rendered="#{!marketBean.pollEnabled}"></h:outputText>
+                        </a4j:region>
 
-                </h:panelGroup>
+                    </h:panelGroup>
 
-            </a4j:outputPanel>
+                </a4j:outputPanel>
 
                 <a4j:outputPanel id="marketRegion">
 
-                   <h:panelGrid columns="2" cellspacing="2" cellpadding="2">
+                    <h:panelGrid columns="2" cellspacing="2" cellpadding="2">
 
-                    <rich:extendedDataTable
-                            id="marketTable"
-                            value="#{marketBean.activeMarkets}"
-                            rowKeyVar="rkv" var="mkt"
-                            onRowMouseOver="this.style.backgroundColor='#{a4jSkin.additionalBackgroundColor}'"
-                            onRowMouseOut="this.style.backgroundColor=''"
+                        <rich:extendedDataTable
+                                id="marketTable"
+                                value="#{marketBean.activeMarkets}"
+                                rowKeyVar="rkv" var="mkt"
+                                onRowMouseOver="this.style.backgroundColor='#{a4jSkin.additionalBackgroundColor}'"
+                                onRowMouseOut="this.style.backgroundColor=''"
 
-                            selectedClass="rich-sdt-row-selected"
-                            sortMode="single"
-                            selectionMode="multiple"
-                            selection="#{marketBean.masterTableSelection}"
-                            rowClasses="rvgRowOne,rvgRowTwo">
-
-
-                        <a4j:ajax event="selectionchange"
-                                  listener="#{marketBean.masterSelectionListener}"
-                                  render=":runnerTable,:marketControls"/>
+                                selectedClass="rich-sdt-row-selected"
+                                sortMode="single"
+                                selectionMode="multiple"
+                                selection="#{marketBean.masterTableSelection}"
+                                rowClasses="rvgRowOne,rvgRowTwo">
 
 
+                            <a4j:ajax event="selectionchange"
+                                      listener="#{marketBean.masterSelectionListener}"
+                                      render=":runnerTable,:marketControls"/>
 
-                        <rich:column title="onAir" label="On Air">
-                            <f:facet name="header">
-                                <h:outputText value="On Air"/>
-                            </f:facet>
-                            <h:graphicImage rendered="#{!mkt.userData4Market[marketBean.currentUser.id].onAir}"
-                                            id="switchOff" style="border-width:0"
-                                            value="/images/eventer/cmd-pause.gif"/>
 
-                            <h:graphicImage rendered="#{mkt.userData4Market[marketBean.currentUser.id].onAir}"
-                                            id="switchOn" style="border-width:0"
-                                            value="/images/eventer/cmd-play-green.gif"/>
+                            <rich:column title="onAir" label="On Air">
+                                <f:facet name="header">
+                                    <h:outputText value="On Air"/>
+                                </f:facet>
+                                <h:graphicImage rendered="#{!mkt.userData4Market[marketBean.currentUser.id].onAir}"
+                                                id="switchOff" style="border-width:0"
+                                                value="/images/eventer/cmd-pause.gif"/>
 
-                        </rich:column>
+                                <h:graphicImage rendered="#{mkt.userData4Market[marketBean.currentUser.id].onAir}"
+                                                id="switchOn" style="border-width:0"
+                                                value="/images/eventer/cmd-play-green.gif"/>
 
-                        <rich:column title="#{mkt.menuPath}/#{mkt.name}" width="350px"  label="Event/Market name">
-                            <f:facet name="header">
-                                <h:outputText value="Name" id="market_name"/>
-                            </f:facet>
+                            </rich:column>
 
-                            <h:outputText title="#{mkt.menuPath}/#{mkt.name}" value="#{mkt.menuPath}/#{mkt.name}"/>
+                            <rich:column title="#{mkt.menuPath}/#{mkt.name}" width="350px" label="Event/Market name">
+                                <f:facet name="header">
+                                    <h:outputText value="Name" id="market_name"/>
+                                </f:facet>
 
-                        </rich:column>
+                                <h:outputText title="#{mkt.menuPath}/#{mkt.name}" value="#{mkt.menuPath}/#{mkt.name}"/>
 
-                        <rich:column width="120px" label="Start event time">
-                            <f:facet name="header">
-                                <h:outputText value="Time"/>
-                            </f:facet>
-                            <h:outputFormat value="#{marketBean.dateFormatValue}">
-                                <f:param value="#{mkt.marketTime}"/>
-                            </h:outputFormat>
-                        </rich:column>
+                            </rich:column>
 
-                        <rich:column width="60px" label="Status">
-                            <f:facet name="header">
-                                <h:outputText value="Status"/>
-                            </f:facet>
+                            <rich:column width="120px" label="Start event time">
+                                <f:facet name="header">
+                                    <h:outputText value="Time"/>
+                                </f:facet>
+                                <h:outputFormat value="#{marketBean.dateFormatValue}">
+                                    <f:param value="#{mkt.marketTime}"/>
+                                </h:outputFormat>
+                            </rich:column>
 
-                            <h:outputText styleClass="#{mkt.statusClass}" value="#{mkt.marketStatus}"/>
+                            <rich:column width="60px" label="Status">
+                                <f:facet name="header">
+                                    <h:outputText value="Status"/>
+                                </f:facet>
 
-                        </rich:column>
+                                <h:outputText styleClass="#{mkt.statusClass}" value="#{mkt.marketStatus}"/>
 
-                        <rich:column label="TimeZone">
-                            <f:facet name="header">
-                                <h:outputText value="TimeZone"/>
-                            </f:facet>
-                            <h:outputText value="#{mkt.timeZone}"/>
-                        </rich:column>
+                            </rich:column>
 
-                    </rich:extendedDataTable>
+                            <rich:column label="TimeZone">
+                                <f:facet name="header">
+                                    <h:outputText value="TimeZone"/>
+                                </f:facet>
+                                <h:outputText value="#{mkt.timeZone}"/>
+                            </rich:column>
 
-                    <rich:fileUpload fileUploadListener="#{marketBean.listener}"
-                                     id="uploadCsvOddsFile"
+                        </rich:extendedDataTable>
 
-                                     acceptedTypes=".txt, .csv, .xls, .xlsx"
-                                     ontyperejected="alert(file_type_is_bad);"
+                        <rich:fileUpload fileUploadListener="#{marketBean.listener}"
+                                         id="uploadCsvOddsFile"
 
-                                     autoclear="true"
-                                     transferErrorLabel="#{labels['uploadOdds.transferErrorLabel']}"
-                                     addControlLabel="#{labels['uploadOdds.addControlLabel']}"
-                                     listHeight="50px"
+                                         acceptedTypes=".txt, .csv, .xls, .xlsx"
+                                         ontyperejected="alert(file_type_is_bad);"
 
-                                     onsizerejected="alert(file_size_too_much);"
+                                         autoclear="true"
+                                         transferErrorLabel="#{labels['uploadOdds.transferErrorLabel']}"
+                                         addControlLabel="#{labels['uploadOdds.addControlLabel']}"
+                                         listHeight="50px"
 
-                                     cancelEntryControlLabel="#{labels['uploadOdds.cancelEntryControlLabel']}"
-                                     clearControlLabel="#{labels['uploadOdds.clearControlLabel']}"
-                                     clearAllControlLabel="#{labels['uploadOdds.clearAllControlLabel']}"
-                                     uploadControlLabel="#{labels['uploadOdds.uploadControlLabel']}"
-                                     progressLabel="#{labels['uploadOdds.progressLabel']}"
-                                     stopControlLabel="#{labels['uploadOdds.stopControlLabel']}"
-                                     doneLabel="#{labels['uploadOdds.doneLabel']}"
-                                     maxFilesQuantity="2">
+                                         onsizerejected="alert(file_size_too_much);"
 
-                        <a4j:ajax event="uploadcomplete" execute="@none" render="runnerPanel" />
+                                         cancelEntryControlLabel="#{labels['uploadOdds.cancelEntryControlLabel']}"
+                                         clearControlLabel="#{labels['uploadOdds.clearControlLabel']}"
+                                         clearAllControlLabel="#{labels['uploadOdds.clearAllControlLabel']}"
+                                         uploadControlLabel="#{labels['uploadOdds.uploadControlLabel']}"
+                                         progressLabel="#{labels['uploadOdds.progressLabel']}"
+                                         stopControlLabel="#{labels['uploadOdds.stopControlLabel']}"
+                                         doneLabel="#{labels['uploadOdds.doneLabel']}"
+                                         maxFilesQuantity="2">
 
-                    </rich:fileUpload>
+                            <a4j:ajax event="uploadcomplete" execute="@none" render="runnerPanel"/>
 
-                   </h:panelGrid>
+                        </rich:fileUpload>
+
+                    </h:panelGrid>
 
                 </a4j:outputPanel>
 
             </h:panelGrid>
-            </h:form>
+        </h:form>
 
     </rich:panel>
 
