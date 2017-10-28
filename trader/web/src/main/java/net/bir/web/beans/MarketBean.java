@@ -239,6 +239,10 @@ AUSTRALIAN
         return getMarketService().merge(market4User);
     }
 
+    public void persist(Market4User market4User) {
+        getMarketService().persist(market4User);
+    }
+
     public void selectionChanged(TreeSelectionChangeEvent selectionChangeEvent) {
         getLog().info(
                 "TREE.selectionChanged - selectionChangeEvent: "
@@ -533,11 +537,11 @@ AUSTRALIAN
 
     public void setCurrentMarket(Market currentMarket) {
         this.currentMarket = currentMarket;
-        getLog().fine("this.currentMarket=" + this.currentMarket);
-        if (this.currentMarket != null) {
-            Market4User m4u = this.currentMarket.getUserData4Market().get(
-                    getCurrentUser().getId());
-            setCurrentMarket4User(m4u);
+        getLog().info("this.currentMarket=" + this.currentMarket);
+        if (this.currentMarket != null && getCurrentUser() != null) {
+            Market4User m4u = this.currentMarket.getUserData4Market().get(getCurrentUser().getId());
+            getLog().info("" + m4u);
+;            setCurrentMarket4User(m4u);
         }
     }
 
@@ -820,7 +824,9 @@ AUSTRALIAN
                           tOff_Mins,
                           _maxLoss);
 
-                  market4User = merge(market4User);
+                  //market4User = merge(market4User);
+
+                    persist(market4User);
 
                   market4users.add(market4User);
 
@@ -844,14 +850,14 @@ AUSTRALIAN
                     log.info("rc.getRunnerName(): " + rc.getRunnerName() + ", rc.getSortPriority():" + rc.getSortPriority());
                     runner.setAsianLineId(rc.getSortPriority());
                     runner = getMarketService().merge(runner);
-                    // System.out.println("==runner " + runner + " merged!");
+                    log.info("==runner " + runner + " merged!");
                     Runner4User r4u = new Runner4User(currentUser, runner);
                     r4u = getMarketService().merge(r4u);
                     Set<Runner4User> runner4users = new HashSet<Runner4User>();
                     runner4users.add(r4u);
                     runner.setRunner4Users(runner4users);
                     getMarketService().merge(runner);
-                    // getLog().info("saved runner: " + runner);
+                     getLog().info("saved runner: " + runner);
                 }
             } else {
                 getLog().log(Level.WARNING,
@@ -989,7 +995,7 @@ AUSTRALIAN
             }
             i++;
         }
-        getLog().info("setting onAir=\"" + b + "\" for " + i + " markets..");
+     //   getLog().info("setting onAir=\"" + b + "\" for " + i + " markets..");
         setPollEnabled(true);
     }
 
@@ -1242,7 +1248,7 @@ AUSTRALIAN
                  bukmOddsInfo[1] = "" + mr.getSelectionId();
                  bukmOddsInfo[0] = "" + mr.getAsianLineId();
                  Runner4User r4u = mr.getUserData4Runner().get(currentUser.getId());
-                 bukmOddsInfo[3] = (r4u.getOdds()!= null? "" + r4u.getOdds(): ""+ NumberFormat.getInstance().format(r4u.getBackPrice1()));
+                 bukmOddsInfo[3] = (r4u.getOdds()!= null? "" + r4u.getOdds(): ""+ NumberFormat.getInstance(new Locale("RU","ru")).format(r4u.getBackPrice1()));
                  bukmOddsInfo[4] = "=$E$1 * $D" + (priority+1);
                  bukmOddsInfoList.add(bukmOddsInfo);
             }

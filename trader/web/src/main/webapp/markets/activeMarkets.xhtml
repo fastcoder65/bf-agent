@@ -9,10 +9,10 @@
         <a4j:status>
 
             <f:facet name="start">
-                <h:graphicImage style="border-width:0" value="/images/ai.gif" alt="tree is loading.." />
+                <h:graphicImage style="border-width:0" title="loading.. " value="/images/ai.gif" alt="tree is loading.." />
             </f:facet>
             <f:facet name="stop">
-                <h:graphicImage style="border-width:0" value="/images/spacer.gif" alt="tree loaded" />
+                <h:graphicImage style="border-width:0" title="loaded." value="/images/spacer.gif" alt="tree loaded" />
             </f:facet>
 
         </a4j:status>
@@ -23,14 +23,15 @@
             <h:outputText value="My markets"/>
         </f:facet>
 
+            <ui:remove>
             <h:form>
 
                 <a4j:queue requestDelay="100" ignoreDupResponce="true"/>
-<ui:remove>
+
                 <a4j:push id="pushTopics" address="pushTopicsContext">
                     <a4j:ajax event="dataavailable" render="uuid" />
                 </a4j:push>
-</ui:remove>
+
                 <h:panelGrid columns="2">
                     <h:outputLabel value="New UUID:" />
                     <a4j:outputPanel id="uuid" layout="block">
@@ -38,6 +39,7 @@
                     </a4j:outputPanel>
                 </h:panelGrid>
             </h:form>
+        </ui:remove>
 
             <h:form>
                 <a4j:queue requestDelay="100" ignoreDupResponce="true"/>

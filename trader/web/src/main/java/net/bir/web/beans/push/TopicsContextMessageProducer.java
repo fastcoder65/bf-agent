@@ -52,8 +52,11 @@ public class TopicsContextMessageProducer implements MessageProducer {
             TopicKey topicKey = new TopicKey(PUSH_TOPICS_CONTEXT_TOPIC);
 
             TopicsContext topicsContext = TopicsContext.lookup();
+            log.info("topicsContext: " + topicsContext);
 
             topicsContext.publish(topicKey, "message");
+            log.info("topic published: " + topicKey);
+
         } catch (Exception e) {
             log.error("Sending push message using TopicContext failed (" + e.getMessage()
                     + ") - operation will be repeated in few seconds");

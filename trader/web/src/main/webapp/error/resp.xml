@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?><?xml-stylesheet type="text/xsl" href="https://portal.rosreestr.ru/xsl/GKN/Vidimus_KS_b/03/common.xsl"?>
+<CadastralCostDoc xmlns:Cos1="urn://x-artefacts-rosreestr-ru/commons/complex-types/cadastral-cost/1.0"
+                  xmlns:Cer1="urn://x-artefacts-rosreestr-ru/commons/complex-types/certification-doc/1.0"
+                  xmlns:tns="urn://x-artefacts-smev-gov-ru/supplementary/commons/1.0.1"
+                  xmlns="urn://x-artefacts-rosreestr-ru/outgoing/cadastral-cost-document/3.0">
+    <Object CadastralNumber="77:02:0010016:1171">
+        <DateKS>2017-10-23</DateKS>
+        <CadastralCost Unit="383" Value="11098505.68">
+            <Cos1:DateValuation>2016-01-01</Cos1:DateValuation>
+            <Cos1:DateEntering>2016-12-24</Cos1:DateEntering>
+            <Cos1:DateApproval>2016-12-09</Cos1:DateApproval>
+            <Cos1:DocNumber>790-ПП</Cos1:DocNumber>
+            <Cos1:DocDate>2016-11-29</Cos1:DocDate>
+        </CadastralCost>
+    </Object>
+    <CertificationDoc>
+        <Cer1:Organization>Филиал федерального государственного бюджетного учреждения "Федеральная кадастровая палата
+            Федеральной службы государственной регистрации, кадастра и картографии" по Москве
+        </Cer1:Organization>
+        <Cer1:Date>2017-10-24</Cer1:Date>
+        <Cer1:Number>77/ИСХ/17-3015463</Cer1:Number>
+        <Cer1:Official>
+            <Cer1:Appointment>Инженер I категории</Cer1:Appointment>
+            <tns:FamilyName>Приемская</tns:FamilyName>
+            <tns:FirstName>Маргарита</tns:FirstName>
+            <tns:Patronymic>Сергеевна</tns:Patronymic>
+        </Cer1:Official>
+    </CertificationDoc>
+</CadastralCostDoc>
