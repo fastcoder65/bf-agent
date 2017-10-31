@@ -3,16 +3,16 @@
 %>
 
 <html xmlns:h="http://java.sun.com/jsf/html"
-	  xmlns:f="http://java.sun.com/jsf/core"
->
+        >
 
 <head>
     <title><h:outputText value="Trader Error"/></title>
     <script type="text/javascript">
     var sOpenAgainMessage = "User session has expired or unpredictable application error has occured. Please, try open this window again. if problem remains, call support service.";
 
-    var mainURL = window.location;
-    
+    var contextURL = '<%=request.getContextPath()%>';
+    var mainURL    = contextURL + '/main.jsf';
+
     function checkOpenerWin(win2check, sURL) {
      var win = null;
      if (win2check)

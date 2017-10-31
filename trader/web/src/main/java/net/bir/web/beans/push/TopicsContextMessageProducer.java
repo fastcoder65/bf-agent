@@ -52,10 +52,10 @@ public class TopicsContextMessageProducer implements MessageProducer {
             TopicKey topicKey = new TopicKey(PUSH_TOPICS_CONTEXT_TOPIC);
 
             TopicsContext topicsContext = TopicsContext.lookup();
-            log.info("topicsContext: " + topicsContext);
+            log.debug("topicsContext: " + topicsContext);
 
             topicsContext.publish(topicKey, "message");
-            log.info("topic published: " + topicKey);
+            log.debug("topic published: " + topicKey);
 
         } catch (Exception e) {
             log.error("Sending push message using TopicContext failed (" + e.getMessage()
@@ -69,7 +69,7 @@ public class TopicsContextMessageProducer implements MessageProducer {
      * @see org.richfaces.demo.push.MessageProducer#getInterval()
      */
     public int getInterval() {
-        return 5000;
+        return 20000;
     }
 
     /*

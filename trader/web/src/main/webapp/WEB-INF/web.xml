@@ -68,7 +68,7 @@
     <!-- Configures Push -->
     <context-param>
         <param-name>org.richfaces.push.initializeOnStartup</param-name>
-        <param-value>false</param-value>
+        <param-value>true</param-value>
     </context-param>
 
     <context-param>
@@ -87,17 +87,19 @@
         <param-name>org.atmosphere.cpr.CometSupport.maxInactiveActivity</param-name>
         <param-value>35000</param-value>
     </context-param>
-<!--
+
+    <!--
     <context-param>
         <param-name>org.atmosphere.useBlocking</param-name>
         <param-value>true</param-value>
     </context-param>
--->
+    -->
 
     <listener>
         <listener-class>net.bir.util.BIRApplicationContextListener</listener-class>
     </listener>
-<!--
+
+    <!--
     <servlet>
         <servlet-name>Faces_Servlet</servlet-name>
         <servlet-class>javax.faces.webapp.FacesServlet</servlet-class>
@@ -130,8 +132,6 @@
         <url-pattern>/downloadDoc/*</url-pattern>
     </servlet-mapping>
 
-
-
     <welcome-file-list>
         <welcome-file>index.html</welcome-file>
     </welcome-file-list>
@@ -141,45 +141,39 @@
         <location>/error/error.jsp</location>
     </error-page>
 
-
+    <error-page>
+        <error-code>404</error-code>
+        <location>/error/error.jsp</location>
+    </error-page>
 
     <!--
     <error-page>
         <error-code>401</error-code>
-        <location>/error.jsp</location>
+        <location>/error/error.jsp</location>
     </error-page>
-            <error-page>
-                <error-code>400</error-code>
-                <location>/error.jsp</location>
-            </error-page>
-
-
-            <error-page>
-                <error-code>403</error-code>
-                <location>/error.jsp</location>
-            </error-page>
-
-            <error-page>
-                <error-code>405</error-code>
-                <location>/error.jsp</location>
-            </error-page>
-
-            <error-page>
-                <error-code>404</error-code>
-                <location>/error.jsp</location>
-            </error-page>
-
-        <error-page>
-            <exception-type>java.lang.Throwable</exception-type>
-            <location>/error.jsp</location>
-        </error-page>
-    -->
+-->
 
     <error-page>
-        <exception-type>java.lang.Exception</exception-type>
-        <location>/error.jsp</location>
+        <error-code>400</error-code>
+        <location>/error/error.jsp</location>
     </error-page>
 
+    <error-page>
+        <error-code>403</error-code>
+        <location>/error/error.jsp</location>
+    </error-page>
+
+    <error-page>
+        <error-code>405</error-code>
+        <location>/error/error.jsp</location>
+    </error-page>
+
+    <!--
+           <error-page>
+               <exception-type>java.lang.Throwable</exception-type>
+               <location>/error/error.jsp</location>
+           </error-page>
+-->
 
     <security-constraint>
         <web-resource-collection>

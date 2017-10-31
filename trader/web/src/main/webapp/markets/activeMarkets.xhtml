@@ -9,11 +9,12 @@
         <a4j:status id="marketStatus_1">
 
             <f:facet name="start">
-                <h:graphicImage style="border-width:0" title="loading.. " value="/images/ai.gif"
-                                alt="tree is loading.."/>
+                <h:graphicImage style="border-width:0" title="Loading.. "  value="/images/ai.gif"
+                                alt="Loading.."/>
             </f:facet>
+
             <f:facet name="stop">
-                <h:graphicImage style="border-width:0" title="loaded." value="/images/spacer.gif" alt="tree loaded"/>
+                <h:graphicImage style="border-width:0" title="loaded." value="/images/spacer.gif" alt="loaded."/>
             </f:facet>
 
         </a4j:status>
@@ -24,34 +25,33 @@
             <h:outputText value="My markets"/>
         </f:facet>
 
-        <ui:remove>
-
             <h:form>
 
+                <a4j:queue requestDelay="100" ignoreDupResponce="true"/>
 
-                <a4j:push id="pushTopics" address="pushTopicsContext">
-                    <a4j:ajax event="dataavailable" render="uuid"/>
+                <a4j:push id="pushTopics" address="pushTopicsContext" >
+                    <a4j:ajax disabled="#{!(marketBean.pollEnabled)}"  event="dataavailable" render="marketTable, runnerTable, marketServerTime"/>
                 </a4j:push>
-
+                <ui:remove>
                 <h:panelGrid columns="2">
                     <h:outputLabel value="New UUID:"/>
                     <a4j:outputPanel id="uuid" layout="block">
                         #{pushBean.UUID}
                     </a4j:outputPanel>
-                </h:panelGrid>
+                </h:panelGrid></ui:remove>
             </h:form>
 
-        </ui:remove>
 
+        <ui:remove>
         <h:form>
             <a4j:region id="pollRegion">
 
-                <a4j:poll id="pollMarkets" interval="10000" enabled="#{marketBean.pollEnabled}"
-                          render="pollMarkets,marketTable,runnerTable,:marketServerTime,:serverTime"/>
-
+                <a4j:poll id="pollMarkets" interval="20000" enabled="#{marketBean.pollEnabled}"
+                          render="pollMarkets, marketTable, runnerTable, marketServerTime"/>
 
             </a4j:region>
         </h:form>
+        </ui:remove>
 
         <h:form>
             <a4j:queue requestDelay="100" ignoreDupResponce="true"/>
