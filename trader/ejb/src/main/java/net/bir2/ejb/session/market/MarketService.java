@@ -20,7 +20,7 @@ public interface MarketService {
 
 	List<Market> listMarkets();
 
-	List<Market> getMyActiveMarkets();
+	List<Market> getMyActiveMarkets(int toffset);
 	
 	List<MarketRunner> listRunners(String marketId);
 

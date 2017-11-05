@@ -12,18 +12,22 @@
 <f:loadBundle basename="net.bir.resources.messages" var="msg" />
 
 <h:head>
-
 	<title>BIR Main</title>
-
 	<link rel="SHORTCUT ICON" href='images/favicon.ico'	type="image/x-icon" />
-
 	<link rel="ICON" href='images/favicon.ico' type="image/x-icon" />
-
 	<link rel="stylesheet" type="text/css"  href="css/main.css" />
 
+	<script type="text/javascript" >
+
+		var currentUserDateTime = new Date();
+		var restInMinutes = 1000 * 60;
+		var userOffsetInMillis = currentUserDateTime.getTimezoneOffset() * restInMinutes;
+		var currentDateTime = 0;
+
+	</script>
 </h:head>
 
-<h:body>
+<h:body onload="if (timeOffsetInit) setTimeout('timeOffsetInit( userOffsetInMillis )', 500);">
 
 	<ui:remove>
 		<script type="text/javascript" src="https://seal.thawte.com/getthawteseal?host_name=www.bir24x7.net&amp;size=M&amp;lang=en"></script>

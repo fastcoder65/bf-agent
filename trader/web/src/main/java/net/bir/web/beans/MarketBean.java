@@ -55,16 +55,62 @@ import java.util.logging.Logger;
 public class MarketBean extends BaseBean implements Serializable {
 
     private static final long serialVersionUID = 1L;
-
+    private static final String MARKET_BEAN = "marketBean";
+    private static final String NA = "N/A";
+    public static String currencyFormat = "#,##0.0#";
+    private static Integer serverTimeZoneOffset = null;
+    private final String CN_RUNNER_TABLE_STATE = "runnerTableState";
+    public List<Double> allValidOdds = null;
+    @EJB(name = "BIR/SettingsServiceBean/local")
+    protected SettingsService settingsService;
+    List<MarketRunner> runners = new ArrayList<MarketRunner>();
     private Market currentMarket = null;
-
     private Market4User market4User = null;
-
     private APIContext apiContext = null;
-
     private UIForm runnerForm;
-
     private UIForm marketForm;
+    private HashMap<String, Entry> cachedEntries = new HashMap<String, Entry>();
+    private TreeNode currentSelection = null;
+    private ScheduledExecutorService scheduler;
+    private String nodeTitle;
+    private SportNode allSports;
+    private MarketNode selectedMarketNode;
+    private JPASettings settings;
+    private Long selectionId;
+    private Uzer currentUser = null;
+    // protected SimpleSelection masterSelection = new SimpleSelection();
+    private Collection<Object> masterTableSelection;
+    private boolean pollEnabled = true;
+    private List<Object> masterSelectionItems = new ArrayList<Object>();
+    private String selectedMarketId = null;
+    private String accountBalance = NA;
+    private boolean runnersOpened = false;
+    private Set<Object> ajaxSetRunners;
+    private String toggleTree = "on";
+    private String runnerTableState = null;
+    private int userTimeOffset = 0;
+    private Boolean odds2downloadPrepared = false;
+
+    public static MarketBean getInstance() {
+        return (MarketBean) WebUtils.getManagedBean(MARKET_BEAN);
+    }
+
+    public static MarketBean getInstance(FacesContext context) {
+        return (MarketBean) WebUtils.getManagedBean(MARKET_BEAN, context);
+    }
+
+    public Integer getServerTimeZoneOffset() {
+
+        if (serverTimeZoneOffset == null) {
+            TimeZone myTimeZone = java.util.TimeZone.getDefault();
+
+            serverTimeZoneOffset = myTimeZone.getOffset((new Date()).getTime());
+
+             log.info("Server Time Zone is: " + myTimeZone.getDisplayName() + ", offset=" + serverTimeZoneOffset);
+        }
+
+        return serverTimeZoneOffset;
+    }
 
     public UIForm getRunnerForm() {
         return runnerForm;
@@ -82,11 +128,6 @@ public class MarketBean extends BaseBean implements Serializable {
         this.marketForm = marketForm;
     }
 
-    private HashMap<String, Entry> cachedEntries = new HashMap<String, Entry>();
-
-
-    private TreeNode currentSelection = null;
-
     public TreeNode getCurrentSelection() {
         return currentSelection;
     }
@@ -95,29 +136,11 @@ public class MarketBean extends BaseBean implements Serializable {
         this.currentSelection = currentSelection;
     }
 
-
-    @EJB(name = "BIR/SettingsServiceBean/local")
-    protected SettingsService settingsService;
-
-
-    private static final String MARKET_BEAN = "marketBean";
-
-    public static MarketBean getInstance() {
-        return (MarketBean) WebUtils.getManagedBean(MARKET_BEAN);
-    }
-
-    public static MarketBean getInstance(FacesContext context) {
-        return (MarketBean) WebUtils.getManagedBean(MARKET_BEAN, context);
-    }
-
-
-
-    private ScheduledExecutorService scheduler;
-
     @PostConstruct
     public void init() {
         scheduler = Executors.newSingleThreadScheduledExecutor();
     }
+
 
     @PreDestroy
     public void destroy() {
@@ -136,17 +159,18 @@ public class MarketBean extends BaseBean implements Serializable {
                 getLog().log(Level.SEVERE, "Logout failed ", e);
             }
     }
-/*
 
-UK
+    /*
 
- The UK Exchange wallet
+    UK
 
-
-AUSTRALIAN
+     The UK Exchange wallet
 
 
- */
+    AUSTRALIAN
+
+
+     */
     public String getAccountBalance() {
         if (NA.equals(accountBalance)) {
             updateBalance();
@@ -157,8 +181,8 @@ AUSTRALIAN
     public String getAusBalance() {
         String result = "N/A";
         AccountFundsResponse resp = null;
-        if (getApiContext() != null && getApiContext().getToken()!= null)
-        resp = getMarketService().getAccountFunds(Wallet.AUSTRALIAN, apiContext.getProduct(), apiContext.getToken());
+        if (getApiContext() != null && getApiContext().getToken() != null)
+            resp = getMarketService().getAccountFunds(Wallet.AUSTRALIAN, apiContext.getProduct(), apiContext.getToken());
 
         if (resp != null)
             result = NumberFormat.getInstance().format(resp.getAvailableToBetBalance());
@@ -192,9 +216,6 @@ AUSTRALIAN
         return apiContext;
     }
 
-    private String nodeTitle;
-    private SportNode allSports;
-
     // Print some data to the output, appending a carriage return.
     public void println(String value) {
         getLog().info(value);
@@ -208,8 +229,6 @@ AUSTRALIAN
     public Boolean adviseNodeOpened(UITree tree) {
         return Boolean.TRUE;
     }
-
-    private MarketNode selectedMarketNode;
 
     public MarketNode getSelectedMarketNode() {
         return selectedMarketNode;
@@ -282,23 +301,21 @@ AUSTRALIAN
 
     }
 
-    public List<Double> allValidOdds=null;
-
     public List<Double> getAllValidOdds() {
 
-          if (allValidOdds == null) {
+        if (allValidOdds == null) {
             if (marketService != null && marketService.getServiceBean() != null) {
                 log.info("getting valid odds from singleton..");
                 allValidOdds = marketService.getServiceBean().getAllValidOdds();
             }
-              if (allValidOdds != null)
-                  log.info("singleton valid odds found " + allValidOdds.size() + " odds.");
+            if (allValidOdds != null)
+                log.info("singleton valid odds found " + allValidOdds.size() + " odds.");
 
-          }
+        }
         return allValidOdds;
     }
 
-    public  List<String> oddsAutoComplete(String prefix) {
+    public List<String> oddsAutoComplete(String prefix) {
         log.info("oddsAutoComplete - prefix: " + prefix);
 
         List<Double> _allValidOdds = getAllValidOdds();
@@ -328,7 +345,7 @@ AUSTRALIAN
            log.info("autocomplete  selected: " + sItem );
         }
         */
-        log.info("autocomplete  selected items: " + result.size() );
+        log.info("autocomplete  selected items: " + result.size());
         return result;
     }
 
@@ -354,10 +371,10 @@ AUSTRALIAN
             List<CompetitionResult> listCompetitions = null;
 
 
-                listCompetitions = getMarketService().getCompetitions(apiContext, eventTypeIds, eventIds);
+            listCompetitions = getMarketService().getCompetitions(apiContext, eventTypeIds, eventIds);
 
-                if (listCompetitions == null || listCompetitions.size() == 0)
-                    listEvents = getMarketService().getEvents(apiContext, eventTypeIds, competitionIds, eventIds);
+            if (listCompetitions == null || listCompetitions.size() == 0)
+                listEvents = getMarketService().getEvents(apiContext, eventTypeIds, competitionIds, eventIds);
 
 
             if (listCompetitions != null) {
@@ -407,7 +424,7 @@ AUSTRALIAN
 
         if (currentSelection instanceof EventNode) {
             EventNode curEventNode = (EventNode) currentSelection;
-         //   getLog().info("## current event Node: " + curEventNode);
+            //   getLog().info("## current event Node: " + curEventNode);
 
             Set<String> eventTypeIds = new HashSet<String>();
             Set<String> eventIds = new HashSet<String>();
@@ -425,10 +442,10 @@ AUSTRALIAN
             if (eventTypeIds.size() > 0 || competitionIds.size() > 0 || eventIds.size() > 0)
 
 
-                    listEvents = getMarketService().getEvents(apiContext, eventTypeIds, competitionIds, eventIds);
+                listEvents = getMarketService().getEvents(apiContext, eventTypeIds, competitionIds, eventIds);
 
             if (listEvents != null) {
-             //   getLog().info("## listEvents.size()= " + listEvents.size());
+                //   getLog().info("## listEvents.size()= " + listEvents.size());
 
                 int i = 0;
                 for (EventResult er : listEvents) {
@@ -452,7 +469,7 @@ AUSTRALIAN
 
                 if (curEventNode != null && "event".equals(curEventNode.getType())) {
 
-                 //   getLog().info("added to eventIds: " + curEventNode.getId());
+                    //   getLog().info("added to eventIds: " + curEventNode.getId());
                     eventIds.add("" + curEventNode.getId());
 
                 }
@@ -477,24 +494,15 @@ AUSTRALIAN
 
         if (currentSelection instanceof MarketNode) {
             MarketNode marketNode = (MarketNode) currentSelection;
-         //   getLog().info("marketNode: " + marketNode);
+            //   getLog().info("marketNode: " + marketNode);
 
 
             if (marketNode != null) {
                 selectedMarketNode = marketNode;
-              //  getLog().info("marketNode is:" + marketNode);
+                //  getLog().info("marketNode is:" + marketNode);
             }
         }
     }
-
-    /*
-    public static final String NT_SPORT = "S-";
-    public static final String NT_EVENT = "E-";
-    public static final String NT_MARKET = "M-";
-    public static final String NT_GROUP = "G-";
-    public static final String NT_COMPETITION = "C-";
-    public static final String NT_RACE = "R-";
-*/
 
     public synchronized List<TreeNode> getRootNodes() throws APINGException {
         if (allSports == null) {
@@ -527,12 +535,18 @@ AUSTRALIAN
 
         List<Market> result;
 
-        result = getMarketService().getMyActiveMarkets();
+        int toffset = -(this.getUserTimeOffset() + this.getServerTimeZoneOffset());
+
+        result = getMarketService().getMyActiveMarkets(toffset);
         getLog().fine(
                 "getActiveMarkets(): read " + result.size()
                         + " active markets..");
 
         return result;
+    }
+
+    public Market getCurrentMarket() {
+        return currentMarket;
     }
 
     public void setCurrentMarket(Market currentMarket) {
@@ -541,15 +555,10 @@ AUSTRALIAN
         if (this.currentMarket != null && getCurrentUser() != null) {
             Market4User m4u = this.currentMarket.getUserData4Market().get(getCurrentUser().getId());
             getLog().info("" + m4u);
-;            setCurrentMarket4User(m4u);
+            ;
+            setCurrentMarket4User(m4u);
         }
     }
-
-    public Market getCurrentMarket() {
-        return currentMarket;
-    }
-
-    private JPASettings settings;
 
     public JPASettings getSettings() {
         if (settings == null) {
@@ -567,8 +576,6 @@ AUSTRALIAN
         }
         return settings;
     }
-
-    List<MarketRunner> runners = new ArrayList<MarketRunner>();
 
     public List<MarketRunner> getRunners() {
 
@@ -588,8 +595,6 @@ AUSTRALIAN
         return runners;
     }
 
-    private Long selectionId;
-
     public Long getSelectionId() {
         return selectionId;
     }
@@ -608,7 +613,7 @@ AUSTRALIAN
 
         Long _selectionId = getSelectionId();
 
-        if (_selectionId == null ) {
+        if (_selectionId == null) {
             log.info("*** _selectionId is null, odds not saved, exit. ");
             return;
         }
@@ -617,44 +622,42 @@ AUSTRALIAN
         log.info("runner is : " + runner);
 
         if (runner != null)
-        try {
+            try {
 
-                    Double _odds = Double.valueOf(uiOddsAutoComplete.getValue().toString());
+                Double _odds = Double.valueOf(uiOddsAutoComplete.getValue().toString());
 
-                    log.info("_odds : " + _odds);
+                log.info("_odds : " + _odds);
 
-                    _odds = (_odds == null || _odds == 0.0) ? BaseServiceBean.FAKE_ODDS
-                            : _odds;
+                _odds = (_odds == null || _odds == 0.0) ? BaseServiceBean.FAKE_ODDS
+                        : _odds;
 
-                    Runner4User r4u = runner.getUserData4Runner().get(
-                            currentUser.getId());
+                Runner4User r4u = runner.getUserData4Runner().get(
+                        currentUser.getId());
                     /*
-					 * Market4User m4u = r4u.getLinkedRunner().getMarket()
+                     * Market4User m4u = r4u.getLinkedRunner().getMarket()
 					 * .getUserData4Market().get(currentUser.getId());
 					 */
-                    Market4User m4u = getCurrentMarket().getUserData4Market()
-                            .get(currentUser.getId());
-                    getLog().info(m4u.toString());
+                Market4User m4u = getCurrentMarket().getUserData4Market()
+                        .get(currentUser.getId());
+                getLog().info(m4u.toString());
 
-                    //this.setPollEnabled(false);
+                //this.setPollEnabled(false);
 
-                    m4u.setOnAir(false);
-                    r4u.setOdds(_odds);
+                m4u.setOnAir(false);
+                r4u.setOdds(_odds);
 
-                    getLog().info(
-                            "** user odds " + _odds + " for runner "
-                                    + runner.getSelectionId() + " saved.");
-                    getMarketService().merge(m4u);
-                    getMarketService().merge(r4u);
+                getLog().info(
+                        "** user odds " + _odds + " for runner "
+                                + runner.getSelectionId() + " saved.");
+                getMarketService().merge(m4u);
+                getMarketService().merge(r4u);
 
-        } catch (Exception e) {
-            getLog().severe(
-                    "Error saving user odds, message: " + e.getMessage());
-        }
+            } catch (Exception e) {
+                getLog().severe(
+                        "Error saving user odds, message: " + e.getMessage());
+            }
 
     }
-
-    private Uzer currentUser = null;
 
     public Uzer getCurrentUser() {
         return currentUser;
@@ -687,8 +690,6 @@ AUSTRALIAN
 
         setPollEnabled(false);
 
-//        MarketCatalogue _mc = (MarketCatalogue) selectedMarketNode.getMarket();
-
         Set<String> marketIds = new HashSet<String>();
         marketIds.add(selectedMarketId);
 
@@ -697,12 +698,9 @@ AUSTRALIAN
         Iterator<MarketCatalogue> mi = _listMarkets.iterator();
 
         MarketCatalogue mc = (mi.hasNext() ? mi.next() : null);
-//        getLog().info(" MarketCatalogue: " + mc.getMarketId());
 
-        MarketDescription md = (mc!= null ? mc.getDescription() : null);
- //       getLog().info("MarketDescription.rules: " + md.getRules());
+        MarketDescription md = (mc != null ? mc.getDescription() : null);
 
-        // get marketbook there
         List<String> listMarketIds = new ArrayList<String>();
         listMarketIds.add(mc.getMarketId());
 
@@ -719,10 +717,9 @@ AUSTRALIAN
         Uzer currentUser = getMarketService().getCurrentUser();
 
         boolean alreadySelected = false;
-        if (mc != null) {
-            alreadySelected = marketService.isMarketAlreadyExistsByMarketId(mc
-                    .getMarketId());
 
+        if (mc != null) {
+            alreadySelected = marketService.isMarketAlreadyExistsByMarketId(mc.getMarketId());
         }
 
         if (alreadySelected) {
@@ -759,34 +756,18 @@ AUSTRALIAN
             Market market = new Market();
             market.setName(mc.getMarketName());
             market.setCountry(mc.getEvent().getCountryCode());
-
-            // market.setCountry("country is: "+ mc.getEvent());
-
             market.setMarketStatus(mb.getStatus());
-            // getLog().info(selectedMarket.getMarketDisplayTime().getTime());
             market.setMarketDisplayTime(md.getMarketTime());
 
-            // market.setExchange(mc.getDescription().getRegulator().
             market.setDelay(mb.getBetDelay());
             market.setMarketId(mc.getMarketId());
-
-            // market.setMarketDescription(mc.getDescription().toString());
-/*
-            TimeZone myTimeZone = java.util.TimeZone.getDefault();
-            int offset = myTimeZone.getOffset((new Date()).getTime());
-            log.info("myTimeZone is: " + myTimeZone.getDisplayName() + ", offset=" + offset);
-*/
 
             Calendar c = Calendar.getInstance();
             c.setTime(md.getMarketTime());
             c.add(Calendar.MILLISECOND, getServerTimeZoneOffset());
             market.setMarketTime(c.getTime());
 
-
             market.setNoOfWinners(mb.getNumberOfWinners()); // selectedMarket.getNumberOfWinners());
-
-            // market.setRunnersMayBeAdded(m
-            // selectedMarket.getRunnersMayBeAdded());
 
             market.setMenuPath(getMenuPath(market.getMarketId()));
             market.setMarketType(md.getMarketType());
@@ -805,39 +786,33 @@ AUSTRALIAN
 
             } else {
 
-                if (getSettings() != null  && getSettings().getSystemSettings() != null ) {
+                if (getSettings() != null && getSettings().getSystemSettings() != null) {
 
-                  SystemSettings sets =  getSettings().getSystemSettings();
+                    SystemSettings sets = getSettings().getSystemSettings();
 
-                  Integer tOn_Hrs = sets.getTurnOnTimeOffsetHours();
-                  Integer tOn_Mins = sets.getTurnOnTimeOffsetMinutes();
+                    Integer tOn_Hrs = sets.getTurnOnTimeOffsetHours();
+                    Integer tOn_Mins = sets.getTurnOnTimeOffsetMinutes();
 
-                  Integer tOff_Hrs = sets.getTurnOffTimeOffsetHours();
-                  Integer tOff_Mins = sets.getTurnOffTimeOffsetMinutes();
+                    Integer tOff_Hrs = sets.getTurnOffTimeOffsetHours();
+                    Integer tOff_Mins = sets.getTurnOffTimeOffsetMinutes();
 
-                  Double _maxLoss = sets.getMaxLossPerSelection();
+                    Double _maxLoss = sets.getMaxLossPerSelection();
 
-                  market4User = new Market4User(currentUser, market,
-                          tOn_Hrs,
-                          tOn_Mins,
-                          tOff_Hrs,
-                          tOff_Mins,
-                          _maxLoss);
+                    market4User = new Market4User(currentUser, market,
+                            tOn_Hrs,
+                            tOn_Mins,
+                            tOff_Hrs,
+                            tOff_Mins,
+                            _maxLoss);
 
-                  //market4User = merge(market4User);
-
-                    persist(market4User);
-
-                  market4users.add(market4User);
-
-                  market.setMarket4Users(market4users);
-
-                  market = merge(market);
-              }
+                    market4User = merge(market4User);
+                    market4users.add(market4User);
+                    market.setMarket4Users(market4users);
+                    market = merge(market);
+                }
             }
 
             List<RunnerCatalog> runners = mc.getRunners();
-            // .getRunners().getRunner();
 
             if (runners != null) {
                 for (RunnerCatalog rc : runners) {
@@ -857,22 +832,19 @@ AUSTRALIAN
                     runner4users.add(r4u);
                     runner.setRunner4Users(runner4users);
                     getMarketService().merge(runner);
-                     getLog().info("saved runner: " + runner);
+                    getLog().info("saved runner: " + runner);
                 }
             } else {
                 getLog().log(Level.WARNING,
                         mc.getMarketName() + ": no runners found!");
             }
         }
-        //   setPollEnabled(true);
+           setPollEnabled(true);
     }
 
     public void changeSelection() {
         getLog().info("changeSelection fired!");
     }
-
-    // protected SimpleSelection masterSelection = new SimpleSelection();
-    private Collection<Object> masterTableSelection;
 
     public Collection<Object> getMasterTableSelection() {
         return masterTableSelection;
@@ -885,8 +857,6 @@ AUSTRALIAN
         //  setPollEnabled(true);
     }
 
-    private boolean pollEnabled = true;
-
     public boolean isPollEnabled() {
         return pollEnabled;
     }
@@ -896,8 +866,6 @@ AUSTRALIAN
         this.pollEnabled = pollEnabled;
         getLog().info("pollEnabled =" + pollEnabled);
     }
-
-    private List<Object> masterSelectionItems = new ArrayList<Object>();
 
     public void masterSelectionListener(AjaxBehaviorEvent event) {
 
@@ -950,26 +918,19 @@ AUSTRALIAN
         this.selectedMarketId = selectedMarketId;
     }
 
-    private String selectedMarketId = null;
-
     public void toggleRefresh() {
         boolean b = this.pollEnabled;
         setPollEnabled(!b);
     }
 
-    private static final String NA = "N/A";
-
-    private String accountBalance = NA;
-
     public void updateBalance() {
         AccountFundsResponse resp = null;
-        if (getApiContext() != null && getApiContext().getToken()!= null)
+        if (getApiContext() != null && getApiContext().getToken() != null)
             resp = getMarketService().getAccountFunds(Wallet.UK, apiContext.getProduct(), apiContext.getToken());
 
         if (resp != null)
             accountBalance = NumberFormat.getInstance().format(resp.getAvailableToBetBalance());
     }
-
 
     public void setOnAirOn() {
         setOnAir(true);
@@ -995,7 +956,7 @@ AUSTRALIAN
             }
             i++;
         }
-     //   getLog().info("setting onAir=\"" + b + "\" for " + i + " markets..");
+        //   getLog().info("setting onAir=\"" + b + "\" for " + i + " markets..");
         setPollEnabled(true);
     }
 
@@ -1046,8 +1007,6 @@ AUSTRALIAN
         return null;
     }
 
-    private boolean runnersOpened = false;
-
     public boolean isRunnersOpened() {
         return runnersOpened;
     }
@@ -1055,8 +1014,6 @@ AUSTRALIAN
     public void setRunnersOpened(boolean runnersOpened) {
         this.runnersOpened = runnersOpened;
     }
-
-    private Set<Object> ajaxSetRunners;
 
     public Set<Object> getAjaxSetRunners() {
         return ajaxSetRunners;
@@ -1066,11 +1023,18 @@ AUSTRALIAN
         this.ajaxSetRunners = ajaxSetRunners;
     }
 
-    public String getServerTime() {
-        return timeFormat.format(new Date());
-    }
+	/*
+	 * 
+	 * To access the SSL session ID from the request, use: String sslID =
+	 * (String)request.getAttribute("javax.servlet.request.ssl_session"); For
+	 * additional discussion on this area, please see Bugzilla.
+	 */
 
-    public static String currencyFormat = "#,##0.0#";
+    public String getServerTime() {
+        Calendar c =  Calendar.getInstance(TimeZone.getDefault());
+        c.add(Calendar.MILLISECOND, -(this.getUserTimeOffset() + this.getServerTimeZoneOffset()));
+        return timeFormat.format(c.getTime());
+    }
 
     public String getCurrencyFormat() {
         return currencyFormat;
@@ -1102,44 +1066,8 @@ AUSTRALIAN
         this.toggleTree = toggleTree;
     }
 
-    private String toggleTree = "on";
-
-	/*
-	 * 
-	 * To access the SSL session ID from the request, use: String sslID =
-	 * (String)request.getAttribute("javax.servlet.request.ssl_session"); For
-	 * additional discussion on this area, please see Bugzilla.
-	 */
-
-    class KeepAliveJob implements Runnable {
-
-        private final Logger log = Logger.getLogger(this.getClass().getName());
-
-        private APIContext apiContext;
-
-        public KeepAliveJob(APIContext apiContext) {
-            this.apiContext = apiContext;
-        }
-
-        @Override
-        public void run() {
-            try {
-                Thread.sleep(1000);
-                log.fine("call getMarketService().keepAlive(" + apiContext + ")");
-                getMarketService().keepAlive(apiContext);
-            } catch (Exception e) {
-                log.log(Level.SEVERE, "error on keep-alive request: " + e.getMessage());
-            }
-            log.fine("run finished");
-        }
-    }
-
-    private String runnerTableState = null;
-
-    private final String CN_RUNNER_TABLE_STATE = "runnerTableState";
-
     public String getRunnerTableState() {
-        if ( runnerTableState == null) {
+        if (runnerTableState == null) {
             // try to get state from cookies
             Cookie[] cookies = ((HttpServletRequest) FacesContext
                     .getCurrentInstance().getExternalContext().getRequest())
@@ -1162,25 +1090,25 @@ AUSTRALIAN
         this.runnerTableState = tableState;
         // save state in cookies
         Cookie stateCookie = new Cookie(CN_RUNNER_TABLE_STATE, this.runnerTableState);
-        log.info("save state for client table: [" + stateCookie.getName() + "=" + this.runnerTableState + "]: " );
+        log.info("save state for client table: [" + stateCookie.getName() + "=" + this.runnerTableState + "]: ");
         stateCookie.setMaxAge(Integer.MAX_VALUE);
         ((HttpServletResponse) FacesContext.getCurrentInstance()
                 .getExternalContext().getResponse()).addCookie(stateCookie);
     }
 
-    private  static Integer serverTimeZoneOffset=null;
+    public int getUserTimeOffsetHours () {
+        int userTimeOffsetHours = getUserTimeOffset() / ( 1000 * 60 * 60 ) ;
+        log.info("current user TimeZone Offset, hours " + (-userTimeOffsetHours));
+        return  -userTimeOffsetHours;
+    }
 
-    public static Integer getServerTimeZoneOffset() {
+    public int getUserTimeOffset() {
+        return userTimeOffset;
+    }
 
-        if (serverTimeZoneOffset == null) {
-            TimeZone myTimeZone = java.util.TimeZone.getDefault();
-
-            serverTimeZoneOffset = myTimeZone.getOffset((new Date()).getTime());
-
-            // log.info("myTimeZone is: " + myTimeZone.getDisplayName() + ", offset=" + offset);
-        }
-
-        return serverTimeZoneOffset;
+    public void setUserTimeOffset(int userTimeOffset) {
+        this.userTimeOffset = userTimeOffset;
+      //  log.info("this.userTimeOffset = " + this.userTimeOffset);
     }
 
     private void writeEmailListAsCsv(List<String[]> output, File file)
@@ -1222,8 +1150,6 @@ AUSTRALIAN
         }
     }
 
-    private Boolean odds2downloadPrepared = false;
-
     public Boolean getOdds2downloadPrepared() {
         return odds2downloadPrepared;
     }
@@ -1237,66 +1163,62 @@ AUSTRALIAN
         getLog().info("prepareDownload() called..");
         odds2downloadPrepared = false;
 
-        if ( currentMarket != null )
-        try {
-             List<String[]> bukmOddsInfoList = new ArrayList<String[]>();
+        if (currentMarket != null)
+            try {
+                List<String[]> bukmOddsInfoList = new ArrayList<String[]>();
 
-             for (Integer priority : currentMarket.getOrderedRunners().keySet()) {
-                MarketRunner mr = currentMarket.getOrderedRunners().get(priority);
-                String[] bukmOddsInfo = new String[5];
-                 bukmOddsInfo[2] = mr.getName();
-                 bukmOddsInfo[1] = "" + mr.getSelectionId();
-                 bukmOddsInfo[0] = "" + mr.getAsianLineId();
-                 Runner4User r4u = mr.getUserData4Runner().get(currentUser.getId());
-                 bukmOddsInfo[3] = (r4u.getOdds()!= null? "" + r4u.getOdds(): ""+ NumberFormat.getInstance(new Locale("RU","ru")).format(r4u.getBackPrice1()));
-                 bukmOddsInfo[4] = "=$E$1 * $D" + (priority+1);
-                 bukmOddsInfoList.add(bukmOddsInfo);
-            }
-
-            log.info("bukmOddsInfoList.size()= " + bukmOddsInfoList.size());
-
-            FacesContext facesContext = FacesContext.getCurrentInstance();
-            HttpSession session = (HttpSession) facesContext
-                    .getExternalContext().getSession(false);
-
-            if (session != null) {
-                session.removeAttribute("fileName");
-                session.removeAttribute("docName");
-                session.removeAttribute("ContentType");
-                session.removeAttribute("ContentLength");
-            }
-
-            if (bukmOddsInfoList.size() > 0) {
-                File temp = null;
-                try {
-                    temp = File.createTempFile("emails_", ".csv");
-                    temp.deleteOnExit();
-                } catch (IOException ioe) {
-                    log.severe(ioe.getMessage());
+                for (Integer priority : currentMarket.getOrderedRunners().keySet()) {
+                    MarketRunner mr = currentMarket.getOrderedRunners().get(priority);
+                    String[] bukmOddsInfo = new String[5];
+                    bukmOddsInfo[2] = mr.getName();
+                    bukmOddsInfo[1] = "" + mr.getSelectionId();
+                    bukmOddsInfo[0] = "" + mr.getAsianLineId();
+                    Runner4User r4u = mr.getUserData4Runner().get(currentUser.getId());
+                    bukmOddsInfo[3] = (r4u.getOdds() != null ? "" + r4u.getOdds() : "" + NumberFormat.getInstance(new Locale("RU", "ru")).format(r4u.getBackPrice1()));
+                    bukmOddsInfo[4] = "=$E$1 * $D" + (priority + 1);
+                    bukmOddsInfoList.add(bukmOddsInfo);
                 }
 
-                writeEmailListAsCsv(bukmOddsInfoList, temp);
-                String tempFileName = temp.getAbsolutePath();
+                log.info("bukmOddsInfoList.size()= " + bukmOddsInfoList.size());
+
+                FacesContext facesContext = FacesContext.getCurrentInstance();
+                HttpSession session = (HttpSession) facesContext
+                        .getExternalContext().getSession(false);
 
                 if (session != null) {
-                    session.setAttribute("fileName", tempFileName);
-                    session.setAttribute("docName", "currentOdds_"+ currentMarket.getMarketId()+"_"+currentMarket.getName());
-                    session.setAttribute("ContentType", "application/csv");
-                    session.setAttribute("ContentLength", Long.valueOf(temp.length()).intValue());
-
-                    odds2downloadPrepared = true;
-
+                    session.removeAttribute("fileName");
+                    session.removeAttribute("docName");
+                    session.removeAttribute("ContentType");
+                    session.removeAttribute("ContentLength");
                 }
+
+                if (bukmOddsInfoList.size() > 0) {
+                    File temp = null;
+                    try {
+                        temp = File.createTempFile("emails_", ".csv");
+                        temp.deleteOnExit();
+                    } catch (IOException ioe) {
+                        log.severe(ioe.getMessage());
+                    }
+
+                    writeEmailListAsCsv(bukmOddsInfoList, temp);
+                    String tempFileName = temp.getAbsolutePath();
+
+                    if (session != null) {
+                        session.setAttribute("fileName", tempFileName);
+                        session.setAttribute("docName", "currentOdds_" + currentMarket.getMarketId() + "_" + currentMarket.getName());
+                        session.setAttribute("ContentType", "application/csv");
+                        session.setAttribute("ContentLength", Long.valueOf(temp.length()).intValue());
+
+                        odds2downloadPrepared = true;
+
+                    }
+                }
+            } catch (IOException e) {
+                log.severe("prepareDownload() error: " + e.getMessage());
             }
-        } catch (IOException e) {
-            log.severe("prepareDownload() error: " + e.getMessage());
-        }
         return null;
     }
-
-    //private ArrayList<UploadedCsvFile> csvOddsFiles = new ArrayList<UploadedCsvFile>();
-
-    //private Map<String, UploadedCsvFile> csvOddsFiles = new HashMap<String, UploadedCsvFile>();
 
     public void listener(FileUploadEvent event) throws Exception {
         UploadedFile item = event.getUploadedFile();
@@ -1309,16 +1231,16 @@ AUSTRALIAN
         InputStreamReader isr = null;
 
         if (currentMarket != null)
-        try {
-            isr = new InputStreamReader(new ByteArrayInputStream(item.getData()), "utf-8");
-            reader = new CSVReader(isr, ';');
-            String[] nextLine = null;
+            try {
+                isr = new InputStreamReader(new ByteArrayInputStream(item.getData()), "utf-8");
+                reader = new CSVReader(isr, ';');
+                String[] nextLine = null;
 
-            while ((nextLine = reader.readNext()) != null) {
-                log.info("" + nextLine.length);
+                while ((nextLine = reader.readNext()) != null) {
+                    log.info("" + nextLine.length);
 
-                if (nextLine.length < 5)
-                    continue;
+                    if (nextLine.length < 5)
+                        continue;
 
                     for (int i = 0; i < nextLine.length; i++) {
                         log.info("nextLine[" + i + "]=" + nextLine[i]);
@@ -1327,7 +1249,7 @@ AUSTRALIAN
                     String sselectionId = nextLine[1];
 
                     log.info(" sselectionId: " + sselectionId);
-                    if ( sselectionId != null && sselectionId.trim().length()> 0 ) {
+                    if (sselectionId != null && sselectionId.trim().length() > 0) {
                         MarketRunner mr = currentMarket.getRunnersMap().get(Long.valueOf(sselectionId));
                         if (mr != null) {
                             Runner4User r4u = mr.getUserData4Runner().get(currentUser.getId());
@@ -1340,20 +1262,47 @@ AUSTRALIAN
                             }
                         }
 
+                    }
+                }
+            } finally {
+                try {
+                    if (reader != null)
+                        reader.close();
+                } catch (Exception e) {
+                }
+                try {
+                    if (isr != null)
+                        isr.close();
+                } catch (Exception e) {
                 }
             }
-        } finally {
-            try {
-                if (reader != null)
-                    reader.close();
-            } catch (Exception e) {
-            }
-            try {
-                if (isr != null)
-                    isr.close();
-            } catch (Exception e) {
-            }
+        //          csvOddsFiles.put(currentMarket.getMarketId(), file);
+    }
+
+    //private ArrayList<UploadedCsvFile> csvOddsFiles = new ArrayList<UploadedCsvFile>();
+
+    //private Map<String, UploadedCsvFile> csvOddsFiles = new HashMap<String, UploadedCsvFile>();
+
+    class KeepAliveJob implements Runnable {
+
+        private final Logger log = Logger.getLogger(this.getClass().getName());
+
+        private APIContext apiContext;
+
+        public KeepAliveJob(APIContext apiContext) {
+            this.apiContext = apiContext;
         }
-  //          csvOddsFiles.put(currentMarket.getMarketId(), file);
+
+        @Override
+        public void run() {
+            try {
+                Thread.sleep(1000);
+                log.fine("call getMarketService().keepAlive(" + apiContext + ")");
+                getMarketService().keepAlive(apiContext);
+            } catch (Exception e) {
+                log.log(Level.SEVERE, "error on keep-alive request: " + e.getMessage());
+            }
+            log.fine("run finished");
+        }
     }
 }

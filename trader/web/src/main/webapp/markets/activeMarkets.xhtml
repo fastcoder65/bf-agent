@@ -24,14 +24,18 @@
         <f:facet name="header">
             <h:outputText value="My markets"/>
         </f:facet>
+         <h:form>
 
-            <h:form>
+             <a4j:jsFunction name="timeOffsetInit">
+                 <a4j:param name="param1" assignTo="#{marketBean.userTimeOffset}" />
+             </a4j:jsFunction>
 
                 <a4j:queue requestDelay="100" ignoreDupResponce="true"/>
 
                 <a4j:push id="pushTopics" address="pushTopicsContext" >
                     <a4j:ajax disabled="#{!(marketBean.pollEnabled)}"  event="dataavailable" render="marketTable, runnerTable, marketServerTime"/>
                 </a4j:push>
+
                 <ui:remove>
                 <h:panelGrid columns="2">
                     <h:outputLabel value="New UUID:"/>
@@ -56,13 +60,12 @@
         <h:form>
             <a4j:queue requestDelay="100" ignoreDupResponce="true"/>
             <h:panelGrid>
-
                 <a4j:outputPanel>
                     <h:outputText id="marketServerTime" value="#{marketBean.serverTime}"/>
+                    <h:outputText id="userTimeOffset" value=" ( #{marketBean.userTimeOffsetHours} )"/>
                 </a4j:outputPanel>
 
                 <a4j:outputPanel>
-
 
                     <rich:messages id="marketMessages" ajaxRendered="true" globalOnly="true" infoStyle="color:green"
                                    warnStyle="color:#FF9900" errorStyle="color:red" showSummary="true"
