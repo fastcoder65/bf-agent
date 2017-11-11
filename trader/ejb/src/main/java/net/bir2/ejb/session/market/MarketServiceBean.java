@@ -116,7 +116,7 @@ public class MarketServiceBean implements MarketService {
 
     @SuppressWarnings("unchecked")
     public List<Market> getMyActiveMarkets(int toffset) {
-        log.info("enter getMyActiveMarkets( " + toffset + " )");
+        log.fine("enter getMyActiveMarkets( " + toffset + " )");
 
         List<Market> result = new ArrayList<Market>();
 
@@ -124,17 +124,7 @@ public class MarketServiceBean implements MarketService {
                 .setParameter("login", getLoginName())
                 .setParameter("marketStatus", "CLOSED")
                 .getResultList();
-/*
-        for (Market market: _result) {
 
-            Date marketTime =  market.getMarketTime();
-            Calendar c = Calendar.getInstance();
-            c.setTime(marketTime);
-            c.add(Calendar.MILLISECOND, toffset);
-            market.setMarketTime(c.getTime());
-            result.add(market);
-      }
-*/
         return _result;
     }
 
